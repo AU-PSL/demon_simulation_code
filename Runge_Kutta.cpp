@@ -3,7 +3,7 @@
 *                                  DEMON
 *
 * This file is distributed under the BSD Open Source License. See LICENSE.TXT 
-* for details. 
+* for details.
 *
 *===-----------------------------------------------------------------------===*/
 
