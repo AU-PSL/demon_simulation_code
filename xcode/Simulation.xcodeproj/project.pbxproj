@@ -311,7 +311,7 @@
 			);
 			mainGroup = 08FB7794FE84155DC02AAC07 /* Simulation */;
 			projectDirPath = "";
-			projectRoot = "<Project File Directory>/..";
+			projectRoot = ..;
 			targets = (
 				D2AAC045055464E500DB518D /* Simulation */,
 				E1FD946912999A2800EBC94D /* Sim_2D */,
