@@ -229,7 +229,7 @@ void Runge_Kutta::modifyTimeStep()
 			__m128d vy2 = _mm_sub_pd(vy1, _mm_load_pd(py2));
            
 			//check separation distances against dist:
-			__m128d comp = _mm_cmple_pd(_mm_sqrt_pd(_mm_add_pd(_mm_mul_pd(vx2, vx2), _mm_mul_pd(vy2, vy2))), dist);
+			__m128d comp = _mm_cmple_pd(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), dist);
             
 			double low, high;
 			_mm_storel_pd(&low, comp);
@@ -245,7 +245,7 @@ void Runge_Kutta::modifyTimeStep()
 			vy2 = _mm_sub_pd(vy1, _mm_loadr_pd(py2));
            
 			//check separation distances against dist: 
-			comp = _mm_cmple_pd(_mm_sqrt_pd(_mm_add_pd(_mm_mul_pd(vx2, vx2), _mm_mul_pd(vy2, vy2))), dist);
+			comp = _mm_cmple_pd(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), dist);
             
 			_mm_storel_pd(&low, comp);
 			_mm_storeh_pd(&high, comp);
