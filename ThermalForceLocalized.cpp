@@ -47,8 +47,8 @@ inline void ThermalForceLocalized::force(const unsigned int currentParticle, con
 {
 	const __m128d radiusV = _mm_sqrt_pd(displacementX*displacementX + displacementY*displacementY);
 	const __m128d mtRandV = _mm_set_pd(mt(), mt());
-	const double thetaL = mt()*M_2_PI;
-	const double thetaH = mt()*M_2_PI;
+	const double thetaL = mt()*2.0*M_PI;
+	const double thetaH = mt()*2.0*M_PI;
 	
 	double rL, rH;
 	_mm_storel_pd(&rL, radiusV);
