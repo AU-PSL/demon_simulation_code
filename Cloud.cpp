@@ -171,7 +171,7 @@ Cloud *Cloud::initializeFromFile(fitsfile *file, int *error, double *currentTime
 	return cloud;
 }
 
-void Cloud::writeCloudSetup(fitsfile *file, int *error)
+void Cloud::writeCloudSetup(fitsfile *file, int *error) const
 {
 	//format number of elements of type double as string, e.g. 1024D
 	stringstream numStream;
@@ -223,7 +223,7 @@ void Cloud::writeCloudSetup(fitsfile *file, int *error)
 	fits_flush_file(file, error);
 }
 
-void Cloud::writeTimeStep(fitsfile *file, int *error, double currentTime)
+void Cloud::writeTimeStep(fitsfile *file, int *error, double currentTime) const
 {
 	if (!*error)
 	{

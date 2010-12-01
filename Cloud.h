@@ -58,12 +58,12 @@ public:
 	//Input: fitsfile *file, int *error
 	//Preconditions: fitsfile exists, error = 0
 	//Postconditions: initial cloud data, including mass & charge, output to file
-	void writeCloudSetup(fitsfile *file, int *error);
+	void writeCloudSetup(fitsfile *file, int *error) const;
 	
 	//Input: fitsfile *file, int *error, double currentTime
 	//Preconditions: fitsfile exists, error = 0, currentTime > 0, writeCloudSetup has previously been called
 	//Postconditions: positions and velocities for current time step output to file
-	void writeTimeStep(fitsfile *file, int *error, double currentTime);
+	void writeTimeStep(fitsfile *file, int *error, double currentTime) const;
 
 //static functions:
 	//Input: int numParticles, double cloudSize
