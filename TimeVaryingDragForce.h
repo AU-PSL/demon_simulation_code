@@ -16,7 +16,7 @@ using namespace std;
 class TimeVaryingDragForce : public DragForce
 {	
 public:
-	TimeVaryingDragForce(Cloud *myCloud, double scale, double offset);	//overloaded constructor
+	TimeVaryingDragForce(Cloud * const myCloud, const double scale, const double offset);	//overloaded constructor
 	~TimeVaryingDragForce() {} //destructor
 
 //public functions:
@@ -30,11 +30,11 @@ public:
 
 private:
 //private variables:
-	double scaleConst;	//[s^-2]
-	double offsetConst; //[s^-1]
+    double scaleConst;	//[s^-2]
+    double offsetConst; //[s^-1]
 	
 //private methods:
-	double const calculateGamma(const double currentTime);
+	const double calculateGamma(const double currentTime);
 };
 
 #endif /* TIMEVARYINGDRAGFORCE_H */

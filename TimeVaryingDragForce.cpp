@@ -9,7 +9,7 @@
 
 #include "TimeVaryingDragForce.h"
 
-TimeVaryingDragForce::TimeVaryingDragForce(Cloud *myCloud, double scale, double offset) 
+TimeVaryingDragForce::TimeVaryingDragForce(Cloud * const myCloud, const double scale, const double offset) 
 : DragForce(myCloud, -offset), scaleConst(scale), offsetConst(offset) {}
 
 void TimeVaryingDragForce::force1(const double currentTime)
@@ -41,7 +41,7 @@ inline const double TimeVaryingDragForce::calculateGamma(const double currentTim
 	return -(scaleConst*currentTime + offsetConst);
 }
 
-void TimeVaryingDragForce::writeForce(fitsfile *file, int *error)
+void TimeVaryingDragForce::writeForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)
@@ -57,7 +57,7 @@ void TimeVaryingDragForce::writeForce(fitsfile *file, int *error)
 		//add TimeVaryingDragForce bit:
 		forceFlags |= TimeVaryingDragForceFlag;
 
-		if (*error == 202 || *error == 204)	//keyword does not exist yet
+		if(*error == KEY_NO_EXIST || *error == VALUE_UNDEFINED)
 			*error = 0;			//clear above error.
 
 		//add or update keyword:
@@ -73,7 +73,7 @@ void TimeVaryingDragForce::writeForce(fitsfile *file, int *error)
 	}
 }
 
-void TimeVaryingDragForce::readForce(fitsfile *file, int *error)
+void TimeVaryingDragForce::readForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)

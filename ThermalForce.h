@@ -16,12 +16,8 @@
 class ThermalForce : public Force
 {	
 public:
-	MTRand mt;
-	ThermalForce(Cloud *myCloud, double redFactor);	//overloaded constructor
+	ThermalForce(Cloud * const myCloud, const double redFactor);	//overloaded constructor
 	~ThermalForce() {} //destructor
-
-//public variables:
-	double heatVal;
 
 //public functions:
 	//Note: currentTime parameter is necessary (due to parent class) but unused
@@ -30,12 +26,19 @@ public:
 	virtual void force3(const double currentTime); //rk substep 3
 	virtual void force4(const double currentTime); //rk substep 4
 
-	virtual void writeForce(fitsfile *file, int *error);
-	virtual void readForce(fitsfile *file, int *error);
+	virtual void writeForce(fitsfile * const file, int * const error);
+	virtual void readForce(fitsfile * const file, int * const error);
 
 private:
+//private variables:
+    MTRand mt;
+
 //private functions:
 	void force(const unsigned int currentParticle);
+
+protected:
+//protected variables:
+	double heatVal;
 };
 
 #endif /* THERMALFORCE_H */

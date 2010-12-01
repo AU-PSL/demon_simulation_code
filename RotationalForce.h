@@ -16,11 +16,8 @@
 class RotationalForce : public Force
 {	
 public:
-	RotationalForce(Cloud *myCloud, double rmin, double rmax, double rotConst);
+	RotationalForce(Cloud * const myCloud, const double rmin, const double rmax, const double rotConst);
 	~RotationalForce() {} //destructor
-
-//public variables:
-	double rotationalConst;
 
 //public functions:
 	//Note: currentTime parameter is necessary (due to parent class) but unused
@@ -34,8 +31,9 @@ public:
 
 private:
 //private variables:
-	double innerRad;
-	double outerRad;
+    double innerRad;
+    double outerRad;
+    double rotationalConst;
 
 //private functions:
 	void force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY);

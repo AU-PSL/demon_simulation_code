@@ -9,57 +9,49 @@
 
 #include "DragForce.h"
 
-DragForce::DragForce(Cloud *myCloud, double gamma) 
+DragForce::DragForce(Cloud * const myCloud, const double gamma) 
 : Force(myCloud), dragConst(-gamma) {}
 
 void DragForce::force1(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-	{
 		force(currentParticle, _mm_load_pd(&cloud->Vx[currentParticle]), _mm_load_pd(&cloud->Vy[currentParticle]));
-	}
 }
 
 void DragForce::force2(const double currentTime)
 {	
 	const __m128d v2 = _mm_set1_pd(2.0);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-	{
 		force(currentParticle, _mm_load_pd(&cloud->Vx[currentParticle]) + _mm_load_pd(&cloud->k1[currentParticle])/v2, 
 			_mm_load_pd(&cloud->Vy[currentParticle]) + _mm_load_pd(&cloud->m1[currentParticle])/v2);
-	}
 }
 
 void DragForce::force3(const double currentTime)
 {	
 	const __m128d v2 = _mm_set1_pd(2.0);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-	{
 		force(currentParticle, _mm_load_pd(&cloud->Vx[currentParticle]) + _mm_load_pd(&cloud->k2[currentParticle])/v2, 
 			_mm_load_pd(&cloud->Vy[currentParticle]) + _mm_load_pd(&cloud->m2[currentParticle])/v2);
-	}
 }
 
 void DragForce::force4(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-	{
 		force(currentParticle, _mm_load_pd(&cloud->Vx[currentParticle]) + _mm_load_pd(&cloud->k3[currentParticle]), 
 			_mm_load_pd(&cloud->Vy[currentParticle]) + _mm_load_pd(&cloud->m3[currentParticle]));
-	}
 }
 
 inline void DragForce::force(const unsigned int currentParticle, const __m128d currentVelocityX, const __m128d currentVelocityY)
 {
 	const __m128d drag = _mm_set1_pd(dragConst)*_mm_load_pd(&cloud->mass[currentParticle]);
-	double *pFx = &cloud->forceX[currentParticle];
-	double *pFy = &cloud->forceY[currentParticle];
+	double * const pFx = &cloud->forceX[currentParticle];
+	double * const pFy = &cloud->forceY[currentParticle];
 
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + drag*currentVelocityX);
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + drag*currentVelocityY);
 }
 
-void DragForce::writeForce(fitsfile *file, int *error)
+void DragForce::writeForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)
@@ -75,7 +67,7 @@ void DragForce::writeForce(fitsfile *file, int *error)
 		//add DragForce bit:
 		forceFlags |= DragForceFlag;		//compound bitwise OR
 
-		if(*error == 202 || *error == 204)	//keyword does not exist yet
+		if(*error == KEY_NO_EXIST || *error == VALUE_UNDEFINED)
 			*error = 0;			//clear above error.
 
 		//add or update keyword:
@@ -88,7 +80,7 @@ void DragForce::writeForce(fitsfile *file, int *error)
 		fits_write_key_dbl(file, const_cast<char *> ("dragConst"), dragConst, 6, const_cast<char *> ("[s^-1] (DragForce)"), error);
 }
 
-void DragForce::readForce(fitsfile *file, int *error)
+void DragForce::readForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)

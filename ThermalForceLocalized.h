@@ -17,13 +17,8 @@
 class ThermalForceLocalized : public Force
 {	
 public:
-	MTRand mt;
-	ThermalForceLocalized(Cloud *myCloud, double thermRed1, double thermRed2, double specifiedRadius);	//overloaded constructor
+	ThermalForceLocalized(Cloud * const myCloud, const double thermRed1, const double thermRed2, const double specifiedRadius);	//overloaded constructor
 	~ThermalForceLocalized() {} //destructor
-
-//public variables:
-	double heatVal1;
-	double heatVal2;
 
 //public functions:
 	//Note: currentTime parameter is necessary (due to parent class) but unused
@@ -32,12 +27,15 @@ public:
 	void force3(const double currentTime); //rk substep 3
 	void force4(const double currentTime); //rk substep 4
 
-    void writeForce(fitsfile *file, int *error);
-    void readForce(fitsfile *file, int *error);
+    void writeForce(fitsfile * const file, int * const error);
+    void readForce(fitsfile * const file, int * const error);
 
 private:
 //private variables:
+    MTRand mt;
 	double heatingRadius;
+    double heatVal1;
+	double heatVal2;
 
 //private functions:
 	void force(const unsigned int currentParticle, const double displacementX, const double displacementY);

@@ -9,7 +9,7 @@
 
 #include "TimeVaryingThermalForce.h"
 
-TimeVaryingThermalForce::TimeVaryingThermalForce(Cloud *myCloud, double scale, double offset) 
+TimeVaryingThermalForce::TimeVaryingThermalForce(Cloud * const myCloud, const double scale, const double offset) 
 : ThermalForce(myCloud, offset), heatValScale(scale), heatValOffset(offset) {}
 
 void TimeVaryingThermalForce::force1(const double currentTime)
@@ -36,7 +36,7 @@ void TimeVaryingThermalForce::force4(const double currentTime)
 	ThermalForce::force4(currentTime);
 }
 
-void TimeVaryingThermalForce::writeForce(fitsfile *file, int *error)
+void TimeVaryingThermalForce::writeForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)
@@ -52,7 +52,7 @@ void TimeVaryingThermalForce::writeForce(fitsfile *file, int *error)
 		//add ThermalForce bit:
 		forceFlags |= TimeVaryingThermalForceFlag;		//compound bitwise OR
 
-		if(*error == 202 || *error == 204)	//keyword does not exist yet
+		if(*error == KEY_NO_EXIST || *error == VALUE_UNDEFINED)
 			*error = 0;			//clear above error.
 
 		//add or update keyword:
@@ -68,7 +68,7 @@ void TimeVaryingThermalForce::writeForce(fitsfile *file, int *error)
 	}
 }
 
-void TimeVaryingThermalForce::readForce(fitsfile *file, int *error)
+void TimeVaryingThermalForce::readForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)

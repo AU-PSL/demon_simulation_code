@@ -9,58 +9,50 @@
 
 #include "RectConfinementForce.h"
 	
-RectConfinementForce::RectConfinementForce(Cloud *myCloud, double confineConstX, double confineConstY)
+RectConfinementForce::RectConfinementForce(Cloud * const myCloud, double confineConstX, double confineConstY)
 : Force(myCloud), confineX(-confineConstX), confineY(-confineConstY) {}
 
 void RectConfinementForce::force1(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-	{
 		force(currentParticle, _mm_load_pd(&cloud->x[currentParticle]), _mm_load_pd(&cloud->y[currentParticle]));
-	}
 }
 
 void RectConfinementForce::force2(const double currentTime)
 {
 	const __m128d v2 = _mm_set1_pd(2.0);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-	{
 		force(currentParticle, _mm_load_pd(&cloud->x[currentParticle]) + _mm_load_pd(&cloud->l1[currentParticle])/v2, 
 			_mm_load_pd(&cloud->y[currentParticle]) + _mm_load_pd(&cloud->n1[currentParticle])/v2);
-	}
 }
 
 void RectConfinementForce::force3(const double currentTime)
 {
 	const __m128d v2 = _mm_set1_pd(2.0);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-	{
 		force(currentParticle, _mm_load_pd(&cloud->x[currentParticle]) + _mm_load_pd(&cloud->l2[currentParticle])/v2, 
 			_mm_load_pd(&cloud->y[currentParticle]) + _mm_load_pd(&cloud->n2[currentParticle])/v2);
-	}
 }
 
 void RectConfinementForce::force4(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-	{
 		force(currentParticle, _mm_load_pd(&cloud->x[currentParticle]) + _mm_load_pd(&cloud->l3[currentParticle]),
 			_mm_load_pd(&cloud->y[currentParticle]) + _mm_load_pd(&cloud->n3[currentParticle]));
-	}
 }
 
 inline void RectConfinementForce::force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY)
 {
 	const __m128d cVx = _mm_set1_pd(confineX);
 	const __m128d cVy = _mm_set1_pd(confineY);
-	double *pFx = &cloud->forceX[currentParticle];
-	double *pFy = &cloud->forceY[currentParticle];
+	double * const pFx = &cloud->forceX[currentParticle];
+	double * const pFy = &cloud->forceY[currentParticle];
 
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + _mm_mul_pd(cVx, currentPositionX));
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + _mm_mul_pd(cVy, currentPositionY));
 }
 
-void RectConfinementForce::writeForce(fitsfile *file, int *error)
+void RectConfinementForce::writeForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)
@@ -76,7 +68,7 @@ void RectConfinementForce::writeForce(fitsfile *file, int *error)
 		//add RectConfinementForce bit:
 		forceFlags |= RectConfinementForceFlag;		//compound bitwise OR
 
-		if(*error == 202 || *error == 204)	//keyword does not exist yet
+		if(*error == KEY_NO_EXIST || *error == VALUE_UNDEFINED)
 			*error = 0;			//clear above error.
 
 		//add or update keyword:
@@ -92,7 +84,7 @@ void RectConfinementForce::writeForce(fitsfile *file, int *error)
 	}
 }
 
-void RectConfinementForce::readForce(fitsfile *file, int *error)
+void RectConfinementForce::readForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)
