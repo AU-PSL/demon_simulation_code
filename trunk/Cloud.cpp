@@ -39,7 +39,7 @@ inline void Cloud::setPosition(const unsigned int index)
 	double tempR = arc4random();
 	double tempTheta = arc4random();
 	double radius = (tempR/RAND_MAX)*cloudSize;
-	double theta = (tempTheta/RAND_MAX)*M_2_PI;
+	double theta = (tempTheta/RAND_MAX)*2.0*M_PI;
 
 	x[index] = radius*cos(theta);
 	y[index] = radius*sin(theta);
@@ -56,7 +56,7 @@ inline void Cloud::setVelocity(const unsigned int index)
 	double initialVel = 0.0;
 
 	double temp = rand();
-	double theta = (temp/RAND_MAX)*(M_2_PI);
+	double theta = (temp/RAND_MAX)*(2.0*M_PI);
 
 	Vx[index] = initialVel*sin(theta);
 	Vy[index] = initialVel*cos(theta);
