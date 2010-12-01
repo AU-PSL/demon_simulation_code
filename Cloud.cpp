@@ -74,11 +74,11 @@ inline void Cloud::setMass(const unsigned int index)
 	mass[index] = (4.0/3.0)*M_PI*(pow(radius,3))*particleDensity;
 }
 
-Cloud *Cloud::initializeNew(const unsigned int numParticles, const double cloudSize)
+Cloud * const Cloud::initializeNew(const unsigned int numParticles, const double cloudSize)
 {
 	cout << "\nGenerating original data.\n\n";
 
-	Cloud* cloud = new Cloud(numParticles, cloudSize);
+	Cloud * const cloud = new Cloud(numParticles, cloudSize);
 
 	//initialize dust cloud:
 	for(unsigned int i = 0; i < numParticles; i++)
@@ -92,11 +92,11 @@ Cloud *Cloud::initializeNew(const unsigned int numParticles, const double cloudS
 	return cloud;
 }
 
-Cloud *Cloud::initializeGrid(const unsigned int numParticles, const double cloudSize)
+Cloud * const Cloud::initializeGrid(const unsigned int numParticles, const double cloudSize)
 {
 	cout << "\nInitializing grid.\n\n";
 
-	Cloud* cloud = new Cloud(numParticles, cloudSize);
+	Cloud * const cloud = new Cloud(numParticles, cloudSize);
 
 	const double sqrtNumPar = floor(sqrt(numParticles));
 	const double gridUnit = 2.0*cloudSize/sqrtNumPar; //number of particles per row/column
@@ -124,7 +124,7 @@ Cloud *Cloud::initializeGrid(const unsigned int numParticles, const double cloud
 	return cloud;
 }
 
-Cloud *Cloud::initializeFromFile(fitsfile *file, int *error, double *currentTime)
+Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error, double * const currentTime)
 {
 	int *anyNull = NULL;
 	long numParticles;
@@ -171,12 +171,12 @@ Cloud *Cloud::initializeFromFile(fitsfile *file, int *error, double *currentTime
 	return cloud;
 }
 
-void Cloud::writeCloudSetup(fitsfile *file, int *error) const
+void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const
 {
 	//format number of elements of type double as string, e.g. 1024D
 	stringstream numStream;
 	numStream << n << "D";
-	string numString = numStream.str();
+	const string numString = numStream.str();
 
 	char *ttypeCloud[] = {const_cast<char *> ("CHARGE"), const_cast<char *> ("MASS")};
 	char *tformCloud[] = {const_cast<char *> ("D"), const_cast<char *> ("D")};
@@ -223,7 +223,7 @@ void Cloud::writeCloudSetup(fitsfile *file, int *error) const
 	fits_flush_file(file, error);
 }
 
-void Cloud::writeTimeStep(fitsfile *file, int *error, double currentTime) const
+void Cloud::writeTimeStep(fitsfile * const file, int * const error, double currentTime) const
 {
 	if (!*error)
 	{
