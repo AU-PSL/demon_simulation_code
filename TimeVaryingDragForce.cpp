@@ -41,7 +41,7 @@ inline const double TimeVaryingDragForce::calculateGamma(const double currentTim
 	return -(scaleConst*currentTime + offsetConst);
 }
 
-void TimeVaryingDragForce::writeForce(fitsfile * const file, int * const error)
+void TimeVaryingDragForce::writeForce(fitsfile * const file, int * const error) const
 {
 	//move to primary HDU:
 	if(!*error)

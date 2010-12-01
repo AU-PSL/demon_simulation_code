@@ -53,7 +53,7 @@ inline void ThermalForce::force(const unsigned int currentParticle)
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + thermV*_mm_set_pd(cos(thetaH), cos(thetaL)));
 }
 
-void ThermalForce::writeForce(fitsfile * const file, int * const error)
+void ThermalForce::writeForce(fitsfile * const file, int * const error) const
 {
 	//move to primary HDU:
 	if(!*error)

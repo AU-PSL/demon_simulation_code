@@ -239,7 +239,7 @@ inline void ShieldedCoulombForce::forcer(const unsigned int currentParticle, con
 	_mm_storer_pd(pFy, _mm_loadr_pd(pFy) - forcevY);
 }
 
-void ShieldedCoulombForce::writeForce(fitsfile * const file, int * const error)
+void ShieldedCoulombForce::writeForce(fitsfile * const file, int * const error) const
 {
 	//move to primary HDU:
 	if(!*error)

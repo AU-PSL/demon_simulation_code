@@ -70,7 +70,7 @@ inline void DrivingForce::force(const unsigned int currentParticle, const __m128
 	// No where do the code the comment and the paper agree with each other.
 }
 
-void DrivingForce::writeForce(fitsfile * const file, int * const error)
+void DrivingForce::writeForce(fitsfile * const file, int * const error) const
 {
 	//move to primary HDU:
 	if(!*error)

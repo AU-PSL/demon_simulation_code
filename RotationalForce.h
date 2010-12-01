@@ -26,7 +26,7 @@ public:
 	void force3(const double currentTime); //rk substep 3
 	void force4(const double currentTime); //rk substep 4
 
-    void writeForce(fitsfile *file, int *error);
+    void writeForce(fitsfile *file, int *error) const;
     void readForce(fitsfile *file, int *error);
 
 private:

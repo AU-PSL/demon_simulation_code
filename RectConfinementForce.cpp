@@ -52,7 +52,7 @@ inline void RectConfinementForce::force(const unsigned int currentParticle, cons
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + _mm_mul_pd(cVy, currentPositionY));
 }
 
-void RectConfinementForce::writeForce(fitsfile * const file, int * const error)
+void RectConfinementForce::writeForce(fitsfile * const file, int * const error) const
 {
 	//move to primary HDU:
 	if(!*error)
