@@ -65,7 +65,7 @@ void help()
 }
 
 // check if force is used
-void checkForce(char option, long usedForces, ForceFlag flag)
+void checkForce(const char option, const long usedForces, const ForceFlag flag)
 {
 	if(usedForces & flag)
 	{
@@ -88,7 +88,7 @@ void checkForce(char option1, char option2, long usedForces, ForceFlag flag1, Fo
 }
 
 // check no defaul command line flag
-void checkOption(int argc, char * const argv[], int i, char option)
+void checkOption(const int argc, char * const argv[], int i, const char option)
 {
 	if(i+1 >= argc || argv[i+1][0] == '-')
 	{
@@ -99,7 +99,8 @@ void checkOption(int argc, char * const argv[], int i, char option)
 }
 
 // check single default command line flag
-int checkOption(int argc, char * const argv[], int i, char option, string name, double *value)
+int checkOption(const int argc, char * const argv[], int i, const char option, 
+                const string name, double * const value)
 {
 	if(i+1 >= argc || argv[i+1][0] == '-')
 	{
@@ -112,7 +113,9 @@ int checkOption(int argc, char * const argv[], int i, char option, string name, 
 }
 
 // check double default command line flag
-int checkOption(int argc, char * const argv[], int i, char option, string name1, double *value1, string name2, double *value2)
+int checkOption(const int argc, char * const argv[], int i, const char option, 
+                const string name1, double * const value1, 
+                const string name2, double * const value2)
 {
 	if(i+1 >= argc || argv[i+1][0] == '-')
 	{
@@ -128,7 +131,10 @@ int checkOption(int argc, char * const argv[], int i, char option, string name1,
 }
 
 // check triple default command line flag
-int checkOption(int argc, char * const argv[], int i, char option, string name1, double *value1, string name2, double *value2, string name3, double *value3)
+int checkOption(const int argc, char * const argv[], int i, const char option, 
+                const string name1, double * const value1, 
+                const string name2, double * const value2, 
+                const string name3, double * const value3)
 {
 	if(i+1 >= argc || argv[i+1][0] == '-')
 	{
@@ -144,13 +150,15 @@ int checkOption(int argc, char * const argv[], int i, char option, string name1,
 }
 
 // Test is character is a A..Z or a..Z
-inline bool isCharacter(char c)
+inline const bool isCharacter(const char c)
 {
-	return (c > 64 && c < 91) || (c > 96 && c < 123);
+	return (c > 'a' && c < 'z') || (c > 'A' && c < 'Z');
 }
 
 // check double default command line flag calling negative numbers for the first item
-int checkOptionWithNeg(int argc, char * const argv[], int i, char option, string name1, double *value1, string name2, double *value2)
+int checkOptionWithNeg(const int argc, char * const argv[], int i, const char option, 
+                       const string name1, double * const value1, 
+                       const string name2, double * const value2)
 {
 	if(i+1 >= argc || (argv[i+1][0] == '-' && isCharacter(argv[i+1][1])))
 	{
@@ -166,7 +174,7 @@ int checkOptionWithNeg(int argc, char * const argv[], int i, char option, string
 }
 
 // Cound number of flagged forces being used.
-unsigned int getNumForces(long usedForces)
+const unsigned int getNumForces(const long usedForces)
 {
 	unsigned int i = 0;
 	if (usedForces & ConfinementForceFlag)
@@ -193,7 +201,7 @@ unsigned int getNumForces(long usedForces)
 }
 
 // Check for error from fitsfile.
-void checkFitsError(int error, int lineNumber)
+void checkFitsError(const int error, const int lineNumber)
 {
 	if(!error)
 		return;
@@ -207,7 +215,7 @@ void checkFitsError(int error, int lineNumber)
 }
 
 // Delete specified fitsfile if it exists.
-void deleteFitsFile(char *filename, int *error)
+void deleteFitsFile(char * const filename, int * const error)
 {
 	//check for pre-existing data file:
 	int exists = 0;
