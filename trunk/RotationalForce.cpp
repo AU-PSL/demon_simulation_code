@@ -74,7 +74,7 @@ inline void RotationalForce::force(const unsigned int currentParticle, const __m
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + cRotConst*currentPositionX/cR);
 }
 
-void RotationalForce::writeForce(fitsfile * const file, int * const error)
+void RotationalForce::writeForce(fitsfile * const file, int * const error) const
 {
 	//move to primary HDU:
 	if(!*error)

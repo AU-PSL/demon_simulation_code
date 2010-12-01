@@ -26,7 +26,7 @@ public:
 	virtual void force3(const double currentTime); //rk substep 3
 	virtual void force4(const double currentTime); //rk substep 4
 	
-	virtual void writeForce(fitsfile * const file, int * const error);
+	virtual void writeForce(fitsfile * const file, int * const error) const;
 	virtual void readForce(fitsfile * const file, int * const error);
 
 protected:

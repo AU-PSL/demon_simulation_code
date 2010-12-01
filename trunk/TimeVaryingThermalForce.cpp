@@ -36,7 +36,7 @@ void TimeVaryingThermalForce::force4(const double currentTime)
 	ThermalForce::force4(currentTime);
 }
 
-void TimeVaryingThermalForce::writeForce(fitsfile * const file, int * const error)
+void TimeVaryingThermalForce::writeForce(fitsfile * const file, int * const error) const
 {
 	//move to primary HDU:
 	if(!*error)

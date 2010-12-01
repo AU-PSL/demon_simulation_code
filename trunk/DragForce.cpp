@@ -51,7 +51,7 @@ inline void DragForce::force(const unsigned int currentParticle, const __m128d c
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + drag*currentVelocityY);
 }
 
-void DragForce::writeForce(fitsfile * const file, int * const error)
+void DragForce::writeForce(fitsfile * const file, int * const error) const
 {
 	//move to primary HDU:
 	if(!*error)

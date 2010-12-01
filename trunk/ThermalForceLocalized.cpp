@@ -64,7 +64,7 @@ inline void ThermalForceLocalized::force(const unsigned int currentParticle, con
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + thermV*_mm_set_pd(cos(thetaH), cos(thetaL)));
 }
 
-void ThermalForceLocalized::writeForce(fitsfile * const file, int * const error)
+void ThermalForceLocalized::writeForce(fitsfile * const file, int * const error) const
 {
 	//move to primary HDU:
 	if(!*error)

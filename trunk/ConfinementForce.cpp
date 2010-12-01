@@ -50,7 +50,7 @@ inline void ConfinementForce::force(const unsigned int currentParticle, const __
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + cV*currentPositionY);
 }
 
-void ConfinementForce::writeForce(fitsfile * const file, int * const error)
+void ConfinementForce::writeForce(fitsfile * const file, int * const error) const
 {
 	//move to primary HDU:
 	if(!*error)

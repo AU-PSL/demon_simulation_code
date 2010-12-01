@@ -40,7 +40,7 @@ public:
 	virtual void force3(const double currentTime)=0; //rk substep 3
 	virtual void force4(const double currentTime)=0; //rk substep 4
 
-	virtual void writeForce(fitsfile * const file, int * const error)=0;	//output force information to file
+	virtual void writeForce(fitsfile * const file, int * const error) const=0;	//output force information to file
 	virtual void readForce(fitsfile * const file, int * const error)=0;	//read force information from file
 };
 
