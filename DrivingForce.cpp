@@ -10,8 +10,8 @@
 #include "DrivingForce.h"
 #include <cmath>
 
-const double DrivingForce::waveNum = M_2_PI/0.002; //wavelength = 2mm
-const double DrivingForce::angFreq = M_2_PI*10.0; //10Hz
+const double DrivingForce::waveNum = 2.0*M_PI/0.002; //wavelength = 2mm
+const double DrivingForce::angFreq = 2.0*M_PI*10.0; //10Hz
 
 DrivingForce::DrivingForce(Cloud * const myCloud, const double drivingConst, const double amp, const double drivingShift)
 : Force(myCloud), amplitude(amp), driveConst(-drivingConst), shift(drivingShift) {}
