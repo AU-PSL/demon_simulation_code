@@ -13,7 +13,7 @@
 
 using namespace std;
 
-ShieldedCoulombForce::ShieldedCoulombForce(Cloud *myCloud, double shieldingConstant)
+ShieldedCoulombForce::ShieldedCoulombForce(Cloud * const myCloud, const double shieldingConstant)
 : Force(myCloud), shielding(shieldingConstant) {}
 
 void ShieldedCoulombForce::force1(const double currentTime)
@@ -239,7 +239,7 @@ inline void ShieldedCoulombForce::forcer(const unsigned int currentParticle, con
 	_mm_storer_pd(pFy, _mm_loadr_pd(pFy) - forcevY);
 }
 
-void ShieldedCoulombForce::writeForce(fitsfile *file, int *error)
+void ShieldedCoulombForce::writeForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)
@@ -255,7 +255,7 @@ void ShieldedCoulombForce::writeForce(fitsfile *file, int *error)
 		//add ShieldedCoulombForce bit:
 		forceFlags |= ShieldedCoulombForceFlag;		//compound bitwise OR
 
-		if(*error == 202 || *error == 204)	//keyword does not exist yet
+		if(*error == KEY_NO_EXIST || *error == VALUE_UNDEFINED)
 			*error = 0;			//clear above error.
 
 		//add or update keyword.
@@ -268,7 +268,7 @@ void ShieldedCoulombForce::writeForce(fitsfile *file, int *error)
 		fits_write_key_dbl(file, const_cast<char *> ("shieldingConstant"), shielding, 6, const_cast<char *> ("[m^-1] (ShieldedCoulombForce)"), error);
 }
 
-void ShieldedCoulombForce::readForce(fitsfile *file, int *error)
+void ShieldedCoulombForce::readForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)

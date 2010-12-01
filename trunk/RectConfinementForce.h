@@ -16,7 +16,7 @@
 class RectConfinementForce : public Force
 {	
 public:
-	RectConfinementForce(Cloud *myCloud, double confineConstX, double confineConstY); //confinement consts must be positive!
+	RectConfinementForce(Cloud * const myCloud, double confineConstX, double confineConstY); //confinement consts must be positive!
 	~RectConfinementForce() {} //destructor
 
 //public functions:
@@ -26,8 +26,8 @@ public:
 	void force3(const double currentTime); //rk substep 3
 	void force4(const double currentTime); //rk substep 4
 
-    void writeForce(fitsfile *file, int *error);
-    void readForce(fitsfile *file, int *error);
+    void writeForce(fitsfile * const file, int * const error);
+    void readForce(fitsfile * const file, int * const error);
 
 private:
 //private variables:

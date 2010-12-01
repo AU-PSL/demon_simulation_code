@@ -16,11 +16,8 @@
 class DrivingForce : public Force
 {	
 public:
-	DrivingForce(Cloud *myCloud, double dampConst, double amp, double drivingShift);	//overloaded constructor
+	DrivingForce(Cloud * const myCloud, const double dampConst, const double amp, const double drivingShift);	//overloaded constructor
 	~DrivingForce() {} //destructor
-
-//public variables:
-	double amplitude;	//[m]
 
 //public functions:
 	void force1(const double currentTime); //rk substep 1
@@ -28,11 +25,12 @@ public:
 	void force3(const double currentTime); //rk substep 3
 	void force4(const double currentTime); //rk substep 4
 
-    void writeForce(fitsfile *file, int *error);
-    void readForce(fitsfile *file, int *error);
+    void writeForce(fitsfile * const file, int * const error);
+    void readForce(fitsfile * const file, int * const error);
 
 private:
 //private variables:
+    double amplitude;	//[N]
 	double driveConst;	//[m]
 	double shift;		//[m]
 	static const double waveNum;		//[1/m]

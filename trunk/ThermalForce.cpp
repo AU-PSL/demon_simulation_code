@@ -12,39 +12,31 @@
 #include <ctime>
 #include "VectorCompatibility.h"
 
-ThermalForce::ThermalForce(Cloud *myCloud, double redFactor) 
+ThermalForce::ThermalForce(Cloud * const myCloud, const double redFactor) 
 : Force(myCloud), mt(time(NULL)), heatVal(redFactor) {}
 
 void ThermalForce::force1(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n/2; currentParticle < numParticles; currentParticle += 2) 
-	{
 		force(currentParticle);
-	}
 }
 
 void ThermalForce::force2(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n/2; currentParticle < numParticles; currentParticle += 2) 
-	{
 		force(currentParticle);
-	}
 }
 
 void ThermalForce::force3(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n/2; currentParticle < numParticles; currentParticle += 2) 
-	{
 		force(currentParticle);
-	}
 }
 
 void ThermalForce::force4(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n/2; currentParticle < numParticles; currentParticle += 2) 
-	{
 		force(currentParticle);
-	}
 }
 
 inline void ThermalForce::force(const unsigned int currentParticle)
@@ -61,7 +53,7 @@ inline void ThermalForce::force(const unsigned int currentParticle)
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + thermV*_mm_set_pd(cos(thetaH), cos(thetaL)));
 }
 
-void ThermalForce::writeForce(fitsfile *file, int *error)
+void ThermalForce::writeForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)
@@ -77,7 +69,7 @@ void ThermalForce::writeForce(fitsfile *file, int *error)
 		//add ThermalForce bit:
 		forceFlags |= ThermalForceFlag;		//compound bitwise OR
 
-		if(*error == 202 || *error == 204)	//keyword does not exist yet
+		if(*error == KEY_NO_EXIST || *error == VALUE_UNDEFINED)
 			*error = 0;			//clear above error.
 
 		//add or update keyword:
@@ -92,7 +84,7 @@ void ThermalForce::writeForce(fitsfile *file, int *error)
 	}
 }
 
-void ThermalForce::readForce(fitsfile *file, int *error)
+void ThermalForce::readForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)

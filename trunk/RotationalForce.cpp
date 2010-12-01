@@ -12,44 +12,36 @@
 
 using namespace std;
 
-RotationalForce::RotationalForce(Cloud *myCloud, double rmin, double rmax, double rotConst)
-: Force(myCloud), rotationalConst(rotConst), innerRad(rmin), outerRad(rmax) {}
+RotationalForce::RotationalForce(Cloud * const myCloud, const double rmin, const double rmax, const double rotConst)
+: Force(myCloud), innerRad(rmin), outerRad(rmax), rotationalConst(rotConst) {}
 
 void RotationalForce::force1(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-	{
+	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, _mm_load_pd(&cloud->x[currentParticle]), _mm_load_pd(&cloud->y[currentParticle]));
-	}
 }
 
 void RotationalForce::force2(const double currentTime)
 {
 	const __m128d v2 = _mm_set1_pd(2.0);
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-	{
+	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, _mm_load_pd(&cloud->x[currentParticle]) + _mm_load_pd(&cloud->l1[currentParticle])/v2, 
 			_mm_load_pd(&cloud->y[currentParticle]) + _mm_load_pd(&cloud->n1[currentParticle])/v2);
-	}
 }
 
 void RotationalForce::force3(const double currentTime)
 {
 	const __m128d v2 = _mm_set1_pd(2.0);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-	{
 		force(currentParticle, _mm_load_pd(&cloud->x[currentParticle]) + _mm_load_pd(&cloud->l2[currentParticle])/v2, 
 			_mm_load_pd(&cloud->y[currentParticle]) + _mm_load_pd(&cloud->n2[currentParticle])/v2);
-	}
 }
 
 void RotationalForce::force4(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-	{
 		force(currentParticle, _mm_load_pd(&cloud->x[currentParticle]) + _mm_load_pd(&cloud->l3[currentParticle]),
 			_mm_load_pd(&cloud->y[currentParticle]) + _mm_load_pd(&cloud->n3[currentParticle]));
-	}
 }
 
 inline void RotationalForce::force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY)
@@ -82,7 +74,7 @@ inline void RotationalForce::force(const unsigned int currentParticle, const __m
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + cRotConst*currentPositionX/cR);
 }
 
-void RotationalForce::writeForce(fitsfile *file, int *error)
+void RotationalForce::writeForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)
@@ -98,7 +90,7 @@ void RotationalForce::writeForce(fitsfile *file, int *error)
 		//add RotationalForce bit:
 		forceFlags |= RotationalForceFlag;		//compound bitwise OR
 
-		if(*error == 202 && *error == 204)	//keyword does not exist yet
+		if(*error == KEY_NO_EXIST || *error == VALUE_UNDEFINED)
 			*error = 0;			//clear above error.
 
 		//add or update keyword:
@@ -115,7 +107,7 @@ void RotationalForce::writeForce(fitsfile *file, int *error)
 	}
 }
 
-void RotationalForce::readForce(fitsfile *file, int *error)
+void RotationalForce::readForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)

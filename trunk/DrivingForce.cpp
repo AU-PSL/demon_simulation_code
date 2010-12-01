@@ -10,19 +10,17 @@
 #include "DrivingForce.h"
 #include <cmath>
 
-const double DrivingForce::waveNum = M_2_PI/.002; //wavelength = 2mm
-const double DrivingForce::angFreq = M_2_PI*10; //10Hz
+const double DrivingForce::waveNum = M_2_PI/0.002; //wavelength = 2mm
+const double DrivingForce::angFreq = M_2_PI*10.0; //10Hz
 
-DrivingForce::DrivingForce(Cloud *myCloud, double drivingConst, double amp, double drivingShift)
+DrivingForce::DrivingForce(Cloud * const myCloud, const double drivingConst, const double amp, const double drivingShift)
 : Force(myCloud), amplitude(amp), driveConst(-drivingConst), shift(drivingShift) {}
 
 void DrivingForce::force1(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-	{
 		force(currentParticle, vtime, _mm_load_pd(&cloud->x[currentParticle]));
-	}
 }
 
 void DrivingForce::force2(const double currentTime)
@@ -30,9 +28,7 @@ void DrivingForce::force2(const double currentTime)
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	const __m128d v2 = _mm_set1_pd(2.0);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-	{
 		force(currentParticle, vtime, _mm_load_pd(&cloud->x[currentParticle]) + _mm_load_pd(&cloud->l1[currentParticle])/v2);
-	}
 }
 
 void DrivingForce::force3(const double currentTime)
@@ -40,18 +36,14 @@ void DrivingForce::force3(const double currentTime)
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	const __m128d v2 = _mm_set1_pd(2.0);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-	{
 		force(currentParticle, vtime, _mm_load_pd(&cloud->x[currentParticle]) + _mm_load_pd(&cloud->l2[currentParticle])/v2);
-	}
 }
 
 void DrivingForce::force4(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-	{
+	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, vtime, _mm_load_pd(&cloud->x[currentParticle]) + _mm_load_pd(&cloud->l3[currentParticle]));
-	}
 }
 
 inline void DrivingForce::force(const unsigned int currentParticle, const __m128d currentTime, const __m128d currentPositionX)
@@ -78,7 +70,7 @@ inline void DrivingForce::force(const unsigned int currentParticle, const __m128
 	// No where do the code the comment and the paper agree with each other.
 }
 
-void DrivingForce::writeForce(fitsfile *file, int *error)
+void DrivingForce::writeForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)
@@ -94,7 +86,7 @@ void DrivingForce::writeForce(fitsfile *file, int *error)
 		//add DrivingForce bit:
 		forceFlags |= DrivingForceFlag;		//compound bitwise OR
 
-		if(*error == 202 || *error == 204)	//keyword does not exist yet
+		if(*error == KEY_NO_EXIST || *error == VALUE_UNDEFINED)
 			*error = 0;			//clear above error.
 
 		//add or update keyword:
@@ -111,7 +103,7 @@ void DrivingForce::writeForce(fitsfile *file, int *error)
 	}
 }
 
-void DrivingForce::readForce(fitsfile *file, int *error)
+void DrivingForce::readForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)

@@ -11,44 +11,36 @@
 #include <ctime>
 #include <cmath>
 
-ThermalForceLocalized::ThermalForceLocalized(Cloud *myCloud, double thermRed1, double thermRed2, double specifiedRadius) 
-: Force(myCloud), mt(time(NULL)), heatVal1(thermRed1), heatVal2(thermRed2), heatingRadius(specifiedRadius) {}
+ThermalForceLocalized::ThermalForceLocalized(Cloud * const myCloud, const double thermRed1, const double thermRed2, const double specifiedRadius) 
+: Force(myCloud), mt(time(NULL)), heatingRadius(specifiedRadius), heatVal1(thermRed1), heatVal2(thermRed2) {}
 
 void ThermalForceLocalized::force1(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n/2; currentParticle < numParticles; currentParticle += 2) 
-	{
 		force(currentParticle, _mm_load_pd(&cloud->x[currentParticle]), _mm_load_pd(&cloud->y[currentParticle]));
-	}
 }
 
 void ThermalForceLocalized::force2(const double currentTime)
 {
 	const __m128d v2 = _mm_set1_pd(2.0);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n/2; currentParticle < numParticles; currentParticle += 2) 
-	{
 		force(currentParticle, _mm_load_pd(&cloud->x[currentParticle]) + _mm_load_pd(&cloud->l1[currentParticle])/v2, 
 			_mm_load_pd(&cloud->y[currentParticle]) + _mm_load_pd(&cloud->n1[currentParticle])/v2);
-	}
 }
 
 void ThermalForceLocalized::force3(const double currentTime)
 {
 	const __m128d v2 = _mm_set1_pd(2.0);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n/2; currentParticle < numParticles; currentParticle += 2) 
-	{
 		force(currentParticle, _mm_load_pd(&cloud->x[currentParticle]) + _mm_load_pd(&cloud->l2[currentParticle])/v2, 
 			_mm_load_pd(&cloud->y[currentParticle]) + _mm_load_pd(&cloud->n2[currentParticle])/v2);
-	}
 }
 
 void ThermalForceLocalized::force4(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n/2; currentParticle < numParticles; currentParticle += 2) 
-	{
 		force(currentParticle, _mm_load_pd(&cloud->x[currentParticle]) + _mm_load_pd(&cloud->l3[currentParticle]),
 			  _mm_load_pd(&cloud->y[currentParticle]) + _mm_load_pd(&cloud->n3[currentParticle]));
-	}
 }
 
 inline void ThermalForceLocalized::force(const unsigned int currentParticle, const __m128d displacementX, const __m128d displacementY)
@@ -72,7 +64,7 @@ inline void ThermalForceLocalized::force(const unsigned int currentParticle, con
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + thermV*_mm_set_pd(cos(thetaH), cos(thetaL)));
 }
 
-void ThermalForceLocalized::writeForce(fitsfile *file, int *error)
+void ThermalForceLocalized::writeForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)
@@ -88,7 +80,7 @@ void ThermalForceLocalized::writeForce(fitsfile *file, int *error)
 		//add ThermalForce bit:
 		forceFlags |= ThermalForceLocalizedFlag;	//compound bitwise OR
 
-		if(*error == 202 || *error == 204)	//keyword does not exist yet
+		if(*error == KEY_NO_EXIST || *error == VALUE_UNDEFINED)
 			*error = 0;			//clear above error.
 
 		//add or update keyword:
@@ -105,7 +97,7 @@ void ThermalForceLocalized::writeForce(fitsfile *file, int *error)
 	}
 }
 
-void ThermalForceLocalized::readForce(fitsfile *file, int *error)
+void ThermalForceLocalized::readForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)
