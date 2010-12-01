@@ -43,8 +43,8 @@ inline void ThermalForce::force(const unsigned int currentParticle)
 {	
 	// MT random number in (0,1)
 	const __m128d thermV = _mm_set1_pd(heatVal) + _mm_set_pd(mt(), mt());
-	const double thetaL = mt()*M_2_PI;
-	const double thetaH = mt()*M_2_PI;
+	const double thetaL = mt()*2.0*M_PI;
+	const double thetaH = mt()*2.0*M_PI;
 	
 	double *pFx = &cloud->forceX[currentParticle];
 	double *pFy = &cloud->forceY[currentParticle];
