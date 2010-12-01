@@ -58,29 +58,29 @@ public:
 	//Input: fitsfile *file, int *error
 	//Preconditions: fitsfile exists, error = 0
 	//Postconditions: initial cloud data, including mass & charge, output to file
-	void writeCloudSetup(fitsfile *file, int *error) const;
+	void writeCloudSetup(fitsfile * const file, int * const error) const;
 	
 	//Input: fitsfile *file, int *error, double currentTime
 	//Preconditions: fitsfile exists, error = 0, currentTime > 0, writeCloudSetup has previously been called
 	//Postconditions: positions and velocities for current time step output to file
-	void writeTimeStep(fitsfile *file, int *error, double currentTime) const;
+	void writeTimeStep(fitsfile * const file, int * const error, double currentTime) const;
 
 //static functions:
 	//Input: int numParticles, double cloudSize
 	//Preconditions: both inputs positive
 	//Postconditions: randomly initialized cloud with radius = cloudSize
-	static Cloud *initializeNew(const unsigned int numParticles, const double cloudSize);
+	static Cloud * const initializeNew(const unsigned int numParticles, const double cloudSize);
 
 	//Input: int numParticles, double cloudSize
 	//Preconditions: both inputs positive
 	//Postconditions: cloud initialized on spatial grid with side length = 2*cloudSize
-	static Cloud *initializeGrid(const unsigned int numParticles, const double cloudSize);
+	static Cloud * const initializeGrid(const unsigned int numParticles, const double cloudSize);
 
 	//Input: fitsFile *file, int *error
 	//Preconditions: fitsfile exists, error = 0
 	//Postconditions: cloud initialized with last time step of fitsfile,
 	//	forces and other simulation information extracted as well
-	static Cloud *initializeFromFile(fitsfile *file, int *error, double *currentTime);
+	static Cloud * const initializeFromFile(fitsfile * const file, int * const error, double * const currentTime);
 };
 
 #endif /* CLOUD_H */
