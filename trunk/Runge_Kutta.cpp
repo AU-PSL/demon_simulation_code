@@ -14,9 +14,8 @@
 
 using namespace std;
 
-Runge_Kutta::Runge_Kutta(Cloud *myCloud, Force **forces, double timeStep, unsigned int forcesSize, double startTime)
-: cloud(myCloud), theForce(forces), numForces(forcesSize), 
-dt(timeStep), init_dt(timeStep), red_dt(timeStep/100.0), currentTime(startTime) {}
+Runge_Kutta::Runge_Kutta(Cloud * const myCloud, Force **forces, const double timeStep, const unsigned int forcesSize, const double startTime)
+: cloud(myCloud), theForce(forces), numForces(forcesSize), init_dt(timeStep), red_dt(timeStep/100.0), currentTime(startTime) {}
 
 //4th order Runge-Kutta algorithm:
 void Runge_Kutta::moveParticles(const double endTime)
@@ -27,7 +26,7 @@ void Runge_Kutta::moveParticles(const double endTime)
     
 	while(currentTime < endTime)
 	{
-		modifyTimeStep();	//implement dynamic timstep (if necessary):
+		const double dt = modifyTimeStep();	//implement dynamic timstep (if necessary):
 	
 		const __m128d vdt = _mm_set1_pd(dt);	//store timestep as vector const
         
@@ -182,11 +181,8 @@ inline void Runge_Kutta::force4(const double time) const
 * use reduced time step. Do not reduce time step if already in reduced mode.
 * Resume normal time step once all particles are sufficiently separated.
 --------------------------------------------------------------------------*/
-void Runge_Kutta::modifyTimeStep()
+const double Runge_Kutta::modifyTimeStep() const
 {
-	//reset time step:
-	dt = init_dt;
-
 	//set constants:	
 	const unsigned int numPar = cloud->n;
 	const __m128d dist = _mm_set1_pd(1.45E-4);
@@ -200,10 +196,7 @@ void Runge_Kutta::modifyTimeStep()
 
 		//if particles too close, reduce time step:
 		if(sqrt(sepx*sepx + sepy*sepy) <= 1.45E-4)
-		{
-			dt = red_dt;
-			return;
-		}
+			return red_dt;
 
 		//load positions into vectors:
 		const __m128d vx1 = _mm_load_pd(&cloud->x[j]);	//x vector
@@ -217,8 +210,8 @@ void Runge_Kutta::modifyTimeStep()
 			const double *py2 = &cloud->y[i];
 
 			//calculate j,i and j+1,i+1 separation distances:
-			__m128d vx2 = _mm_sub_pd(vx1, _mm_load_pd(px2));
-			__m128d vy2 = _mm_sub_pd(vy1, _mm_load_pd(py2));
+			__m128d vx2 = vx1 - _mm_load_pd(px2);
+			__m128d vy2 = vy1 - _mm_load_pd(py2);
            
 			//check separation distances against dist:
 			__m128d comp = _mm_cmple_pd(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), dist);
@@ -227,14 +220,11 @@ void Runge_Kutta::modifyTimeStep()
 			_mm_storel_pd(&low, comp);
 			_mm_storeh_pd(&high, comp);
 			if (isnan(low) || isnan(high))	//if either are too close, reduce time step
-			{
-				dt = red_dt;
-				return;
-			}
+				return red_dt;
 
 			//calculate j,i+1 and j+1,i separation distances:
-			vx2 = _mm_sub_pd(vx1, _mm_loadr_pd(px2));
-			vy2 = _mm_sub_pd(vy1, _mm_loadr_pd(py2));
+			vx2 = vx1 - _mm_loadr_pd(px2);
+			vy2 = vy1 - _mm_loadr_pd(py2);
            
 			//check separation distances against dist: 
 			comp = _mm_cmple_pd(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), dist);
@@ -242,11 +232,11 @@ void Runge_Kutta::modifyTimeStep()
 			_mm_storel_pd(&low, comp);
 			_mm_storeh_pd(&high, comp);
 			if (isnan(low) || isnan(high))	//if either are too close, reduce time step
-			{
-				dt = red_dt;
-				return;
-			}
+				return red_dt;
 		}
 	}
+    
+    //reset time step:
+    return init_dt;
 }
 
