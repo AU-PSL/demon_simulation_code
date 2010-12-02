@@ -53,13 +53,8 @@ inline void Cloud::setPosition(const unsigned int index, const double xVal, cons
 
 inline void Cloud::setVelocity(const unsigned int index)
 {
-	double initialVel = 0.0;
-
-	double temp = rand();
-	double theta = (temp/RAND_MAX)*(2.0*M_PI);
-
-	Vx[index] = initialVel*sin(theta);
-	Vy[index] = initialVel*cos(theta);
+	Vx[index] = 0.0;
+	Vy[index] = 0.0;
 }
 
 inline void Cloud::setCharge(const unsigned int index)
