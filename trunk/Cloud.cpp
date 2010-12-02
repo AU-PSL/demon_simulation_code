@@ -238,3 +238,89 @@ void Cloud::writeTimeStep(fitsfile * const file, int * const error, double curre
 	//write buffer, close file, reopen at same point:
 	fits_flush_file(file, error);
 }
+
+// 4th order Runge-Kutta subsetp helper methods. 
+
+// X position helper functions
+const __m128d Cloud::getx1_pd(const unsigned int i) const {
+    // x
+    return _mm_load_pd(x + i);
+}
+
+const __m128d Cloud::getx2_pd(const unsigned int i) const {
+    // x + l1/2
+    return _mm_load_pd(x + i) + _mm_load_pd(l1 + i)/_mm_set1_pd(2.0);
+}
+
+const __m128d Cloud::getx3_pd(const unsigned int i) const {
+    // x + l2/2
+    return _mm_load_pd(x + i) + _mm_load_pd(l2 + i)/_mm_set1_pd(2.0);
+}
+
+const __m128d Cloud::getx4_pd(const unsigned int i) const {
+    // x + l3
+    return _mm_load_pd(x + i) + _mm_load_pd(l3 + i);
+}
+
+// X position helper functions
+const __m128d Cloud::gety1_pd(const unsigned int i) const {
+    // y
+    return _mm_load_pd(y + i);
+}
+
+const __m128d Cloud::gety2_pd(const unsigned int i) const {
+    // y + n1/2
+    return _mm_load_pd(y + i) + _mm_load_pd(n1 + i)/_mm_set1_pd(2.0);
+}
+
+const __m128d Cloud::gety3_pd(const unsigned int i) const {
+    // y + n2/2
+    return _mm_load_pd(y + i) + _mm_load_pd(n2 + i)/_mm_set1_pd(2.0);
+}
+
+const __m128d Cloud::gety4_pd(const unsigned int i) const {
+    // y + n3
+    return _mm_load_pd(y + i) + _mm_load_pd(n3 + i);
+}
+
+// Vx position helper functions
+const __m128d Cloud::getVx1_pd(const unsigned int i) const {
+    // Vx
+    return _mm_load_pd(Vx + i);
+}
+
+const __m128d Cloud::getVx2_pd(const unsigned int i) const {
+    // Vx + k1/2
+    return _mm_load_pd(Vx + i) + _mm_load_pd(k1 + i)/_mm_set1_pd(2.0);
+}
+
+const __m128d Cloud::getVx3_pd(const unsigned int i) const {
+    // Vx + k2/2
+    return _mm_load_pd(Vx + i) + _mm_load_pd(k2 + i)/_mm_set1_pd(2.0);
+}
+
+const __m128d Cloud::getVx4_pd(const unsigned int i) const {
+    // Vx + k3
+    return _mm_load_pd(Vx + i) + _mm_load_pd(k3 + i);
+}
+
+// Vy position helper functions
+const __m128d Cloud::getVy1_pd(const unsigned int i) const {
+    // Vy
+    return _mm_load_pd(Vy + i);
+}
+
+const __m128d Cloud::getVy2_pd(const unsigned int i) const {
+    // Vy + m1/2
+    return _mm_load_pd(Vy + i) + _mm_load_pd(m1 + i)/_mm_set1_pd(2.0);
+}
+
+const __m128d Cloud::getVy3_pd(const unsigned int i) const {
+    // Vy + m2/2
+    return _mm_load_pd(Vy + i) + _mm_load_pd(m2 + i)/_mm_set1_pd(2.0);
+}
+
+const __m128d Cloud::getVy4_pd(const unsigned int i) const {
+    // Vy + m3
+    return _mm_load_pd(Vy + i) + _mm_load_pd(m3 + i);
+}

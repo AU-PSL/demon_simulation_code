@@ -11,6 +11,7 @@
 #define CLOUD_H
 
 #include "fitsio.h"
+#include "VectorCompatibility.h"
 
 class Cloud
 {	
@@ -64,6 +65,26 @@ public:
 	//Preconditions: fitsfile exists, error = 0, currentTime > 0, writeCloudSetup has previously been called
 	//Postconditions: positions and velocities for current time step output to file
 	void writeTimeStep(fitsfile * const file, int * const error, double currentTime) const;
+    
+    const __m128d getx1_pd(const unsigned int i) const;
+    const __m128d getx2_pd(const unsigned int i) const;
+    const __m128d getx3_pd(const unsigned int i) const;
+    const __m128d getx4_pd(const unsigned int i) const;
+    
+    const __m128d gety1_pd(const unsigned int i) const;
+    const __m128d gety2_pd(const unsigned int i) const;
+    const __m128d gety3_pd(const unsigned int i) const;
+    const __m128d gety4_pd(const unsigned int i) const;
+    
+    const __m128d getVx1_pd(const unsigned int i) const;
+    const __m128d getVx2_pd(const unsigned int i) const;
+    const __m128d getVx3_pd(const unsigned int i) const;
+    const __m128d getVx4_pd(const unsigned int i) const;
+    
+    const __m128d getVy1_pd(const unsigned int i) const;
+    const __m128d getVy2_pd(const unsigned int i) const;
+    const __m128d getVy3_pd(const unsigned int i) const;
+    const __m128d getVy4_pd(const unsigned int i) const;
 
 //static functions:
 	//Input: int numParticles, double cloudSize
