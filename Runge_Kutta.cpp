@@ -239,4 +239,3 @@ const double Runge_Kutta::modifyTimeStep() const
     //reset time step:
     return init_dt;
 }
-
