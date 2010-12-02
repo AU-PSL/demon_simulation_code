@@ -60,8 +60,8 @@ inline void RotationalForce::force(const unsigned int currentParticle, const __m
 								   nanL ? rotationalConst : 0.0);
 	
 	//force in theta direction:
-	double *pFx = &cloud->forceX[currentParticle];
-	double *pFy = &cloud->forceY[currentParticle];
+	double * const pFx = cloud->forceX + currentParticle;
+	double * const pFy = cloud->forceY + currentParticle;
 	
 	// Fx = -c*x/r;
 	// Fy = c*y/r;

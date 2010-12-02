@@ -40,8 +40,8 @@ inline void RectConfinementForce::force(const unsigned int currentParticle, cons
 {
 	const __m128d cVx = _mm_set1_pd(confineX);
 	const __m128d cVy = _mm_set1_pd(confineY);
-	double * const pFx = &cloud->forceX[currentParticle];
-	double * const pFy = &cloud->forceY[currentParticle];
+	double * const pFx = cloud->forceX + currentParticle;
+	double * const pFy = cloud->forceY + currentParticle;
 
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + _mm_mul_pd(cVx, currentPositionX));
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + _mm_mul_pd(cVy, currentPositionY));
