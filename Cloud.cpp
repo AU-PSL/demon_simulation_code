@@ -36,8 +36,8 @@ Cloud::~Cloud()
 
 inline void Cloud::setPosition(const unsigned int index)
 {
-	double radius = (rand()/RAND_MAX)*cloudSize;
-	double theta = (rand()/RAND_MAX)*2.0*M_PI;
+	double radius = ((double)rand()/(double)RAND_MAX)*cloudSize;
+	double theta = ((double)rand()/(double)RAND_MAX)*2.0*M_PI;
 
 	x[index] = radius*cos(theta);
 	y[index] = radius*sin(theta);
