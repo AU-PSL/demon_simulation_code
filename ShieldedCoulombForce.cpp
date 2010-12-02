@@ -10,8 +10,6 @@
 #include "ShieldedCoulombForce.h"
 #include <cmath>
 
-using namespace std;
-
 ShieldedCoulombForce::ShieldedCoulombForce(Cloud * const myCloud, const double shieldingConstant)
 : Force(myCloud), shielding(shieldingConstant) {}
 
