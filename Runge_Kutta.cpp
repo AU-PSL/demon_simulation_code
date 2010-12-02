@@ -36,8 +36,8 @@ void Runge_Kutta::moveParticles(const double endTime)
 			const __m128d vmass = _mm_load_pd(cloud->mass + i);	//load ith and (i+1)th mass into vector
 
 			//assign force pointers for stylistic purposes:
-			double *pFx = cloud->forceX + i;
-			double *pFy = cloud->forceY + i;
+			double * const pFx = cloud->forceX + i;
+			double * const pFy = cloud->forceY + i;
            
 			//calculate ith and (i+1)th tidbits: 
 			_mm_store_pd(cloud->k1 + i, vdt*_mm_load_pd(pFx)/vmass); //velocityX tidbit
@@ -56,8 +56,8 @@ void Runge_Kutta::moveParticles(const double endTime)
 			const __m128d vmass = _mm_load_pd(cloud->mass + i);	//load ith and (i+1)th mass
 
 			//assign force pointers:
-			double *pFx = cloud->forceX + i;
-			double *pFy = cloud->forceY + i;
+			double * const pFx = cloud->forceX + i;
+			double * const pFy = cloud->forceY + i;
 
 			//calculate ith and (i+1)th tidbits: 
 			_mm_store_pd(cloud->k2 + i, vdt*_mm_load_pd(pFx)/vmass); //velocityX tidbit
@@ -76,8 +76,8 @@ void Runge_Kutta::moveParticles(const double endTime)
 			const __m128d vmass = _mm_load_pd(cloud->mass + i);	//load ith and (i+1)th mass
 
 			//assign force pointers:
-			double *pFx = cloud->forceX + i;
-			double *pFy = cloud->forceY + i;
+			double * const pFx = cloud->forceX + i;
+			double * const pFy = cloud->forceY + i;
 
 			//calculate ith and (i+1)th tibits: 
 			_mm_store_pd(cloud->k3 + i, vdt*_mm_load_pd(pFx)/vmass); //velocityX tidbit
@@ -96,8 +96,8 @@ void Runge_Kutta::moveParticles(const double endTime)
 			const __m128d vmass = _mm_load_pd(cloud->mass + i);	//load ith and (i+1)th mass
 
 			//assign force pointers:
-			double *pFx = cloud->forceX + i;
-			double *pFy = cloud->forceY + i;
+			double * const pFx = cloud->forceX + i;
+			double * const pFy = cloud->forceY + i;
             
 			_mm_store_pd(cloud->k4 + i, vdt*_mm_load_pd(pFx)/vmass); //velocityX tidbit
 			_mm_store_pd(cloud->l4 + i, vdt*cloud->getVx4_pd(i));    //positionX tidbit
@@ -136,10 +136,10 @@ void Runge_Kutta::moveParticles(const double endTime)
 			const __m128d vn4 = _mm_load_pd(cloud->n4 + i);
 
 			//assign position and velocity pointers (stylistic):
-			double *px = cloud->x + i;
-			double *py = cloud->y + i;
-			double *pVx = cloud->Vx + i;
-			double *pVy = cloud->Vy + i;
+			double * const px = cloud->x + i;
+			double * const py = cloud->y + i;
+			double * const pVx = cloud->Vx + i;
+			double * const pVy = cloud->Vy + i;
 
 			//calculate next positions and velocities:
 			_mm_store_pd(pVx, _mm_load_pd(pVx) + (vk1 + v2*(vk2 + vk3) + vk4)/v6);
@@ -191,8 +191,8 @@ const double Runge_Kutta::modifyTimeStep() const
 	for(unsigned int j = 0, e = numPar - 1; j < e; j += 2)
 	{
 		//caculate separation distance b/t adjacent elements:
-		const double sepx = cloud->x[j] - cloud->x[j+1];
-		const double sepy = cloud->y[j] - cloud->y[j+1];
+		const double sepx = cloud->x[j] - cloud->x[j + 1];
+		const double sepy = cloud->y[j] - cloud->y[j + 1];
 
 		//if particles too close, reduce time step:
 		if(sqrt(sepx*sepx + sepy*sepy) <= 1.45E-4)
@@ -206,8 +206,8 @@ const double Runge_Kutta::modifyTimeStep() const
 		for(unsigned int i = j + 2; i < numPar; i += 2)
 		{
 			//assign position pointers:
-			const double *px2 = cloud->x + i;
-			const double *py2 = cloud->y + i;
+			const double * const px2 = cloud->x + i;
+			const double * const py2 = cloud->y + i;
 
 			//calculate j,i and j+1,i+1 separation distances:
 			__m128d vx2 = vx1 - _mm_load_pd(px2);
