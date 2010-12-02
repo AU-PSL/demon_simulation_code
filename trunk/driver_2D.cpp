@@ -273,9 +273,6 @@ int main (int argc, char * const argv[])
 	bool grid = false;			//true -> initialize particles on grid
 	bool Mach = false;			//true -> perform Mach Cone experiment
 
-	//seed rand function with time(NULL):
-	srand((int)time(NULL));
-
 	//process command line flags:
 	for(int i = 0; i < argc; i++)
 	{

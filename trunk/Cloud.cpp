@@ -36,10 +36,8 @@ Cloud::~Cloud()
 
 inline void Cloud::setPosition(const unsigned int index)
 {
-	double tempR = arc4random();
-	double tempTheta = arc4random();
-	double radius = (tempR/RAND_MAX)*cloudSize;
-	double theta = (tempTheta/RAND_MAX)*2.0*M_PI;
+	double radius = (rand()/RAND_MAX)*cloudSize;
+	double theta = (rand()/RAND_MAX)*2.0*M_PI;
 
 	x[index] = radius*cos(theta);
 	y[index] = radius*sin(theta);
@@ -66,7 +64,7 @@ inline void Cloud::setMass(const unsigned int index)
 {
 	const double radius = 1.45E-6;
 	const double particleDensity = 2200.0;
-	mass[index] = (4.0/3.0)*M_PI*(pow(radius,3))*particleDensity;
+	mass[index] = (4.0/3.0)*M_PI*radius*radius*radius*particleDensity;
 }
 
 Cloud * const Cloud::initializeNew(const unsigned int numParticles, const double cloudSize)
@@ -74,6 +72,9 @@ Cloud * const Cloud::initializeNew(const unsigned int numParticles, const double
 	cout << "\nGenerating original data.\n\n";
 
 	Cloud * const cloud = new Cloud(numParticles, cloudSize);
+
+    //seed rand function with time(NULL):
+	srand((int)time(NULL));
 
 	//initialize dust cloud:
 	for(unsigned int i = 0; i < numParticles; i++)
@@ -98,6 +99,9 @@ Cloud * const Cloud::initializeGrid(const unsigned int numParticles, const doubl
 	double tempPosX = cloudSize; //position of first particle
 	double tempPosY = cloudSize;
 
+    //seed rand function with time(NULL):
+	srand((int)time(NULL));
+    
 	//initialize dust cloud:
 	for(unsigned int i = 0; i < numParticles; i++)
 	{
@@ -107,7 +111,7 @@ Cloud * const Cloud::initializeGrid(const unsigned int numParticles, const doubl
 		cloud->setMass(i);
 
 		tempPosX -= gridUnit;
-		if(tempPosX <= -1*cloudSize) //end of row
+		if(tempPosX <= -cloudSize) //end of row
 		{
 			tempPosX = cloudSize; //reset
 			tempPosY -= gridUnit; //move to next row
