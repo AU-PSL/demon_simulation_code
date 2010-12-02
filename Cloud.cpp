@@ -241,7 +241,7 @@ void Cloud::writeTimeStep(fitsfile * const file, int * const error, double curre
 
 // 4th order Runge-Kutta subsetp helper methods. 
 
-// X position helper functions
+// X position helper functions -------------------------------------------------
 const __m128d Cloud::getx1_pd(const unsigned int i) const {
     // x
     return _mm_load_pd(x + i);
@@ -262,7 +262,7 @@ const __m128d Cloud::getx4_pd(const unsigned int i) const {
     return _mm_load_pd(x + i) + _mm_load_pd(l3 + i);
 }
 
-// X position helper functions
+// Y position helper functions -------------------------------------------------
 const __m128d Cloud::gety1_pd(const unsigned int i) const {
     // y
     return _mm_load_pd(y + i);
@@ -283,7 +283,7 @@ const __m128d Cloud::gety4_pd(const unsigned int i) const {
     return _mm_load_pd(y + i) + _mm_load_pd(n3 + i);
 }
 
-// Vx position helper functions
+// Vx position helper functions ------------------------------------------------
 const __m128d Cloud::getVx1_pd(const unsigned int i) const {
     // Vx
     return _mm_load_pd(Vx + i);
@@ -304,7 +304,7 @@ const __m128d Cloud::getVx4_pd(const unsigned int i) const {
     return _mm_load_pd(Vx + i) + _mm_load_pd(k3 + i);
 }
 
-// Vy position helper functions
+// Vy position helper functions ------------------------------------------------
 const __m128d Cloud::getVy1_pd(const unsigned int i) const {
     // Vy
     return _mm_load_pd(Vy + i);
