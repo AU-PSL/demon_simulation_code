@@ -15,30 +15,25 @@ RectConfinementForce::RectConfinementForce(Cloud * const myCloud, double confine
 void RectConfinementForce::force1(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle, _mm_load_pd(&cloud->x[currentParticle]), _mm_load_pd(&cloud->y[currentParticle]));
+		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
 }
 
 void RectConfinementForce::force2(const double currentTime)
 {
-	const __m128d v2 = _mm_set1_pd(2.0);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle, _mm_load_pd(&cloud->x[currentParticle]) + _mm_load_pd(&cloud->l1[currentParticle])/v2, 
-			_mm_load_pd(&cloud->y[currentParticle]) + _mm_load_pd(&cloud->n1[currentParticle])/v2);
+		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
 }
 
 void RectConfinementForce::force3(const double currentTime)
 {
-	const __m128d v2 = _mm_set1_pd(2.0);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force(currentParticle, _mm_load_pd(&cloud->x[currentParticle]) + _mm_load_pd(&cloud->l2[currentParticle])/v2, 
-			_mm_load_pd(&cloud->y[currentParticle]) + _mm_load_pd(&cloud->n2[currentParticle])/v2);
+		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
 }
 
 void RectConfinementForce::force4(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle, _mm_load_pd(&cloud->x[currentParticle]) + _mm_load_pd(&cloud->l3[currentParticle]),
-			_mm_load_pd(&cloud->y[currentParticle]) + _mm_load_pd(&cloud->n3[currentParticle]));
+		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
 }
 
 inline void RectConfinementForce::force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY)

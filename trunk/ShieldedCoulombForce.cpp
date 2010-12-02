@@ -17,8 +17,8 @@ void ShieldedCoulombForce::force1(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n, e = cloud->n - 1; currentParticle < e; currentParticle += 2) 
 	{
-		const __m128d vx1 = _mm_load_pd(&cloud->x[currentParticle]);
-		const __m128d vy1 = _mm_load_pd(&cloud->y[currentParticle]);
+		const __m128d vx1 = cloud->getx1_pd(currentParticle);
+		const __m128d vy1 = cloud->gety1_pd(currentParticle);
 		double x1, x2, y1, y2;
 		_mm_storel_pd(&x1, vx1);
 		_mm_storeh_pd(&x2, vx1);
@@ -43,8 +43,8 @@ void ShieldedCoulombForce::force2(const double currentTime)
 	const __m128d v2 = _mm_set1_pd(2.0);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n, e = cloud->n - 1; currentParticle < e; currentParticle += 2) 
 	{
-		const __m128d vx1 = _mm_load_pd(&cloud->x[currentParticle]) + _mm_load_pd(&cloud->l1[currentParticle])/v2;
-		const __m128d vy1 = _mm_load_pd(&cloud->y[currentParticle]) + _mm_load_pd(&cloud->n1[currentParticle])/v2;
+		const __m128d vx1 = cloud->getx2_pd(currentParticle);
+		const __m128d vy1 = cloud->gety2_pd(currentParticle);
 		double x1, x2, y1, y2;
 		_mm_storel_pd(&x1, vx1);
 		_mm_storeh_pd(&x2, vx1);
@@ -73,8 +73,8 @@ void ShieldedCoulombForce::force3(const double currentTime)
 	const __m128d v2 = _mm_set1_pd(2.0);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n, e = cloud->n - 1; currentParticle < e; currentParticle += 2) 
 	{
-		const __m128d vx1 = _mm_load_pd(&cloud->x[currentParticle]) + _mm_load_pd(&cloud->l2[currentParticle])/v2;
-		const __m128d vy1 = _mm_load_pd(&cloud->y[currentParticle]) + _mm_load_pd(&cloud->n2[currentParticle])/v2;
+		const __m128d vx1 = cloud->getx3_pd(currentParticle);
+		const __m128d vy1 = cloud->gety3_pd(currentParticle);
 		double x1, x2, y1, y2;
 		_mm_storel_pd(&x1, vx1);
 		_mm_storeh_pd(&x2, vx1);
@@ -102,8 +102,8 @@ void ShieldedCoulombForce::force4(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n, e = cloud->n - 1; currentParticle < e; currentParticle += 2) 
 	{
-		const __m128d vx1 = _mm_load_pd(&cloud->x[currentParticle]) + _mm_load_pd(&cloud->l3[currentParticle]);
-		const __m128d vy1 = _mm_load_pd(&cloud->y[currentParticle]) + _mm_load_pd(&cloud->n3[currentParticle]);
+		const __m128d vx1 = cloud->getx4_pd(currentParticle);
+		const __m128d vy1 = cloud->gety4_pd(currentParticle);
 		double x1, x2, y1, y2;
 		_mm_storel_pd(&x1, vx1);
 		_mm_storeh_pd(&x2, vx1);

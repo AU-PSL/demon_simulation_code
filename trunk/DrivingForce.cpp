@@ -20,30 +20,28 @@ void DrivingForce::force1(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle, vtime, _mm_load_pd(&cloud->x[currentParticle]));
+		force(currentParticle, vtime, cloud->getx1_pd(currentParticle));
 }
 
 void DrivingForce::force2(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	const __m128d v2 = _mm_set1_pd(2.0);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle, vtime, _mm_load_pd(&cloud->x[currentParticle]) + _mm_load_pd(&cloud->l1[currentParticle])/v2);
+		force(currentParticle, vtime, cloud->getx2_pd(currentParticle));
 }
 
 void DrivingForce::force3(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	const __m128d v2 = _mm_set1_pd(2.0);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle, vtime, _mm_load_pd(&cloud->x[currentParticle]) + _mm_load_pd(&cloud->l2[currentParticle])/v2);
+		force(currentParticle, vtime, cloud->getx3_pd(currentParticle));
 }
 
 void DrivingForce::force4(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force(currentParticle, vtime, _mm_load_pd(&cloud->x[currentParticle]) + _mm_load_pd(&cloud->l3[currentParticle]));
+		force(currentParticle, vtime, cloud->getx4_pd(currentParticle));
 }
 
 inline void DrivingForce::force(const unsigned int currentParticle, const __m128d currentTime, const __m128d currentPositionX)

@@ -15,30 +15,25 @@ DragForce::DragForce(Cloud * const myCloud, const double gamma)
 void DragForce::force1(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle, _mm_load_pd(&cloud->Vx[currentParticle]), _mm_load_pd(&cloud->Vy[currentParticle]));
+		force(currentParticle, cloud->getVx1_pd(currentParticle), cloud->getVy1_pd(currentParticle));
 }
 
 void DragForce::force2(const double currentTime)
 {	
-	const __m128d v2 = _mm_set1_pd(2.0);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle, _mm_load_pd(&cloud->Vx[currentParticle]) + _mm_load_pd(&cloud->k1[currentParticle])/v2, 
-			_mm_load_pd(&cloud->Vy[currentParticle]) + _mm_load_pd(&cloud->m1[currentParticle])/v2);
+		force(currentParticle, cloud->getVx2_pd(currentParticle), cloud->getVy2_pd(currentParticle));
 }
 
 void DragForce::force3(const double currentTime)
 {	
-	const __m128d v2 = _mm_set1_pd(2.0);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle, _mm_load_pd(&cloud->Vx[currentParticle]) + _mm_load_pd(&cloud->k2[currentParticle])/v2, 
-			_mm_load_pd(&cloud->Vy[currentParticle]) + _mm_load_pd(&cloud->m2[currentParticle])/v2);
+		force(currentParticle, cloud->getVx3_pd(currentParticle), cloud->getVy3_pd(currentParticle));
 }
 
 void DragForce::force4(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle, _mm_load_pd(&cloud->Vx[currentParticle]) + _mm_load_pd(&cloud->k3[currentParticle]), 
-			_mm_load_pd(&cloud->Vy[currentParticle]) + _mm_load_pd(&cloud->m3[currentParticle]));
+		force(currentParticle, cloud->getVx4_pd(currentParticle), cloud->getVy4_pd(currentParticle));
 }
 
 inline void DragForce::force(const unsigned int currentParticle, const __m128d currentVelocityX, const __m128d currentVelocityY)
