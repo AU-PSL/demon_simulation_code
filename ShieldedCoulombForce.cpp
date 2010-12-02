@@ -136,7 +136,7 @@ inline void ShieldedCoulombForce::force(const unsigned int currentParticle, cons
 	const double displacement = sqrt(displacementX*displacementX + displacementY*displacementY);
 	const double valExp = displacement*shielding;
 
-	if(valExp < 10) 	//restrict to 10*(ion debye length)
+	if(valExp < 10.0) 	//restrict to 10*(ion debye length)
 	{
 		 //conclude force calculation:
 		const double displacement3 = displacement*displacement*displacement;
@@ -170,8 +170,8 @@ inline void ShieldedCoulombForce::force(const unsigned int currentParticle, cons
 	_mm_storel_pd(&expL, valExp);
 	_mm_storeh_pd(&expH, valExp);
 	
-	__m128d expv = _mm_set_pd(boolH ? exp(expH) : numeric_limits<double>::infinity(), //_mm_set_pd is backwards
-							  boolL ? exp(expL) : numeric_limits<double>::infinity());
+	__m128d expv = _mm_set_pd(boolH ? exp(-expH) : 0.0, //_mm_set_pd is backwards
+							  boolL ? exp(-expL) : 0.0);
 
 	//conclude force calculation:
 	const __m128d displacement3 = displacement*displacement*displacement;
@@ -214,8 +214,8 @@ inline void ShieldedCoulombForce::forcer(const unsigned int currentParticle, con
 	_mm_storel_pd(&expL, valExp);
 	_mm_storeh_pd(&expH, valExp);
 	
-	__m128d expv = _mm_set_pd(boolH ? exp(expH) : numeric_limits<double>::infinity(), //_mm_set_pd is backwards
-							  boolL ? exp(expL) : numeric_limits<double>::infinity());
+	__m128d expv = _mm_set_pd(boolH ? exp(-expH) : 0.0, //_mm_set_pd is backwards
+							  boolL ? exp(-expL) : 0.0);
     
 	//conclude force calculation:
 	const __m128d displacement3 = displacement*displacement*displacement;
