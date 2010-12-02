@@ -40,10 +40,10 @@ void Runge_Kutta::moveParticles(const double endTime)
 			double *pFy = &cloud->forceY[i];
            
 			//calculate ith and (i+1)th tidbits: 
-			_mm_store_pd(&cloud->k1[i], vdt*_mm_load_pd(pFx)/vmass);     //velocityX tidbit
-			_mm_store_pd(&cloud->l1[i], vdt*_mm_load_pd(&cloud->Vx[i])); //positionX tidbit
-			_mm_store_pd(&cloud->m1[i], vdt*_mm_load_pd(pFy)/vmass);     //velocityY tidbit
-			_mm_store_pd(&cloud->n1[i], vdt*_mm_load_pd(&cloud->Vy[i])); //positionY tidbit
+			_mm_store_pd(&cloud->k1[i], vdt*_mm_load_pd(pFx)/vmass); //velocityX tidbit
+			_mm_store_pd(&cloud->l1[i], vdt*cloud->getVx1_pd(i));    //positionX tidbit
+			_mm_store_pd(&cloud->m1[i], vdt*_mm_load_pd(pFy)/vmass); //velocityY tidbit
+			_mm_store_pd(&cloud->n1[i], vdt*cloud->getVy1_pd(i));    //positionY tidbit
 
 			//reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
@@ -60,10 +60,10 @@ void Runge_Kutta::moveParticles(const double endTime)
 			double *pFy = &cloud->forceY[i];
 
 			//calculate ith and (i+1)th tidbits: 
-			_mm_store_pd(&cloud->k2[i], vdt*_mm_load_pd(pFx)/vmass);	                                   //velocityX tidbit
-			_mm_store_pd(&cloud->l2[i], vdt*(_mm_load_pd(&cloud->Vx[i]) + _mm_load_pd(&cloud->k1[i])/v2)); //positionX tidbit
-			_mm_store_pd(&cloud->m2[i], vdt*_mm_load_pd(pFy)/vmass);	                                   //velocityY tidbit
-			_mm_store_pd(&cloud->n2[i], vdt*(_mm_load_pd(&cloud->Vy[i]) + _mm_load_pd(&cloud->m1[i])/v2)); //positionY tidbit
+			_mm_store_pd(&cloud->k2[i], vdt*_mm_load_pd(pFx)/vmass); //velocityX tidbit
+			_mm_store_pd(&cloud->l2[i], vdt*cloud->getVx2_pd(i));    //positionX tidbit
+			_mm_store_pd(&cloud->m2[i], vdt*_mm_load_pd(pFy)/vmass); //velocityY tidbit
+			_mm_store_pd(&cloud->n2[i], vdt*cloud->getVy2_pd(i));    //positionY tidbit
 
 			//reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
@@ -80,10 +80,10 @@ void Runge_Kutta::moveParticles(const double endTime)
 			double *pFy = &cloud->forceY[i];
 
 			//calculate ith and (i+1)th tibits: 
-			_mm_store_pd(&cloud->k3[i], vdt*_mm_load_pd(pFx)/vmass);	                                   //velocityX tidbit
-			_mm_store_pd(&cloud->l3[i], vdt*(_mm_load_pd(&cloud->Vx[i]) + _mm_load_pd(&cloud->k2[i])/v2)); //positionX tidbit
-			_mm_store_pd(&cloud->m3[i], vdt*_mm_load_pd(pFy)/vmass);	                                   //velocityY tidbit
-			_mm_store_pd(&cloud->n3[i], vdt*(_mm_load_pd(&cloud->Vy[i]) + _mm_load_pd(&cloud->m2[i])/v2)); //positionY tidbit
+			_mm_store_pd(&cloud->k3[i], vdt*_mm_load_pd(pFx)/vmass); //velocityX tidbit
+			_mm_store_pd(&cloud->l3[i], vdt*cloud->getVx3_pd(i));    //positionX tidbit
+			_mm_store_pd(&cloud->m3[i], vdt*_mm_load_pd(pFy)/vmass); //velocityY tidbit
+			_mm_store_pd(&cloud->n3[i], vdt*cloud->getVy3_pd(i));    //positionY tidbit
 
 			//reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
@@ -100,9 +100,9 @@ void Runge_Kutta::moveParticles(const double endTime)
 			double *pFy = &cloud->forceY[i];
             
 			_mm_store_pd(&cloud->k4[i], vdt*_mm_load_pd(pFx)/vmass);	                              //velocityX tidbit
-			_mm_store_pd(&cloud->l4[i], vdt*(_mm_load_pd(&cloud->Vx[i]) + _mm_load_pd(&cloud->k3[i]))); //positionX tidbit
+			_mm_store_pd(&cloud->l4[i], vdt*cloud->getVx4_pd(i)); //positionX tidbit
 			_mm_store_pd(&cloud->m4[i], vdt*_mm_load_pd(pFy)/vmass);	                              //velocityY tidbit
-			_mm_store_pd(&cloud->n4[i], vdt*(_mm_load_pd(&cloud->Vy[i]) + _mm_load_pd(&cloud->m3[i]))); //positionY tidbit
+			_mm_store_pd(&cloud->n4[i], vdt*cloud->getVy4_pd(i)); //positionY tidbit
 
 			//reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
@@ -199,8 +199,8 @@ const double Runge_Kutta::modifyTimeStep() const
 			return red_dt;
 
 		//load positions into vectors:
-		const __m128d vx1 = _mm_load_pd(&cloud->x[j]);	//x vector
-		const __m128d vy1 = _mm_load_pd(&cloud->y[j]);	//y vector
+		const __m128d vx1 = cloud->getx1_pd(j);	//x vector
+		const __m128d vy1 = cloud->gety1_pd(j);	//y vector
 
 		//calculate separation distance b/t nonadjacent elements:
 		for(unsigned int i = j + 2; i < numPar; i += 2)
