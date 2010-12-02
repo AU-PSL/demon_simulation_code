@@ -9,7 +9,6 @@
 
 #include "ShieldedCoulombForce.h"
 #include <cmath>
-#include <limits>
 
 using namespace std;
 
