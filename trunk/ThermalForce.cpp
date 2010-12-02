@@ -17,25 +17,25 @@ ThermalForce::ThermalForce(Cloud * const myCloud, const double redFactor)
 
 void ThermalForce::force1(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n/2; currentParticle < numParticles; currentParticle += 2) 
+	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
 
 void ThermalForce::force2(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n/2; currentParticle < numParticles; currentParticle += 2) 
+	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
 
 void ThermalForce::force3(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n/2; currentParticle < numParticles; currentParticle += 2) 
+	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
 
 void ThermalForce::force4(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n/2; currentParticle < numParticles; currentParticle += 2) 
+	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
 
