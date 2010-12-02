@@ -39,8 +39,8 @@ void DragForce::force4(const double currentTime)
 inline void DragForce::force(const unsigned int currentParticle, const __m128d currentVelocityX, const __m128d currentVelocityY)
 {
 	const __m128d drag = _mm_set1_pd(dragConst)*_mm_load_pd(&cloud->mass[currentParticle]);
-	double * const pFx = &cloud->forceX[currentParticle];
-	double * const pFy = &cloud->forceY[currentParticle];
+	double * const pFx = cloud->forceX + currentParticle;
+	double * const pFy = cloud->forceY + currentParticle;
 
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + drag*currentVelocityX);
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + drag*currentVelocityY);

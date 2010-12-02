@@ -180,14 +180,14 @@ inline void ShieldedCoulombForce::force(const unsigned int currentParticle, cons
 	const __m128d forcevX = exponential*displacementX;
 	const __m128d forcevY = exponential*displacementY;
 
-	double *pFx = &cloud->forceX[currentParticle];
-	double *pFy = &cloud->forceY[currentParticle];
+	double *pFx = cloud->forceX + currentParticle;
+	double *pFy = cloud->forceY + currentParticle;
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + forcevX);
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + forcevY);
 
 	//equal and opposite force:
-	pFx = &cloud->forceX[iParticle];
-	pFy = &cloud->forceY[iParticle];
+	pFx = cloud->forceX + iParticle;
+	pFy = cloud->forceY + iParticle;
 	_mm_store_pd(pFx, _mm_load_pd(pFx) - forcevX);
 	_mm_store_pd(pFy, _mm_load_pd(pFy) - forcevY);
 }
@@ -224,14 +224,14 @@ inline void ShieldedCoulombForce::forcer(const unsigned int currentParticle, con
 	const __m128d forcevX = exponential*displacementX;
 	const __m128d forcevY = exponential*displacementY;
 
-	double *pFx = &cloud->forceX[currentParticle];
-	double *pFy = &cloud->forceY[currentParticle];
+	double *pFx = cloud->forceX + currentParticle;
+	double *pFy = cloud->forceY + currentParticle;
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + forcevX);
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + forcevY);
 
 	//equal and opposite force:
-	pFx = &cloud->forceX[iParticle];
-	pFy = &cloud->forceY[iParticle]; 
+	pFx = cloud->forceX + iParticle;
+	pFy = cloud->forceY + iParticle; 
 	_mm_storer_pd(pFx, _mm_loadr_pd(pFx) - forcevX);
 	_mm_storer_pd(pFy, _mm_loadr_pd(pFy) - forcevY);
 }

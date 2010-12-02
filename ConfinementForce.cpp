@@ -38,8 +38,8 @@ void ConfinementForce::force4(const double currentTime)
 inline void ConfinementForce::force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY)
 {
 	const __m128d cV = _mm_set1_pd(confine);
-	double * const pFx = &cloud->forceX[currentParticle];
-	double * const pFy = &cloud->forceY[currentParticle];
+	double * const pFx = cloud->forceX + currentParticle;
+	double * const pFy = cloud->forceY + currentParticle;
 
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + cV*currentPositionX);
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + cV*currentPositionY);

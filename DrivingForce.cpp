@@ -57,7 +57,7 @@ inline void DrivingForce::force(const unsigned int currentParticle, const __m128
 	_mm_storel_pd(&expArgL, expArg);
 	_mm_storeh_pd(&expArgH, expArg);
 	
-	double *pFx = &cloud->forceX[currentParticle];
+	double * const pFx = cloud->forceX + currentParticle;
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + _mm_set1_pd(amplitude)*_mm_set_pd(sin(sinArgH), sin(sinArgL))*_mm_set_pd(exp(expArgH), exp(expArgL))); // _mm_set_pd() is backwards
 															  
 	// FIXME: Equation from the paper is different than the equation found in the code.
