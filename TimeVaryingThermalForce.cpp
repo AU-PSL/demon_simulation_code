@@ -14,27 +14,33 @@ TimeVaryingThermalForce::TimeVaryingThermalForce(Cloud * const myCloud, const do
 
 void TimeVaryingThermalForce::force1(const double currentTime)
 {
-	heatVal = heatValScale*currentTime + heatValOffset;
+	heatVal = calculateHeatVal(currentTime);
 	ThermalForce::force1(currentTime);
 }
 
 void TimeVaryingThermalForce::force2(const double currentTime)
 {
-	heatVal = heatValScale*currentTime + heatValOffset;
+	heatVal = calculateHeatVal(currentTime);
 	ThermalForce::force2(currentTime);
 }
 
 void TimeVaryingThermalForce::force3(const double currentTime)
 {
-	heatVal = heatValScale*currentTime + heatValOffset;
+	heatVal = calculateHeatVal(currentTime);
 	ThermalForce::force3(currentTime);
 }
 
 void TimeVaryingThermalForce::force4(const double currentTime)
 {
-	heatVal = heatValScale*currentTime + heatValOffset;
+	heatVal = calculateHeatVal(currentTime);
 	ThermalForce::force4(currentTime);
 }
+
+inline const double TimeVaryingThermalForce::calculateHeatVal(const double currentTime) const
+{
+	return heatValScale*currentTime + heatValOffset;
+}
+
 
 void TimeVaryingThermalForce::writeForce(fitsfile * const file, int * const error) const
 {
