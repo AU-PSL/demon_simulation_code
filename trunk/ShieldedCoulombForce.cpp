@@ -29,8 +29,8 @@ void ShieldedCoulombForce::force1(const double currentTime)
 
 		for(unsigned int i = currentParticle + 2; i < numParticles; i += 2)
 		{
-			const double *px2 = &cloud->x[i];
-			const double *py2 = &cloud->y[i];
+			const double * const px2 = cloud->x + i;	//increment memory location
+			const double * const py2 = cloud->y + i;
 
 			force(currentParticle, i, vx1 - _mm_load_pd(px2), vy1 - _mm_load_pd(py2));
 			forcer(currentParticle, i, vx1 - _mm_loadr_pd(px2), vy1 - _mm_loadr_pd(py2));
@@ -54,10 +54,10 @@ void ShieldedCoulombForce::force2(const double currentTime)
 		force(currentParticle, currentParticle + 1, x1 - x2, y1 - y2);
 		for(unsigned int i = currentParticle + 2; i < numParticles; i += 2)
 		{
-			const double *px2 = &cloud->x[i];
-			const double *py2 = &cloud->y[i];
-			const double *pl = &cloud->l1[i];
-			const double *pn = &cloud->n1[i];
+			const double * const px2 = cloud->x + i;	//increment memory location
+			const double * const py2 = cloud->y + i;
+			const double * const pl = cloud->l1 + i;
+			const double * const pn = cloud->n1 + i;
             
 			force(currentParticle, i, vx1 - (_mm_load_pd(px2) + _mm_load_pd(pl)/v2), 
 				vy1 - (_mm_load_pd(py2) + _mm_load_pd(pn)/v2));
@@ -84,10 +84,10 @@ void ShieldedCoulombForce::force3(const double currentTime)
 		force(currentParticle, currentParticle + 1, x1 - x2, y1 - y2);
 		for(unsigned int i = currentParticle + 2; i < numParticles; i += 2)
 		{
-			const double *px2 = &cloud->x[i];
-			const double *py2 = &cloud->y[i];
-			const double *pl = &cloud->l2[i];
-			const double *pn = &cloud->n2[i];
+			const double * const px2 = cloud->x + i;	//increment memory location
+			const double * const py2 = cloud->y + i;
+			const double * const pl = cloud->l2 + i;
+			const double * const pn = cloud->n2 + i;
 
 			force(currentParticle, i, vx1 - (_mm_load_pd(px2) + _mm_load_pd(pl)/v2), 
 				vy1 - (_mm_load_pd(py2) + _mm_load_pd(pn)/v2));
@@ -113,10 +113,10 @@ void ShieldedCoulombForce::force4(const double currentTime)
 		force(currentParticle, currentParticle + 1, x1 - x2, y1 - y2);
 		for(unsigned int i = currentParticle + 2; i < numParticles; i += 2)
 		{
-			const double *px2 = &cloud->x[i];
-			const double *py2 = &cloud->y[i];
-			const double *pl = &cloud->l3[i];
-			const double *pn = &cloud->n3[i];
+			const double * const px2 = cloud->x + i;	//increment memory location
+			const double * const py2 = cloud->y + i;
+			const double * const pl = cloud->l3 + i;
+			const double * const pn = cloud->n3 + i;
             
 			force(currentParticle, i, vx1 - (_mm_load_pd(px2) + _mm_load_pd(pl)), 
 				vy1 - (_mm_load_pd(py2) + _mm_load_pd(pn)));
