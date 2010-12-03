@@ -5,7 +5,7 @@ SRCS = $(OBJS,.o=.cpp)
 HDRS = $(OBJS,.o=.h)
 
 # Command name
-CMD = Sim_2D
+CMD = DEMON
 # Library name
 LIBS = libSimulation.a
 CFITSIO = /Users/robert/Documents/Jefferson/cfitsio
@@ -31,20 +31,20 @@ all: $(CMD) $(LIBS) $(HDRS)
 
 lib: $(LIBS) $(HDRS)
 
-$(CMD): $(LIBS) driver_2D.o
-	$(CXX) $(LDFLAGS) -o $(@) $(LIBS) driver_2D.o -lcfitsio
+$(CMD): $(LIBS) driver.o
+	$(CXX) $(LDFLAGS) -o $(@) $(LIBS) driver.o -lcfitsio
 
 $(LIBS): $(OBJS)
 	ar rcs $(@) $(OBJS)
 
-$driver_2D.o: driver_2D.cpp
-	$(CXX) -c driver_2D.cpp driver_2D.o
+$driver.o: driver.cpp
+	$(CXX) -c driver.cpp driver.o
 
 clean:
-	-rm $(OBJS) driver_2D.o driver_mach.o
+	-rm $(OBJS) driver.o driver_mach.o
 	
 cleanlib:
 	-rm $(LIBS) 
 
 cleanall:
-	-rm $(OBJS) driver_2D.o $(CMD) $(LIBS)
+	-rm $(OBJS) driver.o $(CMD) $(LIBS)
