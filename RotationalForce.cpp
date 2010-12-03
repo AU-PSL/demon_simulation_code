@@ -41,12 +41,10 @@ void RotationalForce::force4(const double currentTime)
 
 inline void RotationalForce::force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY)
 {
-	const __m128d cIR = _mm_set1_pd(innerRad);
-	const __m128d cOR = _mm_set1_pd(outerRad);
-	const __m128d cR = _mm_sqrt_pd(currentPositionX*currentPositionX + currentPositionY*currentPositionY);
+	const __m128d dustRadV = _mm_sqrt_pd(currentPositionX*currentPositionX + currentPositionY*currentPositionY);
 
-	// cR > cIR && cR < cOR
-	const __m128d compV = _mm_and_pd(_mm_cmpgt_pd(cR, cIR), _mm_cmplt_pd(cR, cOR));
+	// dustRad > innerRad && dustRadV < outerRad
+	const __m128d compV = _mm_and_pd(_mm_cmpgt_pd(dustRadV, _mm_set1_pd(innerRad)), _mm_cmplt_pd(dustRadV, _mm_set1_pd(outerRad)));
 	double compL, compH;
 	_mm_storel_pd(&compL, compV);
 	_mm_storeh_pd(&compH, compV);
@@ -65,8 +63,8 @@ inline void RotationalForce::force(const unsigned int currentParticle, const __m
 	
 	// Fx = -c*x/r;
 	// Fy = c*y/r;
-	_mm_store_pd(pFx, _mm_load_pd(pFx) - cRotConst*currentPositionY/cR);
-	_mm_store_pd(pFy, _mm_load_pd(pFy) + cRotConst*currentPositionX/cR);
+	_mm_store_pd(pFx, _mm_load_pd(pFx) - cRotConst*currentPositionY/dustRadV);
+	_mm_store_pd(pFy, _mm_load_pd(pFy) + cRotConst*currentPositionX/dustRadV);
 }
 
 void RotationalForce::writeForce(fitsfile * const file, int * const error) const
