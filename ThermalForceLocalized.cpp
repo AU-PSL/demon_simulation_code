@@ -41,7 +41,6 @@ void ThermalForceLocalized::force4(const double currentTime)
 inline void ThermalForceLocalized::force(const unsigned int currentParticle, const __m128d displacementX, const __m128d displacementY)
 {
 	const __m128d radiusV = _mm_sqrt_pd(displacementX*displacementX + displacementY*displacementY);
-	const __m128d mtRandV = _mm_set_pd(mt(), mt());
 	const double thetaL = mt()*2.0*M_PI;
 	const double thetaH = mt()*2.0*M_PI;
 	
@@ -50,7 +49,7 @@ inline void ThermalForceLocalized::force(const unsigned int currentParticle, con
 	_mm_storeh_pd(&rH, radiusV);
 	
 	const __m128d thermV = _mm_set_pd((rH < heatingRadius) ? heatVal1 : heatVal2, // _mm_set_pd() is backwards
-									  (rL < heatingRadius) ? heatVal1 : heatVal2)*mtRandV;
+									  (rL < heatingRadius) ? heatVal1 : heatVal2)*_mm_set_pd(mt(), mt());
 	
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;
