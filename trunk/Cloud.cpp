@@ -34,15 +34,6 @@ Cloud::~Cloud()
 	delete[] forceX; delete[] forceY;
 }
 
-inline void Cloud::setPosition(const unsigned int index)
-{
-	double radius = ((double)rand()/(double)RAND_MAX)*cloudSize;
-	double theta = ((double)rand()/(double)RAND_MAX)*2.0*M_PI;
-
-	x[index] = radius*cos(theta);
-	y[index] = radius*sin(theta);
-}
-
 inline void Cloud::setPosition(const unsigned int index, const double xVal, const double yVal)
 {
 	x[index] = xVal;
@@ -67,27 +58,6 @@ inline void Cloud::setMass(const unsigned int index)
 	mass[index] = (4.0/3.0)*M_PI*radius*radius*radius*particleDensity;
 }
 
-Cloud * const Cloud::initializeNew(const unsigned int numParticles, const double cloudSize)
-{
-	cout << "\nGenerating original data.\n\n";
-
-	Cloud * const cloud = new Cloud(numParticles, cloudSize);
-
-    //seed rand function with time(NULL):
-	srand((int)time(NULL));
-
-	//initialize dust cloud:
-	for(unsigned int i = 0; i < numParticles; i++)
-	{
-		cloud->setPosition(i);
-		cloud->setVelocity(i);
-		cloud->setCharge(i);
-		cloud->setMass(i);
-	}
-
-	return cloud;
-}
-
 Cloud * const Cloud::initializeGrid(const unsigned int numParticles, const double cloudSize)
 {
 	cout << "\nInitializing grid.\n\n";
@@ -99,8 +69,8 @@ Cloud * const Cloud::initializeGrid(const unsigned int numParticles, const doubl
 	double tempPosX = cloudSize; //position of first particle
 	double tempPosY = cloudSize;
 
-    //seed rand function with time(NULL):
-	srand((int)time(NULL));
+	//seed rand function with time(NULL):
+	srand((int)time(NULL));		//needed for Cloud::setCharge
     
 	//initialize dust cloud:
 	for(unsigned int i = 0; i < numParticles; i++)
