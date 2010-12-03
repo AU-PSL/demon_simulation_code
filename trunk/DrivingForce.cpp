@@ -46,9 +46,12 @@ void DrivingForce::force4(const double currentTime)
 
 inline void DrivingForce::force(const unsigned int currentParticle, const __m128d currentTime, const __m128d currentPositionX)
 {	
-	// F = A*sin(k*x - w*t)*exp(-(x + x0)/B) is in the paper
+	// F = A*sin(k*x - w*t)*exp(-(x + x0)^2/B) is in the paper
+    // NOTE: This is different than the equation listed in the paper. The paper 
+    // is incorrect.
+    const __m128d distV = currentParticle - _mm_set1_pd(shift);
 	const __m128d sinArg = _mm_set1_pd(waveNum)*currentPositionX - _mm_set1_pd(angFreq)*currentTime;
-	const __m128d expArg = _mm_set1_pd(-1.0)*(currentPositionX + _mm_set1_pd(shift))/_mm_set1_pd(driveConst);
+	const __m128d expArg = _mm_set1_pd(-1.0)*distV*distV/_mm_set1_pd(driveConst);
 	
 	//no SIMD trig instructions; break vectors and perform separately:
 	double sinArgL, sinArgH, expArgL, expArgH;
@@ -59,13 +62,6 @@ inline void DrivingForce::force(const unsigned int currentParticle, const __m128
 	
 	double * const pFx = cloud->forceX + currentParticle;
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + _mm_set1_pd(amplitude)*_mm_set_pd(sin(sinArgH), sin(sinArgL))*_mm_set_pd(exp(expArgH), exp(expArgL))); // _mm_set_pd() is backwards
-															  
-	// FIXME: Equation from the paper is different than the equation found in the code.
-	// The origonal comment lised the force equation as 
-	// A*sin(k*x - w*t)*exp(-(x + x0)^2/B)
-	// however as the code was written such that
-	// A*sin(k*x - w*t)*exp((x + x0)^3/(B*|x+x0|))
-	// No where do the code the comment and the paper agree with each other.
 }
 
 void DrivingForce::writeForce(fitsfile * const file, int * const error) const
