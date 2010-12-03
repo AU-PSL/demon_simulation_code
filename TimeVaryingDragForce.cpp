@@ -36,7 +36,7 @@ void TimeVaryingDragForce::force4(const double currentTime)
 	DragForce::force4(currentTime);
 }
 
-inline const double TimeVaryingDragForce::calculateGamma(const double currentTime)
+inline const double TimeVaryingDragForce::calculateGamma(const double currentTime) const
 {
 	return -(scaleConst*currentTime + offsetConst);
 }
