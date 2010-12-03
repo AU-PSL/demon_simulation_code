@@ -49,7 +49,7 @@ inline void DrivingForce::force(const unsigned int currentParticle, const __m128
 	// F = A*sin(k*x - w*t)*exp(-(x + x0)^2/B) is in the paper
     // NOTE: This is different than the equation listed in the paper. The paper 
     // is incorrect.
-    const __m128d distV = currentParticle - _mm_set1_pd(shift);
+	const __m128d distV = currentPositionX - _mm_set1_pd(shift);
 	const __m128d sinArg = _mm_set1_pd(waveNum)*currentPositionX - _mm_set1_pd(angFreq)*currentTime;
 	const __m128d expArg = _mm_set1_pd(-1.0)*distV*distV/_mm_set1_pd(driveConst);
 	
