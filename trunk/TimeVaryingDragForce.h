@@ -34,7 +34,7 @@ private:
     double offsetConst; //[s^-1]
 	
 //private methods:
-	const double calculateGamma(const double currentTime);
+	const double calculateGamma(const double currentTime) const;
 };
 
 #endif /* TIMEVARYINGDRAGFORCE_H */
