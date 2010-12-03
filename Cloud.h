@@ -31,11 +31,6 @@ public:
 	double *forceX, *forceY;
 
 //public functions:
-	//Input: int index
-	//Preconditions: 0 <= index < number of particles
-	//Postconditions: x,y positions of particle #index randomly set
-	void setPosition(const unsigned int index);
-	
 	//Input: int index, initialPosX, intialPosY
 	//Preconditions: 0 <= index < number of particles
 	//Postconditions: x,y positions of particle #index set to initialPosX,initialPosY
@@ -66,32 +61,27 @@ public:
 	//Postconditions: positions and velocities for current time step output to file
 	void writeTimeStep(fitsfile * const file, int * const error, double currentTime) const;
     
-    const __m128d getx1_pd(const unsigned int i) const;
-    const __m128d getx2_pd(const unsigned int i) const;
-    const __m128d getx3_pd(const unsigned int i) const;
-    const __m128d getx4_pd(const unsigned int i) const;
-    
-    const __m128d gety1_pd(const unsigned int i) const;
-    const __m128d gety2_pd(const unsigned int i) const;
-    const __m128d gety3_pd(const unsigned int i) const;
-    const __m128d gety4_pd(const unsigned int i) const;
-    
-    const __m128d getVx1_pd(const unsigned int i) const;
-    const __m128d getVx2_pd(const unsigned int i) const;
-    const __m128d getVx3_pd(const unsigned int i) const;
-    const __m128d getVx4_pd(const unsigned int i) const;
-    
-    const __m128d getVy1_pd(const unsigned int i) const;
-    const __m128d getVy2_pd(const unsigned int i) const;
-    const __m128d getVy3_pd(const unsigned int i) const;
-    const __m128d getVy4_pd(const unsigned int i) const;
+	const __m128d getx1_pd(const unsigned int i) const;
+	const __m128d getx2_pd(const unsigned int i) const;
+	const __m128d getx3_pd(const unsigned int i) const;
+	const __m128d getx4_pd(const unsigned int i) const;
+	
+	const __m128d gety1_pd(const unsigned int i) const;
+	const __m128d gety2_pd(const unsigned int i) const;
+	const __m128d gety3_pd(const unsigned int i) const;
+	const __m128d gety4_pd(const unsigned int i) const;
+	
+	const __m128d getVx1_pd(const unsigned int i) const;
+	const __m128d getVx2_pd(const unsigned int i) const;
+	const __m128d getVx3_pd(const unsigned int i) const;
+	const __m128d getVx4_pd(const unsigned int i) const;
+	
+	const __m128d getVy1_pd(const unsigned int i) const;
+	const __m128d getVy2_pd(const unsigned int i) const;
+	const __m128d getVy3_pd(const unsigned int i) const;
+	const __m128d getVy4_pd(const unsigned int i) const;
 
 //static functions:
-	//Input: int numParticles, double cloudSize
-	//Preconditions: both inputs positive
-	//Postconditions: randomly initialized cloud with radius = cloudSize
-	static Cloud * const initializeNew(const unsigned int numParticles, const double cloudSize);
-
 	//Input: int numParticles, double cloudSize
 	//Preconditions: both inputs positive
 	//Postconditions: cloud initialized on spatial grid with side length = 2*cloudSize

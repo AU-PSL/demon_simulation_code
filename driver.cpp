@@ -35,14 +35,13 @@ void help()
           << " -e 5.0                 set simulation end time" << endl
           << " -f noDefaut.fits       use final positions and velocities from file" << endl
           << " -g 10.0                set gamma (magnitute of drag constant)" << endl
-          << " -G                     initialize particles on square grid" << endl
           << " -h                     display Help (instead of running)" << endl
           << " -L 0.001 1E-14 1E-14   use ThermalForceLocalized; set rad, in/out therm vals" << endl
           << " -M 0.2 100             create Mach Code; set bullet velocity, mass factor" << endl
           << " -n 10                  set number of particles" << endl
           << " -o 0.01                set the data Output time step" << endl
           << " -O data.fits           set the name of the output file" << endl
-          << " -r 0.01                set cloud radius (half side-length with -G)" << endl
+          << " -r 0.01                set cloud radius (one-half side length)" << endl
           << " -R 1E-13 1E-12         use RectConfinementForce; set confineConstX,Y" << endl
           << " -s 2E4                 set coulomb shelding constant" << endl
           << " -S 1E-15 0.005 0.007   use RotationalForce; set strength, rmin, rmax" << endl
@@ -54,9 +53,8 @@ void help()
           << " Parameters specified above represent the default values and accepted type," << endl
           << "    with the exception of -c and -f, for which there are no default values." << endl
           << " -c appends to file; ignores all force flags (use -f to run with different" << endl
-          << "    forces)." << endl
+          << "    forces). -c overrides -f if both are specified" << endl
           << " -D uses strengthening drag if scale > 0, weakening drag if scale < 0." << endl
-          << " -G overrides -c and -f." << endl
           << " -n expects even number, else will add 1 (required for SIMD)." << endl
           << " -S creates a shear layer between rmin = cloudsize/2 and" << endl
           << "    rmax = rmin + cloudsize/5." << endl
@@ -240,13 +238,12 @@ int main (int argc, char * const argv[])
 	Force **forceArray;			//new pointer to Force object (will set to array)
 	
 	//declare variables and set default values:
-	bool grid = false;			//true -> initialize particles on grid
 	bool Mach = false;			//true -> perform Mach Cone experiment
 	double startTime = 0.0;
 	double simTimeStep = 0.0001;
 	double dataTimeStep = 0.01;
 	double endTime = 5;
-	double cloudSize = 0.01;		//radius, or one-half side length if grid
+	double cloudSize = 0.01;		//one-half side length (aka "radius")
 	double confinementConst = 1E-13;	//confinementForce
 	double confinementConstX = 1E-13;	//RectConfinementForce
 	double confinementConstY = 1E-12;	//RectConfinementForce
@@ -305,9 +302,6 @@ int main (int argc, char * const argv[])
 				checkOption(argc, argv, i, 'g');
 				//WARNING: Assumes double input!
 				gamma = atof(argv[++i]);	//store gamma
-				break;
-			case 'G':	//initialize on "G"rid:
-				grid = true;
 				break;
 			case 'h':	//display "h"elp:
 				help();
@@ -404,8 +398,33 @@ int main (int argc, char * const argv[])
 	fitsfile *file;
 	int error = 0;
 
-	if(grid)
-		cloud = Cloud::initializeGrid(numParticles, cloudSize);
+	if(continueFileIndex)
+	{
+		//check if file exists:
+		int exists = 0;
+		fits_file_exists(argv[continueFileIndex], &exists, &error);
+		if(exists != 1)
+		{
+			cout << "\nError: " << argv[continueFileIndex] << " does not exist.\n\n";
+			help();
+			exit(1);
+		}
+		checkFitsError(error, __LINE__);
+		
+		cout << "\nInitializing with " << argv[continueFileIndex] << ".\n\n";
+		
+		//open file:
+		fits_open_file(&file, argv[continueFileIndex], READWRITE, &error);	//file pointer, file name (char), read/write, error
+		checkFitsError(error, __LINE__);
+		
+		//use the same forces:
+		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &usedForces, NULL, &error);
+		checkFitsError(error, __LINE__);
+		
+		//initialize with last time step from file:
+		cloud = Cloud::initializeFromFile(file, &error, &startTime);
+		checkFitsError(error, __LINE__);
+	}
 	else if(finalsFileIndex)
 	{
 		//check if file exists:
@@ -433,35 +452,8 @@ int main (int argc, char * const argv[])
  		fits_close_file(file, &error);
 		checkFitsError(error, __LINE__);
 	}
-	else if (continueFileIndex)
-	{
-		//check if file exists:
-		int exists = 0;
-		fits_file_exists(argv[continueFileIndex], &exists, &error);
-		if(exists != 1)
-		{
-			cout << "\nError: " << argv[continueFileIndex] << " does not exist.\n\n";
-			help();
-			exit(1);
-		}
-		checkFitsError(error, __LINE__);
-		
-		cout << "\nInitializing with " << argv[continueFileIndex] << ".\n\n";
-		
-		//open file:
-		fits_open_file(&file, argv[continueFileIndex], READWRITE, &error);	//file pointer, file name (char), read/write, error
-		checkFitsError(error, __LINE__);
-		
-		//use the same forces:
-		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &usedForces, NULL, &error);
-		checkFitsError(error, __LINE__);
-		
-		//initialize with last time step from file:
-		cloud = Cloud::initializeFromFile(file, &error, &startTime);
-		checkFitsError(error, __LINE__);
-	}
-	else 
-		cloud = Cloud::initializeNew(numParticles, cloudSize);
+	else	//initialize new cloud on grid:
+		cloud = Cloud::initializeGrid(numParticles, cloudSize);
 
 	// Create a new file if we aren't continueing one.
 	if (!continueFileIndex)
