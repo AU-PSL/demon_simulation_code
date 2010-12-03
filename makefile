@@ -41,7 +41,7 @@ $driver.o: driver.cpp
 	$(CXX) -c driver.cpp driver.o
 
 clean:
-	-rm $(OBJS) driver.o driver_mach.o
+	-rm $(OBJS) driver.o
 	
 cleanlib:
 	-rm $(LIBS) 
