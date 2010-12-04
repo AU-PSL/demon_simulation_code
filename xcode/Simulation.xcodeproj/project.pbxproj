@@ -37,7 +37,7 @@
 		E1FD94631299996F00EBC94D /* TimeVaryingThermalForce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FD94511299996F00EBC94D /* TimeVaryingThermalForce.cpp */; };
 		E1FD94641299996F00EBC94D /* TimeVaryingThermalForce.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FD94521299996F00EBC94D /* TimeVaryingThermalForce.h */; };
 		E1FD947112999A5700EBC94D /* libSimulation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AAC046055464E500DB518D /* libSimulation.a */; };
-		E1FD947912999A8900EBC94D /* driver_2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FD947812999A8900EBC94D /* driver_2D.cpp */; };
+		E1FD947912999A8900EBC94D /* driver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FD947812999A8900EBC94D /* driver.cpp */; };
 		E1FD948912999E5000EBC94D /* longnam.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FD948812999E5000EBC94D /* longnam.h */; };
 		E1FD948A12999E6500EBC94D /* fitsio.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FD948312999C3200EBC94D /* fitsio.h */; };
 /* End PBXBuildFile section */
@@ -87,7 +87,7 @@
 		E1FD94511299996F00EBC94D /* TimeVaryingThermalForce.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TimeVaryingThermalForce.cpp; path = ../TimeVaryingThermalForce.cpp; sourceTree = SOURCE_ROOT; };
 		E1FD94521299996F00EBC94D /* TimeVaryingThermalForce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimeVaryingThermalForce.h; path = ../TimeVaryingThermalForce.h; sourceTree = SOURCE_ROOT; };
 		E1FD946A12999A2800EBC94D /* Sim_2D */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Sim_2D; sourceTree = BUILT_PRODUCTS_DIR; };
-		E1FD947812999A8900EBC94D /* driver_2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = driver_2D.cpp; path = ../driver_2D.cpp; sourceTree = SOURCE_ROOT; };
+		E1FD947812999A8900EBC94D /* driver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = driver.cpp; path = ../driver.cpp; sourceTree = SOURCE_ROOT; };
 		E1FD948312999C3200EBC94D /* fitsio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fitsio.h; path = ../../../../../Programs/cfitsio/fitsio.h; sourceTree = SOURCE_ROOT; };
 		E1FD948812999E5000EBC94D /* longnam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = longnam.h; path = ../../../../../Programs/cfitsio/longnam.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -127,7 +127,7 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				E1FD947812999A8900EBC94D /* driver_2D.cpp */,
+				E1FD947812999A8900EBC94D /* driver.cpp */,
 				E144C5B3129998DF00CF0AF3 /* Simulation */,
 				E16C488512A58EA6004F3B02 /* makefile */,
 			);
@@ -275,9 +275,9 @@
 			productReference = D2AAC046055464E500DB518D /* libSimulation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		E1FD946912999A2800EBC94D /* Sim_2D */ = {
+		E1FD946912999A2800EBC94D /* DEMON */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E1FD947012999A5400EBC94D /* Build configuration list for PBXNativeTarget "Sim_2D" */;
+			buildConfigurationList = E1FD947012999A5400EBC94D /* Build configuration list for PBXNativeTarget "DEMON" */;
 			buildPhases = (
 				E1FD946712999A2800EBC94D /* Sources */,
 				E1FD946812999A2800EBC94D /* Frameworks */,
@@ -287,7 +287,7 @@
 			dependencies = (
 				E1FD946F12999A3400EBC94D /* PBXTargetDependency */,
 			);
-			name = Sim_2D;
+			name = DEMON;
 			productName = Sim_2D;
 			productReference = E1FD946A12999A2800EBC94D /* Sim_2D */;
 			productType = "com.apple.product-type.tool";
@@ -312,7 +312,7 @@
 			projectRoot = ..;
 			targets = (
 				D2AAC045055464E500DB518D /* Simulation */,
-				E1FD946912999A2800EBC94D /* Sim_2D */,
+				E1FD946912999A2800EBC94D /* DEMON */,
 			);
 		};
 /* End PBXProject section */
@@ -342,7 +342,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E1FD947912999A8900EBC94D /* driver_2D.cpp in Sources */,
+				E1FD947912999A8900EBC94D /* driver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -518,7 +518,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E1FD947012999A5400EBC94D /* Build configuration list for PBXNativeTarget "Sim_2D" */ = {
+		E1FD947012999A5400EBC94D /* Build configuration list for PBXNativeTarget "DEMON" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E1FD946C12999A2E00EBC94D /* Debug */,
