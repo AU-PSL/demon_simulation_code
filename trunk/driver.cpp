@@ -55,6 +55,7 @@ void help()
           << " -c appends to file; ignores all force flags (use -f to run with different" << endl
           << "    forces). -c overrides -f if both are specified" << endl
           << " -D uses strengthening drag if scale > 0, weakening drag if scale < 0." << endl
+          << " -M is best used by loading up a previous cloud that has reached equalibrium." << endl
           << " -n expects even number, else will add 1 (required for SIMD)." << endl
           << " -S creates a shear layer between rmin = cloudsize/2 and" << endl
           << "    rmax = rmin + cloudsize/5." << endl
