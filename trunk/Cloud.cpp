@@ -9,7 +9,6 @@
 
 #include "Cloud.h"
 #include <cmath>
-#include <iostream>
 #include <sstream>
 
 using namespace std;
@@ -60,8 +59,6 @@ inline void Cloud::setMass(const unsigned int index)
 
 Cloud * const Cloud::initializeGrid(const unsigned int numParticles, const double cloudSize)
 {
-	cout << "\nInitializing grid.\n\n";
-
 	Cloud * const cloud = new Cloud(numParticles, cloudSize);
 
 	const double sqrtNumPar = floor(sqrt(numParticles));
@@ -87,8 +84,6 @@ Cloud * const Cloud::initializeGrid(const unsigned int numParticles, const doubl
 			tempPosY -= gridUnit; //move to next row
 		}
 	}
-
-	cout << "\nInitialization complete.\n";
 
 	return cloud;
 }
