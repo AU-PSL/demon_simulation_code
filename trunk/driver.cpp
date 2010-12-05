@@ -579,10 +579,15 @@ int main (int argc, char * const argv[])
 	long seconds = time(NULL) - timer;
 	long minutes = seconds/60;
 	long hours = minutes/60;
-	minutes -= 60*hours;
-	seconds -= minutes*60; 
-	seconds -= hours*3600;
-	cout << "Time elapsed: " << hours << " hours, " << minutes << " minutes, " << seconds << " seconds.\n\n";
+    long days = hours/24;
+    hours -= days*24
+	minutes -= hours*60 + days*1440;
+	seconds -= minutes*60 + hours*3600 + days*86400;
+	cout << "Time elapsed: " 
+    << days << days == 1 ? " day, " : " days, " 
+    << hours << hours == 1 ? " hour " : " hours, " 
+    << minutes << minutes == 1 ? " minute " : " minutes, " 
+    << seconds << seconds == 1 ? " second " : " seconds." << endl << endl;
 	
 	//clean up objects:
 	for (unsigned int i = 0; i < numForces; i++)
