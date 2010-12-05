@@ -86,7 +86,7 @@
 		E1FD94501299996F00EBC94D /* TimeVaryingDragForce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimeVaryingDragForce.h; path = ../TimeVaryingDragForce.h; sourceTree = SOURCE_ROOT; };
 		E1FD94511299996F00EBC94D /* TimeVaryingThermalForce.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TimeVaryingThermalForce.cpp; path = ../TimeVaryingThermalForce.cpp; sourceTree = SOURCE_ROOT; };
 		E1FD94521299996F00EBC94D /* TimeVaryingThermalForce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimeVaryingThermalForce.h; path = ../TimeVaryingThermalForce.h; sourceTree = SOURCE_ROOT; };
-		E1FD946A12999A2800EBC94D /* Sim_2D */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Sim_2D; sourceTree = BUILT_PRODUCTS_DIR; };
+		E1FD946A12999A2800EBC94D /* DEMON */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DEMON; sourceTree = BUILT_PRODUCTS_DIR; };
 		E1FD947812999A8900EBC94D /* driver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = driver.cpp; path = ../driver.cpp; sourceTree = SOURCE_ROOT; };
 		E1FD948312999C3200EBC94D /* fitsio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fitsio.h; path = ../../../../../Programs/cfitsio/fitsio.h; sourceTree = SOURCE_ROOT; };
 		E1FD948812999E5000EBC94D /* longnam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = longnam.h; path = ../../../../../Programs/cfitsio/longnam.h; sourceTree = "<group>"; };
@@ -138,7 +138,7 @@
 			isa = PBXGroup;
 			children = (
 				D2AAC046055464E500DB518D /* libSimulation.a */,
-				E1FD946A12999A2800EBC94D /* Sim_2D */,
+				E1FD946A12999A2800EBC94D /* DEMON */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -289,7 +289,7 @@
 			);
 			name = DEMON;
 			productName = Sim_2D;
-			productReference = E1FD946A12999A2800EBC94D /* Sim_2D */;
+			productReference = E1FD946A12999A2800EBC94D /* DEMON */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -367,10 +367,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/lib;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../../cfitsio\"",
-				);
+				LIBRARY_SEARCH_PATHS = "";
 				PRODUCT_NAME = Simulation;
 			};
 			name = Debug;
@@ -468,11 +465,10 @@
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../../cfitsio\"",
 					"\"$(SRCROOT)/../../../../../Programs/cfitsio\"",
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = Sim_2D;
+				PRODUCT_NAME = DEMON;
 			};
 			name = Debug;
 		};
@@ -488,11 +484,10 @@
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../../cfitsio\"",
 					"\"$(SRCROOT)/../../../../../Programs/cfitsio\"",
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = Sim_2D;
+				PRODUCT_NAME = DEMON;
 				ZERO_LINK = NO;
 			};
 			name = Release;
