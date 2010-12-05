@@ -37,7 +37,7 @@ void help()
           << " -g 10.0                set gamma (magnitute of drag constant)" << endl
           << " -h                     display Help (instead of running)" << endl
           << " -L 0.001 1E-14 1E-14   use ThermalForceLocalized; set rad, in/out therm vals" << endl
-          << " -M 0.2 100             create Mach Code; set bullet velocity, mass factor" << endl
+          << " -M 0.2 100             create Mach Cone; set bullet velocity, mass factor" << endl
           << " -n 10                  set number of particles" << endl
           << " -o 0.01                set the data Output time step" << endl
           << " -O data.fits           set the name of the output file" << endl
