@@ -23,10 +23,13 @@
 #include <iostream>
 using namespace std;
 
+#define clear_line "\33[2K" // VT100 signal to clear line.
+
 void help()
 {
-//80 cols is ********************************************************************************
-     cout << "\n                                      DEMON" << endl
+ //80 cols is ********************************************************************************
+     cout << endl 
+          << "                                      DEMON" << endl
           << "        Dynamic Exploration of Microparticle clouds Optimized Numerically" << endl << endl
           << "Options:" << endl << endl
           << " -c noDefault.fits      continue run from file" << endl
@@ -49,7 +52,7 @@ void help()
           << " -T 1E-14               use ThermalForce; set thermal reduction factor" << endl
           << " -v 1E-14 0.0           use TimeVaryingThermalForce; set scale and offset" << endl
           << " -w 1E-13 0.007 0.00001 use DrivingForce; set amplitude, shift, driveConst" << endl << endl
-          << " Notes: " << endl << endl
+          << "Notes: " << endl << endl
           << " Parameters specified above represent the default values and accepted type," << endl
           << "    with the exception of -c and -f, for which there are no default values." << endl
           << " -c appends to file; ignores all force flags (use -f to run with different" << endl
@@ -69,7 +72,7 @@ void checkForce(const char option, const long usedForces, const ForceFlag flag)
 {
 	if(usedForces & flag)
 	{
-		cout << "\nError: -" << option << " already set.\n";
+		cout << "Error: -" << option << " already set." << endl;
 		help();
 		exit(1);
 	}
@@ -81,7 +84,7 @@ void checkForce(char option1, char option2, long usedForces, ForceFlag flag1, Fo
 	checkForce(option1, usedForces, flag1);
 	if(usedForces & flag2)
 	{
-		cout << "\nError: -" << option1 << " cannot be used with -" << option2 <<"\n";
+		cout << "Error: -" << option1 << " cannot be used with -" << option2 << endl;
 		help();
 		exit(1);
 	}
@@ -98,7 +101,7 @@ void checkOption(const int argc, char * const argv[], int i, const char option)
 {
 	if(i+1 >= argc || argv[i+1][0] == '-')
 	{
-		cout << "\nError: -" << option << " option incomplete.\n";
+		cout << "Error: -" << option << " option incomplete." << endl;
 		help();
 		exit(1);
 	}
@@ -109,10 +112,8 @@ int checkOption(const int argc, char * const argv[], int i, const char option,
                 const string name, double * const value)
 {
 	if(i+1 >= argc || argv[i+1][0] == '-')
-	{
-		cout << "\nWarning: -" << option << " option incomplete.";
-		cout << "\nUsing default " << name << " (" << *value << ").\n\n";	
-	}
+		cout << "Warning: -" << option << " option incomplete." << endl 
+            << "Using default " << name << " (" << *value << ")." << endl;
 	else
 		*value = atof(argv[++i]);
 	return i;
@@ -124,10 +125,9 @@ int checkOption(const int argc, char * const argv[], int i, const char option,
                 const string name2, double * const value2)
 {
 	if(i+1 >= argc || argv[i+1][0] == '-')
-	{
-		cout << "\nWarning: -" << option << " option incomplete.";
-		cout << "\nUsing default "<< name1 << " (" << *value1 << ") and " << name2 << " (" << *value2 << ").\n\n";
-	}
+		cout << "Warning: -" << option << " option incomplete." << endl
+            << "Using default "<< name1 << " (" << *value1 << ") and " 
+            << name2 << " (" << *value2 << ")." << endl;
 	else
 	{
 		*value1 = atof(argv[++i]);
@@ -143,10 +143,10 @@ int checkOption(const int argc, char * const argv[], int i, const char option,
                 const string name3, double * const value3)
 {
 	if(i+1 >= argc || argv[i+1][0] == '-')
-	{
-		cout << "\nWarning: -" << option << " option incomplete.";
-		cout << "\nUsing default "<< name1 << " (" << *value1 << "), " << name2 << " (" << *value2 << ") and " << name3 << " (" << *value3 << ").\n\n";
-	}
+		cout << "Warning: -" << option << " option incomplete." << endl 
+            << "Using default "<< name1 << " (" << *value1 << "), " 
+            << name2 << " (" << *value2 << ") and " 
+            << name3 << " (" << *value3 << ")." << endl;
 	else
 	{
 		*value1 = atof(argv[++i]);
@@ -162,10 +162,9 @@ int checkOptionWithNeg(const int argc, char * const argv[], int i, const char op
                        const string name2, double * const value2)
 {
 	if(i+1 >= argc || (argv[i+1][0] == '-' && isCharacter(argv[i+1][1])))
-	{
-		cout << "\nWarning: -" << option << " option incomplete.";
-		cout << "\nUsing default "<< name1 << " (" << *value1 << ") and " << name2 << " (" << *value2 << ").\n\n";
-	}
+		cout << "Warning: -" << option << " option incomplete." << endl 
+            << "Using default " << name1 << " (" << *value1 << ") and " 
+            << name2 << " (" << *value2 << ")." << endl << endl;
 	else
 	{
 		*value1 = atof(argv[++i]);
@@ -209,9 +208,10 @@ void checkFitsError(const int error, const int lineNumber)
 
 	char message[80];
 	fits_read_errmsg(message);
-	cout << "\nError: Fits file error " << error;
-	cout << " at line number " << lineNumber << " (driver_2D.cpp)\n";
-	cout << message << endl;
+	cout << "Error: Fits file error " << error 
+        << " at line number " << lineNumber 
+        << " (driver_2D.cpp)" << endl 
+        << message << endl;
 	exit(1);
 }
 
@@ -224,10 +224,25 @@ void deleteFitsFile(char * const filename, int * const error)
 
 	if(exists)
 	{
-		cout << "\nRemoving pre-existing " << filename << " file.\n\n";
+		cout << "Warning: Removing pre-existing \"" << filename << "\" file." << endl;
 		remove(filename);	//required by fits, else can't create
 	}
 	checkFitsError(*error, __LINE__);
+}
+
+// Check if fits file exists
+void fitsFileExists(char * const filename, int * const error) {
+    int exists = 0;
+    fits_file_exists(filename, &exists, error);
+    if(exists != 1)
+    {
+        cout << "Error: Fits file \"" << filename << "\" does not exist." << endl;
+        help();
+        exit(1);
+    }
+
+    checkFitsError(*error, __LINE__);
+    cout << "Initializing with fits file \"" << filename << "\"." << endl;
 }
 
 int main (int argc, char * const argv[]) 
@@ -324,8 +339,8 @@ int main (int argc, char * const argv[])
 				numParticles = atoi(argv[++i]);	//store number of particles
 				if((numParticles % 2) != 0)	//odd
 				{
-					cout << "\nEven number of particles required for SIMD.";
-					cout << "\nIncrementing number of particles to " << ++numParticles << endl;
+					cout << "Even number of particles required for SIMD." << endl 
+                        << "Incrementing number of particles to " << ++numParticles << endl;
 				}
 				break;
 			case 'o':	//set dataTimeStep, which conrols "o"utput rate:
@@ -358,8 +373,8 @@ int main (int argc, char * const argv[])
 				i = checkOption(argc, argv, i, 't', "time step", &simTimeStep);
 				if(simTimeStep == 0.0)		//prevent divide-by-zero error
 				{
-					cout << "\nError: simTimeStep set to 0.0 with -t.";
-					cout << "\nTerminating to prevent divide-by-zero.\n\n";
+					cout << "Error: simTimeStep set to 0.0 with -t." << endl 
+                        << "Terminating to prevent divide-by-zero." << endl;
 					help();
 					exit(1);
 				}
@@ -395,24 +410,15 @@ int main (int argc, char * const argv[])
 /*-----------------------------------------------------------------------------
  * Initialize cloud:
 -----------------------------------------------------------------------------*/
+    cout << "Status: Initializing cloud." << endl;
+    
 	//declare fits file and error:
 	fitsfile *file;
 	int error = 0;
 
 	if(continueFileIndex)
 	{
-		//check if file exists:
-		int exists = 0;
-		fits_file_exists(argv[continueFileIndex], &exists, &error);
-		if(exists != 1)
-		{
-			cout << "\nError: " << argv[continueFileIndex] << " does not exist.\n\n";
-			help();
-			exit(1);
-		}
-		checkFitsError(error, __LINE__);
-		
-		cout << "\nInitializing with " << argv[continueFileIndex] << ".\n\n";
+		fitsFileExists(argv[continueFileIndex], &error);
 		
 		//open file:
 		fits_open_file(&file, argv[continueFileIndex], READWRITE, &error);	//file pointer, file name (char), read/write, error
@@ -428,18 +434,7 @@ int main (int argc, char * const argv[])
 	}
 	else if(finalsFileIndex)
 	{
-		//check if file exists:
-		int exists = 0;
-		fits_file_exists(argv[finalsFileIndex], &exists, &error);
-		if(exists != 1)
-		{
-			cout << "\nError: " << argv[finalsFileIndex] << " does not exist.\n\n";
-			help();
-			exit(1);
-		}
-		checkFitsError(error, __LINE__);
-
-		cout << "\nInitializing with " << argv[finalsFileIndex] << ".\n\n";
+        fitsFileExists(argv[finalsFileIndex], &error);
 
 		//open file:
 		fits_open_file(&file, argv[finalsFileIndex], READONLY, &error);	//file pointer, file name (char), read only, error
@@ -487,7 +482,7 @@ int main (int argc, char * const argv[])
  * This concludes initialization of cloud.
  * Initialize array of Force objects:
 -----------------------------------------------------------------------------*/
-    cout << "Initializing forces.\n\n";
+    cout << "Status: Initializing forces." << endl;
     
 	numForces = getNumForces(usedForces);
 	forceArray = new Force*[numForces];
@@ -529,6 +524,7 @@ int main (int argc, char * const argv[])
 /*-----------------------------------------------------------------------------
  * Commence Runge-Kutta algorithm:
 -----------------------------------------------------------------------------*/
+    cout << "Status: Commencing Runge-Kutta." << endl << endl;
     
 	//write initial data:
 	if (!continueFileIndex) 
@@ -553,23 +549,20 @@ int main (int argc, char * const argv[])
 	}
 	
 	Runge_Kutta rk4(cloud, forceArray, simTimeStep, numForces, startTime);
-	
-	cout << "Commencing Runge-Kutta algorithm.\n\n";
 
 	//execute simulation for desired length of time:
+    cout << clear_line << "\rCurrent Time: " << rk4.currentTime << "s (" << (rk4.currentTime/endTime*100.0) << "% Complete)" << flush;
 	while(startTime < endTime)
 	{
 		//call Runge-Kutta algorithm:
 		rk4.moveParticles(startTime += dataTimeStep);
 		//write positions and velocities:
 		cloud->writeTimeStep(file, &error, rk4.currentTime);
-		cout << rk4.currentTime << endl;
+		cout << clear_line << "\rCurrent Time: " << rk4.currentTime << "s (" << (rk4.currentTime/endTime*100.0) << "% Complete)" << flush;
 	}
 
-	cout << "Runge-Kutta algorithm complete.\n\n";
-
 /*-----------------------------------------------------------------------------
- * This concludes the Runge-Kutta algorithm.
+ * This concludes the Runge-Kutta algorithm. Clean up.
 -----------------------------------------------------------------------------*/
 
 	//close fits file:
@@ -583,11 +576,11 @@ int main (int argc, char * const argv[])
     hours -= days*24;
 	minutes -= hours*60 + days*1440;
 	seconds -= minutes*60 + hours*3600 + days*86400;
-	cout << "Time elapsed: " 
-    << days << (days == 1 ? " day, " : " days, ") 
-    << hours << (hours == 1 ? " hour " : " hours, ") 
-    << minutes << (minutes == 1 ? " minute " : " minutes, ") 
-    << seconds << (seconds == 1 ? " second " : " seconds.") << endl << endl;
+	cout << clear_line << "\rTime elapsed: " 
+        << days << (days == 1 ? " day, " : " days, ") 
+        << hours << (hours == 1 ? " hour " : " hours, ") 
+        << minutes << (minutes == 1 ? " minute " : " minutes, ") 
+        << seconds << (seconds == 1 ? " second " : " seconds.") << endl;
 	
 	//clean up objects:
 	for (unsigned int i = 0; i < numForces; i++)
