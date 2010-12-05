@@ -407,9 +407,9 @@ int main (int argc, char * const argv[])
 		usedForces |= ConfinementForceFlag;
 	usedForces |= ShieldedCoulombForceFlag;
 
-/*-----------------------------------------------------------------------------
+/*------------------------------------------------------------------------------
  * Initialize cloud:
------------------------------------------------------------------------------*/
+ -----------------------------------------------------------------------------*/
     cout << "Status: Initializing cloud." << endl;
     
 	//declare fits file and error:
@@ -478,10 +478,10 @@ int main (int argc, char * const argv[])
 		}
 	}
 	
-/*-----------------------------------------------------------------------------
+/*------------------------------------------------------------------------------
  * This concludes initialization of cloud.
  * Initialize array of Force objects:
------------------------------------------------------------------------------*/
+ -----------------------------------------------------------------------------*/
     cout << "Status: Initializing forces." << endl;
     
 	numForces = getNumForces(usedForces);
@@ -521,9 +521,9 @@ int main (int argc, char * const argv[])
 		checkFitsError(error, __LINE__);
 	}
 
-/*-----------------------------------------------------------------------------
+/*------------------------------------------------------------------------------
  * Commence Runge-Kutta algorithm:
------------------------------------------------------------------------------*/
+ -----------------------------------------------------------------------------*/
     cout << "Status: Commencing Runge-Kutta." << endl << endl;
     
 	//write initial data:
@@ -551,19 +551,20 @@ int main (int argc, char * const argv[])
 	Runge_Kutta rk4(cloud, forceArray, simTimeStep, numForces, startTime);
 
 	//execute simulation for desired length of time:
-    cout << clear_line << "\rCurrent Time: " << rk4.currentTime << "s (" << (rk4.currentTime/endTime*100.0) << "% Complete)" << flush;
-	while(startTime < endTime)
+    while(startTime < endTime)
 	{
-		//call Runge-Kutta algorithm:
-		rk4.moveParticles(startTime += dataTimeStep);
+        cout << clear_line << "\rCurrent Time: " << rk4.currentTime << "s (" 
+            << rk4.currentTime/endTime*100.0 << "% Complete)" << flush;
+		
+        //call Runge-Kutta algorithm:
+        rk4.moveParticles(startTime += dataTimeStep);
 		//write positions and velocities:
 		cloud->writeTimeStep(file, &error, rk4.currentTime);
-		cout << clear_line << "\rCurrent Time: " << rk4.currentTime << "s (" << (rk4.currentTime/endTime*100.0) << "% Complete)" << flush;
 	}
 
-/*-----------------------------------------------------------------------------
+/*------------------------------------------------------------------------------
  * This concludes the Runge-Kutta algorithm. Clean up.
------------------------------------------------------------------------------*/
+ -----------------------------------------------------------------------------*/
 
 	//close fits file:
 	fits_close_file(file, &error);
