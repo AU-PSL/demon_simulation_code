@@ -11,7 +11,6 @@
 #define TIMEVARYINGDRAGFORCE_H
 
 #include "DragForce.h"
-using namespace std;
 
 class TimeVaryingDragForce : public DragForce
 {	
