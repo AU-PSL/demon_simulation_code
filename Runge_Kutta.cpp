@@ -90,7 +90,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 			_mm_store_pd(pFy, _mm_setzero_pd());
 		}
 		
-		force4(currentTime+dt);	//compute net force4
+		force4(currentTime + dt);	//compute net force4
 		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2)	//calculate k4 and l4 for entire cloud
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i);	//load ith and (i+1)th mass
