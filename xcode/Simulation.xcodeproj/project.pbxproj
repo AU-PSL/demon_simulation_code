@@ -38,8 +38,6 @@
 		E1FD94641299996F00EBC94D /* TimeVaryingThermalForce.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FD94521299996F00EBC94D /* TimeVaryingThermalForce.h */; };
 		E1FD947112999A5700EBC94D /* libSimulation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AAC046055464E500DB518D /* libSimulation.a */; };
 		E1FD947912999A8900EBC94D /* driver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FD947812999A8900EBC94D /* driver.cpp */; };
-		E1FD948912999E5000EBC94D /* longnam.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FD948812999E5000EBC94D /* longnam.h */; };
-		E1FD948A12999E6500EBC94D /* fitsio.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FD948312999C3200EBC94D /* fitsio.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +51,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4D95C47912B43D770086B123 /* makefile.include */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = makefile.include; path = ../makefile.include; sourceTree = SOURCE_ROOT; };
 		4DB543DB12A5FBF100D7008F /* libcfitsio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcfitsio.a; path = /Users/mark/Programs/cfitsio/libcfitsio.a; sourceTree = "<absolute>"; };
 		D2AAC046055464E500DB518D /* libSimulation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSimulation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E16C487E12A587AE004F3B02 /* LICENSE.TXT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.TXT; path = ../LICENSE.TXT; sourceTree = SOURCE_ROOT; };
@@ -88,8 +87,6 @@
 		E1FD94521299996F00EBC94D /* TimeVaryingThermalForce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimeVaryingThermalForce.h; path = ../TimeVaryingThermalForce.h; sourceTree = SOURCE_ROOT; };
 		E1FD946A12999A2800EBC94D /* DEMON */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DEMON; sourceTree = BUILT_PRODUCTS_DIR; };
 		E1FD947812999A8900EBC94D /* driver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = driver.cpp; path = ../driver.cpp; sourceTree = SOURCE_ROOT; };
-		E1FD948312999C3200EBC94D /* fitsio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fitsio.h; path = ../../../../../Programs/cfitsio/fitsio.h; sourceTree = SOURCE_ROOT; };
-		E1FD948812999E5000EBC94D /* longnam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = longnam.h; path = ../../../../../Programs/cfitsio/longnam.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,7 +112,6 @@
 		08FB7794FE84155DC02AAC07 /* Simulation */ = {
 			isa = PBXGroup;
 			children = (
-				E1FD947A12999B1500EBC94D /* cfitsio */,
 				08FB7795FE84155DC02AAC07 /* Source */,
 				C6A0FF2B0290797F04C91782 /* Documentation */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
@@ -130,6 +126,7 @@
 				E1FD947812999A8900EBC94D /* driver.cpp */,
 				E144C5B3129998DF00CF0AF3 /* Simulation */,
 				E16C488512A58EA6004F3B02 /* makefile */,
+				4D95C47912B43D770086B123 /* makefile.include */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -219,15 +216,6 @@
 			name = Forces;
 			sourceTree = "<group>";
 		};
-		E1FD947A12999B1500EBC94D /* cfitsio */ = {
-			isa = PBXGroup;
-			children = (
-				E1FD948312999C3200EBC94D /* fitsio.h */,
-				E1FD948812999E5000EBC94D /* longnam.h */,
-			);
-			name = cfitsio;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -249,8 +237,6 @@
 				E1FD94601299996F00EBC94D /* ThermalForceLocalized.h in Headers */,
 				E1FD94621299996F00EBC94D /* TimeVaryingDragForce.h in Headers */,
 				E1FD94641299996F00EBC94D /* TimeVaryingThermalForce.h in Headers */,
-				E1FD948A12999E6500EBC94D /* fitsio.h in Headers */,
-				E1FD948912999E5000EBC94D /* longnam.h in Headers */,
 				E1B3A959129D710500599DFF /* VectorCompatibility.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
