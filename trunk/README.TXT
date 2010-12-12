@@ -5,14 +5,26 @@ libcfitsio.a Avalible from http://heasarc.gsfc.nasa.gov/fitsio/
 
 Compiling:
 
+    Download and build libcfitsio.a from the above link.
+
 1. Using Make:
 
-	Download and build libcfitsio.a from the above link. In the makefile change
-	
-CFITSIO = "PATH/TO/CFITSIO/DIRECTORY"
+    In the same directory as the DEMON makefile create a file called 
+makefile.include" with the following entries.
 
-type "make".
+CFITSIO = "path to the complied cfitsio"
+CXX = "command name of the C++ complier"
+CXXFLAGS = "-O3 and any other compiler flags needed."
 
+For example compling with g++ where libcfitsio.a has been compiled into 
+/foo/cfitsio the makefile.include should appear as
+
+CFITSIO = /foo/cfitsio
+CXX = g++
+CXXFLAGS = -O3
+
+where -O3 is the flag controlling the optimization level. To compile DEMON type
+make in the command line.
 
 1. Using xcode:
 
