@@ -266,7 +266,7 @@ int main (int argc, char * const argv[])
 	double shieldingConstant = 2E4;		//corresponds to 10*(ion debye length)
 	double gamma = 10.0;
 	double thermRed = 1E-14;		//default thermal reduction factor
-	double thermRed1 = thermRed;		//default inner reduction factor (-L)
+	double thermRed1 = thermRed;		//default outer reduction factor (-L)
 	double thermScale = 1E-14;		//default for TimeVaryingThermalForce
 	double thermOffset = 0.0;		//default for TimeVaryingThermalForce
 	double heatRadius = .001;		//apply thermal force only within this radius
@@ -327,7 +327,7 @@ int main (int argc, char * const argv[])
 				checkForce('L', 'T', usedForces, ThermalForceLocalizedFlag, ThermalForceFlag);
 				checkForce('L', 'v', usedForces, ThermalForceLocalizedFlag, TimeVaryingThermalForceFlag);
 				usedForces |= ThermalForceLocalizedFlag;
-				i = checkOption(argc, argv, i, 'S', "radius", &heatRadius, "heat factor1", &thermRed, "heat factor2", &thermRed1);
+				i = checkOption(argc, argv, i, 'L', "radius", &heatRadius, "heat factor1", &thermRed, "heat factor2", &thermRed1);
 				break;
 			case 'M':	//perform "M"ach Cone experiment:
 				Mach = true;
