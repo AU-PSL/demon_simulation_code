@@ -398,7 +398,7 @@ int main (int argc, char * const argv[])
 			default:	// Handle unknown options by issuing error.
                 cout << "Error: Unknown option " << argv[i] << endl;
                 help();
-				exit(0);
+				exit(1);
 		}
 	}
 
