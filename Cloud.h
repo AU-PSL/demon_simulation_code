@@ -29,9 +29,8 @@ public:
 	double *x, *y, *Vx, *Vy;	//current positions and velocities=
 	double *charge, *mass;
 	double *forceX, *forceY;
-#ifdef TEST
     __m128d *xCache, *yCache, *VxCache, *VyCache;
-#endif
+
 //public functions:
 	//Input: int index, initialPosX, intialPosY
 	//Preconditions: 0 <= index < number of particles
@@ -68,24 +67,20 @@ public:
 	const __m128d getx3_pd(const unsigned int i) const;
 	const __m128d getx4_pd(const unsigned int i) const;
 
-#ifdef TEST    
     const __m128d getx1r_pd(const unsigned int i) const;
 	const __m128d getx2r_pd(const unsigned int i) const;
 	const __m128d getx3r_pd(const unsigned int i) const;
 	const __m128d getx4r_pd(const unsigned int i) const;
-#endif
 	
 	const __m128d gety1_pd(const unsigned int i) const;
 	const __m128d gety2_pd(const unsigned int i) const;
 	const __m128d gety3_pd(const unsigned int i) const;
 	const __m128d gety4_pd(const unsigned int i) const;
     
-#ifdef TEST
     const __m128d gety1r_pd(const unsigned int i) const;
 	const __m128d gety2r_pd(const unsigned int i) const;
 	const __m128d gety3r_pd(const unsigned int i) const;
 	const __m128d gety4r_pd(const unsigned int i) const;
-#endif
     
 	const __m128d getVx1_pd(const unsigned int i) const;
 	const __m128d getVx2_pd(const unsigned int i) const;

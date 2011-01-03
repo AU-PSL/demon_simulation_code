@@ -7,8 +7,6 @@
 *
 *===-----------------------------------------------------------------------===*/
 
-#ifdef TEST
-
 #include "PositionVelocityCacheOperator.h"
 #include "VectorCompatibility.h"
 
@@ -47,5 +45,3 @@ void PositionVelocityCacheOperator::operation4(const double currentTime) {
         cloud->VyCache[i] = _mm_load_pd(cloud->Vy + offset) + _mm_load_pd(cloud->m3 + offset);
     }
 }
-
-#endif
