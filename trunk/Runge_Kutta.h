@@ -34,7 +34,6 @@ public:
 	void moveParticles(const double endTime);
 
 private:
-#ifdef TEST
 //private variables:
     const unsigned int numOperators;
     Operator ** const operations;
@@ -44,7 +43,7 @@ private:
 	void operate2(const double currentTime) const; //rk substep 2
 	void operate3(const double currentTime) const; //rk substep 3
 	void operate4(const double currentTime) const; //rk substep 4
-#endif    
+  
     void force1(const double currentTime) const; //rk substep 1
 	void force2(const double currentTime) const; //rk substep 2
 	void force3(const double currentTime) const; //rk substep 3
