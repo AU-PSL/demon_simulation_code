@@ -11,11 +11,21 @@
 #include <cmath>
 #include <limits>
 #include "VectorCompatibility.h"
+#include "PositionVelocityCacheOperator.h"
 
 using namespace std;
 
 Runge_Kutta::Runge_Kutta(Cloud * const myCloud, Force **forces, const double timeStep, const unsigned int forcesSize, const double startTime)
-: cloud(myCloud), theForce(forces), numForces(forcesSize), init_dt(timeStep), red_dt(timeStep/100.0), currentTime(startTime) {}
+: cloud(myCloud), theForce(forces), numForces(forcesSize), init_dt(timeStep), red_dt(timeStep/100.0), currentTime(startTime)
+#ifdef TEST
+, numOperators(1), operations(new Operator*[numOperators])
+#endif
+{
+#ifdef TEST
+    // Operators are order dependent.
+    operations[0] = new PositionVelocityCacheOperator(cloud);
+#endif
+}
 
 //4th order Runge-Kutta algorithm:
 void Runge_Kutta::moveParticles(const double endTime)
@@ -30,6 +40,9 @@ void Runge_Kutta::moveParticles(const double endTime)
 	
 		const __m128d vdt = _mm_set1_pd(dt);	//store timestep as vector const
         
+#ifdef TEST
+        operate1(currentTime);
+#endif
 		force1(currentTime);	//compute net force1
 		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2)	//calculate k1 and l1 for entire cloud
 		{
@@ -49,7 +62,10 @@ void Runge_Kutta::moveParticles(const double endTime)
 			_mm_store_pd(pFx, _mm_setzero_pd());
 			_mm_store_pd(pFy, _mm_setzero_pd());
 		}
-		
+        
+#ifdef TEST
+        operate2(currentTime + dt/2.0);
+#endif		
 		force2(currentTime + dt/2.0);	//compute net force2
 		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2)	//calculate k2 and l2 for entire cloud
 		{
@@ -69,7 +85,10 @@ void Runge_Kutta::moveParticles(const double endTime)
 			_mm_store_pd(pFx, _mm_setzero_pd());
 			_mm_store_pd(pFy, _mm_setzero_pd());
 		}
-		
+
+#ifdef TEST
+        operate3(currentTime + dt/2.0);
+#endif	
 		force3(currentTime + dt/2.0);	//compute net force3
 		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2)	//calculate k3 and l3 for entire cloud
 		{
@@ -89,7 +108,10 @@ void Runge_Kutta::moveParticles(const double endTime)
 			_mm_store_pd(pFx, _mm_setzero_pd());
 			_mm_store_pd(pFy, _mm_setzero_pd());
 		}
-		
+        
+#ifdef TEST
+        operate4(currentTime + dt/2.0);
+#endif	
 		force4(currentTime + dt);	//compute net force4
 		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2)	//calculate k4 and l4 for entire cloud
 		{
@@ -151,6 +173,32 @@ void Runge_Kutta::moveParticles(const double endTime)
 		currentTime += dt;
 	}
 }
+
+#ifdef TEST
+inline void Runge_Kutta::operate1(const double time) const
+{
+ 	for(unsigned int i = 0; i < numOperators; i++)
+		operations[i]->operation1(time);
+}
+
+inline void Runge_Kutta::operate2(const double time) const
+{
+ 	for(unsigned int i = 0; i < numOperators; i++)
+		operations[i]->operation2(time);
+}
+
+inline void Runge_Kutta::operate3(const double time) const
+{
+ 	for(unsigned int i = 0; i < numOperators; i++)
+		operations[i]->operation3(time);
+}
+
+inline void Runge_Kutta::operate4(const double time) const
+{
+ 	for(unsigned int i = 0; i < numOperators; i++)
+		operations[i]->operation4(time);
+}
+#endif
 
 inline void Runge_Kutta::force1(const double time) const
 {
