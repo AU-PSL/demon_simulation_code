@@ -20,7 +20,12 @@ m1(new double[n]), m2(new double[n]), m3(new double[n]), m4(new double[n]),
 n1(new double[n]), n2(new double[n]), n3(new double[n]), n4(new double[n]),
 x(new double[n]), y(new double[n]), Vx(new double[n]), Vy(new double[n]), 
 charge(new double[n]), mass(new double[n]), 
-forceX(new double[n]), forceY(new double[n]) {}
+forceX(new double[n]), forceY(new double[n])
+#ifdef TEST
+, xCache(new __m128d[n/2]), yCache(new __m128d[n/2]), 
+VxCache(new __m128d[n/2]), VyCache(new __m128d[n/2]) 
+#endif
+{}
 
 Cloud::~Cloud() 
 {
@@ -31,6 +36,9 @@ Cloud::~Cloud()
 	delete[] x; delete[] y; delete[] Vx; delete[] Vy;
 	delete[] charge; delete[] mass; 
 	delete[] forceX; delete[] forceY;
+#ifdef TEST
+    delete[] xCache; delete[] yCache; delete[] VxCache; delete[] VyCache;
+#endif
 }
 
 inline void Cloud::setPosition(const unsigned int index, const double xVal, const double yVal)
@@ -214,18 +222,51 @@ const __m128d Cloud::getx1_pd(const unsigned int i) const {
 
 const __m128d Cloud::getx2_pd(const unsigned int i) const {
     // x + l1/2
+#ifndef TEST
     return _mm_load_pd(x + i) + _mm_load_pd(l1 + i)/_mm_set1_pd(2.0);
+#else
+    return xCache[i/2];
+#endif
 }
 
 const __m128d Cloud::getx3_pd(const unsigned int i) const {
     // x + l2/2
+#ifndef TEST
     return _mm_load_pd(x + i) + _mm_load_pd(l2 + i)/_mm_set1_pd(2.0);
+#else
+    return xCache[i/2];
+#endif
 }
 
 const __m128d Cloud::getx4_pd(const unsigned int i) const {
     // x + l3
+#ifndef TEST
     return _mm_load_pd(x + i) + _mm_load_pd(l3 + i);
+#else
+    return xCache[i/2];
+#endif
 }
+
+#ifdef TEST
+const __m128d Cloud::getx1r_pd(const unsigned int i) const {
+    return _mm_loadr_pd(x + i);
+}
+
+const __m128d Cloud::getx2r_pd(const unsigned int i) const {
+    const unsigned int j = i/2;
+    return _mm_shuffle_pd(xCache[j], xCache[j], _MM_SHUFFLE2(0, 1));
+}
+
+const __m128d Cloud::getx3r_pd(const unsigned int i) const {
+    const unsigned int j = i/2;
+    return _mm_shuffle_pd(xCache[j], xCache[j], _MM_SHUFFLE2(0, 1));
+}
+
+const __m128d Cloud::getx4r_pd(const unsigned int i) const {
+    const unsigned int j = i/2;
+    return _mm_shuffle_pd(xCache[j], xCache[j], _MM_SHUFFLE2(0, 1));
+}
+#endif
 
 // Y position helper functions -------------------------------------------------
 const __m128d Cloud::gety1_pd(const unsigned int i) const {
@@ -235,18 +276,51 @@ const __m128d Cloud::gety1_pd(const unsigned int i) const {
 
 const __m128d Cloud::gety2_pd(const unsigned int i) const {
     // y + n1/2
+#ifndef TEST
     return _mm_load_pd(y + i) + _mm_load_pd(n1 + i)/_mm_set1_pd(2.0);
+#else
+    return yCache[i/2];
+#endif
 }
 
 const __m128d Cloud::gety3_pd(const unsigned int i) const {
     // y + n2/2
+#ifndef TEST
     return _mm_load_pd(y + i) + _mm_load_pd(n2 + i)/_mm_set1_pd(2.0);
+#else
+    return yCache[i/2];
+#endif
 }
 
 const __m128d Cloud::gety4_pd(const unsigned int i) const {
     // y + n3
+#ifndef TEST
     return _mm_load_pd(y + i) + _mm_load_pd(n3 + i);
+#else
+    return yCache[i/2];
+#endif
 }
+
+#ifdef TEST
+const __m128d Cloud::gety1r_pd(const unsigned int i) const {
+    return _mm_loadr_pd(y + i);
+}
+
+const __m128d Cloud::gety2r_pd(const unsigned int i) const {
+    const unsigned int j = i/2;
+    return _mm_shuffle_pd(yCache[j], yCache[j], _MM_SHUFFLE2(0, 1));
+}
+
+const __m128d Cloud::gety3r_pd(const unsigned int i) const {
+    const unsigned int j = i/2;
+    return _mm_shuffle_pd(yCache[j], yCache[j], _MM_SHUFFLE2(0, 1));
+}
+
+const __m128d Cloud::gety4r_pd(const unsigned int i) const {
+    const unsigned int j = i/2;
+    return _mm_shuffle_pd(yCache[j], yCache[j], _MM_SHUFFLE2(0, 1));
+}
+#endif
 
 // Vx position helper functions ------------------------------------------------
 const __m128d Cloud::getVx1_pd(const unsigned int i) const {
@@ -256,17 +330,29 @@ const __m128d Cloud::getVx1_pd(const unsigned int i) const {
 
 const __m128d Cloud::getVx2_pd(const unsigned int i) const {
     // Vx + k1/2
+#ifndef TEST
     return _mm_load_pd(Vx + i) + _mm_load_pd(k1 + i)/_mm_set1_pd(2.0);
+#else
+    return VxCache[i/2];
+#endif
 }
 
 const __m128d Cloud::getVx3_pd(const unsigned int i) const {
     // Vx + k2/2
+#ifndef TEST
     return _mm_load_pd(Vx + i) + _mm_load_pd(k2 + i)/_mm_set1_pd(2.0);
+#else
+    return VxCache[i/2];
+#endif
 }
 
 const __m128d Cloud::getVx4_pd(const unsigned int i) const {
     // Vx + k3
+#ifndef TEST
     return _mm_load_pd(Vx + i) + _mm_load_pd(k3 + i);
+#else
+    return VxCache[i/2];
+#endif
 }
 
 // Vy position helper functions ------------------------------------------------
@@ -277,15 +363,27 @@ const __m128d Cloud::getVy1_pd(const unsigned int i) const {
 
 const __m128d Cloud::getVy2_pd(const unsigned int i) const {
     // Vy + m1/2
+#ifndef TEST
     return _mm_load_pd(Vy + i) + _mm_load_pd(m1 + i)/_mm_set1_pd(2.0);
+#else
+    return VyCache[i/2];
+#endif
 }
 
 const __m128d Cloud::getVy3_pd(const unsigned int i) const {
     // Vy + m2/2
+#ifndef TEST
     return _mm_load_pd(Vy + i) + _mm_load_pd(m2 + i)/_mm_set1_pd(2.0);
+#else
+    return VyCache[i/2];
+#endif
 }
 
 const __m128d Cloud::getVy4_pd(const unsigned int i) const {
     // Vy + m3
+#ifndef TEST
     return _mm_load_pd(Vy + i) + _mm_load_pd(m3 + i);
+#else
+    return VyCache[i/2];
+#endif
 }

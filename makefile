@@ -1,8 +1,8 @@
 # For each file add the object file that it needs
 # to be made.
-OBJS = Runge_Kutta.o Cloud.o ShieldedCoulombForce.o DragForce.o ConfinementForce.o RectConfinementForce.o ThermalForce.o DrivingForce.o ThermalForceLocalized.o RotationalForce.o mtrand.o TimeVaryingDragForce.o TimeVaryingThermalForce.o
+OBJS = Runge_Kutta.o Cloud.o ShieldedCoulombForce.o DragForce.o ConfinementForce.o RectConfinementForce.o ThermalForce.o DrivingForce.o ThermalForceLocalized.o RotationalForce.o mtrand.o TimeVaryingDragForce.o TimeVaryingThermalForce.o PositionVelocityCacheOperator.o
 SRCS = $(OBJS,.o=.cpp)
-HDRS = $(OBJS,.o=.h) Force.h
+HDRS = $(OBJS,.o=.h) Force.h Operator.h
 
 # Command name
 CMD = DEMON
