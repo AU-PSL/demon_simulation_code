@@ -219,7 +219,8 @@ const double Runge_Kutta::modifyTimeStep() const
 {
 	//set constants:	
 	const unsigned int numPar = cloud->n;
-	const __m128d dist = _mm_set1_pd(1.45E-4);
+    const double dist = 1.45e-4;
+	const __m128d distv = _mm_set1_pd(dist);
 
 	//loop through entire cloud, or until reduction occures
 	for(unsigned int j = 0, e = numPar - 1; j < e; j += 2)
@@ -229,7 +230,7 @@ const double Runge_Kutta::modifyTimeStep() const
 		const double sepy = cloud->y[j] - cloud->y[j + 1];
 
 		//if particles too close, reduce time step:
-		if(sqrt(sepx*sepx + sepy*sepy) <= 1.45E-4)
+		if(sqrt(sepx*sepx + sepy*sepy) <= dist)
 			return red_dt;
 
 		//load positions into vectors:
@@ -248,7 +249,7 @@ const double Runge_Kutta::modifyTimeStep() const
 			__m128d vy2 = vy1 - _mm_load_pd(py2);
            
 			//check separation distances against dist:
-			__m128d comp = _mm_cmple_pd(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), dist);
+			__m128d comp = _mm_cmple_pd(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), distv);
             
 			double low, high;
 			_mm_storel_pd(&low, comp);
@@ -261,7 +262,7 @@ const double Runge_Kutta::modifyTimeStep() const
 			vy2 = vy1 - _mm_loadr_pd(py2);
            
 			//check separation distances against dist: 
-			comp = _mm_cmple_pd(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), dist);
+			comp = _mm_cmple_pd(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), distv);
             
 			_mm_storel_pd(&low, comp);
 			_mm_storeh_pd(&high, comp);
