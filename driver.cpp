@@ -550,7 +550,7 @@ int main (int argc, char * const argv[])
 		cloud->y[0] = 0.0;
 		cloud->Vx[0] = machSpeed;
 		cloud->Vy[0] = 0.0;
-		cloud->mass[0] = massFactor*cloud->mass[0];
+		cloud->mass[0] *= massFactor;
 	}
 	
 	Runge_Kutta rk4(cloud, forceArray, simTimeStep, numForces, startTime);
