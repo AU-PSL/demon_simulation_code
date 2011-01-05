@@ -286,7 +286,6 @@ int main (int argc, char * const argv[])
 	int outputFileIndex = 0;            //Index of argv array that holds the file name of the fitsfile to output.
 	long usedForces = 0;                //bitpacked forces
 	unsigned int numParticles = 10;
-	unsigned int numForces = 3;
 
 	//process command line flags:
 	for(int i = 1; i < argc; i++) // argv[0] is the name of the exicutable.
@@ -486,7 +485,7 @@ int main (int argc, char * const argv[])
  -----------------------------------------------------------------------------*/
 	cout << "Status: Initializing forces." << endl;
     
-	numForces = getNumForces(usedForces);
+	const unsigned int numForces = getNumForces(usedForces);
 	forceArray = new Force*[numForces];
 	unsigned int index = 0;
 	if (usedForces & ConfinementForceFlag)
