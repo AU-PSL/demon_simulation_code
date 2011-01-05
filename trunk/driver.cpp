@@ -211,9 +211,9 @@ void checkFitsError(const int error, const int lineNumber)
 	char message[80];
 	fits_read_errmsg(message);
 	cout << "Error: Fits file error " << error 
-        << " at line number " << lineNumber 
-        << " (driver_2D.cpp)" << endl 
-        << message << endl;
+	<< " at line number " << lineNumber 
+	<< " (driver_2D.cpp)" << endl 
+	<< message << endl;
 	exit(1);
 }
 
