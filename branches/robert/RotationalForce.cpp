@@ -51,18 +51,17 @@ inline void RotationalForce::force(const unsigned int currentParticle, const __m
 	
 	const bool nanL = isnan(compL);
 	const bool nanH = isnan(compH);
-	if (!nanL && !nanH) //niether in, early return
+	if (!nanL && !nanH) //neither in, early return
 		return;
 	
 	__m128d cRotConst = _mm_set_pd(nanH ? rotationalConst : 0.0, // _mm_set_pd() is backwards.
 								   nanL ? rotationalConst : 0.0);
-	
-	//force in theta direction:
+
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;
 	
-	// Fx = -c*x/r;
-	// Fy = c*y/r;
+	//force in theta direction:
+	// Fx = -c*x/r, Fy = c*y/r
 	_mm_store_pd(pFx, _mm_load_pd(pFx) - cRotConst*currentPositionY/dustRadV);
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + cRotConst*currentPositionX/dustRadV);
 }

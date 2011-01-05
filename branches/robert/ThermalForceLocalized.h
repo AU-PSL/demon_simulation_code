@@ -32,14 +32,13 @@ public:
 
 private:
 //private variables:
-    MTRand mt;
+	MTRand mt;
 	double heatingRadius;
-    double heatVal1;
+	double heatVal1;
 	double heatVal2;
 
 //private functions:
-	void force(const unsigned int currentParticle, const double displacementX, const double displacementY);
-	void force(const unsigned int currentParticle, const __m128d displacementX, const __m128d displacementY);
+	void force(const unsigned int currentParticle, const __m128d displacementX, const __m128d displacementY, const __m128d displacementZ);
 };
 
 #endif /* THERMALFORCELOCALIZED_H */

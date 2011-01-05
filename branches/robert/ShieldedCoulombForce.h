@@ -26,17 +26,17 @@ public:
 	void force3(const double currentTime); //rk substep 3
 	void force4(const double currentTime); //rk substep 4
 
-    void writeForce(fitsfile * const file, int * const error) const;
-    void readForce(fitsfile * const file, int * const error);
+	void writeForce(fitsfile * const file, int * const error) const;
+	void readForce(fitsfile * const file, int * const error);
 
 private:
 //public variables:
-    double shielding;
+	double shielding;
 
 //private functions:
-	void force(const unsigned int currentParticle, const unsigned int iParticle, const double displacementX, const double displacementY);
-    void force(const unsigned int currentParticle, const unsigned int iParticle, const __m128d displacementX, const __m128d displacementY);
-    void forcer(const unsigned int currentParticle, const unsigned int iParticle, const __m128d displacementX, const __m128d displacementY);
+	void force(const unsigned int currentParticle, const unsigned int iParticle, const double displacementX, const double displacementY, const double displacementZ);
+	void force(const unsigned int currentParticle, const unsigned int iParticle, const __m128d displacementX, const __m128d displacementY, const __m128d displacementZ);
+	void forcer(const unsigned int currentParticle, const unsigned int iParticle, const __m128d displacementX, const __m128d displacementY, const __m128d displacementZ);
 };
 
 #endif /* SHIELDEDCOULOMBFORCE_H */
