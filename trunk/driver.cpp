@@ -98,15 +98,31 @@ inline const bool isCharacter(const char c)
 	return (c > 'a' && c < 'z') || (c > 'A' && c < 'Z');
 }
 
-// check for one command line flag, exit if absent:
-void checkOption(const int argc, char * const argv[], int i, const char option)
+// check file name options
+int checkFileOption(const int argc, char * const argv[], int i, const char option,
+				const string name, int * const file)
+{
+	if(i + 1 >= argc || argv[i + 1][0] == '-') {
+		cout << "Warning: -" << option << " option incomplete." << endl 
+		<< name << " missing." << endl;
+		help();
+		exit(i);
+	}
+	else
+		*file = ++i;
+	return i;
+}
+
+// check for one command line flag, use default value if absent:
+int checkOption(const int argc, char * const argv[], int i, const char option, 
+                const string name, unsigned int * const value)
 {
 	if(i + 1 >= argc || argv[i + 1][0] == '-')
-	{
-		cout << "Error: -" << option << " option incomplete." << endl;
-		help();
-		exit(1);
-	}
+		cout << "Warning: -" << option << " option incomplete." << endl 
+		<< "Using default " << name << " (" << *value << ")." << endl;
+	else
+		*value = atoi(argv[++i]);
+	return i;
 }
 
 // check for one command line flag, use default value if absent:
@@ -258,9 +274,9 @@ int main (int argc, char * const argv[])
 	//declare variables and set default values:
 	bool Mach = false;                  //true -> perform Mach Cone experiment
 	double startTime = 0.0;
-	double simTimeStep = 0.0001;
 	double dataTimeStep = 0.01;
-	double endTime = 5;
+	double simTimeStep = dataTimeStep/100.0;
+	double endTime = 5.0;
 	double cloudSize = 0.01;            //one-half side length (aka "radius")
 	double confinementConst = 1E-13;    //confinementForce
 	double confinementConstX = 1E-13;   //RectConfinementForce
@@ -293,12 +309,10 @@ int main (int argc, char * const argv[])
 		switch(argv[i][1])
 		{
 			case 'c': // "c"ontinue from file:
-				checkOption(argc, argv, i, 'c');
-				continueFileIndex = ++i;
+				i = checkFileOption(argc, argv, i, 'c', "Contine file", &continueFileIndex);
 				break;
 			case 'C': // set "C"onfinementConst:
-				checkOption(argc, argv, i, 'C');
-				confinementConst = atof(argv[++i]);	//store confinementConst
+				i = checkOption(argc, argv, i, 'C', "confinementConst", &confinementConst);
 				break;
 			case 'D': // use TimeVarying"D"ragForce:
 				checkForce('D', usedForces, TimeVaryingDragForceFlag);
@@ -307,17 +321,13 @@ int main (int argc, char * const argv[])
 				i = checkOptionWithNeg(argc, argv, i, 'D', "scale factor", &dragScale, "offset", &gamma);
 				break;
 			case 'e': // set "e"nd time:
-				checkOption(argc, argv, i, 'e');
-				// WARNING: Assumes integer input!
-				endTime = atoi(argv[++i]);	//store end time
+				checkOption(argc, argv, i, 'e', "end time", &endTime);
 				break;		
 			case 'f': // use "f"inal positions and velocities from previous run:
-				checkOption(argc, argv, i, 'f');
-				finalsFileIndex = ++i;
+				i = checkFileOption(argc, argv, i, 'f', "Finals file", &finalsFileIndex);
 				break;
 			case 'g': // set "g"amma:
-				checkOption(argc, argv, i, 'g');
-				gamma = atof(argv[++i]); // store gamma
+				i = checkOption(argc, argv, i, 'g', "gamma", &gamma);
 				break;
 			case 'h': // display "h"elp:
 				help();
@@ -333,9 +343,7 @@ int main (int argc, char * const argv[])
 				i = checkOption(argc, argv, i, 'M', "velocity", &machSpeed, "mass", &massFactor);
 				break;
 			case 'n': // set "n"umber of particles:
-				checkOption(argc, argv, i, 'n');
-				// WARNING: Assumes integer input!
-				numParticles = atoi(argv[++i]);	// store number of particles
+				i = checkOption(argc, argv, i, 'n', "number of particles", &numParticles);
 				if((numParticles % 2) != 0)	// odd
 				{
 					cout << "Even number of particles required for SIMD." << endl 
@@ -343,16 +351,13 @@ int main (int argc, char * const argv[])
 				}
 				break;
 			case 'o': // set dataTimeStep, which conrols "o"utput rate:
-				checkOption(argc, argv, i, 'o');
-				dataTimeStep = atof(argv[++i]);	//store timestep
+				checkOption(argc, argv, i, 'o', "data time step", &dataTimeStep);
 				break;
 			case 'O': // name "O"utput file:
-				checkOption(argc, argv, i, 'O');
-				outputFileIndex = ++i;
+				i = checkFileOption(argc, argv, i, 'O', "Output file", &outputFileIndex);
 				break;
 			case 'r': // set cloud "r"adius:
-				checkOption(argc, argv, i, 'r');
-				cloudSize = atof(argv[++i]); // store cloud size
+				i = checkOption(argc, argv, i, 'r', "cloud size", &cloudSize);
 				break;		
 			case 'R': // use "R"ectangular confinement:
 				checkForce('R', usedForces, RectConfinementForceFlag);
@@ -360,8 +365,7 @@ int main (int argc, char * const argv[])
 				i = checkOption(argc, argv, i, 'R', "confine constantX", &confinementConstX, "confine constantY", &confinementConstY);
 				break;
 			case 's': // set "s"hielding constant:
-				checkOption(argc, argv, i, 's');
-				shieldingConstant = atof(argv[++i]); // store shielding constant
+				checkOption(argc, argv, i, 's', "shielding constant", &shieldingConstant);
 				break;
 			case 'S': // create rotational "S"hear layer:
 				checkForce('S', usedForces, RotationalForceFlag);
@@ -578,11 +582,12 @@ int main (int argc, char * const argv[])
 	hours -= days*24;
 	minutes -= hours*60 + days*1440;
 	seconds -= minutes*60 + hours*3600 + days*86400;
+	
 	cout << clear_line << "\rTime elapsed: " 
-        << days << (days == 1 ? " day, " : " days, ") 
-        << hours << (hours == 1 ? " hour " : " hours, ") 
-        << minutes << (minutes == 1 ? " minute " : " minutes, ") 
-        << seconds << (seconds == 1 ? " second " : " seconds.") << endl;
+	<< days << (days == 1 ? " day, " : " days, ") 
+	<< hours << (hours == 1 ? " hour " : " hours, ") 
+	<< minutes << (minutes == 1 ? " minute " : " minutes, ") 
+	<< seconds << (seconds == 1 ? " second " : " seconds.") << endl;
 	
 	// clean up objects:
 	for (unsigned int i = 0; i < numForces; i++)
