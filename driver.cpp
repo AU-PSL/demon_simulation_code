@@ -289,11 +289,11 @@ int main (int argc, char * const argv[])
 	double thermOffset = 0.0;           //default for TimeVaryingThermalForce
 	double heatRadius = .001;           //apply thermal force only within this radius
 	double driveConst = .00001;         //used in DrivingForce.cpp for waves
-	double waveAmplitude = 1E-13;		//driving wave amplitude (default comparable to other forces throughout cloud)
+	double waveAmplitude = 1E-13;       //driving wave amplitude (default comparable to other forces throughout cloud)
 	double waveShift = 0.007;           //driving wave shift
 	double machSpeed = 0.2;             //firing speed for Mach Cone experiment
 	double massFactor = 100;            //mass multiplier for fired Mach Cone particle
-	double rmin = cloudSize/2.0;		//inner radius of shear layer
+	double rmin = cloudSize/2.0;        //inner radius of shear layer
 	double rmax = rmin + cloudSize/5.0; //outer ratius of shear layer
 	double rotConst = 1E-15;            //rotational force in shear layer
 	double dragScale = -1.0;            //used in TimeVaryingDragForce
