@@ -16,7 +16,7 @@
 class RectConfinementForce : public Force
 {	
 public:
-	RectConfinementForce(Cloud * const myCloud, double confineConstX, double confineConstY); //confinement consts must be positive!
+	RectConfinementForce(Cloud * const myCloud, double confineConstX, double confineConstY, double confineConstZ); //confinement consts must be positive!
 	~RectConfinementForce() {} //destructor
 
 //public functions:
@@ -33,9 +33,10 @@ private:
 //private variables:
 	double confineX;
 	double confineY;
+	double confineZ;
 
 //private functions:
-	void force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY);
+	void force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY, const __m128d currentPositionZ);
 };
 
 #endif /* RECTCONFINEMENTFORCE_H */

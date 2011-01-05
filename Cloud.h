@@ -23,27 +23,31 @@ public:
 	unsigned int n;			//number of elements (particles)
 	double cloudSize;
 	double *k1, *k2, *k3, *k4;	//velocityX (Runge-Kutta) tidbits
-	double *l1, *l2, *l3, *l4;	//positionsX (Runge-Kutta) tidbits
+	double *l1, *l2, *l3, *l4;	//positionX (Runge-Kutta) tidbits
 	double *m1, *m2, *m3, *m4;	//velocityY (Runge-Kutta) tidbits
-	double *n1, *n2, *n3, *n4;	//positionsY (Runge-Kutta) tidbits
-	double *x, *y, *Vx, *Vy;	//current positions and velocities=
+	double *n1, *n2, *n3, *n4;	//positionY (Runge-Kutta) tidbits
+	double *o1, *o2, *o3, *o4;	//velocityZ (Runge-Kutta) tidbits
+	double *p1, *p2, *p3, *p4;	//positionZ (Rupge-Kutta) tidbits
+	double *x, *y, *z;		//current positions
+	double *Vx, *Vy, *Vz;		//current velocities
 	double *charge, *mass;
-	double *forceX, *forceY;
+	double *forceX, *forceY, *forceZ;
+	bool make3D;
 
 //public functions:
-	//Input: int index, initialPosX, intialPosY
+	//Input: int index, initialPosX, intialPosY, initialPosZ
 	//Preconditions: 0 <= index < number of particles
-	//Postconditions: x,y positions of particle #index set to initialPosX,initialPosY
-	void setPosition(const unsigned int index, const double initialPosX, const double initialPosY);
+	//Postconditions: x,y,z positions of particle #index set to initialPosX,initialPosY,initialPosZ
+	void setPosition(const unsigned int index, const double initialPosX, const double initialPosY, const double initialPosZ);
 
 	//Input: int index
 	//Preconditions: 0 <= index < number of particles
-	//Postconditions: velocity vector of particle #index randomly set
+	//Postconditions: velocity vector of particle #index initialized to zero vector
 	void setVelocity(const unsigned int index);
 
 	//Input: int index
 	//Preconditions: 0 <= index < number of particles
-	//Postconditions: charge of particle #index randomly set, range 5900 to 6100 *1.6E-19
+	//Postconditions: charge of particle #index randomly set, range 5900 to 6100 electrons
 	void setCharge(const unsigned int index);
 
 	//Input: int index
@@ -60,7 +64,8 @@ public:
 	//Preconditions: fitsfile exists, error = 0, currentTime > 0, writeCloudSetup has previously been called
 	//Postconditions: positions and velocities for current time step output to file
 	void writeTimeStep(fitsfile * const file, int * const error, double currentTime) const;
-    
+   
+	//RK4 substep helper functions: 
 	const __m128d getx1_pd(const unsigned int i) const;
 	const __m128d getx2_pd(const unsigned int i) const;
 	const __m128d getx3_pd(const unsigned int i) const;
@@ -70,7 +75,12 @@ public:
 	const __m128d gety2_pd(const unsigned int i) const;
 	const __m128d gety3_pd(const unsigned int i) const;
 	const __m128d gety4_pd(const unsigned int i) const;
-	
+
+	const __m128d getz1_pd(const unsigned int i) const;
+	const __m128d getz2_pd(const unsigned int i) const;
+	const __m128d getz3_pd(const unsigned int i) const;
+	const __m128d getz4_pd(const unsigned int i) const;
+
 	const __m128d getVx1_pd(const unsigned int i) const;
 	const __m128d getVx2_pd(const unsigned int i) const;
 	const __m128d getVx3_pd(const unsigned int i) const;
@@ -81,11 +91,16 @@ public:
 	const __m128d getVy3_pd(const unsigned int i) const;
 	const __m128d getVy4_pd(const unsigned int i) const;
 
+	const __m128d getVz1_pd(const unsigned int i) const;
+	const __m128d getVz2_pd(const unsigned int i) const;
+	const __m128d getVz3_pd(const unsigned int i) const;
+	const __m128d getVz4_pd(const unsigned int i) const;
+
 //static functions:
-	//Input: int numParticles, double cloudSize
-	//Preconditions: both inputs positive
-	//Postconditions: cloud initialized on spatial grid with side length = 2*cloudSize
-	static Cloud * const initializeGrid(const unsigned int numParticles, const double cloudSize);
+	//Input: int numParticles, double cloudSize, bool make3D
+	//Preconditions: numerical inputs positive
+	//Postconditions: cloud initialized on square/cube spatial grid with side length = 2*cloudSize
+	static Cloud * const initializeGrid(const unsigned int numParticles, const double cloudSize, bool make3D);
 
 	//Input: fitsFile *file, int *error
 	//Preconditions: fitsfile exists, error = 0

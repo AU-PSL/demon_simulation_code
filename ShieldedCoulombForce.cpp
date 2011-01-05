@@ -19,21 +19,25 @@ void ShieldedCoulombForce::force1(const double currentTime)
 	{
 		const __m128d vx1 = cloud->getx1_pd(currentParticle);
 		const __m128d vy1 = cloud->gety1_pd(currentParticle);
-		double x1, x2, y1, y2;
+		const __m128d vz1 = cloud->getz1_pd(currentParticle);
+		double x1, x2, y1, y2, z1, z2;
 		_mm_storel_pd(&x1, vx1);
 		_mm_storeh_pd(&x2, vx1);
 		_mm_storel_pd(&y1, vy1);
 		_mm_storeh_pd(&y2, vy1);
+		_mm_storel_pd(&z1, vz1);
+		_mm_storeh_pd(&z2, vz1);
 
-		force(currentParticle, currentParticle + 1, x1 - x2, y1 - y2);
+		force(currentParticle, currentParticle + 1, x1 - x2, y1 - y2, z1 - z2);
 
 		for(unsigned int i = currentParticle + 2; i < numParticles; i += 2)
 		{
 			const double * const px2 = cloud->x + i;	//increment memory location
 			const double * const py2 = cloud->y + i;
+			const double * const pz2 = cloud->z + i;
 
-			force(currentParticle, i, vx1 - _mm_load_pd(px2), vy1 - _mm_load_pd(py2));
-			forcer(currentParticle, i, vx1 - _mm_loadr_pd(px2), vy1 - _mm_loadr_pd(py2));
+			force(currentParticle, i, vx1 - _mm_load_pd(px2), vy1 - _mm_load_pd(py2), vz1 - _mm_load_pd(pz2));
+			forcer(currentParticle, i, vx1 - _mm_loadr_pd(px2), vy1 - _mm_loadr_pd(py2), vz1 - _mm_loadr_pd(pz2));
 		}
 	}
 }
@@ -45,25 +49,32 @@ void ShieldedCoulombForce::force2(const double currentTime)
 	{
 		const __m128d vx1 = cloud->getx2_pd(currentParticle);
 		const __m128d vy1 = cloud->gety2_pd(currentParticle);
-		double x1, x2, y1, y2;
+		const __m128d vz1 = cloud->getz2_pd(currentParticle);
+		double x1, x2, y1, y2, z1, z2;
 		_mm_storel_pd(&x1, vx1);
 		_mm_storeh_pd(&x2, vx1);
 		_mm_storel_pd(&y1, vy1);
 		_mm_storeh_pd(&y2, vy1);
+		_mm_storel_pd(&z1, vz1);
+		_mm_storeh_pd(&z2, vz1);
 
-		force(currentParticle, currentParticle + 1, x1 - x2, y1 - y2);
+		force(currentParticle, currentParticle + 1, x1 - x2, y1 - y2, z1 - z2);
 		for(unsigned int i = currentParticle + 2; i < numParticles; i += 2)
 		{
 			const double * const px2 = cloud->x + i;	//increment memory location
 			const double * const py2 = cloud->y + i;
+			const double * const pz2 = cloud->z + i;
 			const double * const pl = cloud->l1 + i;
 			const double * const pn = cloud->n1 + i;
+			const double * const pp = cloud->p1 + i;
             
 			force(currentParticle, i, vx1 - (_mm_load_pd(px2) + _mm_load_pd(pl)/v2), 
-				vy1 - (_mm_load_pd(py2) + _mm_load_pd(pn)/v2));
+				vy1 - (_mm_load_pd(py2) + _mm_load_pd(pn)/v2),
+				vz1 - (_mm_load_pd(pz2) + _mm_load_pd(pp)/v2));
             
 			forcer(currentParticle, i, vx1 - (_mm_loadr_pd(px2) + _mm_loadr_pd(pl)/v2), 
-				vy1 - (_mm_loadr_pd(py2) + _mm_loadr_pd(pn)/v2));
+				vy1 - (_mm_loadr_pd(py2) + _mm_loadr_pd(pn)/v2),
+				vz1 - (_mm_loadr_pd(pz2) + _mm_loadr_pd(pp)/v2));
 		}
 	}
 }
@@ -75,25 +86,32 @@ void ShieldedCoulombForce::force3(const double currentTime)
 	{
 		const __m128d vx1 = cloud->getx3_pd(currentParticle);
 		const __m128d vy1 = cloud->gety3_pd(currentParticle);
-		double x1, x2, y1, y2;
+		const __m128d vz1 = cloud->getz3_pd(currentParticle);
+		double x1, x2, y1, y2, z1, z2;
 		_mm_storel_pd(&x1, vx1);
 		_mm_storeh_pd(&x2, vx1);
 		_mm_storel_pd(&y1, vy1);
 		_mm_storeh_pd(&y2, vy1);
+		_mm_storel_pd(&z1, vz1);
+		_mm_storeh_pd(&z2, vz1);
 
-		force(currentParticle, currentParticle + 1, x1 - x2, y1 - y2);
+		force(currentParticle, currentParticle + 1, x1 - x2, y1 - y2, z1 - z2);
 		for(unsigned int i = currentParticle + 2; i < numParticles; i += 2)
 		{
 			const double * const px2 = cloud->x + i;	//increment memory location
 			const double * const py2 = cloud->y + i;
+			const double * const pz2 = cloud->z + i;
 			const double * const pl = cloud->l2 + i;
 			const double * const pn = cloud->n2 + i;
+			const double * const pp = cloud->p2 + i;
 
 			force(currentParticle, i, vx1 - (_mm_load_pd(px2) + _mm_load_pd(pl)/v2), 
-				vy1 - (_mm_load_pd(py2) + _mm_load_pd(pn)/v2));
+				vy1 - (_mm_load_pd(py2) + _mm_load_pd(pn)/v2),
+				vz1 - (_mm_load_pd(pz2) + _mm_load_pd(pp)/v2));
             
 			forcer(currentParticle, i, vx1 - (_mm_loadr_pd(px2) + _mm_loadr_pd(pl)/v2), 
- 				vy1 - (_mm_loadr_pd(py2) + _mm_loadr_pd(pn)/v2));
+ 				vy1 - (_mm_loadr_pd(py2) + _mm_loadr_pd(pn)/v2),
+ 				vz1 - (_mm_loadr_pd(pz2) + _mm_loadr_pd(pp)/v2));
 		}
 	}
 }
@@ -104,33 +122,40 @@ void ShieldedCoulombForce::force4(const double currentTime)
 	{
 		const __m128d vx1 = cloud->getx4_pd(currentParticle);
 		const __m128d vy1 = cloud->gety4_pd(currentParticle);
-		double x1, x2, y1, y2;
+		const __m128d vz1 = cloud->getz4_pd(currentParticle);
+		double x1, x2, y1, y2, z1, z2;
 		_mm_storel_pd(&x1, vx1);
 		_mm_storeh_pd(&x2, vx1);
 		_mm_storel_pd(&y1, vy1);
 		_mm_storeh_pd(&y2, vy1);
+		_mm_storel_pd(&z1, vz1);
+		_mm_storeh_pd(&z2, vz1);
 
-		force(currentParticle, currentParticle + 1, x1 - x2, y1 - y2);
+		force(currentParticle, currentParticle + 1, x1 - x2, y1 - y2, z1 - z2);
 		for(unsigned int i = currentParticle + 2; i < numParticles; i += 2)
 		{
 			const double * const px2 = cloud->x + i;	//increment memory location
 			const double * const py2 = cloud->y + i;
+			const double * const pz2 = cloud->z + i;
 			const double * const pl = cloud->l3 + i;
 			const double * const pn = cloud->n3 + i;
+			const double * const pp = cloud->p3 + i;
             
 			force(currentParticle, i, vx1 - (_mm_load_pd(px2) + _mm_load_pd(pl)), 
-				vy1 - (_mm_load_pd(py2) + _mm_load_pd(pn)));
+				vy1 - (_mm_load_pd(py2) + _mm_load_pd(pn)),
+				vz1 - (_mm_load_pd(pz2) + _mm_load_pd(pp)));
 
 			forcer(currentParticle, i, vx1 - (_mm_loadr_pd(px2) + _mm_loadr_pd(pl)), 
- 				vy1 - (_mm_loadr_pd(py2) + _mm_loadr_pd(pn)));
+ 				vy1 - (_mm_loadr_pd(py2) + _mm_loadr_pd(pn)),
+ 				vz1 - (_mm_loadr_pd(pz2) + _mm_loadr_pd(pp)));
 		}
 	}
 }
 
-inline void ShieldedCoulombForce::force(const unsigned int currentParticle, const unsigned int iParticle, const double displacementX, const double displacementY)
+inline void ShieldedCoulombForce::force(const unsigned int currentParticle, const unsigned int iParticle, const double displacementX, const double displacementY, const double displacementZ)
 {
 	// Calculate displacement between particles.
-	const double displacement = sqrt(displacementX*displacementX + displacementY*displacementY);
+	const double displacement = sqrt(displacementX*displacementX + displacementY*displacementY + displacementZ*displacementZ);
 	const double valExp = displacement*shielding;
 
 	if(valExp < 10.0) 	//restrict to 10*(ion debye length)
@@ -141,17 +166,19 @@ inline void ShieldedCoulombForce::force(const unsigned int currentParticle, cons
 		const double exponential = (cloud->charge[currentParticle]*cloud->charge[iParticle])/(4.0*M_PI*8.85E-12)*(1.0 + valExp)/(displacement3*exp(valExp));
 		cloud->forceX[currentParticle] += exponential*displacementX;
 		cloud->forceY[currentParticle] += exponential*displacementY;
+		cloud->forceZ[currentParticle] += exponential*displacementZ;
 
 		//equal and opposite force:
 		cloud->forceX[iParticle] -= exponential*displacementX;
 		cloud->forceY[iParticle] -= exponential*displacementY;
+		cloud->forceZ[iParticle] -= exponential*displacementZ;
 	}
 }
 
-inline void ShieldedCoulombForce::force(const unsigned int currentParticle, const unsigned int iParticle, const __m128d displacementX, const __m128d displacementY)
+inline void ShieldedCoulombForce::force(const unsigned int currentParticle, const unsigned int iParticle, const __m128d displacementX, const __m128d displacementY, const __m128d displacementZ)
 {
 	// Calculate displacement between particles.
-	const __m128d displacement = _mm_sqrt_pd(displacementX*displacementX + displacementY*displacementY);
+	const __m128d displacement = _mm_sqrt_pd(displacementX*displacementX + displacementY*displacementY + displacementZ*displacementZ);
 	const __m128d valExp = displacement*_mm_set_pd(shielding, shielding);
 	
 	double valExpL, valExpH;
@@ -169,7 +196,6 @@ inline void ShieldedCoulombForce::force(const unsigned int currentParticle, cons
 	
 	__m128d expv = _mm_set_pd(boolH ? exp(-expH) : 0.0, //_mm_set_pd is backwards
 							  boolL ? exp(-expL) : 0.0);
-
 	//conclude force calculation:
 	const __m128d displacement3 = displacement*displacement*displacement;
 	//set to charges multiplied by Coulomb's constant:
@@ -179,23 +205,28 @@ inline void ShieldedCoulombForce::force(const unsigned int currentParticle, cons
 	
 	const __m128d forcevX = exponential*displacementX;
 	const __m128d forcevY = exponential*displacementY;
+	const __m128d forcevZ = exponential*displacementZ;
 
 	double *pFx = cloud->forceX + currentParticle;
 	double *pFy = cloud->forceY + currentParticle;
+	double *pFz = cloud->forceZ + currentParticle;
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + forcevX);
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + forcevY);
+	_mm_store_pd(pFz, _mm_load_pd(pFz) + forcevZ);
 
 	//equal and opposite force:
 	pFx = cloud->forceX + iParticle;
 	pFy = cloud->forceY + iParticle;
+	pFz = cloud->forceZ + iParticle;
 	_mm_store_pd(pFx, _mm_load_pd(pFx) - forcevX);
 	_mm_store_pd(pFy, _mm_load_pd(pFy) - forcevY);
+	_mm_store_pd(pFz, _mm_load_pd(pFz) - forcevZ);
 }
 
-inline void ShieldedCoulombForce::forcer(const unsigned int currentParticle, const unsigned int iParticle, const __m128d displacementX, const __m128d displacementY)
+inline void ShieldedCoulombForce::forcer(const unsigned int currentParticle, const unsigned int iParticle, const __m128d displacementX, const __m128d displacementY, const __m128d displacementZ)
 {
 	// Calculate displacement between particles.
-	const __m128d displacement = _mm_sqrt_pd(displacementX*displacementX + displacementY*displacementY);
+	const __m128d displacement = _mm_sqrt_pd(displacementX*displacementX + displacementY*displacementY + displacementZ*displacementZ);
 	const __m128d valExp = displacement*_mm_set_pd(shielding, shielding);
 	
 	double valExpL, valExpH;
@@ -223,17 +254,22 @@ inline void ShieldedCoulombForce::forcer(const unsigned int currentParticle, con
 
 	const __m128d forcevX = exponential*displacementX;
 	const __m128d forcevY = exponential*displacementY;
+	const __m128d forcevZ = exponential*displacementZ;
 
 	double *pFx = cloud->forceX + currentParticle;
 	double *pFy = cloud->forceY + currentParticle;
+	double *pFz = cloud->forceZ + currentParticle;
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + forcevX);
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + forcevY);
+	_mm_store_pd(pFz, _mm_load_pd(pFy) + forcevZ);
 
 	//equal and opposite force:
 	pFx = cloud->forceX + iParticle;
 	pFy = cloud->forceY + iParticle; 
+	pFz = cloud->forceZ + iParticle; 
 	_mm_storer_pd(pFx, _mm_loadr_pd(pFx) - forcevX);
 	_mm_storer_pd(pFy, _mm_loadr_pd(pFy) - forcevY);
+	_mm_storer_pd(pFz, _mm_loadr_pd(pFz) - forcevZ);
 }
 
 void ShieldedCoulombForce::writeForce(fitsfile * const file, int * const error) const

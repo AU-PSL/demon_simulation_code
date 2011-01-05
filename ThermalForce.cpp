@@ -43,14 +43,18 @@ inline void ThermalForce::force(const unsigned int currentParticle)
 {	
 	// MT random number in (0,1)
 	const __m128d thermV = _mm_set1_pd(heatVal)*_mm_set_pd(mt(), mt());
-	const double thetaL = mt()*2.0*M_PI;
-	const double thetaH = mt()*2.0*M_PI;
+	const double phiL = mt()*2.0*M_PI;	//azimuthal angle phi
+	const double phiH = mt()*2.0*M_PI;
+	const double thetaL = mt()*M_PI;	//polar angle theta
+	const double thetaH = mt()*M_PI;
 	
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;
+	double * const pFz = cloud->forceZ + currentParticle;
 	
-	_mm_store_pd(pFx, _mm_load_pd(pFx) + thermV*_mm_set_pd(sin(thetaH), sin(thetaL))); // _mm_set_pd() is backwards
-	_mm_store_pd(pFy, _mm_load_pd(pFy) + thermV*_mm_set_pd(cos(thetaH), cos(thetaL)));
+	_mm_store_pd(pFx, _mm_load_pd(pFx) + thermV*_mm_set_pd(sin(thetaH), sin(thetaL))*_mm_set_pd(cos(phiH), cos(phiL))); // _mm_set_pd() is backwards
+	_mm_store_pd(pFy, _mm_load_pd(pFy) + thermV*_mm_set_pd(sin(thetaH), cos(thetaL))*_mm_set_pd(sin(phiH), sin(phiL)));
+	_mm_store_pd(pFz, _mm_load_pd(pFz) + thermV*_mm_set_pd(cos(thetaH), cos(thetaL)));	
 }
 
 void ThermalForce::writeForce(fitsfile * const file, int * const error) const

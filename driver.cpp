@@ -7,6 +7,11 @@
 *
 *===-----------------------------------------------------------------------===*/
 
+//TODO: This version can run 2D and 3D clouds, but running 2D clouds is slower
+// than running 2D clouds in old (purely 2D) version due to extra overhead
+// that allowed for 3D. Need to fix it so that running 2D with 3D version is
+// just as fast as running 2D with purely 2D version.
+
 #include "ConfinementForce.h"
 #include "DragForce.h"
 #include "DrivingForce.h"
@@ -34,7 +39,8 @@ void help()
           << "Options:" << endl << endl
           << " -c noDefault.fits      continue run from file" << endl
           << " -C 1E-13               set confinementConst" << endl
-          << " -D -1.0 10.0           use TimeVaryingDragForce; set scale, offset" << endl
+          << " -d -1.0 10.0           use TimeVaryingDragForce; set scale, offset" << endl
+          << " -D                     create 3D cloud" << endl
           << " -e 5.0                 set simulation end time" << endl
           << " -f noDefaut.fits       use final positions and velocities from file" << endl
           << " -g 10.0                set gamma (magnitute of drag constant)" << endl
@@ -254,6 +260,7 @@ int main (int argc, char * const argv[])
 	Force **forceArray;			//new pointer to Force object (will set to array)
 	
 	//declare variables and set default values:
+	bool is3D = false;			//true -> make 3D cloud
 	bool Mach = false;			//true -> perform Mach Cone experiment
 	double startTime = 0.0;
 	double simTimeStep = 0.0001;
@@ -263,6 +270,7 @@ int main (int argc, char * const argv[])
 	double confinementConst = 1E-13;	//confinementForce
 	double confinementConstX = 1E-13;	//RectConfinementForce
 	double confinementConstY = 1E-12;	//RectConfinementForce
+	double confinementConstZ = 1E-12;	//RectConfinementForce
 	double shieldingConstant = 2E4;		//corresponds to 10*(ion debye length)
 	double gamma = 10.0;
 	double thermRed = 1E-14;		//default thermal reduction factor
@@ -299,11 +307,15 @@ int main (int argc, char * const argv[])
 				checkOption(argc, argv, i, 'C');
 				confinementConst = atof(argv[++i]);	//store confinementConst
 				break;
-			case 'D':	//use TimeVarying"D"ragForce:
-				checkForce('D', usedForces, TimeVaryingDragForceFlag);
+			case 'd':	//use TimeVarying"D"ragForce:
+				checkForce('d', usedForces, TimeVaryingDragForceFlag);
 				usedForces |= TimeVaryingDragForceFlag;
 				//dragScale needs to allow negative numbers:
-				i = checkOptionWithNeg(argc, argv, i, 'D', "scale factor", &dragScale, "offset", &gamma);
+				i = checkOptionWithNeg(argc, argv, i, 'd', "scale factor", &dragScale, "offset", &gamma);
+				break;
+			case 'D':	//make 3"D" cloud:
+				is3D = true;
+				i++;
 				break;
 			case 'e':	//set "e"nd time:
 				checkOption(argc, argv, i, 'e');
@@ -340,7 +352,7 @@ int main (int argc, char * const argv[])
 				if((numParticles % 2) != 0)	//odd
 				{
 					cout << "Even number of particles required for SIMD." << endl 
-                        << "Incrementing number of particles to " << ++numParticles << endl;
+						<< "Incrementing number of particles to " << ++numParticles << endl;
 				}
 				break;
 			case 'o':	//set dataTimeStep, which conrols "o"utput rate:
@@ -358,7 +370,7 @@ int main (int argc, char * const argv[])
 			case 'R':	//use "R"ectangular confinement:
 				checkForce('R', usedForces, RectConfinementForceFlag);
 				usedForces |= RectConfinementForceFlag;
-				i = checkOption(argc, argv, i, 'R', "confine constantX", &confinementConstX, "confine constantX", &confinementConstY);
+				i = checkOption(argc, argv, i, 'R', "confine constantX", &confinementConstX, "confine constantY", &confinementConstY, "confine constantY", &confinementConstZ);
 				break;
 			case 's':	//set "s"hielding constant:
 				checkOption(argc, argv, i, 's');
@@ -449,7 +461,7 @@ int main (int argc, char * const argv[])
 		checkFitsError(error, __LINE__);
 	}
 	else	//initialize new cloud on grid:
-		cloud = Cloud::initializeGrid(numParticles, cloudSize);
+		cloud = Cloud::initializeGrid(numParticles, cloudSize, is3D);
 
 	// Create a new file if we aren't continueing one.
 	if (!continueFileIndex)
@@ -494,7 +506,7 @@ int main (int argc, char * const argv[])
 	if (usedForces & ShieldedCoulombForceFlag) 
 		forceArray[index++] = new ShieldedCoulombForce(cloud, shieldingConstant);
 	if (usedForces & RectConfinementForceFlag)
-		forceArray[index++] = new RectConfinementForce(cloud, confinementConstX, confinementConstY);
+		forceArray[index++] = new RectConfinementForce(cloud, confinementConstX, confinementConstY, confinementConstZ);
 	if (usedForces & ThermalForceFlag)
 		forceArray[index++] = new ThermalForce(cloud, thermRed);
 	if (usedForces & ThermalForceLocalizedFlag)
@@ -573,8 +585,8 @@ int main (int argc, char * const argv[])
 	long seconds = time(NULL) - timer;
 	long minutes = seconds/60;
 	long hours = minutes/60;
-    long days = hours/24;
-    hours -= days*24;
+	long days = hours/24;
+	hours -= days*24;
 	minutes -= hours*60 + days*1440;
 	seconds -= minutes*60 + hours*3600 + days*86400;
 	cout << clear_line << "\rTime elapsed: " 

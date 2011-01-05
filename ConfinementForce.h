@@ -35,7 +35,7 @@ private:
 	double confine;
 
 //private functions:
-	void force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY);	//common force calculator
+	void force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY, const __m128d currentPositionZ);	//common force calculator
 };
 
 #endif /* CONFINEMENTFORCE_H */
