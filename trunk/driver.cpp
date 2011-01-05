@@ -27,7 +27,9 @@ using namespace std;
 
 void help()
 {
- //80 cols is ********************************************************************************
+// This section is white space sensitive to render correctly in an 80 column 
+// terminal environment. There should be no tabs.
+// 80 cols is ********************************************************************************
      cout << endl 
           << "                                      DEMON" << endl
           << "        Dynamic Exploration of Microparticle clouds Optimized Numerically" << endl << endl
@@ -67,7 +69,7 @@ void help()
           << " -w creates acoustic waves along the x-axis (best with -R)." << endl << endl;
 }
 
-//check if force is used:
+// check if force is used:
 void checkForce(const char option, const long usedForces, const ForceFlag flag)
 {
 	if(usedForces & flag)
@@ -78,7 +80,7 @@ void checkForce(const char option, const long usedForces, const ForceFlag flag)
 	}
 }
 
-//check if using two incompatible forces:
+// check if using two incompatible forces:
 void checkForce(char option1, char option2, long usedForces, ForceFlag flag1, ForceFlag flag2)
 {
 	checkForce(option1, usedForces, flag1);
@@ -90,16 +92,16 @@ void checkForce(char option1, char option2, long usedForces, ForceFlag flag1, Fo
 	}
 }
 
-//check whether character is alphabetical:
+// check whether character is alphabetical:
 inline const bool isCharacter(const char c)
 {
 	return (c > 'a' && c < 'z') || (c > 'A' && c < 'Z');
 }
 
-//check for one command line flag, exit if absent:
+// check for one command line flag, exit if absent:
 void checkOption(const int argc, char * const argv[], int i, const char option)
 {
-	if(i+1 >= argc || argv[i+1][0] == '-')
+	if(i + 1 >= argc || argv[i + 1][0] == '-')
 	{
 		cout << "Error: -" << option << " option incomplete." << endl;
 		help();
@@ -107,27 +109,27 @@ void checkOption(const int argc, char * const argv[], int i, const char option)
 	}
 }
 
-//check for one command line flag, use default value if absent:
+// check for one command line flag, use default value if absent:
 int checkOption(const int argc, char * const argv[], int i, const char option, 
                 const string name, double * const value)
 {
-	if(i+1 >= argc || argv[i+1][0] == '-')
+	if(i + 1 >= argc || argv[i + 1][0] == '-')
 		cout << "Warning: -" << option << " option incomplete." << endl 
-            << "Using default " << name << " (" << *value << ")." << endl;
+		<< "Using default " << name << " (" << *value << ")." << endl;
 	else
 		*value = atof(argv[++i]);
 	return i;
 }
 
-//check for two command line flags, use default values if absent:
+// check for two command line flags, use default values if absent:
 int checkOption(const int argc, char * const argv[], int i, const char option, 
                 const string name1, double * const value1, 
                 const string name2, double * const value2)
 {
-	if(i+1 >= argc || argv[i+1][0] == '-')
+	if(i + 1 >= argc || argv[i + 1][0] == '-')
 		cout << "Warning: -" << option << " option incomplete." << endl
-            << "Using default "<< name1 << " (" << *value1 << ") and " 
-            << name2 << " (" << *value2 << ")." << endl;
+		<< "Using default "<< name1 << " (" << *value1 << ") and " 
+		<< name2 << " (" << *value2 << ")." << endl;
 	else
 	{
 		*value1 = atof(argv[++i]);
@@ -136,17 +138,17 @@ int checkOption(const int argc, char * const argv[], int i, const char option,
 	return i;
 }
 
-//check for three command line flags, use default values if absent:
+// check for three command line flags, use default values if absent:
 int checkOption(const int argc, char * const argv[], int i, const char option, 
                 const string name1, double * const value1, 
                 const string name2, double * const value2, 
                 const string name3, double * const value3)
 {
-	if(i+1 >= argc || argv[i+1][0] == '-')
+	if(i + 1 >= argc || argv[i + 1][0] == '-')
 		cout << "Warning: -" << option << " option incomplete." << endl 
-            << "Using default "<< name1 << " (" << *value1 << "), " 
-            << name2 << " (" << *value2 << ") and " 
-            << name3 << " (" << *value3 << ")." << endl;
+		<< "Using default "<< name1 << " (" << *value1 << "), " 
+		<< name2 << " (" << *value2 << ") and " 
+		<< name3 << " (" << *value3 << ")." << endl;
 	else
 	{
 		*value1 = atof(argv[++i]);
@@ -155,16 +157,16 @@ int checkOption(const int argc, char * const argv[], int i, const char option,
 	return i;
 }
 
-//check for two command line flags in the case of a negative argument,
-//	use default values if absent:
+// check for two command line flags in the case of a negative argument, use 
+// default values if absent:
 int checkOptionWithNeg(const int argc, char * const argv[], int i, const char option, 
                        const string name1, double * const value1, 
                        const string name2, double * const value2)
 {
-	if(i+1 >= argc || (argv[i+1][0] == '-' && isCharacter(argv[i+1][1])))
+	if(i + 1 >= argc || (argv[i + 1][0] == '-' && isCharacter(argv[i + 1][1])))
 		cout << "Warning: -" << option << " option incomplete." << endl 
-            << "Using default " << name1 << " (" << *value1 << ") and " 
-            << name2 << " (" << *value2 << ")." << endl << endl;
+		<< "Using default " << name1 << " (" << *value1 << ") and " 
+		<< name2 << " (" << *value2 << ")." << endl << endl;
 	else
 	{
 		*value1 = atof(argv[++i]);
@@ -247,42 +249,42 @@ void fitsFileExists(char * const filename, int * const error) {
 
 int main (int argc, char * const argv[]) 
 {
-	long timer = time(NULL);		//start timer
+	long timer = time(NULL); //start timer
 
 	//object declarations:
 	Cloud *cloud;
-	Force **forceArray;			//new pointer to Force object (will set to array)
+	Force **forceArray; //new pointer to Force object (will set to array)
 	
 	//declare variables and set default values:
-	bool Mach = false;			//true -> perform Mach Cone experiment
+	bool Mach = false;                  //true -> perform Mach Cone experiment
 	double startTime = 0.0;
 	double simTimeStep = 0.0001;
 	double dataTimeStep = 0.01;
 	double endTime = 5;
-	double cloudSize = 0.01;		//one-half side length (aka "radius")
-	double confinementConst = 1E-13;	//confinementForce
-	double confinementConstX = 1E-13;	//RectConfinementForce
-	double confinementConstY = 1E-12;	//RectConfinementForce
-	double shieldingConstant = 2E4;		//corresponds to 10*(ion debye length)
+	double cloudSize = 0.01;            //one-half side length (aka "radius")
+	double confinementConst = 1E-13;    //confinementForce
+	double confinementConstX = 1E-13;   //RectConfinementForce
+	double confinementConstY = 1E-12;   //RectConfinementForce
+	double shieldingConstant = 2E4;     //corresponds to 10*(ion debye length)
 	double gamma = 10.0;
-	double thermRed = 1E-14;		//default thermal reduction factor
-	double thermRed1 = thermRed;		//default outer reduction factor (-L)
-	double thermScale = 1E-14;		//default for TimeVaryingThermalForce
-	double thermOffset = 0.0;		//default for TimeVaryingThermalForce
-	double heatRadius = .001;		//apply thermal force only within this radius
-	double driveConst = .00001;		//used in DrivingForce.cpp for waves
+	double thermRed = 1E-14;            //default thermal reduction factor
+	double thermRed1 = thermRed;        //default outer reduction factor (-L)
+	double thermScale = 1E-14;          //default for TimeVaryingThermalForce
+	double thermOffset = 0.0;           //default for TimeVaryingThermalForce
+	double heatRadius = .001;           //apply thermal force only within this radius
+	double driveConst = .00001;         //used in DrivingForce.cpp for waves
 	double waveAmplitude = 1E-13;		//driving wave amplitude (default comparable to other forces throughout cloud)
-	double waveShift = 0.007;		//driving wave shift
-	double machSpeed = 0.2;			//firing speed for Mach Cone experiment
-	double massFactor = 100;		//mass multiplier for fired Mach Cone particle
+	double waveShift = 0.007;           //driving wave shift
+	double machSpeed = 0.2;             //firing speed for Mach Cone experiment
+	double massFactor = 100;            //mass multiplier for fired Mach Cone particle
 	double rmin = cloudSize/2.0;		//inner radius of shear layer
-	double rmax = rmin + cloudSize/5.0;	//outer ratius of shear layer
-	double rotConst = 1E-15;		//rotational force in shear layer
-	double dragScale = -1.0;		//used in TimeVaryingDragForce
-	int continueFileIndex = 0;		//Index of argv array that holds the file name of the fitsfile to continue. 
-	int finalsFileIndex = 0;		//Index of argv array that holds the file name of the fitsfile to use finals of.
-	int outputFileIndex = 0;		//Index of argv array that holds the file name of the fitsfile to output.
-	long usedForces = 0;			//bitpacked forces
+	double rmax = rmin + cloudSize/5.0; //outer ratius of shear layer
+	double rotConst = 1E-15;            //rotational force in shear layer
+	double dragScale = -1.0;            //used in TimeVaryingDragForce
+	int continueFileIndex = 0;          //Index of argv array that holds the file name of the fitsfile to continue. 
+	int finalsFileIndex = 0;            //Index of argv array that holds the file name of the fitsfile to use finals of.
+	int outputFileIndex = 0;            //Index of argv array that holds the file name of the fitsfile to output.
+	long usedForces = 0;                //bitpacked forces
 	unsigned int numParticles = 10;
 	unsigned int numForces = 3;
 
@@ -291,113 +293,112 @@ int main (int argc, char * const argv[])
 	{
 		switch(argv[i][1])
 		{
-			case 'c':	//"c"ontinue from file:
+			case 'c': // "c"ontinue from file:
 				checkOption(argc, argv, i, 'c');
 				continueFileIndex = ++i;
 				break;
-			case 'C':	//set "C"onfinementConst:
+			case 'C': // set "C"onfinementConst:
 				checkOption(argc, argv, i, 'C');
 				confinementConst = atof(argv[++i]);	//store confinementConst
 				break;
-			case 'D':	//use TimeVarying"D"ragForce:
+			case 'D': // use TimeVarying"D"ragForce:
 				checkForce('D', usedForces, TimeVaryingDragForceFlag);
 				usedForces |= TimeVaryingDragForceFlag;
-				//dragScale needs to allow negative numbers:
+				// dragScale needs to allow negative numbers:
 				i = checkOptionWithNeg(argc, argv, i, 'D', "scale factor", &dragScale, "offset", &gamma);
 				break;
-			case 'e':	//set "e"nd time:
+			case 'e': // set "e"nd time:
 				checkOption(argc, argv, i, 'e');
-				//WARNING: Assumes integer input!
+				// WARNING: Assumes integer input!
 				endTime = atoi(argv[++i]);	//store end time
 				break;		
-			case 'f':	//use "f"inal positions and velocities from previous run:
+			case 'f': // use "f"inal positions and velocities from previous run:
 				checkOption(argc, argv, i, 'f');
 				finalsFileIndex = ++i;
 				break;
-			case 'g':	//set "g"amma:
+			case 'g': // set "g"amma:
 				checkOption(argc, argv, i, 'g');
-				//WARNING: Assumes double input!
-				gamma = atof(argv[++i]);	//store gamma
+				gamma = atof(argv[++i]); // store gamma
 				break;
-			case 'h':	//display "h"elp:
+			case 'h': // display "h"elp:
 				help();
 				exit(0);
-			case 'L':	//perform "L"ocalized heating experiment:
+			case 'L': // perform "L"ocalized heating experiment:
 				checkForce('L', 'T', usedForces, ThermalForceLocalizedFlag, ThermalForceFlag);
 				checkForce('L', 'v', usedForces, ThermalForceLocalizedFlag, TimeVaryingThermalForceFlag);
 				usedForces |= ThermalForceLocalizedFlag;
 				i = checkOption(argc, argv, i, 'L', "radius", &heatRadius, "heat factor1", &thermRed, "heat factor2", &thermRed1);
 				break;
-			case 'M':	//perform "M"ach Cone experiment:
+			case 'M': // perform "M"ach Cone experiment:
 				Mach = true;
 				i = checkOption(argc, argv, i, 'M', "velocity", &machSpeed, "mass", &massFactor);
 				break;
-			case 'n':	//set "n"umber of particles:
+			case 'n': // set "n"umber of particles:
 				checkOption(argc, argv, i, 'n');
-				//WARNING: Assumes integer input!
-				numParticles = atoi(argv[++i]);	//store number of particles
-				if((numParticles % 2) != 0)	//odd
+				// WARNING: Assumes integer input!
+				numParticles = atoi(argv[++i]);	// store number of particles
+				if((numParticles % 2) != 0)	// odd
 				{
 					cout << "Even number of particles required for SIMD." << endl 
-                        << "Incrementing number of particles to " << ++numParticles << endl;
+					<< "Incrementing number of particles to " << ++numParticles << endl;
 				}
 				break;
-			case 'o':	//set dataTimeStep, which conrols "o"utput rate:
+			case 'o': // set dataTimeStep, which conrols "o"utput rate:
 				checkOption(argc, argv, i, 'o');
 				dataTimeStep = atof(argv[++i]);	//store timestep
 				break;
-			case 'O':	//name "O"utput file:
+			case 'O': // name "O"utput file:
 				checkOption(argc, argv, i, 'O');
 				outputFileIndex = ++i;
 				break;
-			case 'r':	//set cloud "r"adius:
+			case 'r': // set cloud "r"adius:
 				checkOption(argc, argv, i, 'r');
-				cloudSize = atof(argv[++i]);	//store cloud size
+				cloudSize = atof(argv[++i]); // store cloud size
 				break;		
-			case 'R':	//use "R"ectangular confinement:
+			case 'R': // use "R"ectangular confinement:
 				checkForce('R', usedForces, RectConfinementForceFlag);
 				usedForces |= RectConfinementForceFlag;
 				i = checkOption(argc, argv, i, 'R', "confine constantX", &confinementConstX, "confine constantY", &confinementConstY);
 				break;
-			case 's':	//set "s"hielding constant:
+			case 's': // set "s"hielding constant:
 				checkOption(argc, argv, i, 's');
-				shieldingConstant = atof(argv[++i]);	//store shielding constant
+				shieldingConstant = atof(argv[++i]); // store shielding constant
 				break;
-			case 'S':	//create rotational "S"hear layer:
+			case 'S': // create rotational "S"hear layer:
 				checkForce('S', usedForces, RotationalForceFlag);
 				usedForces |= RotationalForceFlag;
 				i = checkOption(argc, argv, i, 'S', "force constant", &rotConst, "rmin", &rmin, "rmax", &rmax);
 				break;
-			case 't':	//set "t"imestep:
+			case 't': // set "t"imestep:
 				i = checkOption(argc, argv, i, 't', "time step", &simTimeStep);
-				if(simTimeStep == 0.0)		//prevent divide-by-zero error
+				if(simTimeStep == 0.0) // prevent divide-by-zero error
 				{
 					cout << "Error: simTimeStep set to 0.0 with -t." << endl 
-                        << "Terminating to prevent divide-by-zero." << endl;
+					<< "Terminating to prevent divide-by-zero." << endl;
 					help();
 					exit(1);
 				}
 				break;
-			case 'T':	//set "T"emperature reduction factor:
+			case 'T': // set "T"emperature reduction factor:
 				checkForce('T', 'L', usedForces, ThermalForceFlag, ThermalForceLocalizedFlag);
 				checkForce('T', 'v', usedForces, ThermalForceFlag, TimeVaryingThermalForceFlag);
 				usedForces |= ThermalForceFlag;
 				i = checkOption(argc, argv, i, 'T', "heat factor", &thermRed);
 				break;
-			case 'v':	//use time ""arying thermal force:
+			case 'v': // use time ""arying thermal force:
 				checkForce('v', 'T', usedForces, TimeVaryingThermalForceFlag, ThermalForceFlag);
 				checkForce('v', 'L', usedForces, TimeVaryingThermalForceFlag, ThermalForceLocalizedFlag);
 				usedForces |= TimeVaryingThermalForceFlag;
 				i = checkOptionWithNeg(argc, argv, i, 'v', "heat value scale", &thermScale, "heat value offset", &thermOffset);
 				break;
-			case 'w':	//drive "w"aves:
+			case 'w': // drive "w"aves:
 				checkForce('w', usedForces, DrivingForceFlag);
 				usedForces |= DrivingForceFlag;
 				i = checkOption(argc, argv, i, 'w', "amplitude", &waveAmplitude, "wave shift", &waveShift, "driving constant", &driveConst);
 				break;
-			default:	// Handle unknown options by issuing error.
-                cout << "Error: Unknown option " << argv[i] << endl;
-                help();
+			default: // Handle unknown options by issuing error.
+				cout << "Error: Unknown option " << argv[i] << endl;
+				help();
 				exit(1);
 		}
 	}
@@ -411,9 +412,9 @@ int main (int argc, char * const argv[])
 /*------------------------------------------------------------------------------
  * Initialize cloud:
  -----------------------------------------------------------------------------*/
-    cout << "Status: Initializing cloud." << endl;
+	cout << "Status: Initializing cloud." << endl;
     
-	//declare fits file and error:
+	// declare fits file and error:
 	fitsfile *file;
 	int error = 0;
 
@@ -421,59 +422,59 @@ int main (int argc, char * const argv[])
 	{
 		fitsFileExists(argv[continueFileIndex], &error);
 		
-		//open file:
+		// open file:
 		fits_open_file(&file, argv[continueFileIndex], READWRITE, &error);	//file pointer, file name (char), read/write, error
 		checkFitsError(error, __LINE__);
 		
-		//use the same forces:
+		// use the same forces:
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &usedForces, NULL, &error);
 		checkFitsError(error, __LINE__);
 		
-		//initialize with last time step from file:
+		// initialize with last time step from file:
 		cloud = Cloud::initializeFromFile(file, &error, &startTime);
 		checkFitsError(error, __LINE__);
 	}
 	else if(finalsFileIndex)
 	{
-        fitsFileExists(argv[finalsFileIndex], &error);
+		fitsFileExists(argv[finalsFileIndex], &error);
 
-		//open file:
+		// open file:
 		fits_open_file(&file, argv[finalsFileIndex], READONLY, &error);	//file pointer, file name (char), read only, error
 		checkFitsError(error, __LINE__);
 
-		//initialize with last time step from file:
+		// initialize with last time step from file:
 		cloud = Cloud::initializeFromFile(file, &error, NULL);
 		checkFitsError(error, __LINE__);
 		
-		//close file:
+		// close file:
  		fits_close_file(file, &error);
 		checkFitsError(error, __LINE__);
 	}
-	else	//initialize new cloud on grid:
+	else // initialize new cloud on grid:
 		cloud = Cloud::initializeGrid(numParticles, cloudSize);
 
 	// Create a new file if we aren't continueing one.
 	if (!continueFileIndex)
 	{
-		if(outputFileIndex)	//use specified file name
+		if(outputFileIndex) // use specified file name
 		{	
 			deleteFitsFile(argv[outputFileIndex], &error);
 			fits_create_file(&file, argv[outputFileIndex], &error);
 			checkFitsError(error, __LINE__);
 			
-			//create "proper" primary HDU
-			//	(prevents fits from generating errors when creating binary tables)
+			// create "proper" primary HDU
+			// (prevents fits from generating errors when creating binary tables)
 			fits_create_img(file, 16, 0, NULL, &error);
 			checkFitsError(error, __LINE__);
 		}
-		else			//use default file name
+		else // use default file name
 		{
 			deleteFitsFile(const_cast<char *> ("data.fits"), &error);
 			fits_create_file(&file, const_cast<char *> ("data.fits"), &error);
 			checkFitsError(error, __LINE__);
 			
-			//create "proper" primary HDU
-			//	(prevents fits from generating errors when creating binary tables)
+			// create "proper" primary HDU
+			// (prevents fits from generating errors when creating binary tables)
 			fits_create_img(file, 16, 0, NULL, &error);
 			checkFitsError(error, __LINE__);
 		}
@@ -483,7 +484,7 @@ int main (int argc, char * const argv[])
  * This concludes initialization of cloud.
  * Initialize array of Force objects:
  -----------------------------------------------------------------------------*/
-    cout << "Status: Initializing forces." << endl;
+	cout << "Status: Initializing forces." << endl;
     
 	numForces = getNumForces(usedForces);
 	forceArray = new Force*[numForces];
@@ -509,13 +510,13 @@ int main (int argc, char * const argv[])
 	if (usedForces & TimeVaryingThermalForceFlag)
 		forceArray[index++] = new TimeVaryingThermalForce(cloud, thermScale, thermOffset);
 	
-	if(continueFileIndex) 	//initialize forces from old file
+	if(continueFileIndex) // initialize forces from old file
 	{
 		for (unsigned int i = 0; i < numForces; i++)
 			forceArray[i]->readForce(file, &error);
 		checkFitsError(error, __LINE__);
 	}
-	else			//write forces to new file
+	else // write forces to new file
 	{
 		for (unsigned int i = 0; i < numForces; i++)
 			forceArray[i]->writeForce(file, &error);
@@ -525,9 +526,9 @@ int main (int argc, char * const argv[])
 /*------------------------------------------------------------------------------
  * Commence Runge-Kutta algorithm:
  -----------------------------------------------------------------------------*/
-    cout << "Status: Commencing Runge-Kutta." << endl << endl;
+	cout << "Status: Commencing Runge-Kutta." << endl << endl;
     
-	//write initial data:
+	// write initial data:
 	if (!continueFileIndex) 
 	{
 		cloud->writeCloudSetup(file, &error);
@@ -541,7 +542,7 @@ int main (int argc, char * const argv[])
 	
 	if(Mach) 
 	{
-		//reserve particle 1 for mach experiment
+		// reserve particle 1 for mach experiment
 		cloud->x[0] = -2.0*cloudSize;
 		cloud->y[0] = 0.0;
 		cloud->Vx[0] = machSpeed;
@@ -551,15 +552,15 @@ int main (int argc, char * const argv[])
 	
 	Runge_Kutta rk4(cloud, forceArray, simTimeStep, numForces, startTime);
 
-	//execute simulation for desired length of time:
-    while(startTime < endTime)
+	// execute simulation for desired length of time:
+	while(startTime < endTime)
 	{
-        cout << clear_line << "\rCurrent Time: " << rk4.currentTime << "s (" 
-            << rk4.currentTime/endTime*100.0 << "% Complete)" << flush;
+		cout << clear_line << "\rCurrent Time: " << rk4.currentTime << "s (" 
+		<< rk4.currentTime/endTime*100.0 << "% Complete)" << flush;
 		
-        //call Runge-Kutta algorithm:
-        rk4.moveParticles(startTime += dataTimeStep);
-		//write positions and velocities:
+		// call Runge-Kutta algorithm:
+		rk4.moveParticles(startTime += dataTimeStep);
+		// write positions and velocities:
 		cloud->writeTimeStep(file, &error, rk4.currentTime);
 	}
 
@@ -567,15 +568,15 @@ int main (int argc, char * const argv[])
  * This concludes the Runge-Kutta algorithm. Clean up.
  -----------------------------------------------------------------------------*/
 
-	//close fits file:
+	// close fits file:
 	fits_close_file(file, &error);
 
-	//calculate and display elapsed time:
+	// calculate and display elapsed time:
 	long seconds = time(NULL) - timer;
 	long minutes = seconds/60;
 	long hours = minutes/60;
-    long days = hours/24;
-    hours -= days*24;
+	long days = hours/24;
+	hours -= days*24;
 	minutes -= hours*60 + days*1440;
 	seconds -= minutes*60 + hours*3600 + days*86400;
 	cout << clear_line << "\rTime elapsed: " 
@@ -584,7 +585,7 @@ int main (int argc, char * const argv[])
         << minutes << (minutes == 1 ? " minute " : " minutes, ") 
         << seconds << (seconds == 1 ? " second " : " seconds.") << endl;
 	
-	//clean up objects:
+	// clean up objects:
 	for (unsigned int i = 0; i < numForces; i++)
 		delete forceArray[i];
 	delete[] forceArray;
