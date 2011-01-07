@@ -26,74 +26,74 @@ void Runge_Kutta::moveParticles1D(const double endTime)
 
 	while(currentTime < endTime)
 	{
-		const double dt = modifyTimeStep1D();	//implement dynamic timstep (if necessary):
-	
-		const __m128d vdt = _mm_set1_pd(dt);	//store timestep as vector const
+		const double dt = modifyTimeStep1D(); //implement dynamic timstep (if necessary):
 
-		force1_3D(currentTime);	//compute net force1
-		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2)	//calculate 1st substep components
+		const __m128d vdt = _mm_set1_pd(dt);  //store timestep as vector const
+
+		force1_3D(currentTime);               //compute net force1
+		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 1st substep components
 		{
-			const __m128d vmass = _mm_load_pd(cloud->mass + i);	//load ith and (i+1)th mass into vector
+			const __m128d vmass = _mm_load_pd(cloud->mass + i);                //load ith and (i+1)th mass into vector
 
 			//assign force pointers for stylistic purposes:
 			double * const pFx = cloud->forceX + i;
 
 			//calculate ith and (i+1)th tidbits: 
-			_mm_store_pd(cloud->k1 + i, vdt*_mm_load_pd(pFx)/vmass);	//velocityX tidbit
-			_mm_store_pd(cloud->l1 + i, vdt*cloud->getVx1_pd(i));		//positionX tidbit
+			_mm_store_pd(cloud->k1 + i, vdt*_mm_load_pd(pFx)/vmass); //velocityX tidbit
+			_mm_store_pd(cloud->l1 + i, vdt*cloud->getVx1_pd(i));    //positionX tidbit
 
 			//reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
 		}
 
-		force2_3D(currentTime + dt/2.0);	//compute net force2
-		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2)	//calculate 2nd substep components
+		force2_3D(currentTime + dt/2.0);      //compute net force2
+		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 2nd substep components
 		{
-			const __m128d vmass = _mm_load_pd(cloud->mass + i);	//load ith and (i+1)th mass
+			const __m128d vmass = _mm_load_pd(cloud->mass + i);                //load ith and (i+1)th mass
 
 			//assign force pointers:
 			double * const pFx = cloud->forceX + i;
 
 			//calculate ith and (i+1)th tidbits: 
-			_mm_store_pd(cloud->k2 + i, vdt*_mm_load_pd(pFx)/vmass);	//velocityX tidbit
-			_mm_store_pd(cloud->l2 + i, vdt*cloud->getVx2_pd(i));		//positionX tidbit
+			_mm_store_pd(cloud->k2 + i, vdt*_mm_load_pd(pFx)/vmass); //velocityX tidbit
+			_mm_store_pd(cloud->l2 + i, vdt*cloud->getVx2_pd(i));    //positionX tidbit
 
 			//reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
 		}
-		
-		force3_3D(currentTime + dt/2.0);	//compute net force3
-		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2)	//calculate 3rd substep components
+
+		force3_3D(currentTime + dt/2.0);      //compute net force3
+		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 3rd substep components
 		{
-			const __m128d vmass = _mm_load_pd(cloud->mass + i);	//load ith and (i+1)th mass
+			const __m128d vmass = _mm_load_pd(cloud->mass + i);                //load ith and (i+1)th mass
 
 			//assign force pointers:
 			double * const pFx = cloud->forceX + i;
 
 			//calculate ith and (i+1)th tibits: 
-			_mm_store_pd(cloud->k3 + i, vdt*_mm_load_pd(pFx)/vmass);	//velocityX tidbit
-			_mm_store_pd(cloud->l3 + i, vdt*cloud->getVx3_pd(i));		//positionX tidbit
+			_mm_store_pd(cloud->k3 + i, vdt*_mm_load_pd(pFx)/vmass); //velocityX tidbit
+			_mm_store_pd(cloud->l3 + i, vdt*cloud->getVx3_pd(i));    //positionX tidbit
 
 			//reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
 		}
-		
-		force4_3D(currentTime + dt);	//compute net force4
-		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2)	//calculate 4th substep components
+
+		force4_3D(currentTime + dt);          //compute net force4
+		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 4th substep components
 		{
-			const __m128d vmass = _mm_load_pd(cloud->mass + i);	//load ith and (i+1)th mass
+			const __m128d vmass = _mm_load_pd(cloud->mass + i);                //load ith and (i+1)th mass
 
 			//assign force pointers:
 			double * const pFx = cloud->forceX + i;
 
-			_mm_store_pd(cloud->k4 + i, vdt*_mm_load_pd(pFx)/vmass);	//velocityX tidbit
-			_mm_store_pd(cloud->l4 + i, vdt*cloud->getVx4_pd(i));		//positionX tidbit
+			_mm_store_pd(cloud->k4 + i, vdt*_mm_load_pd(pFx)/vmass); //velocityX tidbit
+			_mm_store_pd(cloud->l4 + i, vdt*cloud->getVx4_pd(i));    //positionX tidbit
 
 			//reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
 		}
 
-		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2)	//calculate next position and next velocity for entire cloud
+		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate next position and next velocity for entire cloud
 		{
 			//load ith and (i+1)th k's into vectors:
 			const __m128d vk1 = _mm_load_pd(cloud->k1 + i);
@@ -129,90 +129,90 @@ void Runge_Kutta::moveParticles2D(const double endTime)
 
 	while(currentTime < endTime)
 	{
-		const double dt = modifyTimeStep2D();	//implement dynamic timstep (if necessary):
-	
-		const __m128d vdt = _mm_set1_pd(dt);	//store timestep as vector const
+		const double dt = modifyTimeStep2D(); //implement dynamic timstep (if necessary):
 
-		force1_3D(currentTime);	//compute net force1
-		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2)	//calculate 1st substep components
+		const __m128d vdt = _mm_set1_pd(dt);  //store timestep as vector const
+
+		force1_3D(currentTime);               //compute net force1
+		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 1st substep components
 		{
-			const __m128d vmass = _mm_load_pd(cloud->mass + i);	//load ith and (i+1)th mass into vector
+			const __m128d vmass = _mm_load_pd(cloud->mass + i);                //load ith and (i+1)th mass into vector
 
 			//assign force pointers for stylistic purposes:
 			double * const pFx = cloud->forceX + i;
 			double * const pFy = cloud->forceY + i;
 
 			//calculate ith and (i+1)th tidbits: 
-			_mm_store_pd(cloud->k1 + i, vdt*_mm_load_pd(pFx)/vmass);	//velocityX tidbit
-			_mm_store_pd(cloud->l1 + i, vdt*cloud->getVx1_pd(i));		//positionX tidbit
-			_mm_store_pd(cloud->m1 + i, vdt*_mm_load_pd(pFy)/vmass);	//velocityY tidbit
-			_mm_store_pd(cloud->n1 + i, vdt*cloud->getVy1_pd(i));   	//positionY tidbit
+			_mm_store_pd(cloud->k1 + i, vdt*_mm_load_pd(pFx)/vmass); //velocityX tidbit
+			_mm_store_pd(cloud->l1 + i, vdt*cloud->getVx1_pd(i));    //positionX tidbit
+			_mm_store_pd(cloud->m1 + i, vdt*_mm_load_pd(pFy)/vmass); //velocityY tidbit
+			_mm_store_pd(cloud->n1 + i, vdt*cloud->getVy1_pd(i));    //positionY tidbit
 
 			//reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
 			_mm_store_pd(pFy, _mm_setzero_pd());
 		}
 
-		force2_3D(currentTime + dt/2.0);	//compute net force2
-		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2)	//calculate 2nd substep components
+		force2_3D(currentTime + dt/2.0);      //compute net force2
+		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 2nd substep components
 		{
-			const __m128d vmass = _mm_load_pd(cloud->mass + i);	//load ith and (i+1)th mass
+			const __m128d vmass = _mm_load_pd(cloud->mass + i);                //load ith and (i+1)th mass
 
 			//assign force pointers:
 			double * const pFx = cloud->forceX + i;
 			double * const pFy = cloud->forceY + i;
 
 			//calculate ith and (i+1)th tidbits: 
-			_mm_store_pd(cloud->k2 + i, vdt*_mm_load_pd(pFx)/vmass);	//velocityX tidbit
-			_mm_store_pd(cloud->l2 + i, vdt*cloud->getVx2_pd(i));		//positionX tidbit
-			_mm_store_pd(cloud->m2 + i, vdt*_mm_load_pd(pFy)/vmass);	//velocityY tidbit
-			_mm_store_pd(cloud->n2 + i, vdt*cloud->getVy2_pd(i));		//positionY tidbit
+			_mm_store_pd(cloud->k2 + i, vdt*_mm_load_pd(pFx)/vmass); //velocityX tidbit
+			_mm_store_pd(cloud->l2 + i, vdt*cloud->getVx2_pd(i));    //positionX tidbit
+			_mm_store_pd(cloud->m2 + i, vdt*_mm_load_pd(pFy)/vmass); //velocityY tidbit
+			_mm_store_pd(cloud->n2 + i, vdt*cloud->getVy2_pd(i));    //positionY tidbit
 
 			//reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
 			_mm_store_pd(pFy, _mm_setzero_pd());
 		}
-		
-		force3_3D(currentTime + dt/2.0);	//compute net force3
-		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2)	//calculate 3rd substep components
+
+		force3_3D(currentTime + dt/2.0);      //compute net force3
+		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 3rd substep components
 		{
-			const __m128d vmass = _mm_load_pd(cloud->mass + i);	//load ith and (i+1)th mass
+			const __m128d vmass = _mm_load_pd(cloud->mass + i);                //load ith and (i+1)th mass
 
 			//assign force pointers:
 			double * const pFx = cloud->forceX + i;
 			double * const pFy = cloud->forceY + i;
 
 			//calculate ith and (i+1)th tibits: 
-			_mm_store_pd(cloud->k3 + i, vdt*_mm_load_pd(pFx)/vmass);	//velocityX tidbit
-			_mm_store_pd(cloud->l3 + i, vdt*cloud->getVx3_pd(i));		//positionX tidbit
-			_mm_store_pd(cloud->m3 + i, vdt*_mm_load_pd(pFy)/vmass);	//velocityY tidbit
-			_mm_store_pd(cloud->n3 + i, vdt*cloud->getVy3_pd(i));		//positionY tidbit
+			_mm_store_pd(cloud->k3 + i, vdt*_mm_load_pd(pFx)/vmass); //velocityX tidbit
+			_mm_store_pd(cloud->l3 + i, vdt*cloud->getVx3_pd(i));    //positionX tidbit
+			_mm_store_pd(cloud->m3 + i, vdt*_mm_load_pd(pFy)/vmass); //velocityY tidbit
+			_mm_store_pd(cloud->n3 + i, vdt*cloud->getVy3_pd(i));    //positionY tidbit
 
 			//reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
 			_mm_store_pd(pFy, _mm_setzero_pd());
 		}
-		
-		force4_3D(currentTime + dt);	//compute net force4
-		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2)	//calculate 4th substep components
+
+		force4_3D(currentTime + dt);          //compute net force4
+		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 4th substep components
 		{
-			const __m128d vmass = _mm_load_pd(cloud->mass + i);	//load ith and (i+1)th mass
+			const __m128d vmass = _mm_load_pd(cloud->mass + i);                //load ith and (i+1)th mass
 
 			//assign force pointers:
 			double * const pFx = cloud->forceX + i;
 			double * const pFy = cloud->forceY + i;
 
-			_mm_store_pd(cloud->k4 + i, vdt*_mm_load_pd(pFx)/vmass);	//velocityX tidbit
-			_mm_store_pd(cloud->l4 + i, vdt*cloud->getVx4_pd(i));		//positionX tidbit
-			_mm_store_pd(cloud->m4 + i, vdt*_mm_load_pd(pFy)/vmass);	//velocityY tidbit
-			_mm_store_pd(cloud->n4 + i, vdt*cloud->getVy4_pd(i));		//positionY tidbit
+			_mm_store_pd(cloud->k4 + i, vdt*_mm_load_pd(pFx)/vmass); //velocityX tidbit
+			_mm_store_pd(cloud->l4 + i, vdt*cloud->getVx4_pd(i));    //positionX tidbit
+			_mm_store_pd(cloud->m4 + i, vdt*_mm_load_pd(pFy)/vmass); //velocityY tidbit
+			_mm_store_pd(cloud->n4 + i, vdt*cloud->getVy4_pd(i));    //positionY tidbit
 
 			//reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
 			_mm_store_pd(pFy, _mm_setzero_pd());
 		}
 
-		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2)	//calculate next position and next velocity for entire cloud
+		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate next position and next velocity for entire cloud
 		{
 			//load ith and (i+1)th k's into vectors:
 			const __m128d vk1 = _mm_load_pd(cloud->k1 + i);
@@ -264,14 +264,14 @@ void Runge_Kutta::moveParticles3D(const double endTime)
 
 	while(currentTime < endTime)
 	{
-		const double dt = modifyTimeStep3D();	//implement dynamic timstep (if necessary):
-	
-		const __m128d vdt = _mm_set1_pd(dt);	//store timestep as vector const
+		const double dt = modifyTimeStep3D(); //implement dynamic timstep (if necessary):
 
-		force1_3D(currentTime);	//compute net force1
-		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2)	//calculate 1st substep components
+		const __m128d vdt = _mm_set1_pd(dt);  //store timestep as vector const
+
+		force1_3D(currentTime);               //compute net force1
+		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 1st substep components
 		{
-			const __m128d vmass = _mm_load_pd(cloud->mass + i);	//load ith and (i+1)th mass into vector
+			const __m128d vmass = _mm_load_pd(cloud->mass + i);                //load ith and (i+1)th mass into vector
 
 			//assign force pointers for stylistic purposes:
 			double * const pFx = cloud->forceX + i;
@@ -279,12 +279,12 @@ void Runge_Kutta::moveParticles3D(const double endTime)
 			double * const pFz = cloud->forceZ + i;
 
 			//calculate ith and (i+1)th tidbits: 
-			_mm_store_pd(cloud->k1 + i, vdt*_mm_load_pd(pFx)/vmass);	//velocityX tidbit
-			_mm_store_pd(cloud->l1 + i, vdt*cloud->getVx1_pd(i));		//positionX tidbit
-			_mm_store_pd(cloud->m1 + i, vdt*_mm_load_pd(pFy)/vmass);	//velocityY tidbit
-			_mm_store_pd(cloud->n1 + i, vdt*cloud->getVy1_pd(i));   	//positionY tidbit
-			_mm_store_pd(cloud->o1 + i, vdt*_mm_load_pd(pFz)/vmass);	//velocityZ tidbit
-			_mm_store_pd(cloud->p1 + i, vdt*cloud->getVz1_pd(i));		//positionZ tidbit
+			_mm_store_pd(cloud->k1 + i, vdt*_mm_load_pd(pFx)/vmass); //velocityX tidbit
+			_mm_store_pd(cloud->l1 + i, vdt*cloud->getVx1_pd(i));    //positionX tidbit
+			_mm_store_pd(cloud->m1 + i, vdt*_mm_load_pd(pFy)/vmass); //velocityY tidbit
+			_mm_store_pd(cloud->n1 + i, vdt*cloud->getVy1_pd(i));    //positionY tidbit
+			_mm_store_pd(cloud->o1 + i, vdt*_mm_load_pd(pFz)/vmass); //velocityZ tidbit
+			_mm_store_pd(cloud->p1 + i, vdt*cloud->getVz1_pd(i));    //positionZ tidbit
 
 			//reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
@@ -292,10 +292,10 @@ void Runge_Kutta::moveParticles3D(const double endTime)
 			_mm_store_pd(pFz, _mm_setzero_pd());
 		}
 
-		force2_3D(currentTime + dt/2.0);	//compute net force2
-		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2)	//calculate 2nd substep components
+		force2_3D(currentTime + dt/2.0);      //compute net force2
+		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 2nd substep components
 		{
-			const __m128d vmass = _mm_load_pd(cloud->mass + i);	//load ith and (i+1)th mass
+			const __m128d vmass = _mm_load_pd(cloud->mass + i);                //load ith and (i+1)th mass
 
 			//assign force pointers:
 			double * const pFx = cloud->forceX + i;
@@ -303,23 +303,23 @@ void Runge_Kutta::moveParticles3D(const double endTime)
 			double * const pFz = cloud->forceZ + i;
 
 			//calculate ith and (i+1)th tidbits: 
-			_mm_store_pd(cloud->k2 + i, vdt*_mm_load_pd(pFx)/vmass);	//velocityX tidbit
-			_mm_store_pd(cloud->l2 + i, vdt*cloud->getVx2_pd(i));		//positionX tidbit
-			_mm_store_pd(cloud->m2 + i, vdt*_mm_load_pd(pFy)/vmass);	//velocityY tidbit
-			_mm_store_pd(cloud->n2 + i, vdt*cloud->getVy2_pd(i));		//positionY tidbit
-			_mm_store_pd(cloud->o2 + i, vdt*_mm_load_pd(pFz)/vmass);	//velocityZ tidbit
-			_mm_store_pd(cloud->p2 + i, vdt*cloud->getVz2_pd(i));		//positionZ tidbit
+			_mm_store_pd(cloud->k2 + i, vdt*_mm_load_pd(pFx)/vmass); //velocityX tidbit
+			_mm_store_pd(cloud->l2 + i, vdt*cloud->getVx2_pd(i));    //positionX tidbit
+			_mm_store_pd(cloud->m2 + i, vdt*_mm_load_pd(pFy)/vmass); //velocityY tidbit
+			_mm_store_pd(cloud->n2 + i, vdt*cloud->getVy2_pd(i));    //positionY tidbit
+			_mm_store_pd(cloud->o2 + i, vdt*_mm_load_pd(pFz)/vmass); //velocityZ tidbit
+			_mm_store_pd(cloud->p2 + i, vdt*cloud->getVz2_pd(i));    //positionZ tidbit
 
 			//reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
 			_mm_store_pd(pFy, _mm_setzero_pd());
 			_mm_store_pd(pFz, _mm_setzero_pd());
 		}
-		
-		force3_3D(currentTime + dt/2.0);	//compute net force3
-		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2)	//calculate 3rd substep components
+
+		force3_3D(currentTime + dt/2.0);      //compute net force3
+		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 3rd substep components
 		{
-			const __m128d vmass = _mm_load_pd(cloud->mass + i);	//load ith and (i+1)th mass
+			const __m128d vmass = _mm_load_pd(cloud->mass + i);                //load ith and (i+1)th mass
 
 			//assign force pointers:
 			double * const pFx = cloud->forceX + i;
@@ -327,35 +327,35 @@ void Runge_Kutta::moveParticles3D(const double endTime)
 			double * const pFz = cloud->forceZ + i;
 
 			//calculate ith and (i+1)th tibits: 
-			_mm_store_pd(cloud->k3 + i, vdt*_mm_load_pd(pFx)/vmass);	//velocityX tidbit
-			_mm_store_pd(cloud->l3 + i, vdt*cloud->getVx3_pd(i));		//positionX tidbit
-			_mm_store_pd(cloud->m3 + i, vdt*_mm_load_pd(pFy)/vmass);	//velocityY tidbit
-			_mm_store_pd(cloud->n3 + i, vdt*cloud->getVy3_pd(i));		//positionY tidbit
-			_mm_store_pd(cloud->o3 + i, vdt*_mm_load_pd(pFz)/vmass);	//velocityZ tidbit
-			_mm_store_pd(cloud->p3 + i, vdt*cloud->getVz3_pd(i));		//positionZ tidbit
+			_mm_store_pd(cloud->k3 + i, vdt*_mm_load_pd(pFx)/vmass); //velocityX tidbit
+			_mm_store_pd(cloud->l3 + i, vdt*cloud->getVx3_pd(i));    //positionX tidbit
+			_mm_store_pd(cloud->m3 + i, vdt*_mm_load_pd(pFy)/vmass); //velocityY tidbit
+			_mm_store_pd(cloud->n3 + i, vdt*cloud->getVy3_pd(i));    //positionY tidbit
+			_mm_store_pd(cloud->o3 + i, vdt*_mm_load_pd(pFz)/vmass); //velocityZ tidbit
+			_mm_store_pd(cloud->p3 + i, vdt*cloud->getVz3_pd(i));    //positionZ tidbit
 
 			//reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
 			_mm_store_pd(pFy, _mm_setzero_pd());
 			_mm_store_pd(pFz, _mm_setzero_pd());
 		}
-		
-		force4_3D(currentTime + dt);	//compute net force4
-		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2)	//calculate 4th substep components
+
+		force4_3D(currentTime + dt);          //compute net force4
+		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 4th substep components
 		{
-			const __m128d vmass = _mm_load_pd(cloud->mass + i);	//load ith and (i+1)th mass
+			const __m128d vmass = _mm_load_pd(cloud->mass + i);                //load ith and (i+1)th mass
 
 			//assign force pointers:
 			double * const pFx = cloud->forceX + i;
 			double * const pFy = cloud->forceY + i;
 			double * const pFz = cloud->forceZ + i;
 
-			_mm_store_pd(cloud->k4 + i, vdt*_mm_load_pd(pFx)/vmass);	//velocityX tidbit
-			_mm_store_pd(cloud->l4 + i, vdt*cloud->getVx4_pd(i));		//positionX tidbit
-			_mm_store_pd(cloud->m4 + i, vdt*_mm_load_pd(pFy)/vmass);	//velocityY tidbit
-			_mm_store_pd(cloud->n4 + i, vdt*cloud->getVy4_pd(i));		//positionY tidbit
-			_mm_store_pd(cloud->o4 + i, vdt*_mm_load_pd(pFz)/vmass);	//velocityZ tidbit
-			_mm_store_pd(cloud->p4 + i, vdt*cloud->getVz4_pd(i));		//positionZ tidbit
+			_mm_store_pd(cloud->k4 + i, vdt*_mm_load_pd(pFx)/vmass); //velocityX tidbit
+			_mm_store_pd(cloud->l4 + i, vdt*cloud->getVx4_pd(i));    //positionX tidbit
+			_mm_store_pd(cloud->m4 + i, vdt*_mm_load_pd(pFy)/vmass); //velocityY tidbit
+			_mm_store_pd(cloud->n4 + i, vdt*cloud->getVy4_pd(i));    //positionY tidbit
+			_mm_store_pd(cloud->o4 + i, vdt*_mm_load_pd(pFz)/vmass); //velocityZ tidbit
+			_mm_store_pd(cloud->p4 + i, vdt*cloud->getVz4_pd(i));    //positionZ tidbit
 
 			//reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
@@ -363,7 +363,7 @@ void Runge_Kutta::moveParticles3D(const double endTime)
 			_mm_store_pd(pFz, _mm_setzero_pd());
 		}
 
-		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2)	//calculate next position and next velocity for entire cloud
+		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate next position and next velocity for entire cloud
 		{
 			//load ith and (i+1)th k's into vectors:
 			const __m128d vk1 = _mm_load_pd(cloud->k1 + i);
@@ -425,75 +425,75 @@ void Runge_Kutta::moveParticles3D(const double endTime)
 //1D:
 inline void Runge_Kutta::force1_1D(const double time) const
 {
- 	for(unsigned int i = 0; i < numForces; i++)
+	for(unsigned int i = 0; i < numForces; i++)
 		theForce[i]->force1_1D(time);
 }
 
 inline void Runge_Kutta::force2_1D(const double time) const
 {
- 	for(unsigned int i = 0; i < numForces; i++)
+	for(unsigned int i = 0; i < numForces; i++)
 		theForce[i]->force2_1D(time);
 }
 
 inline void Runge_Kutta::force3_1D(const double time) const
 {
- 	for(unsigned int i = 0; i < numForces; i++)
+	for(unsigned int i = 0; i < numForces; i++)
 		theForce[i]->force3_1D(time);
 }
 
 inline void Runge_Kutta::force4_1D(const double time) const
 {
- 	for(unsigned int i = 0; i < numForces; i++)
+	for(unsigned int i = 0; i < numForces; i++)
 		theForce[i]->force4_1D(time);
 }
 
 //2D:
 inline void Runge_Kutta::force1_2D(const double time) const
 {
- 	for(unsigned int i = 0; i < numForces; i++)
+	for(unsigned int i = 0; i < numForces; i++)
 		theForce[i]->force1_2D(time);
 }
 
 inline void Runge_Kutta::force2_2D(const double time) const
 {
- 	for(unsigned int i = 0; i < numForces; i++)
+	for(unsigned int i = 0; i < numForces; i++)
 		theForce[i]->force2_2D(time);
 }
 
 inline void Runge_Kutta::force3_2D(const double time) const
 {
- 	for(unsigned int i = 0; i < numForces; i++)
+	for(unsigned int i = 0; i < numForces; i++)
 		theForce[i]->force3_2D(time);
 }
 
 inline void Runge_Kutta::force4_2D(const double time) const
 {
- 	for(unsigned int i = 0; i < numForces; i++)
+	for(unsigned int i = 0; i < numForces; i++)
 		theForce[i]->force4_2D(time);
 }
 
 //3D:
 inline void Runge_Kutta::force1_3D(const double time) const
 {
- 	for(unsigned int i = 0; i < numForces; i++)
+	for(unsigned int i = 0; i < numForces; i++)
 		theForce[i]->force1_3D(time);
 }
 
 inline void Runge_Kutta::force2_3D(const double time) const
 {
- 	for(unsigned int i = 0; i < numForces; i++)
+	for(unsigned int i = 0; i < numForces; i++)
 		theForce[i]->force2_3D(time);
 }
 
 inline void Runge_Kutta::force3_3D(const double time) const
 {
- 	for(unsigned int i = 0; i < numForces; i++)
+	for(unsigned int i = 0; i < numForces; i++)
 		theForce[i]->force3_3D(time);
 }
 
 inline void Runge_Kutta::force4_3D(const double time) const
 {
- 	for(unsigned int i = 0; i < numForces; i++)
+	for(unsigned int i = 0; i < numForces; i++)
 		theForce[i]->force4_3D(time);
 }
 
@@ -504,7 +504,7 @@ inline void Runge_Kutta::force4_3D(const double time) const
 --------------------------------------------------------------------------*/
 const double Runge_Kutta::modifyTimeStep1D() const
 {
-	//set constants:	
+	//set constants:
 	const unsigned int numPar = cloud->n;
 	const __m128d dist = _mm_set1_pd(1.45E-4);
 
@@ -519,7 +519,7 @@ const double Runge_Kutta::modifyTimeStep1D() const
 			return red_dt;
 
 		//load positions into vectors:
-		const __m128d vx1 = cloud->getx1_pd(j);	//x vector
+		const __m128d vx1 = cloud->getx1_pd(j); //x vector
 
 		//calculate separation distance b/t nonadjacent elements:
 		for(unsigned int i = j + 2; i < numPar; i += 2)
@@ -536,7 +536,7 @@ const double Runge_Kutta::modifyTimeStep1D() const
 			double low, high;
 			_mm_storel_pd(&low, comp);
 			_mm_storeh_pd(&high, comp);
-			if (isnan(low) || isnan(high))	//if either are too close, reduce time step
+			if (isnan(low) || isnan(high))  //if either are too close, reduce time step
 				return red_dt;
 
 			//calculate j,i+1 and j+1,i separation distances:
@@ -547,7 +547,7 @@ const double Runge_Kutta::modifyTimeStep1D() const
 
 			_mm_storel_pd(&low, comp);
 			_mm_storeh_pd(&high, comp);
-			if (isnan(low) || isnan(high))	//if either are too close, reduce time step
+			if (isnan(low) || isnan(high))  //if either are too close, reduce time step
 				return red_dt;
 		}
 	}
@@ -558,7 +558,7 @@ const double Runge_Kutta::modifyTimeStep1D() const
 
 const double Runge_Kutta::modifyTimeStep2D() const
 {
-	//set constants:	
+	//set constants:
 	const unsigned int numPar = cloud->n;
 	const __m128d dist = _mm_set1_pd(1.45E-4);
 
@@ -574,8 +574,8 @@ const double Runge_Kutta::modifyTimeStep2D() const
 			return red_dt;
 
 		//load positions into vectors:
-		const __m128d vx1 = cloud->getx1_pd(j);	//x vector
-		const __m128d vy1 = cloud->gety1_pd(j);	//y vector
+		const __m128d vx1 = cloud->getx1_pd(j); //x vector
+		const __m128d vy1 = cloud->gety1_pd(j); //y vector
 
 		//calculate separation distance b/t nonadjacent elements:
 		for(unsigned int i = j + 2; i < numPar; i += 2)
@@ -594,7 +594,7 @@ const double Runge_Kutta::modifyTimeStep2D() const
 			double low, high;
 			_mm_storel_pd(&low, comp);
 			_mm_storeh_pd(&high, comp);
-			if (isnan(low) || isnan(high))	//if either are too close, reduce time step
+			if (isnan(low) || isnan(high))  //if either are too close, reduce time step
 				return red_dt;
 
 			//calculate j,i+1 and j+1,i separation distances:
@@ -606,7 +606,7 @@ const double Runge_Kutta::modifyTimeStep2D() const
 
 			_mm_storel_pd(&low, comp);
 			_mm_storeh_pd(&high, comp);
-			if (isnan(low) || isnan(high))	//if either are too close, reduce time step
+			if (isnan(low) || isnan(high))  //if either are too close, reduce time step
 				return red_dt;
 		}
 	}
@@ -617,7 +617,7 @@ const double Runge_Kutta::modifyTimeStep2D() const
 
 const double Runge_Kutta::modifyTimeStep3D() const
 {
-	//set constants:	
+	//set constants:
 	const unsigned int numPar = cloud->n;
 	const __m128d dist = _mm_set1_pd(1.45E-4);
 
@@ -634,9 +634,9 @@ const double Runge_Kutta::modifyTimeStep3D() const
 			return red_dt;
 
 		//load positions into vectors:
-		const __m128d vx1 = cloud->getx1_pd(j);	//x vector
-		const __m128d vy1 = cloud->gety1_pd(j);	//y vector
-		const __m128d vz1 = cloud->getz1_pd(j);	//z vector
+		const __m128d vx1 = cloud->getx1_pd(j); //x vector
+		const __m128d vy1 = cloud->gety1_pd(j); //y vector
+		const __m128d vz1 = cloud->getz1_pd(j); //z vector
 
 		//calculate separation distance b/t nonadjacent elements:
 		for(unsigned int i = j + 2; i < numPar; i += 2)
@@ -657,7 +657,7 @@ const double Runge_Kutta::modifyTimeStep3D() const
 			double low, high;
 			_mm_storel_pd(&low, comp);
 			_mm_storeh_pd(&high, comp);
-			if (isnan(low) || isnan(high))	//if either are too close, reduce time step
+			if (isnan(low) || isnan(high))  //if either are too close, reduce time step
 				return red_dt;
 
 			//calculate j,i+1 and j+1,i separation distances:
@@ -670,7 +670,7 @@ const double Runge_Kutta::modifyTimeStep3D() const
 
 			_mm_storel_pd(&low, comp);
 			_mm_storeh_pd(&high, comp);
-			if (isnan(low) || isnan(high))	//if either are too close, reduce time step
+			if (isnan(low) || isnan(high))  //if either are too close, reduce time step
 				return red_dt;
 		}
 	}

@@ -13,9 +13,9 @@
 #include "ThermalForce.h"
 
 class TimeVaryingThermalForce : public ThermalForce
-{	
+{
 public:
-	TimeVaryingThermalForce(Cloud * const myCloud, const double scale, const double offset);	//overloaded constructor
+	TimeVaryingThermalForce(Cloud * const myCloud, const double scale, const double offset); //overloaded constructor
 	~TimeVaryingThermalForce() {} //destructor
 
 //public functions:

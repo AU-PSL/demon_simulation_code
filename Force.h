@@ -30,7 +30,7 @@ class Force
 {
 public:
 	Cloud * const cloud;
-	
+
 	Force(Cloud * const myCloud) : cloud(myCloud) {} 
 	virtual ~Force() {} //implementation of virtual destructor
 

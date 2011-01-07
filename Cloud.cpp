@@ -90,9 +90,9 @@ Cloud * const Cloud::initializeGrid1D(const unsigned int numParticles, const dou
 	Cloud * const cloud = new Cloud(numParticles, cloudSize);
 
 	//seed rand function with time(NULL):
-	srand((int)time(NULL));		//needed for Cloud::setCharge
+	srand((int)time(NULL));      //needed for Cloud::setCharge
 
-	double tempPosX = cloudSize;	//position of first particle
+	double tempPosX = cloudSize; //position of first particle
 
 	const double gridUnit = 2.0*cloudSize/numParticles;
 
@@ -115,9 +115,9 @@ Cloud * const Cloud::initializeGrid2D(const unsigned int numParticles, const dou
 	Cloud * const cloud = new Cloud(numParticles, cloudSize);
 
 	//seed rand function with time(NULL):
-	srand((int)time(NULL));		//needed for Cloud::setCharge
+	srand((int)time(NULL));      //needed for Cloud::setCharge
 
-	double tempPosX = cloudSize;	//position of first particle
+	double tempPosX = cloudSize; //position of first particle
 	double tempPosY = cloudSize;
 
 	const double sqrtNumPar = floor(sqrt(numParticles));
@@ -132,7 +132,7 @@ Cloud * const Cloud::initializeGrid2D(const unsigned int numParticles, const dou
 		cloud->setMass(i);
 
 		tempPosX -= gridUnit;
-		if(tempPosX <= -cloudSize) //end of row
+		if(tempPosX <= -cloudSize)    //end of row
 		{
 			tempPosX = cloudSize; //reset
 			tempPosY -= gridUnit; //move to next row
@@ -147,11 +147,11 @@ Cloud * const Cloud::initializeGrid3D(const unsigned int numParticles, const dou
 	Cloud * const cloud = new Cloud(numParticles, cloudSize);
 
 	//seed rand function with time(NULL):
-	srand((int)time(NULL));		//needed for Cloud::setCharge
+	srand((int)time(NULL));      //needed for Cloud::setCharge
 
-	double tempPosX = cloudSize;	//position of first particle
+	double tempPosX = cloudSize; //position of first particle
 	double tempPosY = cloudSize;
-	double tempPosZ = cloudSize;	
+	double tempPosZ = cloudSize;
 
 	const double cubeNumPar = floor(pow(numParticles,(double)(1/3)));
 	const double gridUnit = 2.0*cloudSize/cubeNumPar;
@@ -165,12 +165,12 @@ Cloud * const Cloud::initializeGrid3D(const unsigned int numParticles, const dou
 		cloud->setMass(i);
 
 		tempPosX -= gridUnit;
-		if(tempPosX <= -cloudSize) //end of row
+		if(tempPosX <= -cloudSize)    //end of row
 		{
 			tempPosX = cloudSize; //reset
 			tempPosY -= gridUnit; //move to next row
 
-			if(tempPosY <= -cloudSize) //end of plane
+			if(tempPosY <= -cloudSize)    //end of plane
 			{
 				tempPosY = cloudSize; //reset
 				tempPosZ -= gridUnit; //move to next plane
@@ -196,7 +196,7 @@ Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error
 		fits_get_num_rows(file, &numParticles, error);
 
 	//create cloud:
-	Cloud* cloud = new Cloud((unsigned int)numParticles, 0.0);	//cloudSize not used in this case, so set to zero
+	Cloud* cloud = new Cloud((unsigned int)numParticles, 0.0); //cloudSize not used in this case, so set to zero
 
 	//read mass and charge information:
 	if(!*error)
@@ -254,12 +254,12 @@ void Cloud::writeCloudSetup(fitsfile * const file, int * const error, const int 
 
 	char *ttypeCloud[] = {const_cast<char *> ("CHARGE"), const_cast<char *> ("MASS")};
 	char *tformCloud[] = {const_cast<char *> ("D"), const_cast<char *> ("D")};
-	char *tunitCloud[] = {const_cast<char *> ("C"), const_cast<char *> ("kg")};	
+	char *tunitCloud[] = {const_cast<char *> ("C"), const_cast<char *> ("kg")};
 
 	//write mass and charge:
 	if (!*error)
 		//file, storage type, num rows, num columns, ...
-		fits_create_tbl(file, BINARY_TBL, n, 2, ttypeCloud, tformCloud, tunitCloud, "CLOUD", error);	
+		fits_create_tbl(file, BINARY_TBL, n, 2, ttypeCloud, tformCloud, tunitCloud, "CLOUD", error);
 	if(!*error)
 	{
 		//file, column #, starting row, first element, num elements, mass array, error
@@ -408,127 +408,127 @@ void Cloud::writeTimeStep3D(fitsfile * const file, int * const error, double cur
 // 4th order Runge-Kutta substep helper methods:
 
 // x-position helper functions -------------------------------------------------
-const __m128d Cloud::getx1_pd(const unsigned int i) const	// x
+const __m128d Cloud::getx1_pd(const unsigned int i) const // x
 {
 	return _mm_load_pd(x + i);
 }
 
-const __m128d Cloud::getx2_pd(const unsigned int i) const	// x + l1/2
+const __m128d Cloud::getx2_pd(const unsigned int i) const // x + l1/2
 {
 	return _mm_load_pd(x + i) + _mm_load_pd(l1 + i)/_mm_set1_pd(2.0);
 }
 
-const __m128d Cloud::getx3_pd(const unsigned int i) const	// x + l2/2
+const __m128d Cloud::getx3_pd(const unsigned int i) const // x + l2/2
 {
 	return _mm_load_pd(x + i) + _mm_load_pd(l2 + i)/_mm_set1_pd(2.0);
 }
 
-const __m128d Cloud::getx4_pd(const unsigned int i) const	// x + l3
+const __m128d Cloud::getx4_pd(const unsigned int i) const // x + l3
 {
 	return _mm_load_pd(x + i) + _mm_load_pd(l3 + i);
 }
 
 // y-position helper functions -------------------------------------------------
-const __m128d Cloud::gety1_pd(const unsigned int i) const	// y
+const __m128d Cloud::gety1_pd(const unsigned int i) const // y
 {
 	return _mm_load_pd(y + i);
 }
 
-const __m128d Cloud::gety2_pd(const unsigned int i) const	// y + n1/2
+const __m128d Cloud::gety2_pd(const unsigned int i) const // y + n1/2
 {
 	return _mm_load_pd(y + i) + _mm_load_pd(n1 + i)/_mm_set1_pd(2.0);
 }
 
-const __m128d Cloud::gety3_pd(const unsigned int i) const	// y + n2/2
+const __m128d Cloud::gety3_pd(const unsigned int i) const // y + n2/2
 {
 	return _mm_load_pd(y + i) + _mm_load_pd(n2 + i)/_mm_set1_pd(2.0);
 }
 
-const __m128d Cloud::gety4_pd(const unsigned int i) const	// y + n3
+const __m128d Cloud::gety4_pd(const unsigned int i) const // y + n3
 {
 	return _mm_load_pd(y + i) + _mm_load_pd(n3 + i);
 }
 
 // z-position helper functions -------------------------------------------------
-const __m128d Cloud::getz1_pd(const unsigned int i) const	// z
+const __m128d Cloud::getz1_pd(const unsigned int i) const // z
 {
 	return _mm_load_pd(z + i);
 }
 
-const __m128d Cloud::getz2_pd(const unsigned int i) const	// z + p1/2
+const __m128d Cloud::getz2_pd(const unsigned int i) const // z + p1/2
 {
 	return _mm_load_pd(z + i) + _mm_load_pd(p1 + i)/_mm_set1_pd(2.0);
 }
 
-const __m128d Cloud::getz3_pd(const unsigned int i) const	// z + p2/2
+const __m128d Cloud::getz3_pd(const unsigned int i) const // z + p2/2
 {
 	return _mm_load_pd(z + i) + _mm_load_pd(p2 + i)/_mm_set1_pd(2.0);
 }
 
-const __m128d Cloud::getz4_pd(const unsigned int i) const	// z + p3
+const __m128d Cloud::getz4_pd(const unsigned int i) const // z + p3
 {
 	return _mm_load_pd(z + i) + _mm_load_pd(p3 + i);
 }
 
 // x-velocity helper functions ------------------------------------------------
-const __m128d Cloud::getVx1_pd(const unsigned int i) const	// Vx
+const __m128d Cloud::getVx1_pd(const unsigned int i) const // Vx
 {
 	return _mm_load_pd(Vx + i);
 }
 
-const __m128d Cloud::getVx2_pd(const unsigned int i) const	// Vx + k1/2
+const __m128d Cloud::getVx2_pd(const unsigned int i) const // Vx + k1/2
 {
 	return _mm_load_pd(Vx + i) + _mm_load_pd(k1 + i)/_mm_set1_pd(2.0);
 }
 
-const __m128d Cloud::getVx3_pd(const unsigned int i) const	// Vx + k2/2
+const __m128d Cloud::getVx3_pd(const unsigned int i) const // Vx + k2/2
 {
 	return _mm_load_pd(Vx + i) + _mm_load_pd(k2 + i)/_mm_set1_pd(2.0);
 }
 
-const __m128d Cloud::getVx4_pd(const unsigned int i) const	// Vx + k3
+const __m128d Cloud::getVx4_pd(const unsigned int i) const // Vx + k3
 {
 	return _mm_load_pd(Vx + i) + _mm_load_pd(k3 + i);
 }
 
 // y-velocity helper functions ------------------------------------------------
-const __m128d Cloud::getVy1_pd(const unsigned int i) const	// Vy
+const __m128d Cloud::getVy1_pd(const unsigned int i) const // Vy
 {
 	return _mm_load_pd(Vy + i);
 }
 
-const __m128d Cloud::getVy2_pd(const unsigned int i) const	// Vy + m1/2
+const __m128d Cloud::getVy2_pd(const unsigned int i) const // Vy + m1/2
 {
 	return _mm_load_pd(Vy + i) + _mm_load_pd(m1 + i)/_mm_set1_pd(2.0);
 }
 
-const __m128d Cloud::getVy3_pd(const unsigned int i) const	// Vy + m2/2
+const __m128d Cloud::getVy3_pd(const unsigned int i) const // Vy + m2/2
 {
 	return _mm_load_pd(Vy + i) + _mm_load_pd(m2 + i)/_mm_set1_pd(2.0);
 }
 
-const __m128d Cloud::getVy4_pd(const unsigned int i) const	// Vy + m3
+const __m128d Cloud::getVy4_pd(const unsigned int i) const // Vy + m3
 {
 	return _mm_load_pd(Vy + i) + _mm_load_pd(m3 + i);
 }
 
 // z-velocity helper functions ------------------------------------------------
-const __m128d Cloud::getVz1_pd(const unsigned int i) const	// Vz
+const __m128d Cloud::getVz1_pd(const unsigned int i) const // Vz
 {
 	return _mm_load_pd(Vz + i);
 }
 
-const __m128d Cloud::getVz2_pd(const unsigned int i) const	// Vz + m1/2
+const __m128d Cloud::getVz2_pd(const unsigned int i) const // Vz + m1/2
 {
 	return _mm_load_pd(Vz + i) + _mm_load_pd(o1 + i)/_mm_set1_pd(2.0);
 }
 
-const __m128d Cloud::getVz3_pd(const unsigned int i) const	// Vz + m2/2
+const __m128d Cloud::getVz3_pd(const unsigned int i) const // Vz + m2/2
 {
 	return _mm_load_pd(Vz + i) + _mm_load_pd(o2 + i)/_mm_set1_pd(2.0);
 }
 
-const __m128d Cloud::getVz4_pd(const unsigned int i) const	// Vz + m3
+const __m128d Cloud::getVz4_pd(const unsigned int i) const // Vz + m3
 {
 	return _mm_load_pd(Vz + i) + _mm_load_pd(o3 + i);
 }

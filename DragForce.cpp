@@ -20,13 +20,13 @@ void DragForce::force1_1D(const double currentTime)
 }
 
 void DragForce::force2_1D(const double currentTime)
-{	
+{
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force1D(currentParticle, cloud->getVx2_pd(currentParticle));
 }
 
 void DragForce::force3_1D(const double currentTime)
-{	
+{
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force1D(currentParticle, cloud->getVx3_pd(currentParticle));
 }
@@ -45,13 +45,13 @@ void DragForce::force1_2D(const double currentTime)
 }
 
 void DragForce::force2_2D(const double currentTime)
-{	
+{
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force2D(currentParticle, cloud->getVx2_pd(currentParticle), cloud->getVy2_pd(currentParticle));
 }
 
 void DragForce::force3_2D(const double currentTime)
-{	
+{
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force2D(currentParticle, cloud->getVx3_pd(currentParticle), cloud->getVy3_pd(currentParticle));
 }
@@ -70,13 +70,13 @@ void DragForce::force1_3D(const double currentTime)
 }
 
 void DragForce::force2_3D(const double currentTime)
-{	
+{
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force3D(currentParticle, cloud->getVx2_pd(currentParticle), cloud->getVy2_pd(currentParticle), cloud->getVz2_pd(currentParticle));
 }
 
 void DragForce::force3_3D(const double currentTime)
-{	
+{
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force3D(currentParticle, cloud->getVx3_pd(currentParticle), cloud->getVy3_pd(currentParticle), cloud->getVz3_pd(currentParticle));
 }
@@ -122,7 +122,7 @@ void DragForce::writeForce(fitsfile * const file, int * const error, const int d
 	//move to primary HDU:
 	if(!*error)
 		//file, # indicating primary HDU, HDU type, error
- 		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
+		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
 	
 	//add flag indicating that the drag force is used:
 	if(!*error) 
@@ -131,10 +131,10 @@ void DragForce::writeForce(fitsfile * const file, int * const error, const int d
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &forceFlags, NULL, error);
 
 		//add DragForce bit:
-		forceFlags |= DragForceFlag;		//compound bitwise OR
+		forceFlags |= DragForceFlag; //compound bitwise OR
 
 		if(*error == KEY_NO_EXIST || *error == VALUE_UNDEFINED)
-			*error = 0;			//clear above error.
+			*error = 0;          //clear above error.
 
 		//add or update keyword:
 		if(!*error) 
@@ -151,7 +151,7 @@ void DragForce::readForce(fitsfile * const file, int * const error, const int di
 	//move to primary HDU:
 	if(!*error)
 		//file, # indicating primary HDU, HDU type, error
- 		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
+		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
 	
 	if(!*error)
 		//file, key name, value, don't read comment, error

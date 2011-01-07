@@ -11,12 +11,12 @@
 #define THERMALFORCE_H
 
 #include "Force.h"
-#include "mtrand.h"	//MT header
+#include "mtrand.h" //MT header
 
 class ThermalForce : public Force
-{	
+{
 public:
-	ThermalForce(Cloud * const myCloud, const double redFactor);	//overloaded constructor
+	ThermalForce(Cloud * const myCloud, const double redFactor); //overloaded constructor
 	~ThermalForce() {} //destructor
 
 //public functions:

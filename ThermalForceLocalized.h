@@ -11,13 +11,13 @@
 #define THERMALFORCELOCALIZED_H
 
 #include "Force.h"
-#include "mtrand.h"	//MT header
+#include "mtrand.h" //MT header
 #include "VectorCompatibility.h"
 
 class ThermalForceLocalized : public Force
-{	
+{
 public:
-	ThermalForceLocalized(Cloud * const myCloud, const double thermRed1, const double thermRed2, const double specifiedRadius);	//overloaded constructor
+	ThermalForceLocalized(Cloud * const myCloud, const double thermRed1, const double thermRed2, const double specifiedRadius); //overloaded constructor
 	~ThermalForceLocalized() {} //destructor
 
 //public functions:

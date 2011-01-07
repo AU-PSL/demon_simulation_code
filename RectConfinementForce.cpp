@@ -8,7 +8,7 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "RectConfinementForce.h"
-	
+
 RectConfinementForce::RectConfinementForce(Cloud * const myCloud, double confineConstX, double confineConstY, double confineConstZ)
 : Force(myCloud), confineX(-confineConstX), confineY(-confineConstY), confineZ(-confineConstZ) {}
 
@@ -120,7 +120,7 @@ void RectConfinementForce::writeForce(fitsfile * const file, int * const error, 
 	//move to primary HDU:
 	if(!*error)
 		//file, # indicating primary HDU, HDU type, error
- 		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
+		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
 	
 	//add flag indicating that the rectangular confinement force is used:
 	if(!*error) 
@@ -129,10 +129,10 @@ void RectConfinementForce::writeForce(fitsfile * const file, int * const error, 
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &forceFlags, NULL, error);
 
 		//add RectConfinementForce bit:
-		forceFlags |= RectConfinementForceFlag;		//compound bitwise OR
+		forceFlags |= RectConfinementForceFlag; //compound bitwise OR
 
 		if(*error == KEY_NO_EXIST || *error == VALUE_UNDEFINED)
-			*error = 0;			//clear above error.
+			*error = 0;                     //clear above error.
 
 		//add or update keyword:
 		if(!*error) 
@@ -140,7 +140,7 @@ void RectConfinementForce::writeForce(fitsfile * const file, int * const error, 
 	}
 
 	if(!*error)
-	{	
+	{
 		if(dimension == 1)
 		{
 			//file, key name, value, precision (scientific format), comment
@@ -165,7 +165,7 @@ void RectConfinementForce::readForce(fitsfile * const file, int * const error, c
 	//move to primary HDU:
 	if(!*error)
 		//file, # indicating primary HDU, HDU type, error
- 		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
+		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
 
 	if(!*error)
 	{

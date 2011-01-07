@@ -14,9 +14,9 @@
 #include "VectorCompatibility.h"
 
 class DrivingForce : public Force
-{	
+{
 public:
-	DrivingForce(Cloud * const myCloud, const double dampConst, const double amp, const double drivingShift);	//overloaded constructor
+	DrivingForce(Cloud * const myCloud, const double dampConst, const double amp, const double drivingShift); //overloaded constructor
 	~DrivingForce() {} //destructor
 
 //public functions:
@@ -40,11 +40,11 @@ public:
 
 private:
 //private variables:
-	double amplitude;	//[N]
-	double driveConst;	//[m]
-	double shift;		//[m]
-	static const double waveNum;		//[1/m]
-	static const double angFreq;		//[rad*Hz]
+	double amplitude;  //[N]
+	double driveConst; //[m]
+	double shift;      //[m]
+	static const double waveNum; //[1/m]
+	static const double angFreq; //[rad*Hz]
 
 //private functions:
 	void force(const unsigned int currentParticle, const __m128d currentTime, const __m128d currentPositionX);
