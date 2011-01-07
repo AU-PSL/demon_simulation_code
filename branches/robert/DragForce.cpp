@@ -12,31 +12,100 @@
 DragForce::DragForce(Cloud * const myCloud, const double gamma) 
 : Force(myCloud), dragConst(-gamma) {}
 
-void DragForce::force1(const double currentTime)
+//1D:
+void DragForce::force1_1D(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle, cloud->getVx1_pd(currentParticle), cloud->getVy1_pd(currentParticle), cloud->getVz1_pd(currentParticle));
+		force1D(currentParticle, cloud->getVx1_pd(currentParticle));
 }
 
-void DragForce::force2(const double currentTime)
+void DragForce::force2_1D(const double currentTime)
 {	
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle, cloud->getVx2_pd(currentParticle), cloud->getVy2_pd(currentParticle), cloud->getVz2_pd(currentParticle));
+		force1D(currentParticle, cloud->getVx2_pd(currentParticle));
 }
 
-void DragForce::force3(const double currentTime)
+void DragForce::force3_1D(const double currentTime)
 {	
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle, cloud->getVx3_pd(currentParticle), cloud->getVy3_pd(currentParticle), cloud->getVz3_pd(currentParticle));
+		force1D(currentParticle, cloud->getVx3_pd(currentParticle));
 }
 
-void DragForce::force4(const double currentTime)
+void DragForce::force4_1D(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle, cloud->getVx4_pd(currentParticle), cloud->getVy4_pd(currentParticle), cloud->getVz4_pd(currentParticle));
+		force1D(currentParticle, cloud->getVx4_pd(currentParticle));
 }
 
-inline void DragForce::force(const unsigned int currentParticle, const __m128d currentVelocityX, const __m128d currentVelocityY, const __m128d currentVelocityZ)
+//2D:
+void DragForce::force1_2D(const double currentTime)
+{
+	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+		force2D(currentParticle, cloud->getVx1_pd(currentParticle), cloud->getVy1_pd(currentParticle));
+}
+
+void DragForce::force2_2D(const double currentTime)
+{	
+	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+		force2D(currentParticle, cloud->getVx2_pd(currentParticle), cloud->getVy2_pd(currentParticle));
+}
+
+void DragForce::force3_2D(const double currentTime)
+{	
+	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+		force2D(currentParticle, cloud->getVx3_pd(currentParticle), cloud->getVy3_pd(currentParticle));
+}
+
+void DragForce::force4_2D(const double currentTime)
+{
+	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+		force2D(currentParticle, cloud->getVx4_pd(currentParticle), cloud->getVy4_pd(currentParticle));
+}
+
+//3D:
+void DragForce::force1_3D(const double currentTime)
+{
+	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+		force3D(currentParticle, cloud->getVx1_pd(currentParticle), cloud->getVy1_pd(currentParticle), cloud->getVz1_pd(currentParticle));
+}
+
+void DragForce::force2_3D(const double currentTime)
+{	
+	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+		force3D(currentParticle, cloud->getVx2_pd(currentParticle), cloud->getVy2_pd(currentParticle), cloud->getVz2_pd(currentParticle));
+}
+
+void DragForce::force3_3D(const double currentTime)
+{	
+	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+		force3D(currentParticle, cloud->getVx3_pd(currentParticle), cloud->getVy3_pd(currentParticle), cloud->getVz3_pd(currentParticle));
+}
+
+void DragForce::force4_3D(const double currentTime)
+{
+	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+		force3D(currentParticle, cloud->getVx4_pd(currentParticle), cloud->getVy4_pd(currentParticle), cloud->getVz4_pd(currentParticle));
+}
+
+inline void DragForce::force1D(const unsigned int currentParticle, const __m128d currentVelocityX)
+{
+	const __m128d drag = _mm_set1_pd(dragConst)*_mm_load_pd(&cloud->mass[currentParticle]);
+	double * const pFx = cloud->forceX + currentParticle;
+
+	_mm_store_pd(pFx, _mm_load_pd(pFx) + drag*currentVelocityX);
+}
+
+inline void DragForce::force2D(const unsigned int currentParticle, const __m128d currentVelocityX, const __m128d currentVelocityY)
+{
+	const __m128d drag = _mm_set1_pd(dragConst)*_mm_load_pd(&cloud->mass[currentParticle]);
+	double * const pFx = cloud->forceX + currentParticle;
+	double * const pFy = cloud->forceY + currentParticle;
+
+	_mm_store_pd(pFx, _mm_load_pd(pFx) + drag*currentVelocityX);
+	_mm_store_pd(pFy, _mm_load_pd(pFy) + drag*currentVelocityY);
+}
+
+inline void DragForce::force3D(const unsigned int currentParticle, const __m128d currentVelocityX, const __m128d currentVelocityY, const __m128d currentVelocityZ)
 {
 	const __m128d drag = _mm_set1_pd(dragConst)*_mm_load_pd(&cloud->mass[currentParticle]);
 	double * const pFx = cloud->forceX + currentParticle;
@@ -48,7 +117,7 @@ inline void DragForce::force(const unsigned int currentParticle, const __m128d c
 	_mm_store_pd(pFz, _mm_load_pd(pFz) + drag*currentVelocityZ);
 }
 
-void DragForce::writeForce(fitsfile * const file, int * const error) const
+void DragForce::writeForce(fitsfile * const file, int * const error, const int dimension) const
 {
 	//move to primary HDU:
 	if(!*error)
@@ -77,7 +146,7 @@ void DragForce::writeForce(fitsfile * const file, int * const error) const
 		fits_write_key_dbl(file, const_cast<char *> ("dragConst"), dragConst, 6, const_cast<char *> ("[s^-1] (DragForce)"), error);
 }
 
-void DragForce::readForce(fitsfile * const file, int * const error)
+void DragForce::readForce(fitsfile * const file, int * const error, const int dimension)
 {
 	//move to primary HDU:
 	if(!*error)

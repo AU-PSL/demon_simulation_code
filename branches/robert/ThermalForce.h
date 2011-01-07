@@ -21,20 +21,32 @@ public:
 
 //public functions:
 	//Note: currentTime parameter is necessary (due to parent class) but unused
-	virtual void force1(const double currentTime); //rk substep 1
-	virtual void force2(const double currentTime); //rk substep 2
-	virtual void force3(const double currentTime); //rk substep 3
-	virtual void force4(const double currentTime); //rk substep 4
+	virtual void force1_1D(const double currentTime); //rk substep 1
+	virtual void force2_1D(const double currentTime); //rk substep 2
+	virtual void force3_1D(const double currentTime); //rk substep 3
+	virtual void force4_1D(const double currentTime); //rk substep 4
 
-	virtual void writeForce(fitsfile * const file, int * const error) const;
-	virtual void readForce(fitsfile * const file, int * const error);
+	virtual void force1_2D(const double currentTime); 
+	virtual void force2_2D(const double currentTime); 
+	virtual void force3_2D(const double currentTime); 
+	virtual void force4_2D(const double currentTime); 
+
+	virtual void force1_3D(const double currentTime); 
+	virtual void force2_3D(const double currentTime); 
+	virtual void force3_3D(const double currentTime); 
+	virtual void force4_3D(const double currentTime); 
+
+	virtual void writeForce(fitsfile * const file, int * const error, const int dimension) const;
+	virtual void readForce(fitsfile * const file, int * const error, const int dimension);
 
 private:
 //private variables:
-    MTRand mt;
+	MTRand mt;
 
 //private functions:
-	void force(const unsigned int currentParticle);
+	void force1D(const unsigned int currentParticle);
+	void force2D(const unsigned int currentParticle);
+	void force3D(const unsigned int currentParticle);
 
 protected:
 //protected variables:

@@ -15,30 +15,76 @@ using namespace std;
 RotationalForce::RotationalForce(Cloud * const myCloud, const double rmin, const double rmax, const double rotConst)
 : Force(myCloud), innerRad(rmin), outerRad(rmax), rotationalConst(rotConst) {}
 
-void RotationalForce::force1(const double currentTime)
+//1D:
+void RotationalForce::force1_1D(const double currentTime)
+{
+	cout << "Error: RotationalForce not specified for 1D.\n";
+	exit(1);
+}
+
+void RotationalForce::force2_1D(const double currentTime)
+{
+	force1_1D(currentTime);
+}
+
+void RotationalForce::force3_1D(const double currentTime)
+{
+	force1_1D(currentTime);
+}
+
+void RotationalForce::force4_1D(const double currentTime)
+{
+	force1_1D(currentTime);
+}
+
+//2D:
+void RotationalForce::force1_2D(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
 }
 
-void RotationalForce::force2(const double currentTime)
+void RotationalForce::force2_2D(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
 }
 
-void RotationalForce::force3(const double currentTime)
+void RotationalForce::force3_2D(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
 }
 
-void RotationalForce::force4(const double currentTime)
+void RotationalForce::force4_2D(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
 }
 
+//3D:
+void RotationalForce::force1_3D(const double currentTime)
+{
+	force1_2D(currentTime); //rotation independent of z-dimension
+}
+
+void RotationalForce::force2_3D(const double currentTime)
+{
+	force2_2D(currentTime);
+}
+
+void RotationalForce::force3_3D(const double currentTime)
+{
+	force3_2D(currentTime);
+}
+
+void RotationalForce::force4_3D(const double currentTime)
+{
+	force4_2D(currentTime);
+}
+
+//RotationalForce given by 2D case. Since privite force function is not inherited
+// from Force.h, no need to overload generic force function.
 inline void RotationalForce::force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY)
 {
 	const __m128d dustRadV = _mm_sqrt_pd(currentPositionX*currentPositionX + currentPositionY*currentPositionY);
@@ -66,7 +112,7 @@ inline void RotationalForce::force(const unsigned int currentParticle, const __m
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + cRotConst*currentPositionX/dustRadV);
 }
 
-void RotationalForce::writeForce(fitsfile * const file, int * const error) const
+void RotationalForce::writeForce(fitsfile * const file, int * const error, const int dimension) const
 {
 	//move to primary HDU:
 	if(!*error)
@@ -99,7 +145,7 @@ void RotationalForce::writeForce(fitsfile * const file, int * const error) const
 	}
 }
 
-void RotationalForce::readForce(fitsfile * const file, int * const error)
+void RotationalForce::readForce(fitsfile * const file, int * const error, const int dimension)
 {
 	//move to primary HDU:
 	if(!*error)
