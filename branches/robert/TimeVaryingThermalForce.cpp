@@ -97,8 +97,8 @@ void TimeVaryingThermalForce::writeForce(fitsfile * const file, int * const erro
 	//move to primary HDU:
 	if(!*error)
 		//file, # indicating primary HDU, HDU type, error
- 		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
-	
+		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
+
 	//add flag indicating that the thermal force is used:
 	if(!*error) 
 	{
@@ -106,10 +106,10 @@ void TimeVaryingThermalForce::writeForce(fitsfile * const file, int * const erro
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &forceFlags, NULL, error);
 
 		//add ThermalForce bit:
-		forceFlags |= TimeVaryingThermalForceFlag;		//compound bitwise OR
+		forceFlags |= TimeVaryingThermalForceFlag; //compound bitwise OR
 
 		if(*error == KEY_NO_EXIST || *error == VALUE_UNDEFINED)
-			*error = 0;			//clear above error.
+			*error = 0;                        //clear above error.
 
 		//add or update keyword:
 		if(!*error) 
@@ -129,8 +129,8 @@ void TimeVaryingThermalForce::readForce(fitsfile * const file, int * const error
 	//move to primary HDU:
 	if(!*error)
 		//file, # indicating primary HDU, HDU type, error
- 		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
-	
+		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
+
 	if(!*error)
 	{
 		//file, key name, value, don't read comment, error

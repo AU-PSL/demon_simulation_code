@@ -15,7 +15,7 @@
 #include <iostream> //necessary for cout statement in force1_1D
 
 class RotationalForce : public Force
-{	
+{
 public:
 	RotationalForce(Cloud * const myCloud, const double rmin, const double rmax, const double rotConst);
 	~RotationalForce() {} //destructor

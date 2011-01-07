@@ -48,7 +48,7 @@ void DrivingForce::force4_1D(const double currentTime)
 //2D:
 void DrivingForce::force1_2D(const double currentTime)
 {
-	force1_1D(currentTime);	//DrivingForce affects only x-dimension
+	force1_1D(currentTime); //DrivingForce affects only x-dimension
 }
 
 void DrivingForce::force2_2D(const double currentTime)
@@ -90,19 +90,19 @@ void DrivingForce::force4_3D(const double currentTime)
 //DrivingForce only acts in a single dimension, and privite force function is not inherited
 // from Force.h, so no need to overload generic force function.
 inline void DrivingForce::force(const unsigned int currentParticle, const __m128d currentTime, const __m128d currentPositionX)
-{	
+{
 	//N.B. F = A*sin(k*x - w*t)*exp(-(x + x0)^2/B) is the equation used in the paper, which differs from that below.
 	const __m128d distV = currentPositionX - _mm_set1_pd(shift);
 	const __m128d sinArg = _mm_set1_pd(waveNum)*currentPositionX - _mm_set1_pd(angFreq)*currentTime;
 	const __m128d expArg = _mm_set1_pd(-1.0)*distV*distV/_mm_set1_pd(driveConst);
-	
+
 	//no SIMD trig instructions; break vectors and perform separately:
 	double sinArgL, sinArgH, expArgL, expArgH;
 	_mm_storel_pd(&sinArgL, sinArg);
 	_mm_storeh_pd(&sinArgH, sinArg);
 	_mm_storel_pd(&expArgL, expArg);
 	_mm_storeh_pd(&expArgH, expArg);
-	
+
 	double * const pFx = cloud->forceX + currentParticle;
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + _mm_set1_pd(amplitude)*_mm_set_pd(sin(sinArgH), sin(sinArgL))*_mm_set_pd(exp(expArgH), exp(expArgL))); // _mm_set_pd() is backwards
 }
@@ -112,8 +112,8 @@ void DrivingForce::writeForce(fitsfile * const file, int * const error, const in
 	//move to primary HDU:
 	if(!*error)
 		//file, # indicating primary HDU, HDU type, error
- 		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
-	
+		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
+
 	//add flag indicating that the driving force is used:
 	if(!*error) 
 	{
@@ -121,10 +121,10 @@ void DrivingForce::writeForce(fitsfile * const file, int * const error, const in
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &forceFlags, NULL, error);
 
 		//add DrivingForce bit:
-		forceFlags |= DrivingForceFlag;		//compound bitwise OR
+		forceFlags |= DrivingForceFlag; //compound bitwise OR
 
 		if(*error == KEY_NO_EXIST || *error == VALUE_UNDEFINED)
-			*error = 0;			//clear above error.
+			*error = 0;             //clear above error.
 
 		//add or update keyword:
 		if(!*error) 
@@ -145,8 +145,8 @@ void DrivingForce::readForce(fitsfile * const file, int * const error, const int
 	//move to primary HDU:
 	if(!*error)
 		//file, # indicating primary HDU, HDU type, error
- 		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
-	
+		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
+
 	if(!*error)
 	{
 		//file, key name, value, don't read comment, error

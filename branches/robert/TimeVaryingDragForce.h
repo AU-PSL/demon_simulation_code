@@ -13,9 +13,9 @@
 #include "DragForce.h"
 
 class TimeVaryingDragForce : public DragForce
-{	
+{
 public:
-	TimeVaryingDragForce(Cloud * const myCloud, const double scale, const double offset);	//overloaded constructor
+	TimeVaryingDragForce(Cloud * const myCloud, const double scale, const double offset); //overloaded constructor
 	~TimeVaryingDragForce() {} //destructor
 
 //public functions:
@@ -39,9 +39,9 @@ public:
 
 private:
 //private variables:
-	double scaleConst;	//[s^-2]
+	double scaleConst;  //[s^-2]
 	double offsetConst; //[s^-1]
-	
+
 //private methods:
 	const double calculateGamma(const double currentTime) const;
 };

@@ -15,14 +15,14 @@
 class Runge_Kutta
 {
 public:
-	Runge_Kutta(Cloud * const myCloud, Force ** const forces, const double timeStep, const unsigned int forcesSize, double startTime);	//overloaded constructor
+	Runge_Kutta(Cloud * const myCloud, Force ** const forces, const double timeStep, const unsigned int forcesSize, double startTime); //overloaded constructor
 
 //public variables:
-	Cloud * const cloud;		//pointer to cloud object
-	Force ** const theForce;	//pointer to Force object
+	Cloud * const cloud;          //pointer to cloud object
+	Force ** const theForce;      //pointer to Force object
 	const unsigned int numForces;
-	const double init_dt;		//store initial time step
-	const double red_dt;		//store reduced time step
+	const double init_dt;         //store initial time step
+	const double red_dt;          //store reduced time step
 	double currentTime;
 
 //public functions:

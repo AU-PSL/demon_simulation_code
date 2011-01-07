@@ -14,18 +14,18 @@
 #include "VectorCompatibility.h"
 
 class DragForce : public Force
-{	
+{
 public:
-	DragForce(Cloud * const myCloud, const double gamma);	//overloaded constructor
+	DragForce(Cloud * const myCloud, const double gamma); //overloaded constructor
 	~DragForce() {} //destructor
-	
+
 //public functions:
 	//Note: currentTime parameter is necessary (due to parent class) but unused
 	virtual void force1_1D(const double currentTime); //rk substep 1
 	virtual void force2_1D(const double currentTime); //rk substep 2
 	virtual void force3_1D(const double currentTime); //rk substep 3
 	virtual void force4_1D(const double currentTime); //rk substep 4
-	
+
 	virtual void force1_2D(const double currentTime); 
 	virtual void force2_2D(const double currentTime); 
 	virtual void force3_2D(const double currentTime); 
@@ -41,7 +41,7 @@ public:
 
 protected:
 //protected variables:
-	double dragConst;	//[s^-1]
+	double dragConst; //[s^-1]
 
 private:
 //private functions:

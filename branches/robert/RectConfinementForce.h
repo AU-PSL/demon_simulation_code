@@ -14,7 +14,7 @@
 #include "VectorCompatibility.h"
 
 class RectConfinementForce : public Force
-{	
+{
 public:
 	RectConfinementForce(Cloud * const myCloud, double confineConstX, double confineConstY, double confineConstZ); //confinement consts must be positive!
 	~RectConfinementForce() {} //destructor

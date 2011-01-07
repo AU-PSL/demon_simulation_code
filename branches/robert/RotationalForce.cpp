@@ -94,18 +94,18 @@ inline void RotationalForce::force(const unsigned int currentParticle, const __m
 	double compL, compH;
 	_mm_storel_pd(&compL, compV);
 	_mm_storeh_pd(&compH, compV);
-	
+
 	const bool nanL = isnan(compL);
 	const bool nanH = isnan(compH);
 	if (!nanL && !nanH) //neither in, early return
 		return;
-	
+
 	__m128d cRotConst = _mm_set_pd(nanH ? rotationalConst : 0.0, // _mm_set_pd() is backwards.
-								   nanL ? rotationalConst : 0.0);
+		nanL ? rotationalConst : 0.0);
 
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;
-	
+
 	//force in theta direction:
 	// Fx = -c*x/r, Fy = c*y/r
 	_mm_store_pd(pFx, _mm_load_pd(pFx) - cRotConst*currentPositionY/dustRadV);
@@ -117,8 +117,8 @@ void RotationalForce::writeForce(fitsfile * const file, int * const error, const
 	//move to primary HDU:
 	if(!*error)
 		//file, # indicating primary HDU, HDU type, error
- 		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
-	
+		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
+
 	//add flag indicating that the drag force is used:
 	if(!*error) 
 	{
@@ -126,10 +126,10 @@ void RotationalForce::writeForce(fitsfile * const file, int * const error, const
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &forceFlags, NULL, error);
 
 		//add RotationalForce bit:
-		forceFlags |= RotationalForceFlag;		//compound bitwise OR
+		forceFlags |= RotationalForceFlag; //compound bitwise OR
 
 		if(*error == KEY_NO_EXIST || *error == VALUE_UNDEFINED)
-			*error = 0;			//clear above error.
+			*error = 0;                //clear above error.
 
 		//add or update keyword:
 		if(!*error) 
@@ -150,8 +150,8 @@ void RotationalForce::readForce(fitsfile * const file, int * const error, const 
 	//move to primary HDU:
 	if(!*error)
 		//file, # indicating primary HDU, HDU type, error
- 		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
-	
+		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
+
 	if(!*error)
 	{
 		//file, key name, value, don't read comment, error

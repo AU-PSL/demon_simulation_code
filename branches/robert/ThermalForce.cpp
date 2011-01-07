@@ -91,7 +91,7 @@ void ThermalForce::force4_3D(const double currentTime)
 }
 
 inline void ThermalForce::force1D(const unsigned int currentParticle)
-{	
+{
 	//MT returns random number in (0,1)
 	const __m128d thermV = _mm_set1_pd(heatVal)*_mm_set_pd(mt(), mt());
 	const double twoL = mt()*2.0; //random number in (0,2)
@@ -114,40 +114,40 @@ inline void ThermalForce::force1D(const unsigned int currentParticle)
 		directionH = 0;
 
 	double * const pFx = cloud->forceX + currentParticle;
-	
+
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + thermV*_mm_set_pd(directionH, directionL)); // _mm_set_pd() is backwards
 }
 
 inline void ThermalForce::force2D(const unsigned int currentParticle)
-{	
+{
 	//MT returns random number in (0,1)
 	const __m128d thermV = _mm_set1_pd(heatVal)*_mm_set_pd(mt(), mt());
-	const double phiL = mt()*2.0*M_PI;	//azimuthal angle phi
+	const double phiL = mt()*2.0*M_PI; //azimuthal angle phi
 	const double phiH = mt()*2.0*M_PI;
-	
+
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;
-	
+
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + thermV*_mm_set_pd(cos(phiH), cos(phiL))); // _mm_set_pd() is backwards
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + thermV*_mm_set_pd(sin(phiH), sin(phiL)));
 }
 
 inline void ThermalForce::force3D(const unsigned int currentParticle)
-{	
+{
 	//MT returns random number in (0,1)
 	const __m128d thermV = _mm_set1_pd(heatVal)*_mm_set_pd(mt(), mt());
-	const double phiL = mt()*2.0*M_PI;	//azimuthal angle phi
+	const double phiL = mt()*2.0*M_PI; //azimuthal angle phi
 	const double phiH = mt()*2.0*M_PI;
-	const double thetaL = mt()*M_PI;	//polar angle theta
+	const double thetaL = mt()*M_PI;   //polar angle theta
 	const double thetaH = mt()*M_PI;
-	
+
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;
 	double * const pFz = cloud->forceZ + currentParticle;
-	
+
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + thermV*_mm_set_pd(sin(thetaH), sin(thetaL))*_mm_set_pd(cos(phiH), cos(phiL))); // _mm_set_pd() is backwards
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + thermV*_mm_set_pd(sin(thetaH), cos(thetaL))*_mm_set_pd(sin(phiH), sin(phiL)));
-	_mm_store_pd(pFz, _mm_load_pd(pFz) + thermV*_mm_set_pd(cos(thetaH), cos(thetaL)));	
+	_mm_store_pd(pFz, _mm_load_pd(pFz) + thermV*_mm_set_pd(cos(thetaH), cos(thetaL)));
 }
 
 void ThermalForce::writeForce(fitsfile * const file, int * const error, const int dimension) const
@@ -155,8 +155,8 @@ void ThermalForce::writeForce(fitsfile * const file, int * const error, const in
 	//move to primary HDU:
 	if(!*error)
 		//file, # indicating primary HDU, HDU type, error
- 		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
-	
+		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
+
 	//add flag indicating that the thermal force is used:
 	if(!*error) 
 	{
@@ -164,10 +164,10 @@ void ThermalForce::writeForce(fitsfile * const file, int * const error, const in
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &forceFlags, NULL, error);
 
 		//add ThermalForce bit:
-		forceFlags |= ThermalForceFlag;		//compound bitwise OR
+		forceFlags |= ThermalForceFlag; //compound bitwise OR
 
 		if(*error == KEY_NO_EXIST || *error == VALUE_UNDEFINED)
-			*error = 0;			//clear above error.
+			*error = 0;             //clear above error.
 
 		//add or update keyword:
 		if(!*error) 
@@ -186,8 +186,8 @@ void ThermalForce::readForce(fitsfile * const file, int * const error, const int
 	//move to primary HDU:
 	if(!*error)
 		//file, # indicating primary HDU, HDU type, error
- 		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
-	
+		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
+
 	if(!*error)
 	{
 		//file, key name, value, don't read comment, error

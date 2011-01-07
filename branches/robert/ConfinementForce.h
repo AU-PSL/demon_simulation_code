@@ -14,9 +14,9 @@
 #include "VectorCompatibility.h"
 
 class ConfinementForce : public Force
-{	
+{
 public:
-	ConfinementForce(Cloud * const myCloud, double confineConst);	//overloaded constructor
+	ConfinementForce(Cloud * const myCloud, double confineConst); //overloaded constructor
 	//IMPORTANT: In the above constructor, confineConst must be positive!
 	~ConfinementForce() {} //destructor
 
@@ -45,7 +45,7 @@ private:
 	double confine;
 
 //private functions:
-	void force1D(const unsigned int currentParticle, const __m128d currentPositionX);	//common force calculator
+	void force1D(const unsigned int currentParticle, const __m128d currentPositionX); //common force calculator
 	void force2D(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY);
 	void force3D(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY, const __m128d currentPositionZ);
 };

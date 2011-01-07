@@ -14,22 +14,22 @@
 #include "VectorCompatibility.h"
 
 class Cloud
-{	
+{
 public:
-	Cloud(unsigned int numPar, double sizeOfCloud);	//overloaded constructor
+	Cloud(unsigned int numPar, double sizeOfCloud); //overloaded constructor
 	~Cloud();
 
 //public variables:
-	unsigned int n;			//number of elements (particles)
+	unsigned int n;            //number of elements (particles)
 	double cloudSize;
-	double *k1, *k2, *k3, *k4;	//velocityX (Runge-Kutta) tidbits
-	double *l1, *l2, *l3, *l4;	//positionX (Runge-Kutta) tidbits
-	double *m1, *m2, *m3, *m4;	//velocityY (Runge-Kutta) tidbits
-	double *n1, *n2, *n3, *n4;	//positionY (Runge-Kutta) tidbits
-	double *o1, *o2, *o3, *o4;	//velocityZ (Runge-Kutta) tidbits
-	double *p1, *p2, *p3, *p4;	//positionZ (Rupge-Kutta) tidbits
-	double *x, *y, *z;		//current positions
-	double *Vx, *Vy, *Vz;		//current velocities
+	double *k1, *k2, *k3, *k4; //velocityX (Runge-Kutta) tidbits
+	double *l1, *l2, *l3, *l4; //positionX (Runge-Kutta) tidbits
+	double *m1, *m2, *m3, *m4; //velocityY (Runge-Kutta) tidbits
+	double *n1, *n2, *n3, *n4; //positionY (Runge-Kutta) tidbits
+	double *o1, *o2, *o3, *o4; //velocityZ (Runge-Kutta) tidbits
+	double *p1, *p2, *p3, *p4; //positionZ (Rupge-Kutta) tidbits
+	double *x, *y, *z;         //current positions
+	double *Vx, *Vy, *Vz;      //current velocities
 	double *charge, *mass;
 	double *forceX, *forceY, *forceZ;
 
@@ -105,9 +105,9 @@ public:
 	//Input: int numParticles, double cloudSize
 	//Preconditions: both inputs positive
 	//Postconditions: cloud initialized on spatial grid with side length = 2*cloudSize
-	static Cloud * const initializeGrid1D(const unsigned int numParticles, const double cloudSize);	//line
-	static Cloud * const initializeGrid2D(const unsigned int numParticles, const double cloudSize);	//square
-	static Cloud * const initializeGrid3D(const unsigned int numParticles, const double cloudSize);	//cube
+	static Cloud * const initializeGrid1D(const unsigned int numParticles, const double cloudSize); //line
+	static Cloud * const initializeGrid2D(const unsigned int numParticles, const double cloudSize); //square
+	static Cloud * const initializeGrid3D(const unsigned int numParticles, const double cloudSize); //cube
 
 	//Input: fitsFile *file, int *error, int dimension
 	//Preconditions: fitsfile exists, error = 0, dimension = 1 OR 2 OR 3
