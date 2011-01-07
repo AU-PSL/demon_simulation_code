@@ -39,17 +39,37 @@ Cloud::~Cloud()
 	delete[] forceX; delete[] forceY; delete[] forceZ;
 }
 
-inline void Cloud::setPosition(const unsigned int index, const double xVal, const double yVal, const double zVal)
+inline void Cloud::setPosition1D(const unsigned int index, const double xVal)
 {
 	x[index] = xVal;
+}
+
+inline void Cloud::setPosition2D(const unsigned int index, const double xVal, const double yVal)
+{
+	setPosition1D(index, xVal);
 	y[index] = yVal;
+}
+
+inline void Cloud::setPosition3D(const unsigned int index, const double xVal, const double yVal, const double zVal)
+{
+	setPosition2D(index, xVal, yVal);
 	z[index] = zVal;
 }
 
-inline void Cloud::setVelocity(const unsigned int index)
+inline void Cloud::setVelocity1D(const unsigned int index)
 {
 	Vx[index] = 0.0;
+}
+
+inline void Cloud::setVelocity2D(const unsigned int index)
+{
+	setVelocity1D(index);
 	Vy[index] = 0.0;
+}
+
+inline void Cloud::setVelocity3D(const unsigned int index)
+{
+	setVelocity2D(index);
 	Vz[index] = 0.0;
 }
 
@@ -65,7 +85,32 @@ inline void Cloud::setMass(const unsigned int index)
 	mass[index] = (4.0/3.0)*M_PI*radius*radius*radius*particleDensity;
 }
 
-Cloud * const Cloud::initializeGrid(const unsigned int numParticles, const double cloudSize, const bool make3D)
+Cloud * const Cloud::initializeGrid1D(const unsigned int numParticles, const double cloudSize)
+{
+	Cloud * const cloud = new Cloud(numParticles, cloudSize);
+
+	//seed rand function with time(NULL):
+	srand((int)time(NULL));		//needed for Cloud::setCharge
+
+	double tempPosX = cloudSize;	//position of first particle
+
+	const double gridUnit = 2.0*cloudSize/numParticles;
+
+	//initialize dust cloud:
+	for(unsigned int i = 0; i < numParticles; i++)
+	{
+		cloud->setPosition1D(i, tempPosX);
+		cloud->setVelocity1D(i);
+		cloud->setCharge(i);
+		cloud->setMass(i);
+
+		tempPosX -= gridUnit;
+	}
+
+	return cloud;
+}
+
+Cloud * const Cloud::initializeGrid2D(const unsigned int numParticles, const double cloudSize)
 {
 	Cloud * const cloud = new Cloud(numParticles, cloudSize);
 
@@ -75,62 +120,68 @@ Cloud * const Cloud::initializeGrid(const unsigned int numParticles, const doubl
 	double tempPosX = cloudSize;	//position of first particle
 	double tempPosY = cloudSize;
 
-	if(!make3D)
+	const double sqrtNumPar = floor(sqrt(numParticles));
+	const double gridUnit = 2.0*cloudSize/sqrtNumPar;
+
+	//initialize dust cloud:
+	for(unsigned int i = 0; i < numParticles; i++)
 	{
-		const double sqrtNumPar = floor(sqrt(numParticles));
-		const double gridUnit = 2.0*cloudSize/sqrtNumPar;	//number of particles per row/column
-    
-		//initialize dust cloud:
-		for(unsigned int i = 0; i < numParticles; i++)
+		cloud->setPosition2D(i, tempPosX, tempPosY);
+		cloud->setVelocity2D(i);
+		cloud->setCharge(i);
+		cloud->setMass(i);
+
+		tempPosX -= gridUnit;
+		if(tempPosX <= -cloudSize) //end of row
 		{
-			cloud->setPosition(i, tempPosX, tempPosY, 0.0);
-			cloud->setVelocity(i);
-			cloud->setCharge(i);
-			cloud->setMass(i);
-
-			tempPosX -= gridUnit;
-			if(tempPosX <= -cloudSize) //end of row
-			{
-				tempPosX = cloudSize; //reset
-				tempPosY -= gridUnit; //move to next row
-			}
-		}
-	}
-	else
-	{
-		double tempPosZ = cloudSize;	
-
-		const double cubeNumPar = floor(pow(numParticles,(double)(1/3)));
-		const double gridUnit = 2.0*cloudSize/cubeNumPar;
-
-		//initialize dust cloud:
-		for(unsigned int i = 0; i < numParticles; i++)
-		{
-			cloud->setPosition(i, tempPosX, tempPosY, tempPosZ);
-			cloud->setVelocity(i);
-			cloud->setCharge(i);
-			cloud->setMass(i);
-
-			tempPosX -= gridUnit;
-			if(tempPosX <= -cloudSize) //end of row
-			{
-				tempPosX = cloudSize; //reset
-				tempPosY -= gridUnit; //move to next row
-
-				if(tempPosY <= -cloudSize) //end of plane
-				{
-					tempPosY = cloudSize; //reset
-					tempPosZ -= gridUnit; //move to next plane
-				}
-			}
+			tempPosX = cloudSize; //reset
+			tempPosY -= gridUnit; //move to next row
 		}
 	}
 
 	return cloud;
 }
 
-//FIXME: Allow initialization from files made with 2D code.
-Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error, double * const currentTime)
+Cloud * const Cloud::initializeGrid3D(const unsigned int numParticles, const double cloudSize)
+{
+	Cloud * const cloud = new Cloud(numParticles, cloudSize);
+
+	//seed rand function with time(NULL):
+	srand((int)time(NULL));		//needed for Cloud::setCharge
+
+	double tempPosX = cloudSize;	//position of first particle
+	double tempPosY = cloudSize;
+	double tempPosZ = cloudSize;	
+
+	const double cubeNumPar = floor(pow(numParticles,(double)(1/3)));
+	const double gridUnit = 2.0*cloudSize/cubeNumPar;
+
+	//initialize dust cloud:
+	for(unsigned int i = 0; i < numParticles; i++)
+	{
+		cloud->setPosition3D(i, tempPosX, tempPosY, tempPosZ);
+		cloud->setVelocity3D(i);
+		cloud->setCharge(i);
+		cloud->setMass(i);
+
+		tempPosX -= gridUnit;
+		if(tempPosX <= -cloudSize) //end of row
+		{
+			tempPosX = cloudSize; //reset
+			tempPosY -= gridUnit; //move to next row
+
+			if(tempPosY <= -cloudSize) //end of plane
+			{
+				tempPosY = cloudSize; //reset
+				tempPosZ -= gridUnit; //move to next plane
+			}
+		}
+	}
+	
+	return cloud;
+}
+
+Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error, double * const currentTime, const int dimension)
 {
 	int *anyNull = NULL;
 	long numParticles;
@@ -168,18 +219,33 @@ Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error
 		if (currentTime)
 			fits_read_col_dbl(file, 1, numTimeSteps, 1, 1, 0.0, currentTime, anyNull, error);
 
-		fits_read_col_dbl(file, 2, numTimeSteps, 1, numParticles, 0.0, cloud->x, anyNull, error);
-		fits_read_col_dbl(file, 3, numTimeSteps, 1, numParticles, 0.0, cloud->y, anyNull, error);
-		fits_read_col_dbl(file, 3, numTimeSteps, 1, numParticles, 0.0, cloud->z, anyNull, error);
-		fits_read_col_dbl(file, 4, numTimeSteps, 1, numParticles, 0.0, cloud->Vx, anyNull, error);
-		fits_read_col_dbl(file, 5, numTimeSteps, 1, numParticles, 0.0, cloud->Vy, anyNull, error);
-		fits_read_col_dbl(file, 5, numTimeSteps, 1, numParticles, 0.0, cloud->Vz, anyNull, error);
+		if(dimension == 1)
+		{
+			fits_read_col_dbl(file, 2, numTimeSteps, 1, numParticles, 0.0, cloud->x, anyNull, error);
+			fits_read_col_dbl(file, 3, numTimeSteps, 1, numParticles, 0.0, cloud->Vx, anyNull, error);
+		}
+		else if(dimension == 2)
+		{
+			fits_read_col_dbl(file, 2, numTimeSteps, 1, numParticles, 0.0, cloud->x, anyNull, error);
+			fits_read_col_dbl(file, 3, numTimeSteps, 1, numParticles, 0.0, cloud->y, anyNull, error);
+			fits_read_col_dbl(file, 4, numTimeSteps, 1, numParticles, 0.0, cloud->Vx, anyNull, error);
+			fits_read_col_dbl(file, 5, numTimeSteps, 1, numParticles, 0.0, cloud->Vy, anyNull, error);
+		}
+		else if(dimension == 3)
+		{
+			fits_read_col_dbl(file, 2, numTimeSteps, 1, numParticles, 0.0, cloud->x, anyNull, error);
+			fits_read_col_dbl(file, 3, numTimeSteps, 1, numParticles, 0.0, cloud->y, anyNull, error);
+			fits_read_col_dbl(file, 4, numTimeSteps, 1, numParticles, 0.0, cloud->z, anyNull, error);
+			fits_read_col_dbl(file, 5, numTimeSteps, 1, numParticles, 0.0, cloud->Vx, anyNull, error);
+			fits_read_col_dbl(file, 6, numTimeSteps, 1, numParticles, 0.0, cloud->Vy, anyNull, error);
+			fits_read_col_dbl(file, 7, numTimeSteps, 1, numParticles, 0.0, cloud->Vz, anyNull, error);
+		}
 	}
 
 	return cloud;
 }
 
-void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const
+void Cloud::writeCloudSetup(fitsfile * const file, int * const error, const int dimension) const
 {
 	//format number of elements of type double as string, e.g. 1024D
 	stringstream numStream;
@@ -189,16 +255,6 @@ void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const
 	char *ttypeCloud[] = {const_cast<char *> ("CHARGE"), const_cast<char *> ("MASS")};
 	char *tformCloud[] = {const_cast<char *> ("D"), const_cast<char *> ("D")};
 	char *tunitCloud[] = {const_cast<char *> ("C"), const_cast<char *> ("kg")};	
-
-	char *ttypeRun[] = {const_cast<char *> ("TIME"),
-		const_cast<char *> ("X_POSITION"), const_cast<char *> ("Y_POSITION"), const_cast<char *> ("Z_POSITION"), 
-		const_cast<char *> ("X_VELOCITY"), const_cast<char *> ("Y_VELOCITY"), const_cast<char *> ("Z_VELOCITY")};
-	char *tformRun[] = {const_cast<char *> ("D"), 
-		const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str()), 
-		const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str())};
-	char *tunitRun[] = {const_cast<char *> ("s"),
-		const_cast<char *> ("m"), const_cast<char *> ("m"), const_cast<char *> ("m"), 
-		const_cast<char *> ("m/s"), const_cast<char *> ("m/s"), const_cast<char *> ("m/s")};
 
 	//write mass and charge:
 	if (!*error)
@@ -212,28 +268,108 @@ void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const
 	}
 
 	//write position and velocity:
-	if (!*error)
-		fits_create_tbl(file, BINARY_TBL, 0, 5, ttypeRun, tformRun, tunitRun, "TIME_STEP", error);
-		//n.b. num rows automatically incremented.
-		// Increment from 0 as opposed to preallocating to ensure
-		// proper output in the event of program interruption.
-	if (!*error)
+	if(dimension == 1)
 	{
-		double time = 0.0;
-		fits_write_col_dbl(file, 1, 1, 1, 1, &time, error);
-		fits_write_col_dbl(file, 2, 1, 1, n, x, error);
-		fits_write_col_dbl(file, 3, 1, 1, n, y, error);
-		fits_write_col_dbl(file, 3, 1, 1, n, z, error);
-		fits_write_col_dbl(file, 4, 1, 1, n, Vx, error);
-		fits_write_col_dbl(file, 5, 1, 1, n, Vy, error);
-		fits_write_col_dbl(file, 5, 1, 1, n, Vz, error);
+		char *ttypeRun[] = {const_cast<char *> ("TIME"),
+			const_cast<char *> ("X_POSITION"), const_cast<char *> ("X_VELOCITY")};
+		char *tformRun[] = {const_cast<char *> ("D"), 
+			const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str())};
+		char *tunitRun[] = {const_cast<char *> ("s"),
+			const_cast<char *> ("m"), const_cast<char *> ("m/s")};
+
+		if (!*error)
+			fits_create_tbl(file, BINARY_TBL, 0, 5, ttypeRun, tformRun, tunitRun, "TIME_STEP", error);
+			//n.b. num rows automatically incremented. Increment from 0 as opposed to preallocating 
+			//to ensure proper output in the event of program interruption.
+
+		if(!*error)
+		{
+			double time = 0.0;
+			fits_write_col_dbl(file, 1, 1, 1, 1, &time, error);
+
+			fits_write_col_dbl(file, 2, 1, 1, n, x, error);
+			fits_write_col_dbl(file, 3, 1, 1, n, Vx, error);
+		}
+	}
+	if(dimension == 2)
+	{
+		char *ttypeRun[] = {const_cast<char *> ("TIME"),
+			const_cast<char *> ("X_POSITION"), const_cast<char *> ("Y_POSITION"), 
+			const_cast<char *> ("X_VELOCITY"), const_cast<char *> ("Y_VELOCITY")};
+		char *tformRun[] = {const_cast<char *> ("D"), 
+			const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str()), 
+			const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str())};
+		char *tunitRun[] = {const_cast<char *> ("s"),
+			const_cast<char *> ("m"), const_cast<char *> ("m"),
+			const_cast<char *> ("m/s"), const_cast<char *> ("m/s")};
+
+		if(!*error)
+			fits_create_tbl(file, BINARY_TBL, 0, 5, ttypeRun, tformRun, tunitRun, "TIME_STEP", error);
+			//n.b. num rows automatically incremented. Increment from 0 as opposed to preallocating 
+			//to ensure proper output in the event of program interruption.
+
+		if(!*error)
+		{
+			double time = 0.0;
+			fits_write_col_dbl(file, 1, 1, 1, 1, &time, error);
+
+			fits_write_col_dbl(file, 2, 1, 1, n, x, error);
+			fits_write_col_dbl(file, 3, 1, 1, n, y, error);
+			fits_write_col_dbl(file, 4, 1, 1, n, Vx, error);
+			fits_write_col_dbl(file, 5, 1, 1, n, Vy, error);
+		}
+	}
+	if(dimension == 3)
+	{
+		char *ttypeRun[] = {const_cast<char *> ("TIME"),
+			const_cast<char *> ("X_POSITION"), const_cast<char *> ("Y_POSITION"), const_cast<char *> ("Z_POSITION"), 
+			const_cast<char *> ("X_VELOCITY"), const_cast<char *> ("Y_VELOCITY"), const_cast<char *> ("Z_VELOCITY")};
+		char *tformRun[] = {const_cast<char *> ("D"), 
+			const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str()), 
+			const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str())};
+		char *tunitRun[] = {const_cast<char *> ("s"),
+			const_cast<char *> ("m"), const_cast<char *> ("m"), const_cast<char *> ("m"), 
+			const_cast<char *> ("m/s"), const_cast<char *> ("m/s"), const_cast<char *> ("m/s")};
+
+		if(!*error)
+			fits_create_tbl(file, BINARY_TBL, 0, 5, ttypeRun, tformRun, tunitRun, "TIME_STEP", error);
+			//n.b. num rows automatically incremented. Increment from 0 as opposed to preallocating 
+			//to ensure proper output in the event of program interruption.
+
+		if(!*error)
+		{
+			double time = 0.0;
+			fits_write_col_dbl(file, 1, 1, 1, 1, &time, error);
+
+			fits_write_col_dbl(file, 2, 1, 1, n, x, error);
+			fits_write_col_dbl(file, 3, 1, 1, n, y, error);
+			fits_write_col_dbl(file, 4, 1, 1, n, z, error);
+			fits_write_col_dbl(file, 5, 1, 1, n, Vx, error);
+			fits_write_col_dbl(file, 6, 1, 1, n, Vy, error);
+			fits_write_col_dbl(file, 7, 1, 1, n, Vz, error);
+		}
 	}
 
 	//write buffer, close file, reopen at same point:
 	fits_flush_file(file, error);
 }
 
-void Cloud::writeTimeStep(fitsfile * const file, int * const error, double currentTime) const
+void Cloud::writeTimeStep1D(fitsfile * const file, int * const error, double currentTime) const
+{
+	if (!*error)
+	{
+		long numRows = 0;
+		fits_get_num_rows(file, &numRows, error);
+		fits_write_col_dbl(file, 1, ++numRows, 1, 1, &currentTime, error);
+		fits_write_col_dbl(file, 2, numRows, 1, n, x, error);
+		fits_write_col_dbl(file, 3, numRows, 1, n, Vx, error);
+	}
+
+	//write buffer, close file, reopen at same point:
+	fits_flush_file(file, error);
+}
+
+void Cloud::writeTimeStep2D(fitsfile * const file, int * const error, double currentTime) const
 {
 	if (!*error)
 	{
@@ -242,10 +378,27 @@ void Cloud::writeTimeStep(fitsfile * const file, int * const error, double curre
 		fits_write_col_dbl(file, 1, ++numRows, 1, 1, &currentTime, error);
 		fits_write_col_dbl(file, 2, numRows, 1, n, x, error);
 		fits_write_col_dbl(file, 3, numRows, 1, n, y, error);
-		fits_write_col_dbl(file, 3, numRows, 1, n, z, error);
 		fits_write_col_dbl(file, 4, numRows, 1, n, Vx, error);
 		fits_write_col_dbl(file, 5, numRows, 1, n, Vy, error);
-		fits_write_col_dbl(file, 5, numRows, 1, n, Vz, error);
+	}
+
+	//write buffer, close file, reopen at same point:
+	fits_flush_file(file, error);
+}
+
+void Cloud::writeTimeStep3D(fitsfile * const file, int * const error, double currentTime) const
+{
+	if (!*error)
+	{
+		long numRows = 0;
+		fits_get_num_rows(file, &numRows, error);
+		fits_write_col_dbl(file, 1, ++numRows, 1, 1, &currentTime, error);
+		fits_write_col_dbl(file, 2, numRows, 1, n, x, error);
+		fits_write_col_dbl(file, 3, numRows, 1, n, y, error);
+		fits_write_col_dbl(file, 4, numRows, 1, n, z, error);
+		fits_write_col_dbl(file, 5, numRows, 1, n, Vx, error);
+		fits_write_col_dbl(file, 6, numRows, 1, n, Vy, error);
+		fits_write_col_dbl(file, 7, numRows, 1, n, Vz, error);
 	}
 
 	//write buffer, close file, reopen at same point:
@@ -257,125 +410,125 @@ void Cloud::writeTimeStep(fitsfile * const file, int * const error, double curre
 // x-position helper functions -------------------------------------------------
 const __m128d Cloud::getx1_pd(const unsigned int i) const	// x
 {
-    return _mm_load_pd(x + i);
+	return _mm_load_pd(x + i);
 }
 
 const __m128d Cloud::getx2_pd(const unsigned int i) const	// x + l1/2
 {
-    return _mm_load_pd(x + i) + _mm_load_pd(l1 + i)/_mm_set1_pd(2.0);
+	return _mm_load_pd(x + i) + _mm_load_pd(l1 + i)/_mm_set1_pd(2.0);
 }
 
 const __m128d Cloud::getx3_pd(const unsigned int i) const	// x + l2/2
 {
-    return _mm_load_pd(x + i) + _mm_load_pd(l2 + i)/_mm_set1_pd(2.0);
+	return _mm_load_pd(x + i) + _mm_load_pd(l2 + i)/_mm_set1_pd(2.0);
 }
 
 const __m128d Cloud::getx4_pd(const unsigned int i) const	// x + l3
 {
-    return _mm_load_pd(x + i) + _mm_load_pd(l3 + i);
+	return _mm_load_pd(x + i) + _mm_load_pd(l3 + i);
 }
 
 // y-position helper functions -------------------------------------------------
 const __m128d Cloud::gety1_pd(const unsigned int i) const	// y
 {
-    return _mm_load_pd(y + i);
+	return _mm_load_pd(y + i);
 }
 
 const __m128d Cloud::gety2_pd(const unsigned int i) const	// y + n1/2
 {
-    return _mm_load_pd(y + i) + _mm_load_pd(n1 + i)/_mm_set1_pd(2.0);
+	return _mm_load_pd(y + i) + _mm_load_pd(n1 + i)/_mm_set1_pd(2.0);
 }
 
 const __m128d Cloud::gety3_pd(const unsigned int i) const	// y + n2/2
 {
-    return _mm_load_pd(y + i) + _mm_load_pd(n2 + i)/_mm_set1_pd(2.0);
+	return _mm_load_pd(y + i) + _mm_load_pd(n2 + i)/_mm_set1_pd(2.0);
 }
 
 const __m128d Cloud::gety4_pd(const unsigned int i) const	// y + n3
 {
-    return _mm_load_pd(y + i) + _mm_load_pd(n3 + i);
+	return _mm_load_pd(y + i) + _mm_load_pd(n3 + i);
 }
 
 // z-position helper functions -------------------------------------------------
 const __m128d Cloud::getz1_pd(const unsigned int i) const	// z
 {
-    return _mm_load_pd(z + i);
+	return _mm_load_pd(z + i);
 }
 
 const __m128d Cloud::getz2_pd(const unsigned int i) const	// z + p1/2
 {
-    return _mm_load_pd(z + i) + _mm_load_pd(p1 + i)/_mm_set1_pd(2.0);
+	return _mm_load_pd(z + i) + _mm_load_pd(p1 + i)/_mm_set1_pd(2.0);
 }
 
 const __m128d Cloud::getz3_pd(const unsigned int i) const	// z + p2/2
 {
-    return _mm_load_pd(z + i) + _mm_load_pd(p2 + i)/_mm_set1_pd(2.0);
+	return _mm_load_pd(z + i) + _mm_load_pd(p2 + i)/_mm_set1_pd(2.0);
 }
 
 const __m128d Cloud::getz4_pd(const unsigned int i) const	// z + p3
 {
-    return _mm_load_pd(z + i) + _mm_load_pd(p3 + i);
+	return _mm_load_pd(z + i) + _mm_load_pd(p3 + i);
 }
 
 // x-velocity helper functions ------------------------------------------------
 const __m128d Cloud::getVx1_pd(const unsigned int i) const	// Vx
 {
-    return _mm_load_pd(Vx + i);
+	return _mm_load_pd(Vx + i);
 }
 
 const __m128d Cloud::getVx2_pd(const unsigned int i) const	// Vx + k1/2
 {
-    return _mm_load_pd(Vx + i) + _mm_load_pd(k1 + i)/_mm_set1_pd(2.0);
+	return _mm_load_pd(Vx + i) + _mm_load_pd(k1 + i)/_mm_set1_pd(2.0);
 }
 
 const __m128d Cloud::getVx3_pd(const unsigned int i) const	// Vx + k2/2
 {
-    return _mm_load_pd(Vx + i) + _mm_load_pd(k2 + i)/_mm_set1_pd(2.0);
+	return _mm_load_pd(Vx + i) + _mm_load_pd(k2 + i)/_mm_set1_pd(2.0);
 }
 
 const __m128d Cloud::getVx4_pd(const unsigned int i) const	// Vx + k3
 {
-    return _mm_load_pd(Vx + i) + _mm_load_pd(k3 + i);
+	return _mm_load_pd(Vx + i) + _mm_load_pd(k3 + i);
 }
 
 // y-velocity helper functions ------------------------------------------------
 const __m128d Cloud::getVy1_pd(const unsigned int i) const	// Vy
 {
-    return _mm_load_pd(Vy + i);
+	return _mm_load_pd(Vy + i);
 }
 
 const __m128d Cloud::getVy2_pd(const unsigned int i) const	// Vy + m1/2
 {
-    return _mm_load_pd(Vy + i) + _mm_load_pd(m1 + i)/_mm_set1_pd(2.0);
+	return _mm_load_pd(Vy + i) + _mm_load_pd(m1 + i)/_mm_set1_pd(2.0);
 }
 
 const __m128d Cloud::getVy3_pd(const unsigned int i) const	// Vy + m2/2
 {
-    return _mm_load_pd(Vy + i) + _mm_load_pd(m2 + i)/_mm_set1_pd(2.0);
+	return _mm_load_pd(Vy + i) + _mm_load_pd(m2 + i)/_mm_set1_pd(2.0);
 }
 
 const __m128d Cloud::getVy4_pd(const unsigned int i) const	// Vy + m3
 {
-    return _mm_load_pd(Vy + i) + _mm_load_pd(m3 + i);
+	return _mm_load_pd(Vy + i) + _mm_load_pd(m3 + i);
 }
 
 // z-velocity helper functions ------------------------------------------------
 const __m128d Cloud::getVz1_pd(const unsigned int i) const	// Vz
 {
-    return _mm_load_pd(Vz + i);
+	return _mm_load_pd(Vz + i);
 }
 
 const __m128d Cloud::getVz2_pd(const unsigned int i) const	// Vz + m1/2
 {
-    return _mm_load_pd(Vz + i) + _mm_load_pd(o1 + i)/_mm_set1_pd(2.0);
+	return _mm_load_pd(Vz + i) + _mm_load_pd(o1 + i)/_mm_set1_pd(2.0);
 }
 
 const __m128d Cloud::getVz3_pd(const unsigned int i) const	// Vz + m2/2
 {
-    return _mm_load_pd(Vz + i) + _mm_load_pd(o2 + i)/_mm_set1_pd(2.0);
+	return _mm_load_pd(Vz + i) + _mm_load_pd(o2 + i)/_mm_set1_pd(2.0);
 }
 
 const __m128d Cloud::getVz4_pd(const unsigned int i) const	// Vz + m3
 {
-    return _mm_load_pd(Vz + i) + _mm_load_pd(o3 + i);
+	return _mm_load_pd(Vz + i) + _mm_load_pd(o3 + i);
 }

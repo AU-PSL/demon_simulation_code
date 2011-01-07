@@ -35,13 +35,23 @@ public:
 	virtual ~Force() {} //implementation of virtual destructor
 
 	//Note: currentTime parameter necessary for DrivingForce, unused in others
-	virtual void force1(const double currentTime)=0; //rk substep 1
-	virtual void force2(const double currentTime)=0; //rk substep 2
-	virtual void force3(const double currentTime)=0; //rk substep 3
-	virtual void force4(const double currentTime)=0; //rk substep 4
+	virtual void force1_1D(const double currentTime)=0; //rk substep 1
+	virtual void force2_1D(const double currentTime)=0; //rk substep 2
+	virtual void force3_1D(const double currentTime)=0; //rk substep 3
+	virtual void force4_1D(const double currentTime)=0; //rk substep 4
 
-	virtual void writeForce(fitsfile * const file, int * const error) const=0;	//output force information to file
-	virtual void readForce(fitsfile * const file, int * const error)=0;	//read force information from file
+	virtual void force1_2D(const double currentTime)=0;
+	virtual void force2_2D(const double currentTime)=0;
+	virtual void force3_2D(const double currentTime)=0;
+	virtual void force4_2D(const double currentTime)=0;
+
+	virtual void force1_3D(const double currentTime)=0;
+	virtual void force2_3D(const double currentTime)=0;
+	virtual void force3_3D(const double currentTime)=0;
+	virtual void force4_3D(const double currentTime)=0;
+
+	virtual void writeForce(fitsfile * const file, int * const error, const int dimension) const=0; //output force information to file:
+	virtual void readForce(fitsfile * const file, int * const error, const int dimension)=0;        //read force information from file:
 };
 
 #endif /* FORCE_H */

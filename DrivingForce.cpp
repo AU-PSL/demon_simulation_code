@@ -16,39 +16,82 @@ const double DrivingForce::angFreq = 2.0*M_PI*10.0; //10Hz
 DrivingForce::DrivingForce(Cloud * const myCloud, const double drivingConst, const double amp, const double drivingShift)
 : Force(myCloud), amplitude(amp), driveConst(-drivingConst), shift(drivingShift) {}
 
-void DrivingForce::force1(const double currentTime)
+//1D:
+void DrivingForce::force1_1D(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, vtime, cloud->getx1_pd(currentParticle));
 }
 
-void DrivingForce::force2(const double currentTime)
+void DrivingForce::force2_1D(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, vtime, cloud->getx2_pd(currentParticle));
 }
 
-void DrivingForce::force3(const double currentTime)
+void DrivingForce::force3_1D(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, vtime, cloud->getx3_pd(currentParticle));
 }
 
-void DrivingForce::force4(const double currentTime)
+void DrivingForce::force4_1D(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, vtime, cloud->getx4_pd(currentParticle));
 }
 
+//2D:
+void DrivingForce::force1_2D(const double currentTime)
+{
+	force1_1D(currentTime);	//DrivingForce affects only x-dimension
+}
+
+void DrivingForce::force2_2D(const double currentTime)
+{
+	force2_1D(currentTime);
+}
+
+void DrivingForce::force3_2D(const double currentTime)
+{
+	force3_1D(currentTime);
+}
+
+void DrivingForce::force4_2D(const double currentTime)
+{
+	force4_1D(currentTime);
+}
+
+//3D:
+void DrivingForce::force1_3D(const double currentTime)
+{
+	force1_1D(currentTime); //DrivingForce affects only x-dimension
+}
+
+void DrivingForce::force2_3D(const double currentTime)
+{
+	force2_1D(currentTime);
+}
+
+void DrivingForce::force3_3D(const double currentTime)
+{
+	force3_1D(currentTime);
+}
+
+void DrivingForce::force4_3D(const double currentTime)
+{
+	force4_1D(currentTime);
+}
+
+//DrivingForce only acts in a single dimension, and privite force function is not inherited
+// from Force.h, so no need to overload generic force function.
 inline void DrivingForce::force(const unsigned int currentParticle, const __m128d currentTime, const __m128d currentPositionX)
 {	
-	// F = A*sin(k*x - w*t)*exp(-(x + x0)^2/B) is in the paper
-    // NOTE: This is different than the equation listed in the paper. The paper 
-    // is incorrect.
+	//N.B. F = A*sin(k*x - w*t)*exp(-(x + x0)^2/B) is the equation used in the paper, which differs from that below.
 	const __m128d distV = currentPositionX - _mm_set1_pd(shift);
 	const __m128d sinArg = _mm_set1_pd(waveNum)*currentPositionX - _mm_set1_pd(angFreq)*currentTime;
 	const __m128d expArg = _mm_set1_pd(-1.0)*distV*distV/_mm_set1_pd(driveConst);
@@ -64,7 +107,7 @@ inline void DrivingForce::force(const unsigned int currentParticle, const __m128
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + _mm_set1_pd(amplitude)*_mm_set_pd(sin(sinArgH), sin(sinArgL))*_mm_set_pd(exp(expArgH), exp(expArgL))); // _mm_set_pd() is backwards
 }
 
-void DrivingForce::writeForce(fitsfile * const file, int * const error) const
+void DrivingForce::writeForce(fitsfile * const file, int * const error, const int dimension) const
 {
 	//move to primary HDU:
 	if(!*error)
@@ -97,7 +140,7 @@ void DrivingForce::writeForce(fitsfile * const file, int * const error) const
 	}
 }
 
-void DrivingForce::readForce(fitsfile * const file, int * const error)
+void DrivingForce::readForce(fitsfile * const file, int * const error, const int dimension)
 {
 	//move to primary HDU:
 	if(!*error)

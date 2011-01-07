@@ -13,23 +13,28 @@
 #include <smmintrin.h>
 
 #if !defined(__GNUC__) && !defined(__clang__)
-__m128d operator+(const __m128d &a, const __m128d &b) {
+__m128d operator+(const __m128d &a, const __m128d &b)
+{
 	return _mm_add_pd(a, b);
 }
 
-__m128d operator-(const __m128d &a, const __m128d &b) {
+__m128d operator-(const __m128d &a, const __m128d &b)
+{
 	return _mm_sub_pd(a, b);
 }
 
-__m128d operator*(const __m128d &a, const __m128d &b) {
+__m128d operator*(const __m128d &a, const __m128d &b)
+{
 	return _mm_mul_pd(a, b);
 }
 
-__m128d operator/(const __m128d &a, const __m128d &b) {
+__m128d operator/(const __m128d &a, const __m128d &b)
+{
 	return _mm_div_pd(a, b);
 }
 
-__m128d operator&&(const __m128d &a, const __m128d &b) {
+__m128d operator&&(const __m128d &a, const __m128d &b)
+{
 	return _mm_and_pd(a, b);
 }
 #endif

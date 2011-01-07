@@ -7,10 +7,8 @@
 *
 *===-----------------------------------------------------------------------===*/
 
-//TODO: This version can run 2D and 3D clouds, but running 2D clouds is slower
-// than running 2D clouds in old (purely 2D) version due to extra overhead
-// that allowed for 3D. Need to fix it so that running 2D with 3D version is
-// just as fast as running 2D with purely 2D version.
+//TODO: -f and -c must include dimensionality argument.
+//TODO: Dimension of read file takes precedence over dimension of -D.
 
 #include "ConfinementForce.h"
 #include "DragForce.h"
@@ -40,7 +38,7 @@ void help()
           << " -c noDefault.fits      continue run from file" << endl
           << " -C 1E-13               set confinementConst" << endl
           << " -d -1.0 10.0           use TimeVaryingDragForce; set scale, offset" << endl
-          << " -D                     create 3D cloud" << endl
+          << " -D 2                   set number of spatial dimensions" << endl
           << " -e 5.0                 set simulation end time" << endl
           << " -f noDefaut.fits       use final positions and velocities from file" << endl
           << " -g 10.0                set gamma (magnitute of drag constant)" << endl
@@ -62,8 +60,9 @@ void help()
           << " Parameters specified above represent the default values and accepted type," << endl
           << "    with the exception of -c and -f, for which there are no default values." << endl
           << " -c appends to file; ignores all force flags (use -f to run with different" << endl
-          << "    forces). -c overrides -f if both are specified" << endl
-          << " -D uses strengthening drag if scale > 0, weakening drag if scale < 0." << endl
+          << "    forces). -c overrides -f if both are specified." << endl
+          << " -d uses strengthening drag if scale > 0, weakening drag if scale < 0." << endl
+          << " -D may have argument 1, 2, or 3 for 1D, 2D, or 3D clouds, respectively." << endl
           << " -M is best used by loading up a previous cloud that has reached equalibrium." << endl
           << " -n expects even number, else will add 1 (required for SIMD)." << endl
           << " -S creates a shear layer between rmin = cloudsize/2 and" << endl
@@ -115,11 +114,11 @@ void checkOption(const int argc, char * const argv[], int i, const char option)
 
 //check for one command line flag, use default value if absent:
 int checkOption(const int argc, char * const argv[], int i, const char option, 
-                const string name, double * const value)
+	const string name, double * const value)
 {
 	if(i+1 >= argc || argv[i+1][0] == '-')
 		cout << "Warning: -" << option << " option incomplete." << endl 
-            << "Using default " << name << " (" << *value << ")." << endl;
+			<< "Using default " << name << " (" << *value << ")." << endl;
 	else
 		*value = atof(argv[++i]);
 	return i;
@@ -127,13 +126,13 @@ int checkOption(const int argc, char * const argv[], int i, const char option,
 
 //check for two command line flags, use default values if absent:
 int checkOption(const int argc, char * const argv[], int i, const char option, 
-                const string name1, double * const value1, 
-                const string name2, double * const value2)
+	const string name1, double * const value1, 
+	const string name2, double * const value2)
 {
 	if(i+1 >= argc || argv[i+1][0] == '-')
 		cout << "Warning: -" << option << " option incomplete." << endl
-            << "Using default "<< name1 << " (" << *value1 << ") and " 
-            << name2 << " (" << *value2 << ")." << endl;
+			<< "Using default "<< name1 << " (" << *value1 << ") and " 
+			<< name2 << " (" << *value2 << ")." << endl;
 	else
 	{
 		*value1 = atof(argv[++i]);
@@ -144,15 +143,15 @@ int checkOption(const int argc, char * const argv[], int i, const char option,
 
 //check for three command line flags, use default values if absent:
 int checkOption(const int argc, char * const argv[], int i, const char option, 
-                const string name1, double * const value1, 
-                const string name2, double * const value2, 
-                const string name3, double * const value3)
+	const string name1, double * const value1, 
+	const string name2, double * const value2, 
+	const string name3, double * const value3)
 {
 	if(i+1 >= argc || argv[i+1][0] == '-')
 		cout << "Warning: -" << option << " option incomplete." << endl 
-            << "Using default "<< name1 << " (" << *value1 << "), " 
-            << name2 << " (" << *value2 << ") and " 
-            << name3 << " (" << *value3 << ")." << endl;
+			<< "Using default "<< name1 << " (" << *value1 << "), " 
+			<< name2 << " (" << *value2 << ") and " 
+			<< name3 << " (" << *value3 << ")." << endl;
 	else
 	{
 		*value1 = atof(argv[++i]);
@@ -164,13 +163,13 @@ int checkOption(const int argc, char * const argv[], int i, const char option,
 //check for two command line flags in the case of a negative argument,
 //	use default values if absent:
 int checkOptionWithNeg(const int argc, char * const argv[], int i, const char option, 
-                       const string name1, double * const value1, 
-                       const string name2, double * const value2)
+	const string name1, double * const value1, 
+	const string name2, double * const value2)
 {
 	if(i+1 >= argc || (argv[i+1][0] == '-' && isCharacter(argv[i+1][1])))
 		cout << "Warning: -" << option << " option incomplete." << endl 
-            << "Using default " << name1 << " (" << *value1 << ") and " 
-            << name2 << " (" << *value2 << ")." << endl << endl;
+			<< "Using default " << name1 << " (" << *value1 << ") and " 
+			<< name2 << " (" << *value2 << ")." << endl << endl;
 	else
 	{
 		*value1 = atof(argv[++i]);
@@ -215,9 +214,9 @@ void checkFitsError(const int error, const int lineNumber)
 	char message[80];
 	fits_read_errmsg(message);
 	cout << "Error: Fits file error " << error 
-        << " at line number " << lineNumber 
-        << " (driver_2D.cpp)" << endl 
-        << message << endl;
+		<< " at line number " << lineNumber 
+		<< " (driver_2D.cpp)" << endl 
+		<< message << endl;
 	exit(1);
 }
 
@@ -236,19 +235,20 @@ void deleteFitsFile(char * const filename, int * const error)
 	checkFitsError(*error, __LINE__);
 }
 
-// Check if fits file exists
-void fitsFileExists(char * const filename, int * const error) {
-    int exists = 0;
-    fits_file_exists(filename, &exists, error);
-    if(exists != 1)
-    {
-        cout << "Error: Fits file \"" << filename << "\" does not exist." << endl;
-        help();
-        exit(1);
-    }
+//check if fits file exists:
+void fitsFileExists(char * const filename, int * const error)
+{
+	int exists = 0;
+	fits_file_exists(filename, &exists, error);
+	if(exists != 1)
+	{
+		cout << "Error: Fits file \"" << filename << "\" does not exist." << endl;
+		help();
+		exit(1);
+	}
 
-    checkFitsError(*error, __LINE__);
-    cout << "Initializing with fits file \"" << filename << "\"." << endl;
+	checkFitsError(*error, __LINE__);
+	cout << "Initializing with fits file \"" << filename << "\"." << endl;
 }
 
 int main (int argc, char * const argv[]) 
@@ -260,7 +260,6 @@ int main (int argc, char * const argv[])
 	Force **forceArray;			//new pointer to Force object (will set to array)
 	
 	//declare variables and set default values:
-	bool is3D = false;			//true -> make 3D cloud
 	bool Mach = false;			//true -> perform Mach Cone experiment
 	double startTime = 0.0;
 	double simTimeStep = 0.0001;
@@ -290,6 +289,7 @@ int main (int argc, char * const argv[])
 	int continueFileIndex = 0;		//Index of argv array that holds the file name of the fitsfile to continue. 
 	int finalsFileIndex = 0;		//Index of argv array that holds the file name of the fitsfile to use finals of.
 	int outputFileIndex = 0;		//Index of argv array that holds the file name of the fitsfile to output.
+	int dimension = 2;			//1D, 2D, or 3D cloud
 	long usedForces = 0;			//bitpacked forces
 	unsigned int numParticles = 10;
 	unsigned int numForces = 3;
@@ -313,9 +313,15 @@ int main (int argc, char * const argv[])
 				//dragScale needs to allow negative numbers:
 				i = checkOptionWithNeg(argc, argv, i, 'd', "scale factor", &dragScale, "offset", &gamma);
 				break;
-			case 'D':	//make 3"D" cloud:
-				is3D = true;
-				i++;
+			case 'D':	//set cloud "D"imension
+				checkOption(argc, argv, i, 'D');
+				dimension = atoi(argv[++i]);
+				if(dimension != 1 && dimension != 2 && dimension != 3)
+				{
+					cout << "Error: Invalid spatial dimension.\n";
+					help();
+					exit(1);
+				}
 				break;
 			case 'e':	//set "e"nd time:
 				checkOption(argc, argv, i, 'e');
@@ -386,7 +392,7 @@ int main (int argc, char * const argv[])
 				if(simTimeStep == 0.0)		//prevent divide-by-zero error
 				{
 					cout << "Error: simTimeStep set to 0.0 with -t." << endl 
-                        << "Terminating to prevent divide-by-zero." << endl;
+						<< "Terminating to prevent divide-by-zero." << endl;
 					help();
 					exit(1);
 				}
@@ -422,8 +428,8 @@ int main (int argc, char * const argv[])
 /*------------------------------------------------------------------------------
  * Initialize cloud:
  -----------------------------------------------------------------------------*/
-    cout << "Status: Initializing cloud." << endl;
-    
+	cout << "Status: Initializing cloud." << endl;
+
 	//declare fits file and error:
 	fitsfile *file;
 	int error = 0;
@@ -441,19 +447,19 @@ int main (int argc, char * const argv[])
 		checkFitsError(error, __LINE__);
 		
 		//initialize with last time step from file:
-		cloud = Cloud::initializeFromFile(file, &error, &startTime);
+		cloud = Cloud::initializeFromFile(file, &error, &startTime, dimension);
 		checkFitsError(error, __LINE__);
 	}
 	else if(finalsFileIndex)
 	{
-        fitsFileExists(argv[finalsFileIndex], &error);
+		fitsFileExists(argv[finalsFileIndex], &error);
 
 		//open file:
 		fits_open_file(&file, argv[finalsFileIndex], READONLY, &error);	//file pointer, file name (char), read only, error
 		checkFitsError(error, __LINE__);
 
 		//initialize with last time step from file:
-		cloud = Cloud::initializeFromFile(file, &error, NULL);
+		cloud = Cloud::initializeFromFile(file, &error, NULL, dimension);
 		checkFitsError(error, __LINE__);
 		
 		//close file:
@@ -461,7 +467,21 @@ int main (int argc, char * const argv[])
 		checkFitsError(error, __LINE__);
 	}
 	else	//initialize new cloud on grid:
-		cloud = Cloud::initializeGrid(numParticles, cloudSize, is3D);
+	{
+		if(dimension == 1)
+			cloud = Cloud::initializeGrid1D(numParticles, cloudSize);
+		else if(dimension == 2)
+			cloud = Cloud::initializeGrid2D(numParticles, cloudSize);
+		else if(dimension == 3)
+			cloud = Cloud::initializeGrid3D(numParticles, cloudSize);
+		else	//this should never happen
+		{
+			cout << "Error: Impossible case reached when determining dimension "
+				"prior to calling Cloud::initializeGrid.\n";
+			exit(1);
+		}
+		
+	}
 
 	// Create a new file if we aren't continueing one.
 	if (!continueFileIndex)
@@ -488,14 +508,15 @@ int main (int argc, char * const argv[])
 			fits_create_img(file, 16, 0, NULL, &error);
 			checkFitsError(error, __LINE__);
 		}
-	}
-	
+	}	
 /*------------------------------------------------------------------------------
  * This concludes initialization of cloud.
+ -----------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------
  * Initialize array of Force objects:
  -----------------------------------------------------------------------------*/
-    cout << "Status: Initializing forces." << endl;
-    
+	cout << "Status: Initializing forces." << endl;
+
 	numForces = getNumForces(usedForces);
 	forceArray = new Force*[numForces];
 	unsigned int index = 0;
@@ -523,25 +544,23 @@ int main (int argc, char * const argv[])
 	if(continueFileIndex) 	//initialize forces from old file
 	{
 		for (unsigned int i = 0; i < numForces; i++)
-			forceArray[i]->readForce(file, &error);
+			forceArray[i]->readForce(file, &error, dimension);
 		checkFitsError(error, __LINE__);
 	}
 	else			//write forces to new file
 	{
 		for (unsigned int i = 0; i < numForces; i++)
-			forceArray[i]->writeForce(file, &error);
+			forceArray[i]->writeForce(file, &error, dimension);
 		checkFitsError(error, __LINE__);
 	}
-
 /*------------------------------------------------------------------------------
- * Commence Runge-Kutta algorithm:
+ * This concludes initialization of Force objects.
  -----------------------------------------------------------------------------*/
-    cout << "Status: Commencing Runge-Kutta." << endl << endl;
-    
+
 	//write initial data:
 	if (!continueFileIndex) 
 	{
-		cloud->writeCloudSetup(file, &error);
+		cloud->writeCloudSetup(file, &error, dimension);
 		checkFitsError(error, __LINE__);
 	}
 	else
@@ -550,8 +569,14 @@ int main (int argc, char * const argv[])
 		checkFitsError(error, __LINE__);
 	}
 	
-	if(Mach) 
+	if(Mach) //TODO: make Mach 3D
 	{
+		if(dimension != 2)
+		{
+			cout << "Error: Mach currently only supported when dimension = 2.\n";
+			exit(1);
+		}
+
 		//reserve particle 1 for mach experiment
 		cloud->x[0] = -2.0*cloudSize;
 		cloud->y[0] = 0.0;
@@ -560,22 +585,55 @@ int main (int argc, char * const argv[])
 		cloud->mass[0] = massFactor*cloud->mass[0];
 	}
 	
+/*------------------------------------------------------------------------------
+ * Commence Runge-Kutta algorithm:
+ -----------------------------------------------------------------------------*/
+	cout << "Status: Commencing Runge-Kutta." << endl << endl;
+
 	Runge_Kutta rk4(cloud, forceArray, simTimeStep, numForces, startTime);
 
 	//execute simulation for desired length of time:
-    while(startTime < endTime)
+	if(dimension == 1)	//condition farther up than necessary to avoid querying on each time step
 	{
-        cout << clear_line << "\rCurrent Time: " << rk4.currentTime << "s (" 
-            << rk4.currentTime/endTime*100.0 << "% Complete)" << flush;
-		
-        //call Runge-Kutta algorithm:
-        rk4.moveParticles(startTime += dataTimeStep);
-		//write positions and velocities:
-		cloud->writeTimeStep(file, &error, rk4.currentTime);
-	}
+		while(startTime < endTime)
+		{
+	 		cout << clear_line << "\rCurrent Time: " << rk4.currentTime << "s (" 
+				<< rk4.currentTime/endTime*100.0 << "% Complete)" << flush;
 
+			//call Runge-Kutta algorithm:
+			rk4.moveParticles1D(startTime += dataTimeStep);
+			//write positions and velocities:
+			cloud->writeTimeStep1D(file, &error, rk4.currentTime);
+		}
+	}
+	if(dimension == 2)
+	{
+		while(startTime < endTime)
+		{
+	 		cout << clear_line << "\rCurrent Time: " << rk4.currentTime << "s (" 
+				<< rk4.currentTime/endTime*100.0 << "% Complete)" << flush;
+
+			//call Runge-Kutta algorithm:
+			rk4.moveParticles2D(startTime += dataTimeStep);
+			//write positions and velocities:
+			cloud->writeTimeStep2D(file, &error, rk4.currentTime);
+		}
+	}
+	if(dimension == 3)
+	{
+		while(startTime < endTime)
+		{
+	 		cout << clear_line << "\rCurrent Time: " << rk4.currentTime << "s (" 
+				<< rk4.currentTime/endTime*100.0 << "% Complete)" << flush;
+
+			//call Runge-Kutta algorithm:
+			rk4.moveParticles3D(startTime += dataTimeStep);
+			//write positions and velocities:
+			cloud->writeTimeStep3D(file, &error, rk4.currentTime);
+		}
+	}
 /*------------------------------------------------------------------------------
- * This concludes the Runge-Kutta algorithm. Clean up.
+ * This concludes the Runge-Kutta algorithm.
  -----------------------------------------------------------------------------*/
 
 	//close fits file:
@@ -590,10 +648,10 @@ int main (int argc, char * const argv[])
 	minutes -= hours*60 + days*1440;
 	seconds -= minutes*60 + hours*3600 + days*86400;
 	cout << clear_line << "\rTime elapsed: " 
-        << days << (days == 1 ? " day, " : " days, ") 
-        << hours << (hours == 1 ? " hour " : " hours, ") 
-        << minutes << (minutes == 1 ? " minute " : " minutes, ") 
-        << seconds << (seconds == 1 ? " second " : " seconds.") << endl;
+		<< days << (days == 1 ? " day, " : " days, ") 
+		<< hours << (hours == 1 ? " hour " : " hours, ") 
+		<< minutes << (minutes == 1 ? " minute " : " minutes, ") 
+		<< seconds << (seconds == 1 ? " second " : " seconds.") << endl;
 	
 	//clean up objects:
 	for (unsigned int i = 0; i < numForces; i++)
