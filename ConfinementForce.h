@@ -13,7 +13,7 @@
 #include "Force.h"
 #include "VectorCompatibility.h"
 
-class ConfinementForce : public Force
+class ConfinementForce3D : public Force
 {
 public:
 	ConfinementForce(Cloud * const myCloud, double confineConst); //overloaded constructor

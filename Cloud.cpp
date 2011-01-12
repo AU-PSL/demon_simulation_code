@@ -22,8 +22,10 @@ o1(new double[n]), o2(new double[n]), o3(new double[n]), o4(new double[n]),
 p1(new double[n]), p2(new double[n]), p3(new double[n]), p4(new double[n]),
 x(new double[n]), y(new double[n]), z(new double[n]),
 Vx(new double[n]), Vy(new double[n]), Vz(new double[n]),
-charge(new double[n]), mass(new double[n]), 
-forceX(new double[n]), forceY(new double[n]), forceZ(new double[n]) {}
+charge(new double[n]), mass(new double[n]),
+forceX(new double[n]), forceY(new double[n]), forceZ(new double[n]),
+xCache(new __m128d[n/2]), yCache(new __m128d[n/2]), zCache(new __m128d[n/2]),
+VxCache(new __m128d[n/2]), VyCache(new __m128d[n/2]), VzCache(new __m128d[n/2]) {}
 
 Cloud::~Cloud() 
 {
@@ -37,39 +39,21 @@ Cloud::~Cloud()
 	delete[] Vx; delete[] Vy; delete[] Vz;
 	delete[] charge; delete[] mass; 
 	delete[] forceX; delete[] forceY; delete[] forceZ;
+	delete[] xCache; delete[] yCache; delete[] zCache;
+	delete[] VxCache; delete[] VxCache; delete[] VzCache;
 }
 
-inline void Cloud::setPosition1D(const unsigned int index, const double xVal)
+inline void Cloud::setPosition(const unsigned int index, const double xVal, const double yVal, const double zVal)
 {
 	x[index] = xVal;
-}
-
-inline void Cloud::setPosition2D(const unsigned int index, const double xVal, const double yVal)
-{
-	setPosition1D(index, xVal);
 	y[index] = yVal;
-}
-
-inline void Cloud::setPosition3D(const unsigned int index, const double xVal, const double yVal, const double zVal)
-{
-	setPosition2D(index, xVal, yVal);
 	z[index] = zVal;
 }
 
-inline void Cloud::setVelocity1D(const unsigned int index)
+inline void Cloud::setVelocity(const unsigned int index)
 {
 	Vx[index] = 0.0;
-}
-
-inline void Cloud::setVelocity2D(const unsigned int index)
-{
-	setVelocity1D(index);
 	Vy[index] = 0.0;
-}
-
-inline void Cloud::setVelocity3D(const unsigned int index)
-{
-	setVelocity2D(index);
 	Vz[index] = 0.0;
 }
 
@@ -85,12 +69,12 @@ inline void Cloud::setMass(const unsigned int index)
 	mass[index] = (4.0/3.0)*M_PI*radius*radius*radius*particleDensity;
 }
 
-Cloud * const Cloud::initializeGrid1D(const unsigned int numParticles, const double cloudSize)
+Cloud * const Cloud::initializeLine(const unsigned int numParticles, const double cloudSize)
 {
 	Cloud * const cloud = new Cloud(numParticles, cloudSize);
 
 	//seed rand function with time(NULL):
-	srand((int)time(NULL));      //needed for Cloud::setCharge
+	srand((int)time(NULL));      //needed for setCharge
 
 	double tempPosX = cloudSize; //position of first particle
 
@@ -99,8 +83,8 @@ Cloud * const Cloud::initializeGrid1D(const unsigned int numParticles, const dou
 	//initialize dust cloud:
 	for(unsigned int i = 0; i < numParticles; i++)
 	{
-		cloud->setPosition1D(i, tempPosX);
-		cloud->setVelocity1D(i);
+		cloud->setPosition(i, tempPosX, 0.0, 0.0);
+		cloud->setVelocity(i);
 		cloud->setCharge(i);
 		cloud->setMass(i);
 
@@ -110,12 +94,12 @@ Cloud * const Cloud::initializeGrid1D(const unsigned int numParticles, const dou
 	return cloud;
 }
 
-Cloud * const Cloud::initializeGrid2D(const unsigned int numParticles, const double cloudSize)
+Cloud * const Cloud::initializeSquare(const unsigned int numParticles, const double cloudSize)
 {
 	Cloud * const cloud = new Cloud(numParticles, cloudSize);
 
 	//seed rand function with time(NULL):
-	srand((int)time(NULL));      //needed for Cloud::setCharge
+	srand((int)time(NULL));      //needed for setCharge
 
 	double tempPosX = cloudSize; //position of first particle
 	double tempPosY = cloudSize;
@@ -126,8 +110,8 @@ Cloud * const Cloud::initializeGrid2D(const unsigned int numParticles, const dou
 	//initialize dust cloud:
 	for(unsigned int i = 0; i < numParticles; i++)
 	{
-		cloud->setPosition2D(i, tempPosX, tempPosY);
-		cloud->setVelocity2D(i);
+		cloud->setPosition(i, tempPosX, tempPosY, 0.0);
+		cloud->setVelocity(i);
 		cloud->setCharge(i);
 		cloud->setMass(i);
 
@@ -142,12 +126,12 @@ Cloud * const Cloud::initializeGrid2D(const unsigned int numParticles, const dou
 	return cloud;
 }
 
-Cloud * const Cloud::initializeGrid3D(const unsigned int numParticles, const double cloudSize)
+Cloud * const Cloud::initializeCube(const unsigned int numParticles, const double cloudSize)
 {
 	Cloud * const cloud = new Cloud(numParticles, cloudSize);
 
 	//seed rand function with time(NULL):
-	srand((int)time(NULL));      //needed for Cloud::setCharge
+	srand((int)time(NULL));      //needed for setCharge
 
 	double tempPosX = cloudSize; //position of first particle
 	double tempPosY = cloudSize;
@@ -159,8 +143,8 @@ Cloud * const Cloud::initializeGrid3D(const unsigned int numParticles, const dou
 	//initialize dust cloud:
 	for(unsigned int i = 0; i < numParticles; i++)
 	{
-		cloud->setPosition3D(i, tempPosX, tempPosY, tempPosZ);
-		cloud->setVelocity3D(i);
+		cloud->setPosition(i, tempPosX, tempPosY, tempPosZ);
+		cloud->setVelocity(i);
 		cloud->setCharge(i);
 		cloud->setMass(i);
 
@@ -181,7 +165,7 @@ Cloud * const Cloud::initializeGrid3D(const unsigned int numParticles, const dou
 	return cloud;
 }
 
-Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error, double * const currentTime, const int dimension)
+Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error, double * const currentTime)
 {
 	int *anyNull = NULL;
 	long numParticles;
@@ -216,36 +200,21 @@ Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error
 
 	if(!*error)
 	{
-		if (currentTime)
+		if(currentTime)
 			fits_read_col_dbl(file, 1, numTimeSteps, 1, 1, 0.0, currentTime, anyNull, error);
 
-		if(dimension == 1)
-		{
-			fits_read_col_dbl(file, 2, numTimeSteps, 1, numParticles, 0.0, cloud->x, anyNull, error);
-			fits_read_col_dbl(file, 3, numTimeSteps, 1, numParticles, 0.0, cloud->Vx, anyNull, error);
-		}
-		else if(dimension == 2)
-		{
-			fits_read_col_dbl(file, 2, numTimeSteps, 1, numParticles, 0.0, cloud->x, anyNull, error);
-			fits_read_col_dbl(file, 3, numTimeSteps, 1, numParticles, 0.0, cloud->y, anyNull, error);
-			fits_read_col_dbl(file, 4, numTimeSteps, 1, numParticles, 0.0, cloud->Vx, anyNull, error);
-			fits_read_col_dbl(file, 5, numTimeSteps, 1, numParticles, 0.0, cloud->Vy, anyNull, error);
-		}
-		else if(dimension == 3)
-		{
-			fits_read_col_dbl(file, 2, numTimeSteps, 1, numParticles, 0.0, cloud->x, anyNull, error);
-			fits_read_col_dbl(file, 3, numTimeSteps, 1, numParticles, 0.0, cloud->y, anyNull, error);
-			fits_read_col_dbl(file, 4, numTimeSteps, 1, numParticles, 0.0, cloud->z, anyNull, error);
-			fits_read_col_dbl(file, 5, numTimeSteps, 1, numParticles, 0.0, cloud->Vx, anyNull, error);
-			fits_read_col_dbl(file, 6, numTimeSteps, 1, numParticles, 0.0, cloud->Vy, anyNull, error);
-			fits_read_col_dbl(file, 7, numTimeSteps, 1, numParticles, 0.0, cloud->Vz, anyNull, error);
-		}
+		fits_read_col_dbl(file, 2, numTimeSteps, 1, numParticles, 0.0, cloud->x, anyNull, error);
+		fits_read_col_dbl(file, 3, numTimeSteps, 1, numParticles, 0.0, cloud->y, anyNull, error);
+		fits_read_col_dbl(file, 4, numTimeSteps, 1, numParticles, 0.0, cloud->z, anyNull, error);
+		fits_read_col_dbl(file, 5, numTimeSteps, 1, numParticles, 0.0, cloud->Vx, anyNull, error);
+		fits_read_col_dbl(file, 6, numTimeSteps, 1, numParticles, 0.0, cloud->Vy, anyNull, error);
+		fits_read_col_dbl(file, 7, numTimeSteps, 1, numParticles, 0.0, cloud->Vz, anyNull, error);
 	}
 
 	return cloud;
 }
-
-void Cloud::writeCloudSetup(fitsfile * const file, int * const error, const int dimension) const
+//writeCloudSetup:
+void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const
 {
 	//format number of elements of type double as string, e.g. 1024D
 	stringstream numStream;
@@ -268,125 +237,38 @@ void Cloud::writeCloudSetup(fitsfile * const file, int * const error, const int 
 	}
 
 	//write position and velocity:
-	if(dimension == 1)
+	char *ttypeRun[] = {const_cast<char *> ("TIME"),
+		const_cast<char *> ("X_POSITION"), const_cast<char *> ("Y_POSITION"), const_cast<char *> ("Z_POSITION"), 
+		const_cast<char *> ("X_VELOCITY"), const_cast<char *> ("Y_VELOCITY"), const_cast<char *> ("Z_VELOCITY")};
+	char *tformRun[] = {const_cast<char *> ("D"), 
+		const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str()), 
+		const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str())};
+	char *tunitRun[] = {const_cast<char *> ("s"),
+		const_cast<char *> ("m"), const_cast<char *> ("m"), const_cast<char *> ("m"), 
+		const_cast<char *> ("m/s"), const_cast<char *> ("m/s"), const_cast<char *> ("m/s")};
+
+	if(!*error)
+		fits_create_tbl(file, BINARY_TBL, 0, 7, ttypeRun, tformRun, tunitRun, "TIME_STEP", error);
+		//n.b. num rows automatically incremented. Increment from 0 as opposed to preallocating 
+		//to ensure proper output in the event of program interruption.
+
+	if(!*error)
 	{
-		char *ttypeRun[] = {const_cast<char *> ("TIME"),
-			const_cast<char *> ("X_POSITION"), const_cast<char *> ("X_VELOCITY")};
-		char *tformRun[] = {const_cast<char *> ("D"), 
-			const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str())};
-		char *tunitRun[] = {const_cast<char *> ("s"),
-			const_cast<char *> ("m"), const_cast<char *> ("m/s")};
-
-		if (!*error)
-			fits_create_tbl(file, BINARY_TBL, 0, 5, ttypeRun, tformRun, tunitRun, "TIME_STEP", error);
-			//n.b. num rows automatically incremented. Increment from 0 as opposed to preallocating 
-			//to ensure proper output in the event of program interruption.
-
-		if(!*error)
-		{
-			double time = 0.0;
-			fits_write_col_dbl(file, 1, 1, 1, 1, &time, error);
-
-			fits_write_col_dbl(file, 2, 1, 1, n, x, error);
-			fits_write_col_dbl(file, 3, 1, 1, n, Vx, error);
-		}
-	}
-	if(dimension == 2)
-	{
-		char *ttypeRun[] = {const_cast<char *> ("TIME"),
-			const_cast<char *> ("X_POSITION"), const_cast<char *> ("Y_POSITION"), 
-			const_cast<char *> ("X_VELOCITY"), const_cast<char *> ("Y_VELOCITY")};
-		char *tformRun[] = {const_cast<char *> ("D"), 
-			const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str()), 
-			const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str())};
-		char *tunitRun[] = {const_cast<char *> ("s"),
-			const_cast<char *> ("m"), const_cast<char *> ("m"),
-			const_cast<char *> ("m/s"), const_cast<char *> ("m/s")};
-
-		if(!*error)
-			fits_create_tbl(file, BINARY_TBL, 0, 5, ttypeRun, tformRun, tunitRun, "TIME_STEP", error);
-			//n.b. num rows automatically incremented. Increment from 0 as opposed to preallocating 
-			//to ensure proper output in the event of program interruption.
-
-		if(!*error)
-		{
-			double time = 0.0;
-			fits_write_col_dbl(file, 1, 1, 1, 1, &time, error);
-
-			fits_write_col_dbl(file, 2, 1, 1, n, x, error);
-			fits_write_col_dbl(file, 3, 1, 1, n, y, error);
-			fits_write_col_dbl(file, 4, 1, 1, n, Vx, error);
-			fits_write_col_dbl(file, 5, 1, 1, n, Vy, error);
-		}
-	}
-	if(dimension == 3)
-	{
-		char *ttypeRun[] = {const_cast<char *> ("TIME"),
-			const_cast<char *> ("X_POSITION"), const_cast<char *> ("Y_POSITION"), const_cast<char *> ("Z_POSITION"), 
-			const_cast<char *> ("X_VELOCITY"), const_cast<char *> ("Y_VELOCITY"), const_cast<char *> ("Z_VELOCITY")};
-		char *tformRun[] = {const_cast<char *> ("D"), 
-			const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str()), 
-			const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str())};
-		char *tunitRun[] = {const_cast<char *> ("s"),
-			const_cast<char *> ("m"), const_cast<char *> ("m"), const_cast<char *> ("m"), 
-			const_cast<char *> ("m/s"), const_cast<char *> ("m/s"), const_cast<char *> ("m/s")};
-
-		if(!*error)
-			fits_create_tbl(file, BINARY_TBL, 0, 5, ttypeRun, tformRun, tunitRun, "TIME_STEP", error);
-			//n.b. num rows automatically incremented. Increment from 0 as opposed to preallocating 
-			//to ensure proper output in the event of program interruption.
-
-		if(!*error)
-		{
-			double time = 0.0;
-			fits_write_col_dbl(file, 1, 1, 1, 1, &time, error);
-
-			fits_write_col_dbl(file, 2, 1, 1, n, x, error);
-			fits_write_col_dbl(file, 3, 1, 1, n, y, error);
-			fits_write_col_dbl(file, 4, 1, 1, n, z, error);
-			fits_write_col_dbl(file, 5, 1, 1, n, Vx, error);
-			fits_write_col_dbl(file, 6, 1, 1, n, Vy, error);
-			fits_write_col_dbl(file, 7, 1, 1, n, Vz, error);
-		}
+		double time = 0.0;
+		fits_write_col_dbl(file, 1, 1, 1, 1, &time, error);
+		fits_write_col_dbl(file, 2, 1, 1, n, x, error);
+		fits_write_col_dbl(file, 3, 1, 1, n, y, error);
+		fits_write_col_dbl(file, 4, 1, 1, n, z, error);
+		fits_write_col_dbl(file, 5, 1, 1, n, Vx, error);
+		fits_write_col_dbl(file, 6, 1, 1, n, Vy, error);
+		fits_write_col_dbl(file, 7, 1, 1, n, Vz, error);
 	}
 
 	//write buffer, close file, reopen at same point:
 	fits_flush_file(file, error);
 }
 
-void Cloud::writeTimeStep1D(fitsfile * const file, int * const error, double currentTime) const
-{
-	if (!*error)
-	{
-		long numRows = 0;
-		fits_get_num_rows(file, &numRows, error);
-		fits_write_col_dbl(file, 1, ++numRows, 1, 1, &currentTime, error);
-		fits_write_col_dbl(file, 2, numRows, 1, n, x, error);
-		fits_write_col_dbl(file, 3, numRows, 1, n, Vx, error);
-	}
-
-	//write buffer, close file, reopen at same point:
-	fits_flush_file(file, error);
-}
-
-void Cloud::writeTimeStep2D(fitsfile * const file, int * const error, double currentTime) const
-{
-	if (!*error)
-	{
-		long numRows = 0;
-		fits_get_num_rows(file, &numRows, error);
-		fits_write_col_dbl(file, 1, ++numRows, 1, 1, &currentTime, error);
-		fits_write_col_dbl(file, 2, numRows, 1, n, x, error);
-		fits_write_col_dbl(file, 3, numRows, 1, n, y, error);
-		fits_write_col_dbl(file, 4, numRows, 1, n, Vx, error);
-		fits_write_col_dbl(file, 5, numRows, 1, n, Vy, error);
-	}
-
-	//write buffer, close file, reopen at same point:
-	fits_flush_file(file, error);
-}
-
-void Cloud::writeTimeStep3D(fitsfile * const file, int * const error, double currentTime) const
+void Cloud::writeTimeStep(fitsfile * const file, int * const error, double currentTime) const
 {
 	if (!*error)
 	{
