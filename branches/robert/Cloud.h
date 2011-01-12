@@ -32,21 +32,18 @@ public:
 	double *Vx, *Vy, *Vz;      //current velocities
 	double *charge, *mass;
 	double *forceX, *forceY, *forceZ;
+	__m128d *xCache, *yCache, *zCache, *VxCache, *VyCache, *VzCache;
 
 //public functions:
-	//Input: int index, initialPosX (intialPosY, initialPosZ)
+	//Input: int index, initialPosX, intialPosY, initialPosZ
 	//Preconditions: 0 <= index < number of particles
-	//Postconditions: x (y,z) position of particle #index set to initialPosX (initialPosY,initialPosZ)
-	void setPosition1D(const unsigned int index, const double initialPosX);
-	void setPosition2D(const unsigned int index, const double initialPosX, const double initialPosY);
-	void setPosition3D(const unsigned int index, const double initialPosX, const double initialPosY, const double initialPosZ);
+	//Postconditions: x,y,z position of particle #index set to initialPosX,initialPosY,initialPosZ
+	void setPosition(const unsigned int index, const double initialPosX, const double initialPosY, const double initialPosZ);
 
 	//Input: int index
 	//Preconditions: 0 <= index < number of particles
 	//Postconditions: velocity vector of particle #index initialized to zero vector
-	void setVelocity1D(const unsigned int index);
-	void setVelocity2D(const unsigned int index);
-	void setVelocity3D(const unsigned int index);
+	void setVelocity(const unsigned int index);
 
 	//Input: int index
 	//Preconditions: 0 <= index < number of particles
@@ -58,17 +55,15 @@ public:
 	//Postconditions: mass of particle #index set according to radius, density
 	void setMass(const unsigned int index);
 
-	//Input: fitsfile *file, int *error, int dimension
-	//Preconditions: fitsfile exists, error = 0, dimension = 1 OR 2 OR 3
+	//Input: fitsfile *file, int *error
+	//Preconditions: fitsfile exists, error = 0
 	//Postconditions: initial cloud data, including mass & charge, output to file
-	void writeCloudSetup(fitsfile * const file, int * const error, const int dimension) const;
+	void writeCloudSetup(fitsfile * const file, int * const error) const;
 	
 	//Input: fitsfile *file, int *error, double currentTime
 	//Preconditions: fitsfile exists, error = 0, currentTime > 0, writeCloudSetup has previously been called
 	//Postconditions: positions and velocities for current time step output to file
-	void writeTimeStep1D(fitsfile * const file, int * const error, double currentTime) const;
-	void writeTimeStep2D(fitsfile * const file, int * const error, double currentTime) const;
-	void writeTimeStep3D(fitsfile * const file, int * const error, double currentTime) const;
+	void writeTimeStep(fitsfile * const file, int * const error, double currentTime) const;
    
 	//RK4 substep helper functions: 
 	const __m128d getx1_pd(const unsigned int i) const;
@@ -105,15 +100,15 @@ public:
 	//Input: int numParticles, double cloudSize
 	//Preconditions: both inputs positive
 	//Postconditions: cloud initialized on spatial grid with side length = 2*cloudSize
-	static Cloud * const initializeGrid1D(const unsigned int numParticles, const double cloudSize); //line
-	static Cloud * const initializeGrid2D(const unsigned int numParticles, const double cloudSize); //square
-	static Cloud * const initializeGrid3D(const unsigned int numParticles, const double cloudSize); //cube
+	static Cloud * const initializeLine(const unsigned int numParticles, const double cloudSize); //1D
+	static Cloud * const initializeSquare(const unsigned int numParticles, const double cloudSize); //2D
+	static Cloud * const initializeCube(const unsigned int numParticles, const double cloudSize); //3D
 
-	//Input: fitsFile *file, int *error, int dimension
-	//Preconditions: fitsfile exists, error = 0, dimension = 1 OR 2 OR 3
+	//Input: fitsFile *file, int *error
+	//Preconditions: fitsfile exists, error = 0
 	//Postconditions: cloud initialized with last time step of fitsfile,
 	//	forces and other simulation information extracted as well
-	static Cloud * const initializeFromFile(fitsfile * const file, int * const error, double * const currentTime, const int dimension);
+	static Cloud * const initializeFromFile(fitsfile * const file, int * const error, double * const currentTime);
 };
 
 #endif /* CLOUD_H */
