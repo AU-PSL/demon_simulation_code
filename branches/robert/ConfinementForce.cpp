@@ -9,84 +9,88 @@
 
 #include "ConfinementForce.h"
 
-ConfinementForce::ConfinementForce(Cloud * const myCloud, double confineConst) : Force(myCloud), confine(-confineConst) {}
+//Constructors:
+ConfinementForce1D::ConfinementForce1D(Cloud * const myCloud, double confineConst) : Force(myCloud), confine(-confineConst) {}
+ConfinementForce2D::ConfinementForce2D(Cloud * const myCloud, double confineConst) : ConfinementForce1D(myCloud, confineConst) {}
+ConfinementForce3D::ConfinementForce3D(Cloud * const myCloud, double confineConst) : ConfinementForce2D(myCloud, confineConst) {}
 
 //1D:
-void ConfinementForce::force1_1D(const double currentTime)
+void ConfinementForce1D::force1(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force1D(currentParticle, cloud->getx1_pd(currentParticle));
+		force(currentParticle, cloud->getx1_pd(currentParticle));
 }
 
-void ConfinementForce::force2_1D(const double currentTime)
+void ConfinementForce1D::force2(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force1D(currentParticle, cloud->getx2_pd(currentParticle));
+		force(currentParticle, cloud->getx2_pd(currentParticle));
 }
 
-void ConfinementForce::force3_1D(const double currentTime)
+void ConfinementForce1D::force3(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force1D(currentParticle, cloud->getx3_pd(currentParticle));
+		force(currentParticle, cloud->getx3_pd(currentParticle));
 }
 
-void ConfinementForce::force4_1D(const double currentTime)
+void ConfinementForce1D::force4(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force1D(currentParticle, cloud->getx4_pd(currentParticle));
+		force(currentParticle, cloud->getx4_pd(currentParticle));
 }
 
 //2D:
-void ConfinementForce::force1_2D(const double currentTime)
+void ConfinementForce2D::force1(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force2D(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
+		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
 }
 
-void ConfinementForce::force2_2D(const double currentTime)
+void ConfinementForce2D::force2(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force2D(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
+		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
 }
 
-void ConfinementForce::force3_2D(const double currentTime)
+void ConfinementForce2D::force3(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force2D(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
+		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
 }
 
-void ConfinementForce::force4_2D(const double currentTime)
+void ConfinementForce2D::force4(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force2D(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
+		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
 }
 
 //3D:
-void ConfinementForce::force1_3D(const double currentTime)
+void ConfinementForce3D::force1(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force3D(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle), cloud->getz1_pd(currentParticle));
+		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle), cloud->getz1_pd(currentParticle));
 }
 
-void ConfinementForce::force2_3D(const double currentTime)
+void ConfinementForce3D::force2(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force3D(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle), cloud->getz2_pd(currentParticle));
+		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle), cloud->getz2_pd(currentParticle));
 }
 
-void ConfinementForce::force3_3D(const double currentTime)
+void ConfinementForce3D::force3(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force3D(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle), cloud->getz3_pd(currentParticle));
+		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle), cloud->getz3_pd(currentParticle));
 }
 
-void ConfinementForce::force4_3D(const double currentTime)
+void ConfinementForce3D::force4(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force3D(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle), cloud->getz4_pd(currentParticle));
+		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle), cloud->getz4_pd(currentParticle));
 }
 
-inline void ConfinementForce::force1D(const unsigned int currentParticle, const __m128d currentPositionX)
+//force methods:
+inline void ConfinementForce1D::force(const unsigned int currentParticle, const __m128d currentPositionX)
 {
 	const __m128d cV = _mm_set1_pd(confine);
 	double * const pFx = cloud->forceX + currentParticle;
@@ -94,7 +98,7 @@ inline void ConfinementForce::force1D(const unsigned int currentParticle, const 
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + cV*currentPositionX);
 }
 
-inline void ConfinementForce::force2D(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY)
+inline void ConfinementForce2D::force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY)
 {
 	const __m128d cV = _mm_set1_pd(confine);
 	double * const pFx = cloud->forceX + currentParticle;
@@ -104,7 +108,7 @@ inline void ConfinementForce::force2D(const unsigned int currentParticle, const 
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + cV*currentPositionY);
 }
 
-inline void ConfinementForce::force3D(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY, const __m128d currentPositionZ)
+inline void ConfinementForce3D::force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY, const __m128d currentPositionZ)
 {
 	const __m128d cV = _mm_set1_pd(confine);
 	double * const pFx = cloud->forceX + currentParticle;
@@ -116,7 +120,8 @@ inline void ConfinementForce::force3D(const unsigned int currentParticle, const 
 	_mm_store_pd(pFz, _mm_load_pd(pFz) + cV*currentPositionZ);
 }
 
-void ConfinementForce::writeForce(fitsfile * const file, int * const error, const int dimension) const
+//write force:
+void ConfinementForce1D::writeForce(fitsfile * const file, int * const error) const
 {
 	//move to primary HDU:
 	if(!*error)
@@ -145,7 +150,8 @@ void ConfinementForce::writeForce(fitsfile * const file, int * const error, cons
 		fits_write_key_dbl(file, const_cast<char *> ("confineConst"), confine, 6, const_cast<char *> ("[N/m] (ConfinementForce)"), error);
 }
 
-void ConfinementForce::readForce(fitsfile * const file, int * const error, const int dimension)
+//read force:
+void ConfinementForce1D::readForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)
