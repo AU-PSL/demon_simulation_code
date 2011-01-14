@@ -42,7 +42,7 @@ class ConfinementForce2D : public ConfinementForce1D
 {
 public:
 	ConfinementForce2D(Cloud * const myCloud, double confineConst); //overloaded constructor
-	~ConfinementForce2D() {} //destructor
+	~ConfinementForce2D() {}
 
 private:
 //private functions:
@@ -53,7 +53,7 @@ class ConfinementForce3D : public ConfinementForce2D
 {
 public:
 	ConfinementForce3D(Cloud * const myCloud, double confineConst); //overloaded constructor
-	~ConfinementForce3D() {} //destructor
+	~ConfinementForce3D() {}
 
 private:
 //private functions:
