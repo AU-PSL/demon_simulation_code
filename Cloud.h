@@ -100,9 +100,9 @@ public:
 	//Input: int numParticles, double cloudSize
 	//Preconditions: both inputs positive
 	//Postconditions: cloud initialized on spatial grid with side length = 2*cloudSize
-	static Cloud * const initializeLine(const unsigned int numParticles, const double cloudSize); //1D
+	static Cloud * const initializeLine(const unsigned int numParticles, const double cloudSize);   //1D
 	static Cloud * const initializeSquare(const unsigned int numParticles, const double cloudSize); //2D
-	static Cloud * const initializeCube(const unsigned int numParticles, const double cloudSize); //3D
+	static Cloud * const initializeCube(const unsigned int numParticles, const double cloudSize);   //3D
 
 	//Input: fitsFile *file, int *error
 	//Preconditions: fitsfile exists, error = 0
