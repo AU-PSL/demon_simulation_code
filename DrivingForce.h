@@ -44,13 +44,14 @@ class DrivingForce2D : public DrivingForce1D
 {
 public:
 	DrivingForce2D(Cloud * const myCloud, const double dampConst, const double amp, const double drivingShift);
-	~DrivingForce2D() {}
+	~DrivingForce2D() {};
 };
 
 class DrivingForce3D : public DrivingForce2D
 {
 public:
 	DrivingForce3D(Cloud * const myCloud, const double dampConst, const double amp, const double drivingShift);
-	~DrivingForce3D() {}
+	~DrivingForce3D() {};
+};
 
 #endif /* DRIVINGFORCE_H */
