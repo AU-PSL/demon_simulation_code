@@ -10,86 +10,48 @@
 #include "DrivingForce.h"
 #include <cmath>
 
-const double DrivingForce::waveNum = 2.0*M_PI/0.002; //wavelength = 2mm
-const double DrivingForce::angFreq = 2.0*M_PI*10.0; //10Hz
+const double DrivingForce1D::waveNum = 2.0*M_PI/0.002; //wavelength = 2mm
+const double DrivingForce1D::angFreq = 2.0*M_PI*10.0; //10Hz
 
-DrivingForce::DrivingForce(Cloud * const myCloud, const double drivingConst, const double amp, const double drivingShift)
+//Constructors:
+DrivingForce1D::DrivingForce1D(Cloud * const myCloud, const double drivingConst, const double amp, const double drivingShift)
 : Force(myCloud), amplitude(amp), driveConst(-drivingConst), shift(drivingShift) {}
+DrivingForce2D::DrivingForce2D(Cloud * const myCloud, const double drivingConst, const double amp, const double drivingShift)
+: DrivingForce1D(myCloud, drivingConst, amp, drivingShift) {}
+DrivingForce3D::DrivingForce3D(Cloud * const myCloud, const double drivingConst, const double amp, const double drivingShift)
+: DrivingForce2D(myCloud, drivingConst, amp, drivingShift) {}
 
 //1D:
-void DrivingForce::force1_1D(const double currentTime)
+void DrivingForce1D::force1(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, vtime, cloud->getx1_pd(currentParticle));
 }
 
-void DrivingForce::force2_1D(const double currentTime)
+void DrivingForce1D::force2(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, vtime, cloud->getx2_pd(currentParticle));
 }
 
-void DrivingForce::force3_1D(const double currentTime)
+void DrivingForce1D::force3(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, vtime, cloud->getx3_pd(currentParticle));
 }
 
-void DrivingForce::force4_1D(const double currentTime)
+void DrivingForce1D::force4(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, vtime, cloud->getx4_pd(currentParticle));
 }
 
-//2D:
-void DrivingForce::force1_2D(const double currentTime)
-{
-	force1_1D(currentTime); //DrivingForce affects only x-dimension
-}
-
-void DrivingForce::force2_2D(const double currentTime)
-{
-	force2_1D(currentTime);
-}
-
-void DrivingForce::force3_2D(const double currentTime)
-{
-	force3_1D(currentTime);
-}
-
-void DrivingForce::force4_2D(const double currentTime)
-{
-	force4_1D(currentTime);
-}
-
-//3D:
-void DrivingForce::force1_3D(const double currentTime)
-{
-	force1_1D(currentTime); //DrivingForce affects only x-dimension
-}
-
-void DrivingForce::force2_3D(const double currentTime)
-{
-	force2_1D(currentTime);
-}
-
-void DrivingForce::force3_3D(const double currentTime)
-{
-	force3_1D(currentTime);
-}
-
-void DrivingForce::force4_3D(const double currentTime)
-{
-	force4_1D(currentTime);
-}
-
-//DrivingForce only acts in a single dimension, and privite force function is not inherited
-// from Force.h, so no need to overload generic force function.
-inline void DrivingForce::force(const unsigned int currentParticle, const __m128d currentTime, const __m128d currentPositionX)
+//force method:
+inline void DrivingForce1D::force(const unsigned int currentParticle, const __m128d currentTime, const __m128d currentPositionX)
 {
 	//N.B. F = A*sin(k*x - w*t)*exp(-(x + x0)^2/B) is the equation used in the paper, which differs from that below.
 	const __m128d distV = currentPositionX - _mm_set1_pd(shift);
@@ -104,10 +66,12 @@ inline void DrivingForce::force(const unsigned int currentParticle, const __m128
 	_mm_storeh_pd(&expArgH, expArg);
 
 	double * const pFx = cloud->forceX + currentParticle;
-	_mm_store_pd(pFx, _mm_load_pd(pFx) + _mm_set1_pd(amplitude)*_mm_set_pd(sin(sinArgH), sin(sinArgL))*_mm_set_pd(exp(expArgH), exp(expArgL))); // _mm_set_pd() is backwards
+	_mm_store_pd(pFx, _mm_load_pd(pFx) + _mm_set1_pd(amplitude)*_mm_set_pd(sin(sinArgH),
+		sin(sinArgL))*_mm_set_pd(exp(expArgH), exp(expArgL))); // _mm_set_pd() is backwards
 }
 
-void DrivingForce::writeForce(fitsfile * const file, int * const error, const int dimension) const
+//writeForce:
+void DrivingForce1D::writeForce(fitsfile * const file, int * const error) const
 {
 	//move to primary HDU:
 	if(!*error)
@@ -140,7 +104,8 @@ void DrivingForce::writeForce(fitsfile * const file, int * const error, const in
 	}
 }
 
-void DrivingForce::readForce(fitsfile * const file, int * const error, const int dimension)
+//readForce:
+void DrivingForce::readForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)
