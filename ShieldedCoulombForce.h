@@ -34,9 +34,9 @@ private:
 	double shielding;
 
 //private functions:
-	void force1D(const unsigned int currentParticle, const unsigned int iParticle, const double displacementX);
-	void force1D(const unsigned int currentParticle, const unsigned int iParticle, const __m128d displacementX);
-	void forcer1D(const unsigned int currentParticle, const unsigned int iParticle, const __m128d displacementX);
+	void force(const unsigned int currentParticle, const unsigned int iParticle, const double displacementX);
+	void force(const unsigned int currentParticle, const unsigned int iParticle, const __m128d displacementX);
+	void forcer(const unsigned int currentParticle, const unsigned int iParticle, const __m128d displacementX);
 };
 
 class ShieldedCoulombForce2D : public ShieldedCoulombForce1D
@@ -47,9 +47,9 @@ public:
 
 private:
 //private functions:
-	void force2D(const unsigned int currentParticle, const unsigned int iParticle, const double displacementX, const double displacementY);
-	void force2D(const unsigned int currentParticle, const unsigned int iParticle, const __m128d displacementX, const __m128d displacementY);
-	void forcer2D(const unsigned int currentParticle, const unsigned int iParticle, const __m128d displacementX, const __m128d displacementY);
+	void force(const unsigned int currentParticle, const unsigned int iParticle, const double displacementX, const double displacementY);
+	void force(const unsigned int currentParticle, const unsigned int iParticle, const __m128d displacementX, const __m128d displacementY);
+	void forcer(const unsigned int currentParticle, const unsigned int iParticle, const __m128d displacementX, const __m128d displacementY);
 };
 
 class ShieldedCoulombForce3D : public ShieldedCoulombForce2D
@@ -60,9 +60,9 @@ public:
 
 private:
 //private functions:
-	void force3D(const unsigned int currentParticle, const unsigned int iParticle, const double displacementX, const double displacementY, const double displacementZ);
-	void force3D(const unsigned int currentParticle, const unsigned int iParticle, const __m128d displacementX, const __m128d displacementY, const __m128d displacementZ);
-	void forcer3D(const unsigned int currentParticle, const unsigned int iParticle, const __m128d displacementX, const __m128d displacementY, const __m128d displacementZ);
+	void force(const unsigned int currentParticle, const unsigned int iParticle, const double displacementX, const double displacementY, const double displacementZ);
+	void force(const unsigned int currentParticle, const unsigned int iParticle, const __m128d displacementX, const __m128d displacementY, const __m128d displacementZ);
+	void forcer(const unsigned int currentParticle, const unsigned int iParticle, const __m128d displacementX, const __m128d displacementY, const __m128d displacementZ);
 };
 
 #endif /* SHIELDEDCOULOMBFORCE_H */

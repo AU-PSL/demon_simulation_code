@@ -34,7 +34,7 @@ private:
 	double confineX;
 
 //private functions:
-	void force1D(const unsigned int currentParticle, const __m128d currentPositionX);
+	void force(const unsigned int currentParticle, const __m128d currentPositionX);
 };
 
 class RectConfinementForce2D : public RectConfinementForce1D
@@ -48,7 +48,7 @@ private:
 	double confineY;
 
 //private functions:
-	void force2D(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY);
+	void force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY);
 };
 
 class RectConfinementForce3D : public RectConfinementForce2D
@@ -62,7 +62,7 @@ private:
 	double confineZ;
 
 //private functions:
-	void force3D(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY, const __m128d currentPositionZ);
+	void force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY, const __m128d currentPositionZ);
 };
 
 #endif /* RECTCONFINEMENTFORCE_H */
