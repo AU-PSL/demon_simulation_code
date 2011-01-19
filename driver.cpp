@@ -321,7 +321,7 @@ int main (int argc, char * const argv[])
 				i = checkOptionWithNeg(argc, argv, i, 'D', "scale factor", &dragScale, "offset", &gamma);
 				break;
 			case 'e': // set "e"nd time:
-				checkOption(argc, argv, i, 'e', "end time", &endTime);
+				i = checkOption(argc, argv, i, 'e', "end time", &endTime);
 				break;		
 			case 'f': // use "f"inal positions and velocities from previous run:
 				i = checkFileOption(argc, argv, i, 'f', "Finals file", &finalsFileIndex);
