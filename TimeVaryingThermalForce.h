@@ -15,25 +15,25 @@
 class TimeVaryingThermalForce : public ThermalForce
 {	
 public:
-	TimeVaryingThermalForce(Cloud * const myCloud, const double scale, const double offset);	//overloaded constructor
-	~TimeVaryingThermalForce() {} //destructor
+	TimeVaryingThermalForce(Cloud * const myCloud, const double scale, const double offset);
+	~TimeVaryingThermalForce() {} // destructor
 
-//public functions:
-	void force1(const double currentTime); //rk substep 1
-	void force2(const double currentTime); //rk substep 2
-	void force3(const double currentTime); //rk substep 3
-	void force4(const double currentTime); //rk substep 4
+// public functions:
+	void force1(const double currentTime); // rk substep 1
+	void force2(const double currentTime); // rk substep 2
+	void force3(const double currentTime); // rk substep 3
+	void force4(const double currentTime); // rk substep 4
     
     void writeForce(fitsfile * const file, int * const error) const;
     void readForce(fitsfile * const file, int * const error);
 
 private:
-//private variables
+// private variables
     double heatValScale;
     double heatValOffset;
     
-//private functions:
+// private functions:
     const double calculateHeatVal(const double currentTime) const;
 };
 
-#endif /* TIMEVARYINGTHERMALFORCE_H */
+#endif // TIMEVARYINGTHERMALFORCE_H
