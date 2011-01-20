@@ -107,7 +107,7 @@ Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error
 		fits_get_num_rows(file, &numParticles, error);
 
 	//create cloud:
-	Cloud* cloud = new Cloud((unsigned int)numParticles, 0.0);	//cloudSize not used in this case, so set to zero
+	Cloud * const cloud = new Cloud((unsigned int)numParticles, 0.0);	//cloudSize not used in this case, so set to zero
 
 	//read mass and charge information:
 	if(!*error)
@@ -211,123 +211,147 @@ void Cloud::writeTimeStep(fitsfile * const file, int * const error, double curre
 // 4th order Runge-Kutta subsetp helper methods. 
 
 // X position helper functions -------------------------------------------------
-const __m128d Cloud::getx1_pd(const unsigned int i) const {
+const __m128d Cloud::getx1_pd(const unsigned int i) const 
+{
     // x
     return _mm_load_pd(x + i);
 }
 
-const __m128d Cloud::getx2_pd(const unsigned int i) const {
+const __m128d Cloud::getx2_pd(const unsigned int i) const 
+{
     // x + l1/2
     return xCache[i/2];
 }
 
-const __m128d Cloud::getx3_pd(const unsigned int i) const {
+const __m128d Cloud::getx3_pd(const unsigned int i) const 
+{
     // x + l2/2
     return xCache[i/2];
 }
 
-const __m128d Cloud::getx4_pd(const unsigned int i) const {
+const __m128d Cloud::getx4_pd(const unsigned int i) const 
+{
     // x + l3
     return xCache[i/2];
 }
 
-const __m128d Cloud::getx1r_pd(const unsigned int i) const {
+const __m128d Cloud::getx1r_pd(const unsigned int i) const 
+{
     return _mm_loadr_pd(x + i);
 }
 
-const __m128d Cloud::getx2r_pd(const unsigned int i) const {
+const __m128d Cloud::getx2r_pd(const unsigned int i) const 
+{
     const unsigned int j = i/2;
     return _mm_shuffle_pd(xCache[j], xCache[j], _MM_SHUFFLE2(0, 1));
 }
 
-const __m128d Cloud::getx3r_pd(const unsigned int i) const {
+const __m128d Cloud::getx3r_pd(const unsigned int i) const 
+{
     const unsigned int j = i/2;
     return _mm_shuffle_pd(xCache[j], xCache[j], _MM_SHUFFLE2(0, 1));
 }
 
-const __m128d Cloud::getx4r_pd(const unsigned int i) const {
+const __m128d Cloud::getx4r_pd(const unsigned int i) const 
+{
     const unsigned int j = i/2;
     return _mm_shuffle_pd(xCache[j], xCache[j], _MM_SHUFFLE2(0, 1));
 }
 
 // Y position helper functions -------------------------------------------------
-const __m128d Cloud::gety1_pd(const unsigned int i) const {
+const __m128d Cloud::gety1_pd(const unsigned int i) const 
+{
     // y
     return _mm_load_pd(y + i);
 }
 
-const __m128d Cloud::gety2_pd(const unsigned int i) const {
+const __m128d Cloud::gety2_pd(const unsigned int i) const 
+{
     // y + n1/2
     return yCache[i/2];
 }
 
-const __m128d Cloud::gety3_pd(const unsigned int i) const {
+const __m128d Cloud::gety3_pd(const unsigned int i) const 
+{
     // y + n2/2
     return yCache[i/2];
 }
 
-const __m128d Cloud::gety4_pd(const unsigned int i) const {
+const __m128d Cloud::gety4_pd(const unsigned int i) const 
+{
     // y + n3
     return yCache[i/2];
 }
 
-const __m128d Cloud::gety1r_pd(const unsigned int i) const {
+const __m128d Cloud::gety1r_pd(const unsigned int i) const 
+{
     return _mm_loadr_pd(y + i);
 }
 
-const __m128d Cloud::gety2r_pd(const unsigned int i) const {
+const __m128d Cloud::gety2r_pd(const unsigned int i) const 
+{
     const unsigned int j = i/2;
     return _mm_shuffle_pd(yCache[j], yCache[j], _MM_SHUFFLE2(0, 1));
 }
 
-const __m128d Cloud::gety3r_pd(const unsigned int i) const {
+const __m128d Cloud::gety3r_pd(const unsigned int i) const 
+{
     const unsigned int j = i/2;
     return _mm_shuffle_pd(yCache[j], yCache[j], _MM_SHUFFLE2(0, 1));
 }
 
-const __m128d Cloud::gety4r_pd(const unsigned int i) const {
+const __m128d Cloud::gety4r_pd(const unsigned int i) const 
+{
     const unsigned int j = i/2;
     return _mm_shuffle_pd(yCache[j], yCache[j], _MM_SHUFFLE2(0, 1));
 }
 
 // Vx position helper functions ------------------------------------------------
-const __m128d Cloud::getVx1_pd(const unsigned int i) const {
+const __m128d Cloud::getVx1_pd(const unsigned int i) const 
+{
     // Vx
     return _mm_load_pd(Vx + i);
 }
 
-const __m128d Cloud::getVx2_pd(const unsigned int i) const {
+const __m128d Cloud::getVx2_pd(const unsigned int i) const 
+{
     // Vx + k1/2
     return VxCache[i/2];
 }
 
-const __m128d Cloud::getVx3_pd(const unsigned int i) const {
+const __m128d Cloud::getVx3_pd(const unsigned int i) const 
+{
     // Vx + k2/2
     return VxCache[i/2];
 }
 
-const __m128d Cloud::getVx4_pd(const unsigned int i) const {
+const __m128d Cloud::getVx4_pd(const unsigned int i) const 
+{
     // Vx + k3
     return VxCache[i/2];
 }
 
 // Vy position helper functions ------------------------------------------------
-const __m128d Cloud::getVy1_pd(const unsigned int i) const {
+const __m128d Cloud::getVy1_pd(const unsigned int i) const 
+{
     // Vy
     return _mm_load_pd(Vy + i);
 }
 
-const __m128d Cloud::getVy2_pd(const unsigned int i) const {
+const __m128d Cloud::getVy2_pd(const unsigned int i) const 
+{
     // Vy + m1/2
     return VyCache[i/2];
 }
 
-const __m128d Cloud::getVy3_pd(const unsigned int i) const {
+const __m128d Cloud::getVy3_pd(const unsigned int i) const 
+{
     // Vy + m2/2
     return VyCache[i/2];
 }
 
-const __m128d Cloud::getVy4_pd(const unsigned int i) const {
+const __m128d Cloud::getVy4_pd(const unsigned int i) const 
+{
     // Vy + m3
     return VyCache[i/2];
 }
