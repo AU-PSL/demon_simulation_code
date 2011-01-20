@@ -48,41 +48,41 @@ inline void DragForce::force(const unsigned int currentParticle, const __m128d c
 
 void DragForce::writeForce(fitsfile * const file, int * const error) const
 {
-	//move to primary HDU:
+	// move to primary HDU:
 	if(!*error)
-		//file, # indicating primary HDU, HDU type, error
+		// file, # indicating primary HDU, HDU type, error
  		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
 	
-	//add flag indicating that the drag force is used:
+	// add flag indicating that the drag force is used:
 	if(!*error) 
 	{
 		long forceFlags = 0;
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &forceFlags, NULL, error);
 
-		//add DragForce bit:
-		forceFlags |= DragForceFlag;		//compound bitwise OR
+		// add DragForce bit:
+		forceFlags |= DragForceFlag; // compound bitwise OR
 
 		if(*error == KEY_NO_EXIST || *error == VALUE_UNDEFINED)
-			*error = 0;			//clear above error.
+			*error = 0; // clear above error.
 
-		//add or update keyword:
+		// add or update keyword:
 		if(!*error) 
 			fits_update_key(file, TLONG, const_cast<char *> ("FORCES"), &forceFlags, const_cast<char *> ("Force configuration."), error);
 	}
 	
 	if(!*error)
-		//file, key name, value, precision (scientific format), comment
+		// file, key name, value, precision (scientific format), comment
 		fits_write_key_dbl(file, const_cast<char *> ("dragConst"), dragConst, 6, const_cast<char *> ("[s^-1] (DragForce)"), error);
 }
 
 void DragForce::readForce(fitsfile * const file, int * const error)
 {
-	//move to primary HDU:
+	// move to primary HDU:
 	if(!*error)
-		//file, # indicating primary HDU, HDU type, error
+		// file, # indicating primary HDU, HDU type, error
  		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
 	
 	if(!*error)
-		//file, key name, value, don't read comment, error
+		// file, key name, value, don't read comment, error
 		fits_read_key_dbl(file, const_cast<char *> ("dragConst"), &dragConst, NULL, error);
 }
