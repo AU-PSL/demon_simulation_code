@@ -17,26 +17,26 @@ class RotationalForce : public Force
 {	
 public:
 	RotationalForce(Cloud * const myCloud, const double rmin, const double rmax, const double rotConst);
-	~RotationalForce() {} //destructor
+	~RotationalForce() {} // destructor
 
-//public functions:
-	//Note: currentTime parameter is necessary (due to parent class) but unused
-	void force1(const double currentTime); //rk substep 1
-	void force2(const double currentTime); //rk substep 2
-	void force3(const double currentTime); //rk substep 3
-	void force4(const double currentTime); //rk substep 4
+// public functions:
+	// Note: currentTime parameter is necessary (due to parent class) but unused
+	void force1(const double currentTime); // rk substep 1
+	void force2(const double currentTime); // rk substep 2
+	void force3(const double currentTime); // rk substep 3
+	void force4(const double currentTime); // rk substep 4
 
-    void writeForce(fitsfile *file, int *error) const;
-    void readForce(fitsfile *file, int *error);
+	void writeForce(fitsfile *file, int *error) const;
+	void readForce(fitsfile *file, int *error);
 
 private:
-//private variables:
-    double innerRad;
-    double outerRad;
-    double rotationalConst;
+// private variables:
+	double innerRad;
+	double outerRad;
+	double rotationalConst;
 
-//private functions:
+// private functions:
 	void force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY);
 };
 
-#endif /* ROTATIONALFORCE_H */
+#endif // ROTATIONALFORCE_H
