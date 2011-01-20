@@ -33,8 +33,8 @@ Cloud::~Cloud()
 	delete[] x; delete[] y; delete[] Vx; delete[] Vy;
 	delete[] charge; delete[] mass; 
 	delete[] forceX; delete[] forceY;
-    delete[] xCache; delete[] yCache; 
-    delete[] VxCache; delete[] VyCache;
+	delete[] xCache; delete[] yCache; 
+	delete[] VxCache; delete[] VyCache;
 }
 
 inline void Cloud::setPosition(const unsigned int index, const double xVal, const double yVal)
@@ -66,14 +66,14 @@ Cloud * const Cloud::initializeGrid(const unsigned int numParticles, const doubl
 	Cloud * const cloud = new Cloud(numParticles, cloudSize);
 
 	const double sqrtNumPar = floor(sqrt(numParticles));
-	const double gridUnit = 2.0*cloudSize/sqrtNumPar; //number of particles per row/column
-	double tempPosX = cloudSize; //position of first particle
+	const double gridUnit = 2.0*cloudSize/sqrtNumPar; // number of particles per row/column
+	double tempPosX = cloudSize; // position of first particle
 	double tempPosY = cloudSize;
 
-	//seed rand function with time(NULL):
-	srand((int)time(NULL));		//needed for Cloud::setCharge
+	// seed rand function with time(NULL):
+	srand((int)time(NULL)); // needed for Cloud::setCharge
     
-	//initialize dust cloud:
+	// initialize dust cloud:
 	for(unsigned int i = 0; i < numParticles; i++)
 	{
 		cloud->setPosition(i, tempPosX, tempPosY);
@@ -82,10 +82,10 @@ Cloud * const Cloud::initializeGrid(const unsigned int numParticles, const doubl
 		cloud->setMass(i);
 
 		tempPosX -= gridUnit;
-		if(tempPosX <= -cloudSize) //end of row
+		if(tempPosX <= -cloudSize) // end of row
 		{
-			tempPosX = cloudSize; //reset
-			tempPosY -= gridUnit; //move to next row
+			tempPosX = cloudSize; // reset
+			tempPosY -= gridUnit; // move to next row
 		}
 	}
 
@@ -98,30 +98,30 @@ Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error
 	long numParticles;
 	long numTimeSteps;
 
-	//move to CLOUD HDU:
+	// move to CLOUD HDU:
 	if(!*error)
 		fits_movnam_hdu(file, BINARY_TBL, const_cast<char *> ("CLOUD"), 0, error);
 
-	//get number of particles:
+	// get number of particles:
 	if(!*error)
 		fits_get_num_rows(file, &numParticles, error);
 
-	//create cloud:
-	Cloud * const cloud = new Cloud((unsigned int)numParticles, 0.0);	//cloudSize not used in this case, so set to zero
+	// create cloud:
+	Cloud * const cloud = new Cloud((unsigned int)numParticles, 0.0);	// cloudSize not used in this case, so set to zero
 
-	//read mass and charge information:
+	// read mass and charge information:
 	if(!*error)
 	{
-		//file, column #, starting row, first element, num elements, mass array, pointless pointer, error
+		// file, column #, starting row, first element, num elements, mass array, pointless pointer, error
 		fits_read_col_dbl(file, 1, 1, 1, numParticles, 0.0, cloud->charge, anyNull, error);
 		fits_read_col_dbl(file, 2, 1, 1, numParticles, 0.0, cloud->mass, anyNull, error);
 	}
 
-	//move to TIME_STEP HDU:
+	// move to TIME_STEP HDU:
 	if(!*error)
 		fits_movnam_hdu(file, BINARY_TBL, const_cast<char *> ("TIME_STEP"), 0, error);
 
-	//get number of time steps:
+	// get number of time steps:
 	if(!*error)
 		fits_get_num_rows(file, &numTimeSteps, error);
 
@@ -141,7 +141,7 @@ Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error
 
 void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const
 {
-	//format number of elements of type double as string, e.g. 1024D
+	// format number of elements of type double as string, e.g. 1024D
 	stringstream numStream;
 	numStream << n << "D";
 	const string numString = numStream.str();
@@ -160,21 +160,21 @@ void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const
 		const_cast<char *> ("m"), const_cast<char *> ("m"), 
 		const_cast<char *> ("m/s"), const_cast<char *> ("m/s")};
 
-	//write mass and charge:
+	// write mass and charge:
 	if (!*error)
-		//file, storage type, num rows, num columns, ...
+		// file, storage type, num rows, num columns, ...
 		fits_create_tbl(file, BINARY_TBL, n, 2, ttypeCloud, tformCloud, tunitCloud, "CLOUD", error);	
 	if(!*error)
 	{
-		//file, column #, starting row, first element, num elements, mass array, error
+		// file, column #, starting row, first element, num elements, mass array, error
 		fits_write_col_dbl(file, 1, 1, 1, n, charge, error);
 		fits_write_col_dbl(file, 2, 1, 1, n, mass, error);
 	}
 
-	//write position and velocity:
+	// write position and velocity:
 	if (!*error)
 		fits_create_tbl(file, BINARY_TBL, 0, 5, ttypeRun, tformRun, tunitRun, "TIME_STEP", error);
-		//n.b. num rows automatically incremented.
+		// n.b. num rows automatically incremented.
 		// Increment from 0 as opposed to preallocating to ensure
 		// proper output in the event of program interruption.
 	if (!*error)
@@ -187,7 +187,7 @@ void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const
 		fits_write_col_dbl(file, 5, 1, 1, n, Vy, error);
 	}
 
-	//write buffer, close file, reopen at same point:
+	// write buffer, close file, reopen at same point:
 	fits_flush_file(file, error);
 }
 
@@ -204,7 +204,7 @@ void Cloud::writeTimeStep(fitsfile * const file, int * const error, double curre
 		fits_write_col_dbl(file, 5, numRows, 1, n, Vy, error);
 	}
 
-	//write buffer, close file, reopen at same point:
+	// write buffer, close file, reopen at same point:
 	fits_flush_file(file, error);
 }
 
@@ -213,145 +213,145 @@ void Cloud::writeTimeStep(fitsfile * const file, int * const error, double curre
 // X position helper functions -------------------------------------------------
 const __m128d Cloud::getx1_pd(const unsigned int i) const 
 {
-    // x
-    return _mm_load_pd(x + i);
+	// x
+	return _mm_load_pd(x + i);
 }
 
 const __m128d Cloud::getx2_pd(const unsigned int i) const 
 {
-    // x + l1/2
-    return xCache[i/2];
+	// x + l1/2
+	return xCache[i/2];
 }
 
 const __m128d Cloud::getx3_pd(const unsigned int i) const 
 {
-    // x + l2/2
-    return xCache[i/2];
+	// x + l2/2
+	return xCache[i/2];
 }
 
 const __m128d Cloud::getx4_pd(const unsigned int i) const 
 {
-    // x + l3
-    return xCache[i/2];
+	// x + l3
+	return xCache[i/2];
 }
 
 const __m128d Cloud::getx1r_pd(const unsigned int i) const 
 {
-    return _mm_loadr_pd(x + i);
+	return _mm_loadr_pd(x + i);
 }
 
 const __m128d Cloud::getx2r_pd(const unsigned int i) const 
 {
-    const unsigned int j = i/2;
-    return _mm_shuffle_pd(xCache[j], xCache[j], _MM_SHUFFLE2(0, 1));
+	const unsigned int j = i/2;
+	return _mm_shuffle_pd(xCache[j], xCache[j], _MM_SHUFFLE2(0, 1));
 }
 
 const __m128d Cloud::getx3r_pd(const unsigned int i) const 
 {
-    const unsigned int j = i/2;
-    return _mm_shuffle_pd(xCache[j], xCache[j], _MM_SHUFFLE2(0, 1));
+	const unsigned int j = i/2;
+	return _mm_shuffle_pd(xCache[j], xCache[j], _MM_SHUFFLE2(0, 1));
 }
 
 const __m128d Cloud::getx4r_pd(const unsigned int i) const 
 {
-    const unsigned int j = i/2;
-    return _mm_shuffle_pd(xCache[j], xCache[j], _MM_SHUFFLE2(0, 1));
+	const unsigned int j = i/2;
+	return _mm_shuffle_pd(xCache[j], xCache[j], _MM_SHUFFLE2(0, 1));
 }
 
 // Y position helper functions -------------------------------------------------
 const __m128d Cloud::gety1_pd(const unsigned int i) const 
 {
-    // y
-    return _mm_load_pd(y + i);
+	// y
+	return _mm_load_pd(y + i);
 }
 
 const __m128d Cloud::gety2_pd(const unsigned int i) const 
 {
-    // y + n1/2
-    return yCache[i/2];
+	// y + n1/2
+	return yCache[i/2];
 }
 
 const __m128d Cloud::gety3_pd(const unsigned int i) const 
 {
-    // y + n2/2
-    return yCache[i/2];
+	// y + n2/2
+	return yCache[i/2];
 }
 
 const __m128d Cloud::gety4_pd(const unsigned int i) const 
 {
-    // y + n3
-    return yCache[i/2];
+	// y + n3
+	return yCache[i/2];
 }
 
 const __m128d Cloud::gety1r_pd(const unsigned int i) const 
 {
-    return _mm_loadr_pd(y + i);
+	return _mm_loadr_pd(y + i);
 }
 
 const __m128d Cloud::gety2r_pd(const unsigned int i) const 
 {
-    const unsigned int j = i/2;
-    return _mm_shuffle_pd(yCache[j], yCache[j], _MM_SHUFFLE2(0, 1));
+	const unsigned int j = i/2;
+	return _mm_shuffle_pd(yCache[j], yCache[j], _MM_SHUFFLE2(0, 1));
 }
 
 const __m128d Cloud::gety3r_pd(const unsigned int i) const 
 {
-    const unsigned int j = i/2;
-    return _mm_shuffle_pd(yCache[j], yCache[j], _MM_SHUFFLE2(0, 1));
+	const unsigned int j = i/2;
+	return _mm_shuffle_pd(yCache[j], yCache[j], _MM_SHUFFLE2(0, 1));
 }
 
 const __m128d Cloud::gety4r_pd(const unsigned int i) const 
 {
-    const unsigned int j = i/2;
-    return _mm_shuffle_pd(yCache[j], yCache[j], _MM_SHUFFLE2(0, 1));
+	const unsigned int j = i/2;
+	return _mm_shuffle_pd(yCache[j], yCache[j], _MM_SHUFFLE2(0, 1));
 }
 
 // Vx position helper functions ------------------------------------------------
 const __m128d Cloud::getVx1_pd(const unsigned int i) const 
 {
-    // Vx
-    return _mm_load_pd(Vx + i);
+	// Vx
+	return _mm_load_pd(Vx + i);
 }
 
 const __m128d Cloud::getVx2_pd(const unsigned int i) const 
 {
-    // Vx + k1/2
-    return VxCache[i/2];
+	// Vx + k1/2
+	return VxCache[i/2];
 }
 
 const __m128d Cloud::getVx3_pd(const unsigned int i) const 
 {
-    // Vx + k2/2
-    return VxCache[i/2];
+	// Vx + k2/2
+	return VxCache[i/2];
 }
 
 const __m128d Cloud::getVx4_pd(const unsigned int i) const 
 {
-    // Vx + k3
-    return VxCache[i/2];
+	// Vx + k3
+	return VxCache[i/2];
 }
 
 // Vy position helper functions ------------------------------------------------
 const __m128d Cloud::getVy1_pd(const unsigned int i) const 
 {
-    // Vy
-    return _mm_load_pd(Vy + i);
+	// Vy
+	return _mm_load_pd(Vy + i);
 }
 
 const __m128d Cloud::getVy2_pd(const unsigned int i) const 
 {
-    // Vy + m1/2
-    return VyCache[i/2];
+	// Vy + m1/2
+	return VyCache[i/2];
 }
 
 const __m128d Cloud::getVy3_pd(const unsigned int i) const 
 {
-    // Vy + m2/2
-    return VyCache[i/2];
+	// Vy + m2/2
+	return VyCache[i/2];
 }
 
 const __m128d Cloud::getVy4_pd(const unsigned int i) const 
 {
-    // Vy + m3
-    return VyCache[i/2];
+	// Vy + m3
+	return VyCache[i/2];
 }
