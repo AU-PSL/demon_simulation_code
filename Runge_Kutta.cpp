@@ -60,7 +60,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 		force2(currentTime + dt/2.0); // compute net force2
 		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2) // calculate k2 and l2 for entire cloud
 		{
-			const __m128d vmass = _mm_load_pd(cloud->mass + i);	// load ith and (i+1)th mass
+			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
 
 			// assign force pointers:
 			double * const pFx = cloud->forceX + i;
@@ -81,7 +81,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 		force3(currentTime + dt/2.0); // compute net force3
 		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2) // calculate k3 and l3 for entire cloud
 		{
-			const __m128d vmass = _mm_load_pd(cloud->mass + i);	// load ith and (i+1)th mass
+			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
 
 			// assign force pointers:
 			double * const pFx = cloud->forceX + i;
@@ -102,7 +102,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 		force4(currentTime + dt); // compute net force4
 		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2) // calculate k4 and l4 for entire cloud
 		{
-			const __m128d vmass = _mm_load_pd(cloud->mass + i);	// load ith and (i+1)th mass
+			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
 
 			// assign force pointers:
 			double * const pFx = cloud->forceX + i;
