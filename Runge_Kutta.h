@@ -19,35 +19,35 @@ class Runge_Kutta
 public:
 	Runge_Kutta(Cloud * const myCloud, Force ** const forces, const double timeStep, const unsigned int forcesSize, double startTime);	//overloaded constructor
 
-//public variables:
-	Cloud * const cloud;		//pointer to cloud object
-	Force ** const theForce;	//pointer to Force object
+// public variables:
+	Cloud * const cloud; // pointer to cloud object
+	Force ** const theForce; // pointer to Force object
 	const unsigned int numForces;
-	const double init_dt;		//store initial time step
+	const double init_dt; // store initial time step
 	double currentTime;
 
-//public functions:
-	//Input: double endTime
-	//Preconditions: endTime > 0
-	//Postconditions: Runge-Kutta algorithm complete; position, velocity, time updated.
+// public functions:
+	// Input: double endTime
+	// Preconditions: endTime > 0
+	// Postconditions: Runge-Kutta algorithm complete; position, velocity, time updated.
 	void moveParticles(const double endTime);
 
 private:
-//private variables:
-    const unsigned int numOperators;
-    Operator ** const operations;
+// private variables:
+	const unsigned int numOperators;
+	Operator ** const operations;
     
-//private functions:
-	void operate1(const double currentTime) const; //rk substep 1
-	void operate2(const double currentTime) const; //rk substep 2
-	void operate3(const double currentTime) const; //rk substep 3
-	void operate4(const double currentTime) const; //rk substep 4
+// private functions:
+	void operate1(const double currentTime) const; // rk substep 1
+	void operate2(const double currentTime) const; // rk substep 2
+	void operate3(const double currentTime) const; // rk substep 3
+	void operate4(const double currentTime) const; // rk substep 4
   
-    void force1(const double currentTime) const; //rk substep 1
-	void force2(const double currentTime) const; //rk substep 2
-	void force3(const double currentTime) const; //rk substep 3
-	void force4(const double currentTime) const; //rk substep 4
-    const double modifyTimeStep(const unsigned int startIndex, const double dist, const double currentTimeStep) const;
+	void force1(const double currentTime) const; // rk substep 1
+	void force2(const double currentTime) const; // rk substep 2
+	void force3(const double currentTime) const; // rk substep 3
+	void force4(const double currentTime) const; // rk substep 4
+	const double modifyTimeStep(const unsigned int startIndex, const double dist, const double currentTimeStep) const;
 };
 
-#endif /* RUNGE_KUTTA_H */
+#endif // RUNGE_KUTTA_H
