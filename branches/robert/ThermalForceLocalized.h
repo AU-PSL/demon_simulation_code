@@ -13,32 +13,24 @@
 #include "Force.h"
 #include "mtrand.h" //MT header
 #include "VectorCompatibility.h"
+#include <cmath>
+#include <ctime>
 
-class ThermalForceLocalized : public Force
+class ThermalForceLocalized1D : public Force
 {
 public:
-	ThermalForceLocalized(Cloud * const myCloud, const double thermRed1, const double thermRed2, const double specifiedRadius); //overloaded constructor
-	~ThermalForceLocalized() {} //destructor
+	ThermalForceLocalized1D(Cloud * const myCloud, const double thermRed1, const double thermRed2, const double specifiedRadius);
+	~ThermalForceLocalized1D() {}
 
 //public functions:
 	//Note: currentTime parameter is necessary (due to parent class) but unused
-	void force1_1D(const double currentTime); //rk substep 1
-	void force2_1D(const double currentTime); //rk substep 2
-	void force3_1D(const double currentTime); //rk substep 3
-	void force4_1D(const double currentTime); //rk substep 4
+	void force1(const double currentTime); //rk substep 1
+	void force2(const double currentTime); //rk substep 2
+	void force3(const double currentTime); //rk substep 3
+	void force4(const double currentTime); //rk substep 4
 
-	void force1_2D(const double currentTime); 
-	void force2_2D(const double currentTime); 
-	void force3_2D(const double currentTime); 
-	void force4_2D(const double currentTime); 
-
-	void force1_3D(const double currentTime); 
-	void force2_3D(const double currentTime); 
-	void force3_3D(const double currentTime); 
-	void force4_3D(const double currentTime); 
-
-	void writeForce(fitsfile * const file, int * const error, const int dimension) const;
-	void readForce(fitsfile * const file, int * const error, const int dimension);
+	void writeForce(fitsfile * const file, int * const error) const;
+	void readForce(fitsfile * const file, int * const error);
 
 private:
 //private variables:
@@ -49,7 +41,27 @@ private:
 
 //private functions:
 	void force1D(const unsigned int currentParticle, const __m128d displacementX);
+};
+
+class ThermalForceLocalized2D : public ThermalForceLocalized1D
+{
+public:
+	ThermalForceLocalized2D(Cloud * const myCloud, const double thermRed1, const double thermRed2, const double specifiedRadius);
+	~ThermalForceLocalized2D() {}
+
+private:
+//private functions:
 	void force2D(const unsigned int currentParticle, const __m128d displacementX, const __m128d displacementY);
+};
+
+class ThermalForceLocalized3D : public ThermalForceLocalized2D
+{
+public:
+	ThermalForceLocalized3D(Cloud * const myCloud, const double thermRed1, const double thermRed2, const double specifiedRadius);
+	~ThermalForceLocalized3D() {}
+
+private:
+//private functions:
 	void force3D(const unsigned int currentParticle, const __m128d displacementX, const __m128d displacementY, const __m128d displacementZ);
 };
 
