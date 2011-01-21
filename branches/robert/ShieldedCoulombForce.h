@@ -29,10 +29,11 @@ public:
 	void writeForce(fitsfile * const file, int * const error) const;
 	void readForce(fitsfile * const file, int * const error);
 
-private:
-//public variables:
+protected:
+//protected variables:
 	double shielding;
 
+private:
 //private functions:
 	void force(const unsigned int currentParticle, const unsigned int iParticle, const double displacementX);
 	void force(const unsigned int currentParticle, const unsigned int iParticle, const __m128d displacementX);
@@ -45,6 +46,12 @@ public:
 	ShieldedCoulombForce2D(Cloud * const myCloud, const double shieldingConstant);
 	~ShieldedCoulombForce2D() {};
 
+//public functions:
+	void force1(const double currentTime);
+	void force2(const double currentTime);
+	void force3(const double currentTime);
+	void force4(const double currentTime);
+
 private:
 //private functions:
 	void force(const unsigned int currentParticle, const unsigned int iParticle, const double displacementX, const double displacementY);
@@ -56,7 +63,13 @@ class ShieldedCoulombForce3D : public ShieldedCoulombForce2D
 {
 public:
 	ShieldedCoulombForce3D(Cloud * const myCloud, const double shieldingConstant);
-	~ShieldedCoulombForce2D() {};
+	~ShieldedCoulombForce3D() {};
+
+//public functions:
+	void force1(const double currentTime);
+	void force2(const double currentTime);
+	void force3(const double currentTime);
+	void force4(const double currentTime);
 
 private:
 //private functions:
