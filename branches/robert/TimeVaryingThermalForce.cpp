@@ -9,90 +9,96 @@
 
 #include "TimeVaryingThermalForce.h"
 
-TimeVaryingThermalForce::TimeVaryingThermalForce(Cloud * const myCloud, const double scale, const double offset) 
-: ThermalForce(myCloud, offset), heatValScale(scale), heatValOffset(offset) {}
+TimeVaryingThermalForce1D::TimeVaryingThermalForce1D(Cloud * const myCloud, const double scale, const double offset) 
+: ThermalForce1D(myCloud, offset), heatValScale(scale), heatValOffset(offset) {}
+TimeVaryingThermalForce2D::TimeVaryingThermalForce2D(Cloud * const myCloud, const double scale, const double offset) 
+: ThermalForce2D(myCloud, offset), TimeVaryingThermalForce1D(myCloud, scale, offset) {}
+TimeVaryingThermalForce3D::TimeVaryingThermalForce3D(Cloud * const myCloud, const double scale, const double offset) 
+: ThermalForce3D(myCloud, offset), TimeVaryingThermalForce2D(myCloud, scale, offset) {}
 
 //1D:
-void TimeVaryingThermalForce::force1_1D(const double currentTime)
+void TimeVaryingThermalForce1D::force1(const double currentTime)
 {
 	heatVal = calculateHeatVal(currentTime);
-	ThermalForce::force1_1D(currentTime);
+	ThermalForce1D::force1(currentTime);
 }
 
-void TimeVaryingThermalForce::force2_1D(const double currentTime)
+void TimeVaryingThermalForce1D::force2(const double currentTime)
 {
 	heatVal = calculateHeatVal(currentTime);
-	ThermalForce::force2_1D(currentTime);
+	ThermalForce1D::force2(currentTime);
 }
 
-void TimeVaryingThermalForce::force3_1D(const double currentTime)
+void TimeVaryingThermalForce1D::force3(const double currentTime)
 {
 	heatVal = calculateHeatVal(currentTime);
-	ThermalForce::force3_1D(currentTime);
+	ThermalForce1D::force3(currentTime);
 }
 
-void TimeVaryingThermalForce::force4_1D(const double currentTime)
+void TimeVaryingThermalForce1D::force4(const double currentTime)
 {
 	heatVal = calculateHeatVal(currentTime);
-	ThermalForce::force4_1D(currentTime);
+	ThermalForce1D::force4(currentTime);
 }
 
 //2D:
-void TimeVaryingThermalForce::force1_2D(const double currentTime)
+void TimeVaryingThermalForce2D::force1(const double currentTime)
 {
 	heatVal = calculateHeatVal(currentTime);
-	ThermalForce::force1_2D(currentTime);
+	ThermalForce2D::force1(currentTime);
 }
 
-void TimeVaryingThermalForce::force2_2D(const double currentTime)
+void TimeVaryingThermalForce2D::force2(const double currentTime)
 {
 	heatVal = calculateHeatVal(currentTime);
-	ThermalForce::force2_2D(currentTime);
+	ThermalForce2D::force2(currentTime);
 }
 
-void TimeVaryingThermalForce::force3_2D(const double currentTime)
+void TimeVaryingThermalForce2D::force3(const double currentTime)
 {
 	heatVal = calculateHeatVal(currentTime);
-	ThermalForce::force3_2D(currentTime);
+	ThermalForce2D::force3(currentTime);
 }
 
-void TimeVaryingThermalForce::force4_2D(const double currentTime)
+void TimeVaryingThermalForce2D::force4(const double currentTime)
 {
 	heatVal = calculateHeatVal(currentTime);
-	ThermalForce::force4_2D(currentTime);
+	ThermalForce2D::force4(currentTime);
 }
 
 //3D:
-void TimeVaryingThermalForce::force1_3D(const double currentTime)
+void TimeVaryingThermalForce3D::force1(const double currentTime)
 {
 	heatVal = calculateHeatVal(currentTime);
-	ThermalForce::force1_3D(currentTime);
+	ThermalForce3D::force1(currentTime);
 }
 
-void TimeVaryingThermalForce::force2_3D(const double currentTime)
+void TimeVaryingThermalForce3D::force2(const double currentTime)
 {
 	heatVal = calculateHeatVal(currentTime);
-	ThermalForce::force2_3D(currentTime);
+	ThermalForce3D::force2(currentTime);
 }
 
-void TimeVaryingThermalForce::force3_3D(const double currentTime)
+void TimeVaryingThermalForce3D::force3(const double currentTime)
 {
 	heatVal = calculateHeatVal(currentTime);
-	ThermalForce::force3_3D(currentTime);
+	ThermalForce3D::force3(currentTime);
 }
 
-void TimeVaryingThermalForce::force4_3D(const double currentTime)
+void TimeVaryingThermalForce3D::force4(const double currentTime)
 {
 	heatVal = calculateHeatVal(currentTime);
-	ThermalForce::force4_3D(currentTime);
+	ThermalForce3D::force4(currentTime);
 }
 
-inline const double TimeVaryingThermalForce::calculateHeatVal(const double currentTime) const
+//calculuateHeatVal:
+inline const double TimeVaryingThermalForce1D::calculateHeatVal(const double currentTime) const
 {
 	return heatValScale*currentTime + heatValOffset;
 }
 
-void TimeVaryingThermalForce::writeForce(fitsfile * const file, int * const error, const int dimension) const
+//writeForce:
+void TimeVaryingThermalForce1D::writeForce(fitsfile * const file, int * const error) const
 {
 	//move to primary HDU:
 	if(!*error)
@@ -124,7 +130,7 @@ void TimeVaryingThermalForce::writeForce(fitsfile * const file, int * const erro
 	}
 }
 
-void TimeVaryingThermalForce::readForce(fitsfile * const file, int * const error, const int dimension)
+void TimeVaryingThermalForce1D::readForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)
