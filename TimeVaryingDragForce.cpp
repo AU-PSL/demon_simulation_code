@@ -9,90 +9,96 @@
 
 #include "TimeVaryingDragForce.h"
 
-TimeVaryingDragForce::TimeVaryingDragForce(Cloud * const myCloud, const double scale, const double offset) 
-: DragForce(myCloud, -offset), scaleConst(scale), offsetConst(offset) {}
+TimeVaryingDragForce1D::TimeVaryingDragForce1D(Cloud * const myCloud, const double scale, const double offset) 
+: DragForce1D(myCloud, -offset), scaleConst(scale), offsetConst(offset) {}
+TimeVaryingDragForce2D::TimeVaryingDragForce2D(Cloud * const myCloud, const double scale, const double offset) 
+: DragForce2D(myCloud, -offset), TimeVaryingDragForce1D(myCloud, scale, offset) {}
+TimeVaryingDragForce3D::TimeVaryingDragForce3D(Cloud * const myCloud, const double scale, const double offset) 
+: DragForce3D(myCloud, -offset), TimeVaryingDragForce2D(myCloud, scale, offset) {}
 
 //1D:
-void TimeVaryingDragForce::force1_1D(const double currentTime)
+void TimeVaryingDragForce1D::force1(const double currentTime)
 {
 	dragConst = calculateGamma(currentTime);
-	DragForce::force1_1D(currentTime);
+	DragForce1D::force1(currentTime);
 }
 
-void TimeVaryingDragForce::force2_1D(const double currentTime)
+void TimeVaryingDragForce1D::force2(const double currentTime)
 {
 	dragConst = calculateGamma(currentTime);
-	DragForce::force2_1D(currentTime);
+	DragForce1D::force2(currentTime);
 }
 
-void TimeVaryingDragForce::force3_1D(const double currentTime)
+void TimeVaryingDragForce1D::force3(const double currentTime)
 {
 	dragConst = calculateGamma(currentTime);
-	DragForce::force3_1D(currentTime);
+	DragForce1D::force3(currentTime);
 }
 
-void TimeVaryingDragForce::force4_1D(const double currentTime)
+void TimeVaryingDragForce1D::force4(const double currentTime)
 {
 	dragConst = calculateGamma(currentTime);
-	DragForce::force4_1D(currentTime);
+	DragForce1D::force4(currentTime);
 }
 
 //2D:
-void TimeVaryingDragForce::force1_2D(const double currentTime)
+void TimeVaryingDragForce2D::force1(const double currentTime)
 {
 	dragConst = calculateGamma(currentTime);
-	DragForce::force1_2D(currentTime);
+	DragForce2D::force1(currentTime);
 }
 
-void TimeVaryingDragForce::force2_2D(const double currentTime)
+void TimeVaryingDragForce2D::force2(const double currentTime)
 {
 	dragConst = calculateGamma(currentTime);
-	DragForce::force2_2D(currentTime);
+	DragForce2D::force2(currentTime);
 }
 
-void TimeVaryingDragForce::force3_2D(const double currentTime)
+void TimeVaryingDragForce2D::force3(const double currentTime)
 {
 	dragConst = calculateGamma(currentTime);
-	DragForce::force3_2D(currentTime);
+	DragForce2D::force3(currentTime);
 }
 
-void TimeVaryingDragForce::force4_2D(const double currentTime)
+void TimeVaryingDragForce2D::force4(const double currentTime)
 {
 	dragConst = calculateGamma(currentTime);
-	DragForce::force4_2D(currentTime);
+	DragForce2D::force4(currentTime);
 }
 
 //3D:
-void TimeVaryingDragForce::force1_3D(const double currentTime)
+void TimeVaryingDragForce3D::force1(const double currentTime)
 {
 	dragConst = calculateGamma(currentTime);
-	DragForce::force1_3D(currentTime);
+	DragForce::force1(currentTime);
 }
 
-void TimeVaryingDragForce::force2_3D(const double currentTime)
+void TimeVaryingDragForce3D::force2(const double currentTime)
 {
 	dragConst = calculateGamma(currentTime);
-	DragForce::force2_3D(currentTime);
+	DragForce::force2(currentTime);
 }
 
-void TimeVaryingDragForce::force3_3D(const double currentTime)
+void TimeVaryingDragForce3D::force3(const double currentTime)
 {
 	dragConst = calculateGamma(currentTime);
-	DragForce::force3_3D(currentTime);
+	DragForce::force3(currentTime);
 }
 
-void TimeVaryingDragForce::force4_3D(const double currentTime)
+void TimeVaryingDragForce3D::force4(const double currentTime)
 {
 	dragConst = calculateGamma(currentTime);
-	DragForce::force4_3D(currentTime);
+	DragForce::force4(currentTime);
 }
 
-inline const double TimeVaryingDragForce::calculateGamma(const double currentTime) const
+//calculateGamma:
+inline const double TimeVaryingDragForce1D::calculateGamma(const double currentTime) const
 {
 	return -(scaleConst*currentTime + offsetConst);
 }
 
-void TimeVaryingDragForce::writeForce(fitsfile * const file, int * const error, const int dimension) const
+//writeForce:
+void TimeVaryingDragForce1D::writeForce(fitsfile * const file, int * const error) const
 {
 	//move to primary HDU:
 	if(!*error)
@@ -124,7 +130,8 @@ void TimeVaryingDragForce::writeForce(fitsfile * const file, int * const error, 
 	}
 }
 
-void TimeVaryingDragForce::readForce(fitsfile * const file, int * const error, const int dimension)
+//readForce:
+void TimeVaryingDragForce1D::readForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)

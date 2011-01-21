@@ -12,30 +12,20 @@
 
 #include "DragForce.h"
 
-class TimeVaryingDragForce : public DragForce
+class TimeVaryingDragForce1D : public DragForce1D
 {
 public:
-	TimeVaryingDragForce(Cloud * const myCloud, const double scale, const double offset); //overloaded constructor
-	~TimeVaryingDragForce() {} //destructor
+	TimeVaryingDragForce1D(Cloud * const myCloud, const double scale, const double offset); //overloaded constructor
+	~TimeVaryingDragForce1D() {} //destructor
 
 //public functions:
-	void force1_1D(const double currentTime); //rk substep 1
-	void force2_1D(const double currentTime); //rk substep 2
-	void force3_1D(const double currentTime); //rk substep 3
-	void force4_1D(const double currentTime); //rk substep 4
-	
-	void force1_2D(const double currentTime); 
-	void force2_2D(const double currentTime); 
-	void force3_2D(const double currentTime); 
-	void force4_2D(const double currentTime); 
+	void force1(const double currentTime); //rk substep 1
+	void force2(const double currentTime); //rk substep 2
+	void force3(const double currentTime); //rk substep 3
+	void force4(const double currentTime); //rk substep 4
 
-	void force1_3D(const double currentTime); 
-	void force2_3D(const double currentTime); 
-	void force3_3D(const double currentTime); 
-	void force4_3D(const double currentTime); 
-
-	void writeForce(fitsfile *file, int *error, const int dimension) const;
-	void readForce(fitsfile *file, int *error, const int dimension);
+	void writeForce(fitsfile *file, int *error) const;
+	void readForce(fitsfile *file, int *error);
 
 private:
 //private variables:
@@ -45,5 +35,18 @@ private:
 //private methods:
 	const double calculateGamma(const double currentTime) const;
 };
+
+class TimeVaryingDragForce2D : public DragForce2D TimeVaryingDragForce1D
+{
+public:
+	TimeVaryingDragForce2D(Cloud * const myCloud, const double scale, const double offset); //overloaded constructor
+	~TimeVaryingDragForce2D() {} //destructor
+};
+
+class TimeVaryingDragForce3D : public DragForce3D TimeVaryingDragForce2D
+{
+public:
+	TimeVaryingDragForce3D(Cloud * const myCloud, const double scale, const double offset); //overloaded constructor
+	~TimeVaryingDragForce3D() {} //destructor
 
 #endif /* TIMEVARYINGDRAGFORCE_H */
