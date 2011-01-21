@@ -30,10 +30,11 @@ public:
 	void writeForce(fitsfile * const file, int * const error) const;
 	void readForce(fitsfile * const file, int * const error);
 
-private:
-//private variables:
+protected:
+//protected variables:
 	double confine;
 
+private:
 //private functions:
 	void force(const unsigned int currentParticle, const __m128d currentPositionX); //common force calculator
 };
@@ -43,6 +44,12 @@ class ConfinementForce2D : public ConfinementForce1D
 public:
 	ConfinementForce2D(Cloud * const myCloud, double confineConst); //overloaded constructor
 	~ConfinementForce2D() {}
+
+//public functions:
+	void force1(const double currentTime);
+	void force2(const double currentTime);
+	void force3(const double currentTime);
+	void force4(const double currentTime);
 
 private:
 //private functions:
@@ -54,6 +61,12 @@ class ConfinementForce3D : public ConfinementForce2D
 public:
 	ConfinementForce3D(Cloud * const myCloud, double confineConst); //overloaded constructor
 	~ConfinementForce3D() {}
+
+//public functions:
+	void force1(const double currentTime);
+	void force2(const double currentTime);
+	void force3(const double currentTime);
+	void force4(const double currentTime);
 
 private:
 //private functions:

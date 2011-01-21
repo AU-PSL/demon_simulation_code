@@ -121,7 +121,7 @@ inline void DragForce3D::force(const unsigned int currentParticle, const __m128d
 }
 
 //writeForce:
-void DragForce::writeForce(fitsfile * const file, int * const error) const
+void DragForce1D::writeForce(fitsfile * const file, int * const error) const
 {
 	//move to primary HDU:
 	if(!*error)
@@ -151,7 +151,7 @@ void DragForce::writeForce(fitsfile * const file, int * const error) const
 }
 
 //readForce:
-void DragForce::readForce(fitsfile * const file, int * const error)
+void DragForce1D::readForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)

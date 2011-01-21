@@ -15,7 +15,7 @@ RectConfinementForce1D::RectConfinementForce1D(Cloud * const myCloud, double con
 : Force(myCloud), confineX(-confineConstX) {}
 RectConfinementForce2D::RectConfinementForce2D(Cloud * const myCloud, double confineConstX, double confineConstY)
 : RectConfinementForce1D(myCloud, confineConstX), confineY(-confineConstY) {}
-RectConfinementForce::RectConfinementForce(Cloud * const myCloud, double confineConstX, double confineConstY, double confineConstZ)
+RectConfinementForce3D::RectConfinementForce3D(Cloud * const myCloud, double confineConstX, double confineConstY, double confineConstZ)
 : RectConfinementForce2D(myCloud, confineConstX, confineConstY), confineZ(-confineConstZ) {}
 
 //1D:

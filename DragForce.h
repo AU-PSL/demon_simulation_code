@@ -44,6 +44,12 @@ public:
 	DragForce2D(Cloud * const myCloud, const double gamma);
 	~DragForce2D() {}
 
+//public functions:
+	virtual void force1(const double currentTime);
+	virtual void force2(const double currentTime);
+	virtual void force3(const double currentTime);
+	virtual void force4(const double currentTime);
+
 private:
 //private functions:
 	void force(const unsigned int currentParticle, const __m128d currentVelocityX, const __m128d currentVelocityY);
@@ -54,6 +60,12 @@ class DragForce3D : public DragForce2D
 public:
 	DragForce3D(Cloud * const myCloud, const double gamma);
 	~DragForce3D() {}
+
+//public functions:
+	virtual void force1(const double currentTime);
+	virtual void force2(const double currentTime);
+	virtual void force3(const double currentTime);
+	virtual void force4(const double currentTime);
 
 private:
 //private functions:
