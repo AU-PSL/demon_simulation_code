@@ -26,8 +26,8 @@ public:
 	virtual void force3(const double currentTime); //rk substep 3
 	virtual void force4(const double currentTime); //rk substep 4
 
-	virtual void writeForce(fitsfile * const file, int * const error, const int dimension) const;
-	virtual void readForce(fitsfile * const file, int * const error, const int dimension);
+	virtual void writeForce(fitsfile * const file, int * const error) const;
+	virtual void readForce(fitsfile * const file, int * const error);
 
 private:
 //private variables:
@@ -46,10 +46,6 @@ class ThermalForce2D : public ThermalForce1D
 public:
 	ThermalForce2D(Cloud * const myCloud, const doudble redFactor);
 	~ThermalForce2D() {};
-
-private:
-//private functions:
-	void force(const unsigned int currentParticle);
 };
 
 class ThermalForce3D : public ThermalForce1D
@@ -57,10 +53,6 @@ class ThermalForce3D : public ThermalForce1D
 public:
 	ThermalForce3D(Cloud * const myCloud, const doudble redFactor);
 	~ThermalForce3D() {};
-
-private:
-//private functions:
-	void force(const unsigned int currentParticle);
 };
 
 #endif /* THERMALFORCE_H */
