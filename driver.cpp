@@ -7,9 +7,6 @@
 *
 *===-----------------------------------------------------------------------===*/
 
-//TODO: -f and -c must include dimensionality argument.
-//TODO: Dimension of read file takes precedence over dimension of -D.
-
 #include "ConfinementForce.h"
 #include "DragForce.h"
 #include "DrivingForce.h"
@@ -101,15 +98,21 @@ inline const bool isCharacter(const char c)
 	return (c > 'a' && c < 'z') || (c > 'A' && c < 'Z');
 }
 
-//check for one command line flag, exit if absent:
-void checkOption(const int argc, char * const argv[], int i, const char option)
+//check file name exists:
+int checkFileOption(const int argc, char * const argv[], int i, const char option,
+	const string name, int * const file)
 {
 	if(i+1 >= argc || argv[i+1][0] == '-')
 	{
-		cout << "Error: -" << option << " option incomplete." << endl;
+		cout << "Warning: -" << option << " option incomplete." << endl
+			<< name << " missing." << endl;
 		help();
-		exit(1);
+		exit(i);
 	}
+	else
+		*file = ++i;
+
+	return i;
 }
 
 //check for one command line flag, use default value if absent:
@@ -121,6 +124,7 @@ int checkOption(const int argc, char * const argv[], int i, const char option,
 			<< "Using default " << name << " (" << *value << ")." << endl;
 	else
 		*value = atof(argv[++i]);
+
 	return i;
 }
 
@@ -138,6 +142,7 @@ int checkOption(const int argc, char * const argv[], int i, const char option,
 		*value1 = atof(argv[++i]);
 		i = checkOption(argc, argv, i, option, name2, value2);
 	}
+
 	return i;
 }
 
@@ -157,6 +162,7 @@ int checkOption(const int argc, char * const argv[], int i, const char option,
 		*value1 = atof(argv[++i]);
 		i = checkOption(argc, argv, i, option, name2, value2, name3, value3);
 	}
+
 	return i;
 }
 
@@ -232,6 +238,7 @@ void deleteFitsFile(char * const filename, int * const error)
 		cout << "Warning: Removing pre-existing \"" << filename << "\" file." << endl;
 		remove(filename); //required by fits, else can't create
 	}
+
 	checkFitsError(*error, __LINE__);
 }
 
@@ -300,12 +307,10 @@ int main (int argc, char * const argv[])
 		switch(argv[i][1])
 		{
 			case 'c': //"c"ontinue from file:
-				checkOption(argc, argv, i, 'c');
-				continueFileIndex = ++i;
+				i = checkFileOption(argc, argv, i, 'c', "Continue file", &continueFileIndex);
 				break;
 			case 'C': //set "C"onfinementConst:
-				checkOption(argc, argv, i, 'C');
-				confinementConst = atof(argv[++i]); //store confinementConst
+				i = checkOption(argc, argv, i, 'C', "confinementConst", &confinementConst);
 				break;
 			case 'd': //use TimeVarying"D"ragForce:
 				checkForce('d', usedForces, TimeVaryingDragForceFlag);
@@ -314,8 +319,7 @@ int main (int argc, char * const argv[])
 				i = checkOptionWithNeg(argc, argv, i, 'd', "scale factor", &dragScale, "offset", &gamma);
 				break;
 			case 'D': //set cloud "D"imension
-				checkOption(argc, argv, i, 'D');
-				dimension = atoi(argv[++i]);
+				i = checkOption(argc, argv, i, 'D', "dimension", &dimension);
 				if(dimension != 1 && dimension != 2 && dimension != 3)
 				{
 					cout << "Error: Invalid spatial dimension.\n";
@@ -324,18 +328,13 @@ int main (int argc, char * const argv[])
 				}
 				break;
 			case 'e': //set "e"nd time:
-				checkOption(argc, argv, i, 'e');
-				//WARNING: Assumes integer input!
-				endTime = atoi(argv[++i]); //store end time
+				i = checkOption(argc, argv, i, 'e', "end time", &endTime);
 				break;
 			case 'f': //use "f"inal positions and velocities from previous run:
-				checkOption(argc, argv, i, 'f');
-				finalsFileIndex = ++i;
+				i = checkOption(argc, argv, i, 'f', "Finals file", &finalsFileIndex);
 				break;
 			case 'g': //set "g"amma:
-				checkOption(argc, argv, i, 'g');
-				//WARNING: Assumes double input!
-				gamma = atof(argv[++i]); //store gamma
+				i = checkOption(argc, argv, i, 'g', "gamma", &gamma);
 				break;
 			case 'h': //display "h"elp:
 				help();
@@ -345,16 +344,14 @@ int main (int argc, char * const argv[])
 				checkForce('L', 'T', usedForces, ThermalForceLocalizedFlag, ThermalForceFlag);
 				checkForce('L', 'v', usedForces, ThermalForceLocalizedFlag, TimeVaryingThermalForceFlag);
 				usedForces |= ThermalForceLocalizedFlag;
-				i = checkOption(argc, argv, i, 'S', "radius", &heatRadius, "heat factor1", &thermRed, "heat factor2", &thermRed1);
+				i = checkOption(argc, argv, i, 'L', "radius", &heatRadius, "heat factor1", &thermRed, "heat factor2", &thermRed1);
 				break;
 			case 'M': //perform "M"ach Cone experiment:
 				Mach = true;
 				i = checkOption(argc, argv, i, 'M', "velocity", &machSpeed, "mass", &massFactor);
 				break;
 			case 'n': //set "n"umber of particles:
-				checkOption(argc, argv, i, 'n');
-				//WARNING: Assumes integer input!
-				numParticles = atoi(argv[++i]); //store number of particles
+				i = checkOption(argc, argv, i, 'n', "number of particles", &numParticles);
 				if((numParticles % 2) != 0)     //odd
 				{
 					cout << "Even number of particles required for SIMD." << endl 
@@ -362,16 +359,13 @@ int main (int argc, char * const argv[])
 				}
 				break;
 			case 'o': //set dataTimeStep, which conrols "o"utput rate:
-				checkOption(argc, argv, i, 'o');
-				dataTimeStep = atof(argv[++i]); //store timestep
+				i = checkOption(argc, argv, i, 'o', "data time step", &dataTimeStep);
 				break;
 			case 'O': //name "O"utput file:
-				checkOption(argc, argv, i, 'O');
-				outputFileIndex = ++i;
+				i = checkOption(argc, argv, i, 'O', "output file", &outputFileIndex);
 				break;
 			case 'r': //set cloud "r"adius:
-				checkOption(argc, argv, i, 'r');
-				cloudSize = atof(argv[++i]); //store cloud size
+				i = checkOption(argc, argv, i, 'r', "cloud size", &cloudSize);
 				break;
 			case 'R': //use "R"ectangular confinement:
 				checkForce('R', usedForces, RectConfinementForceFlag);
@@ -379,8 +373,7 @@ int main (int argc, char * const argv[])
 				i = checkOption(argc, argv, i, 'R', "confine constantX", &confinementConstX, "confine constantY", &confinementConstY, "confine constantY", &confinementConstZ);
 				break;
 			case 's': //set "s"hielding constant:
-				checkOption(argc, argv, i, 's');
-				shieldingConstant = atof(argv[++i]); //store shielding constant
+				i = checkOption(argc, argv, i, 's', "shielding constant", &shieldingConstant);
 				break;
 			case 'S': //create rotational "S"hear layer:
 				checkForce('S', usedForces, RotationalForceFlag);
