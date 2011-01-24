@@ -22,25 +22,25 @@ RectConfinementForce3D::RectConfinementForce3D(Cloud * const myCloud, double con
 void RectConfinementForce1D::force1(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		ConfinementForce1D::force(currentParticle, cloud->getx1_pd(currentParticle));
+		force(currentParticle, cloud->getx1_pd(currentParticle));
 }
 
 void RectConfinementForce1D::force2(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		ConfinementForce1D::force(currentParticle, cloud->getx2_pd(currentParticle));
+		force(currentParticle, cloud->getx2_pd(currentParticle));
 }
 
 void RectConfinementForce1D::force3(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		ConfinementForce1D::force(currentParticle, cloud->getx3_pd(currentParticle));
+		force(currentParticle, cloud->getx3_pd(currentParticle));
 }
 
 void RectConfinementForce1D::force4(const double currentTime)
 {
 	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		ConfinementForce1D::force(currentParticle, cloud->getx4_pd(currentParticle));
+		force(currentParticle, cloud->getx4_pd(currentParticle));
 }
 
 //2D:
@@ -94,23 +94,25 @@ void RectConfinementForce3D::force4(const double currentTime)
 }
 
 //force methods:
-inline void RectConfinementForce2D::force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY)
+inline void RectConfinementForce1D::force(const unsigned int currentParticle, const __m128d currentPositionX)
 {
 	double * const pFx = cloud->forceX + currentParticle;
-	double * const pFy = cloud->forceY + currentParticle;
-
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + _mm_set1_pd(confineX)*currentPositionX);
+}
+
+inline void RectConfinementForce2D::force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY)
+{
+	RectConfinementForce1D::force(currentParticle, currentPositionX);
+
+	double * const pFy = cloud->forceY + currentParticle;
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + _mm_set1_pd(confineY)*currentPositionY);
 }
 
 inline void RectConfinementForce3D::force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY, const __m128d currentPositionZ)
 {
-	double * const pFx = cloud->forceX + currentParticle;
-	double * const pFy = cloud->forceY + currentParticle;
-	double * const pFz = cloud->forceZ + currentParticle;
+	RectConfinementForce2D::force(currentParticle, currentPositionX, currentPositionY);
 
-	_mm_store_pd(pFx, _mm_load_pd(pFx) + _mm_set1_pd(confineX)*currentPositionX);
-	_mm_store_pd(pFy, _mm_load_pd(pFy) + _mm_set1_pd(confineY)*currentPositionY);
+	double * const pFz = cloud->forceZ + currentParticle;
 	_mm_store_pd(pFz, _mm_load_pd(pFz) + _mm_set1_pd(confineZ)*currentPositionZ);
 }
 
@@ -150,7 +152,7 @@ void RectConfinementForce2D::writeForce(fitsfile * const  file, int * const erro
 	fits_write_key_dbl(file, const_cast<char *> ("confineConstY"), confineY, 6, const_cast<char *> ("[N/m] (RectConfinementForce)"), error);
 }
 
-void RectConfinementForce2D::writeForce(fitsfile * const  file, int * const error) const
+void RectConfinementForce3D::writeForce(fitsfile * const  file, int * const error) const
 {
 	RectConfinementForce2D::writeForce(file, error);
 	fits_write_key_dbl(file, const_cast<char *> ("confineConstZ"), confineZ, 6, const_cast<char *> ("[N/m] (RectConfinementForce)"), error);
