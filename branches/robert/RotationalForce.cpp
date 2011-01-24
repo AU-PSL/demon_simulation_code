@@ -105,7 +105,7 @@ void RotationalForce2D::writeForce(fitsfile * const file, int * const error) con
 }
 
 //readForce:
-void RotationalForce::readForce(fitsfile * const file, int * const error)
+void RotationalForce2D::readForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)
