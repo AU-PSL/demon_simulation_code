@@ -36,14 +36,14 @@ private:
 	const double calculateGamma(const double currentTime) const;
 };
 
-class TimeVaryingDragForce2D : public DragForce2D TimeVaryingDragForce1D
+class TimeVaryingDragForce2D : public TimeVaryingDragForce1D, public DragForce2D
 {
 public:
 	TimeVaryingDragForce2D(Cloud * const myCloud, const double scale, const double offset); //overloaded constructor
 	~TimeVaryingDragForce2D() {} //destructor
 };
 
-class TimeVaryingDragForce3D : public DragForce3D TimeVaryingDragForce2D
+class TimeVaryingDragForce3D : public TimeVaryingDragForce2D, public DragForce3D
 {
 public:
 	TimeVaryingDragForce3D(Cloud * const myCloud, const double scale, const double offset); //overloaded constructor

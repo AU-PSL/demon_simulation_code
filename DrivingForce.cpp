@@ -105,7 +105,7 @@ void DrivingForce1D::writeForce(fitsfile * const file, int * const error) const
 }
 
 //readForce:
-void DrivingForce::readForce(fitsfile * const file, int * const error)
+void DrivingForce1D::readForce(fitsfile * const file, int * const error)
 {
 	//move to primary HDU:
 	if(!*error)
