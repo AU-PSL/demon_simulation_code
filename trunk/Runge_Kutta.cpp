@@ -271,6 +271,6 @@ const double Runge_Kutta::modifyTimeStep(const unsigned int startIndex, const do
 		}
 	}
     
-    // reset time step:
-    return currentTimeStep;
+	// reset time step:
+	return currentTimeStep;
 }
