@@ -26,14 +26,14 @@ public:
 	void force3(const double currentTime); //rk substep 3
 	void force4(const double currentTime); //rk substep 4
 
-	void writeForce(fitsfile * const file, int * const error, const int dimension) const;
-	void readForce(fitsfile * const file, int * const error, const int dimension);
+	void writeForce(fitsfile * const file, int * const error) const;
+	void readForce(fitsfile * const file, int * const error);
 
-private:
-//private variables:
+protected:
+//protected variables:
 	double confineX;
 
-//private functions:
+//protected functions:
 	void force(const unsigned int currentParticle, const __m128d currentPositionX);
 };
 
@@ -43,11 +43,20 @@ public:
 	RectConfinementForce2D(Cloud * const myCloud, double confineConstX, double confineConstY);
 	~RectConfinementForce2D() {}
 
-private:
-//private variables:
+//public functions:
+	void force1(const double currentTime);
+	void force2(const double currentTime);
+	void force3(const double currentTime);
+	void force4(const double currentTime);
+
+	void writeForce(fitsfile * const file, int * const error) const;
+	void readForce(fitsfile * const file, int * const error);
+
+protected:
+//protected variables:
 	double confineY;
 
-//private functions:
+//protected functions:
 	void force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY);
 };
 
@@ -57,11 +66,20 @@ public:
 	RectConfinementForce3D(Cloud * const myCloud, double confineConstX, double confineConstY, double confineConstZ);
 	~RectConfinementForce3D() {}
 
-private:
-//private variables:
+//public functions:
+	void force1(const double currentTime);
+	void force2(const double currentTime);
+	void force3(const double currentTime);
+	void force4(const double currentTime);
+
+	void writeForce(fitsfile * const file, int * const error) const;
+	void readForce(fitsfile * const file, int * const error);
+
+protected:
+//protected variables:
 	double confineZ;
 
-//private functions:
+//protected functions:
 	void force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY, const __m128d currentPositionZ);
 };
 
