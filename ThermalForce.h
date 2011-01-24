@@ -29,30 +29,48 @@ public:
 	virtual void writeForce(fitsfile * const file, int * const error) const;
 	virtual void readForce(fitsfile * const file, int * const error);
 
-private:
-//private variables:
-	MTRand mt;
-
-//private functions:
-	void force(const unsigned int currentParticle);
-
 protected:
 //protected variables:
 	double heatVal;
+	MTRand mt;
+
+private:
+//private functions:
+	void force(const unsigned int currentParticle);
 };
 
 class ThermalForce2D : public ThermalForce1D
 {
 public:
-	ThermalForce2D(Cloud * const myCloud, const doudble redFactor);
+	ThermalForce2D(Cloud * const myCloud, const double redFactor);
 	~ThermalForce2D() {};
+
+//public functions:
+	virtual void force1(const double currentTime);
+	virtual void force2(const double currentTime);
+	virtual void force3(const double currentTime);
+	virtual void force4(const double currentTime);
+
+private:
+//private functions:
+	void force(const unsigned int currentParticle);
 };
 
-class ThermalForce3D : public ThermalForce1D
+class ThermalForce3D : public ThermalForce2D
 {
 public:
-	ThermalForce3D(Cloud * const myCloud, const doudble redFactor);
+	ThermalForce3D(Cloud * const myCloud, const double redFactor);
 	~ThermalForce3D() {};
+
+//public functions:
+	virtual void force1(const double currentTime);
+	virtual void force2(const double currentTime);
+	virtual void force3(const double currentTime);
+	virtual void force4(const double currentTime);
+
+private:
+//private functions:
+	void force(const unsigned int currentParticle);
 };
 
 #endif /* THERMALFORCE_H */
