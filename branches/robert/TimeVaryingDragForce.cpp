@@ -11,8 +11,10 @@
 
 TimeVaryingDragForce1D::TimeVaryingDragForce1D(Cloud * const myCloud, const double scale, const double offset) 
 : DragForce1D(myCloud, -offset), scaleConst(scale), offsetConst(offset) {}
+
 TimeVaryingDragForce2D::TimeVaryingDragForce2D(Cloud * const myCloud, const double scale, const double offset) 
 : DragForce2D(myCloud, -offset), TimeVaryingDragForce1D(myCloud, scale, offset) {}
+
 TimeVaryingDragForce3D::TimeVaryingDragForce3D(Cloud * const myCloud, const double scale, const double offset) 
 : DragForce3D(myCloud, -offset), TimeVaryingDragForce2D(myCloud, scale, offset) {}
 
@@ -70,25 +72,25 @@ void TimeVaryingDragForce2D::force4(const double currentTime)
 void TimeVaryingDragForce3D::force1(const double currentTime)
 {
 	dragConst = calculateGamma(currentTime);
-	DragForce::force1(currentTime);
+	DragForce3D::force1(currentTime);
 }
 
 void TimeVaryingDragForce3D::force2(const double currentTime)
 {
 	dragConst = calculateGamma(currentTime);
-	DragForce::force2(currentTime);
+	DragForce3D::force2(currentTime);
 }
 
 void TimeVaryingDragForce3D::force3(const double currentTime)
 {
 	dragConst = calculateGamma(currentTime);
-	DragForce::force3(currentTime);
+	DragForce3D::force3(currentTime);
 }
 
 void TimeVaryingDragForce3D::force4(const double currentTime)
 {
 	dragConst = calculateGamma(currentTime);
-	DragForce::force4(currentTime);
+	DragForce3D::force4(currentTime);
 }
 
 //calculateGamma:
