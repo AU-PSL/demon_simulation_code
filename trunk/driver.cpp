@@ -115,7 +115,7 @@ int checkFileOption(const int argc, char * const argv[], int i, const char optio
 
 // check for one command line flag, use default value if absent:
 int checkOption(const int argc, char * const argv[], int i, const char option, 
-                const string name, unsigned int * const value)
+                const string name, cloud_index * const value)
 {
 	if(i + 1 >= argc || argv[i + 1][0] == '-')
 		cout << "Warning: -" << option << " option incomplete." << endl 
@@ -301,7 +301,7 @@ int main (int argc, char * const argv[])
 	int finalsFileIndex = 0;            // Index of argv array that holds the file name of the fitsfile to use finals of.
 	int outputFileIndex = 0;            // Index of argv array that holds the file name of the fitsfile to output.
 	long usedForces = 0;                // bitpacked forces
-	unsigned int numParticles = 10;
+	cloud_index numParticles = 10;
 
 	//process command line flags:
 	for(int i = 1; i < argc; i++) // argv[0] is the name of the exicutable.
