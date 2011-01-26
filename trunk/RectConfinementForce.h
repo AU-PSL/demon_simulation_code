@@ -16,7 +16,8 @@
 class RectConfinementForce : public Force
 {	
 public:
-	RectConfinementForce(Cloud * const myCloud, double confineConstX, double confineConstY); // confinement consts must be positive!
+	RectConfinementForce(Cloud * const myCloud, double confineConstX, double confineConstY);
+	// IMPORTANT: In the above constructor, confineConst_'s must be positive!
 	~RectConfinementForce() {} // destructor
 
 // public functions:
