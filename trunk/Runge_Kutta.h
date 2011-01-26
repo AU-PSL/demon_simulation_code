@@ -34,7 +34,7 @@ public:
 
 private:
 // private variables:
-	const unsigned int numOperators;
+	const operator_index numOperators;
 	Operator ** const operations;
     
 // private functions:

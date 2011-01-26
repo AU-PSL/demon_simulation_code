@@ -163,25 +163,25 @@ void Runge_Kutta::moveParticles(const double endTime)
 
 inline void Runge_Kutta::operate1(const double time) const
 {
- 	for(unsigned int i = 0; i < numOperators; i++)
+ 	for(operator_index i = 0; i < numOperators; i++)
 		operations[i]->operation1(time);
 }
 
 inline void Runge_Kutta::operate2(const double time) const
 {
- 	for(unsigned int i = 0; i < numOperators; i++)
+ 	for(operator_index i = 0; i < numOperators; i++)
 		operations[i]->operation2(time);
 }
 
 inline void Runge_Kutta::operate3(const double time) const
 {
- 	for(unsigned int i = 0; i < numOperators; i++)
+ 	for(operator_index i = 0; i < numOperators; i++)
 		operations[i]->operation3(time);
 }
 
 inline void Runge_Kutta::operate4(const double time) const
 {
- 	for(unsigned int i = 0; i < numOperators; i++)
+ 	for(operator_index i = 0; i < numOperators; i++)
 		operations[i]->operation4(time);
 }
 
