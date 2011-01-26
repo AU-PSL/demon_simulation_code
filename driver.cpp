@@ -192,9 +192,9 @@ int checkOptionWithNeg(const int argc, char * const argv[], int i, const char op
 }
 
 // count number of forces in use:
-const unsigned int getNumForces(const long usedForces)
+const force_index getNumForces(const long usedForces)
 {
-	unsigned int i = 0;
+	force_index i = 0;
 	if (usedForces & ConfinementForceFlag)
 		++i;
 	if (usedForces & DragForceFlag)
@@ -489,9 +489,9 @@ int main (int argc, char * const argv[])
  -----------------------------------------------------------------------------*/
 	cout << "Status: Initializing forces." << endl;
     
-	const unsigned int numForces = getNumForces(usedForces);
+	const force_index numForces = getNumForces(usedForces);
 	forceArray = new Force*[numForces];
-	unsigned int index = 0;
+	force_index index = 0;
 	if (usedForces & ConfinementForceFlag)
 		forceArray[index++] = new ConfinementForce(cloud, confinementConst);
 	if (usedForces & DragForceFlag) 
@@ -515,13 +515,13 @@ int main (int argc, char * const argv[])
 	
 	if(continueFileIndex) // initialize forces from old file
 	{
-		for (unsigned int i = 0; i < numForces; i++)
+		for (force_index i = 0; i < numForces; i++)
 			forceArray[i]->readForce(file, &error);
 		checkFitsError(error, __LINE__);
 	}
 	else // write forces to new file
 	{
-		for (unsigned int i = 0; i < numForces; i++)
+		for (force_index i = 0; i < numForces; i++)
 			forceArray[i]->writeForce(file, &error);
 		checkFitsError(error, __LINE__);
 	}
@@ -590,7 +590,7 @@ int main (int argc, char * const argv[])
 	<< seconds << (seconds == 1 ? " second " : " seconds.") << endl;
 	
 	// clean up objects:
-	for (unsigned int i = 0; i < numForces; i++)
+	for (force_index i = 0; i < numForces; i++)
 		delete forceArray[i];
 	delete[] forceArray;
 	delete cloud;
