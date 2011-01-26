@@ -237,14 +237,14 @@ void checkFitsError(const int error, const int lineNumber)
 // delete fitsfile:
 void deleteFitsFile(char * const filename, int * const error)
 {
-	//check for pre-existing data file:
+	// check for pre-existing data file:
 	int exists = 0;
 	fits_file_exists(filename, &exists, error);
 
 	if(exists)
 	{
 		cout << "Warning: Removing pre-existing \"" << filename << "\" file." << endl;
-		remove(filename);	//required by fits, else can't create
+		remove(filename); // required by fits, else can't create
 	}
 	checkFitsError(*error, __LINE__);
 }
@@ -266,11 +266,11 @@ void fitsFileExists(char * const filename, int * const error) {
 
 int main (int argc, char * const argv[]) 
 {
-	long timer = time(NULL); //start timer
+	long timer = time(NULL); // start timer
 
 	// object declarations:
 	Cloud *cloud;
-	Force **forceArray; //new pointer to Force object (will set to array)
+	Force **forceArray; // new pointer to Force object (will set to array)
 	
 	// declare variables and set default values:
 	bool Mach = false;                  // true -> perform Mach Cone experiment
@@ -304,7 +304,7 @@ int main (int argc, char * const argv[])
 	force_flags usedForces = 0;         // bitpacked forces
 	cloud_index numParticles = 10;
 
-	//process command line flags:
+	// process command line flags:
 	for(int i = 1; i < argc; i++) // argv[0] is the name of the exicutable.
 	{
 		switch(argv[i][1])
@@ -427,7 +427,7 @@ int main (int argc, char * const argv[])
 		fitsFileExists(argv[continueFileIndex], &error);
 		
 		// open file:
-		fits_open_file(&file, argv[continueFileIndex], READWRITE, &error);	//file pointer, file name (char), read/write, error
+		fits_open_file(&file, argv[continueFileIndex], READWRITE, &error); // file pointer, file name (char), read/write, error
 		checkFitsError(error, __LINE__);
 		
 		// use the same forces:
@@ -443,7 +443,7 @@ int main (int argc, char * const argv[])
 		fitsFileExists(argv[finalsFileIndex], &error);
 
 		// open file:
-		fits_open_file(&file, argv[finalsFileIndex], READONLY, &error);	//file pointer, file name (char), read only, error
+		fits_open_file(&file, argv[finalsFileIndex], READONLY, &error); // file pointer, file name (char), read only, error
 		checkFitsError(error, __LINE__);
 
 		// initialize with last time step from file:
