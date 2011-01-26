@@ -191,7 +191,7 @@ int checkOptionWithNeg(const int argc, char * const argv[], int i, const char op
 	return i;
 }
 
-//count number of forces in use:
+// count number of forces in use:
 const unsigned int getNumForces(const long usedForces)
 {
 	unsigned int i = 0;
@@ -218,7 +218,7 @@ const unsigned int getNumForces(const long usedForces)
 	return i;
 }
 
-//check fitsfile for errors:
+// check fitsfile for errors:
 void checkFitsError(const int error, const int lineNumber)
 {
 	if(!error)
@@ -233,7 +233,7 @@ void checkFitsError(const int error, const int lineNumber)
 	exit(1);
 }
 
-//delete fitsfile:
+// delete fitsfile:
 void deleteFitsFile(char * const filename, int * const error)
 {
 	//check for pre-existing data file:
@@ -267,40 +267,40 @@ int main (int argc, char * const argv[])
 {
 	long timer = time(NULL); //start timer
 
-	//object declarations:
+	// object declarations:
 	Cloud *cloud;
 	Force **forceArray; //new pointer to Force object (will set to array)
 	
-	//declare variables and set default values:
-	bool Mach = false;                  //true -> perform Mach Cone experiment
+	// declare variables and set default values:
+	bool Mach = false;                  // true -> perform Mach Cone experiment
 	double startTime = 0.0;
 	double dataTimeStep = 0.01;
 	double simTimeStep = dataTimeStep/100.0;
 	double endTime = 5.0;
-	double cloudSize = 0.01;            //one-half side length (aka "radius")
-	double confinementConst = 1E-13;    //confinementForce
-	double confinementConstX = 1E-13;   //RectConfinementForce
-	double confinementConstY = 1E-12;   //RectConfinementForce
-	double shieldingConstant = 2E4;     //corresponds to 10*(ion debye length)
+	double cloudSize = 0.01;            // one-half side length (aka "radius")
+	double confinementConst = 1E-13;    // confinementForce
+	double confinementConstX = 1E-13;   // RectConfinementForce
+	double confinementConstY = 1E-12;   // RectConfinementForce
+	double shieldingConstant = 2E4;     // corresponds to 10*(ion debye length)
 	double gamma = 10.0;
-	double thermRed = 1E-14;            //default thermal reduction factor
-	double thermRed1 = thermRed;        //default outer reduction factor (-L)
-	double thermScale = 1E-14;          //default for TimeVaryingThermalForce
-	double thermOffset = 0.0;           //default for TimeVaryingThermalForce
-	double heatRadius = .001;           //apply thermal force only within this radius
-	double driveConst = .00001;         //used in DrivingForce.cpp for waves
-	double waveAmplitude = 1E-13;       //driving wave amplitude (default comparable to other forces throughout cloud)
-	double waveShift = 0.007;           //driving wave shift
-	double machSpeed = 0.2;             //firing speed for Mach Cone experiment
-	double massFactor = 100;            //mass multiplier for fired Mach Cone particle
-	double rmin = cloudSize/2.0;        //inner radius of shear layer
-	double rmax = rmin + cloudSize/5.0; //outer ratius of shear layer
-	double rotConst = 1E-15;            //rotational force in shear layer
-	double dragScale = -1.0;            //used in TimeVaryingDragForce
-	int continueFileIndex = 0;          //Index of argv array that holds the file name of the fitsfile to continue. 
-	int finalsFileIndex = 0;            //Index of argv array that holds the file name of the fitsfile to use finals of.
-	int outputFileIndex = 0;            //Index of argv array that holds the file name of the fitsfile to output.
-	long usedForces = 0;                //bitpacked forces
+	double thermRed = 1E-14;            // default thermal reduction factor
+	double thermRed1 = thermRed;        // default outer reduction factor (-L)
+	double thermScale = 1E-14;          // default for TimeVaryingThermalForce
+	double thermOffset = 0.0;           // default for TimeVaryingThermalForce
+	double heatRadius = .001;           // apply thermal force only within this radius
+	double driveConst = .00001;         // used in DrivingForce.cpp for waves
+	double waveAmplitude = 1E-13;       // driving wave amplitude (default comparable to other forces throughout cloud)
+	double waveShift = 0.007;           // driving wave shift
+	double machSpeed = 0.2;             // firing speed for Mach Cone experiment
+	double massFactor = 100;            // mass multiplier for fired Mach Cone particle
+	double rmin = cloudSize/2.0;        // inner radius of shear layer
+	double rmax = rmin + cloudSize/5.0; // outer ratius of shear layer
+	double rotConst = 1E-15;            // rotational force in shear layer
+	double dragScale = -1.0;            // used in TimeVaryingDragForce
+	int continueFileIndex = 0;          // Index of argv array that holds the file name of the fitsfile to continue. 
+	int finalsFileIndex = 0;            // Index of argv array that holds the file name of the fitsfile to use finals of.
+	int outputFileIndex = 0;            // Index of argv array that holds the file name of the fitsfile to output.
+	long usedForces = 0;                // bitpacked forces
 	unsigned int numParticles = 10;
 
 	//process command line flags:
