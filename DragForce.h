@@ -31,7 +31,7 @@ public:
 
 protected:
 //protected variables:
-	double dragConst; //[s^-1]
+	static double dragConst; //[s^-1]
 
 private:
 //private functions:
