@@ -107,7 +107,7 @@ Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error
 		fits_get_num_rows(file, &numParticles, error);
 
 	// create cloud:
-	Cloud * const cloud = new Cloud((cloud_index)numParticles, 0.0);	// cloudSize not used in this case, so set to zero
+	Cloud * const cloud = new Cloud((cloud_index)numParticles, 0.0); // cloudSize not used in this case, so set to zero
 
 	// read mass and charge information:
 	if(!*error)
