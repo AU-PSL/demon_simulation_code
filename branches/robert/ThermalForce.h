@@ -31,7 +31,7 @@ public:
 
 protected:
 //protected variables:
-	double heatVal;
+	static double heatVal;
 	MTRand mt;
 
 private:

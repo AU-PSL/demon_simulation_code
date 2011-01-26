@@ -27,27 +27,40 @@ public:
 	void writeForce(fitsfile * const file, int * const error) const;
 	void readForce(fitsfile * const file, int * const error);
 
+protected:
+//protected functions:
+	const double calculateHeatVal(const double currentTime) const;
+
 private:
 //private variables
 	double heatValScale;
 	double heatValOffset;
-
-//private functions:
-	const double calculateHeatVal(const double currentTime) const;
 };
 
-class TimeVaryingThermalForce2D : public ThermalForce2D TimeVaryingThermalForce1D
+class TimeVaryingThermalForce2D : public TimeVaryingThermalForce1D, public ThermalForce2D
 {
 public:
 	TimeVaryingThermalForce2D(Cloud * const myCloud, const double scale, const double offset); //overloaded constructor
 	~TimeVaryingThermalForce2D() {} //destructor
+
+//public functions:
+	void force1(const double currentTime);
+	void force2(const double currentTime);
+	void force3(const double currentTime);
+	void force4(const double currentTime);
 };
 
-class TimeVaryingThermalForce3D : public ThermalForce3D TimeVaryingThermalForce2D
+class TimeVaryingThermalForce3D : public TimeVaryingThermalForce2D, public ThermalForce3D
 {
 public:
 	TimeVaryingThermalForce3D(Cloud * const myCloud, const double scale, const double offset); //overloaded constructor
 	~TimeVaryingThermalForce3D() {} //destructor
+
+//public functions:
+	void force1(const double currentTime);
+	void force2(const double currentTime);
+	void force3(const double currentTime);
+	void force4(const double currentTime);
 };
 
 #endif /* TIMEVARYINGTHERMALFORCE_H */

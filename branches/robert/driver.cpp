@@ -128,6 +128,32 @@ int checkOption(const int argc, char * const argv[], int i, const char option,
 	return i;
 }
 
+//check for one command line flag, use default value if absent (overloaded for int values):
+int checkOption(const int argc, char * const argv[], int i, const char option, 
+	const string name, int * const value)
+{
+	if(i+1 >= argc || argv[i+1][0] == '-')
+		cout << "Warning: -" << option << " option incomplete." << endl 
+			<< "Using default " << name << " (" << *value << ")." << endl;
+	else
+		*value = atoi(argv[++i]);
+
+	return i;
+}
+
+//check for one command line flag, use default value if absent (overloaded for unsigned int values):
+int checkOption(const int argc, char * const argv[], int i, const char option, 
+	const string name, unsigned int * const value)
+{
+	if(i+1 >= argc || argv[i+1][0] == '-')
+		cout << "Warning: -" << option << " option incomplete." << endl 
+			<< "Using default " << name << " (" << *value << ")." << endl;
+	else
+		*value = atoi(argv[++i]);
+
+	return i;
+}
+
 //check for two command line flags, use default values if absent:
 int checkOption(const int argc, char * const argv[], int i, const char option, 
 	const string name1, double * const value1, 
@@ -440,7 +466,7 @@ int main (int argc, char * const argv[])
 		checkFitsError(error, __LINE__);
 		
 		//initialize with last time step from file:
-		cloud = Cloud::initializeFromFile(file, &error, &startTime, dimension);
+		cloud = Cloud::initializeFromFile(file, &error, &startTime);
 		checkFitsError(error, __LINE__);
 	}
 	else if(finalsFileIndex)
@@ -452,7 +478,7 @@ int main (int argc, char * const argv[])
 		checkFitsError(error, __LINE__);
 
 		//initialize with last time step from file:
-		cloud = Cloud::initializeFromFile(file, &error, NULL, dimension);
+		cloud = Cloud::initializeFromFile(file, &error, NULL);
 		checkFitsError(error, __LINE__);
 		
 		//close file:
@@ -462,11 +488,11 @@ int main (int argc, char * const argv[])
 	else //initialize new cloud on grid:
 	{
 		if(dimension == 1)
-			cloud = Cloud::initializeGrid1D(numParticles, cloudSize);
+			cloud = Cloud::initializeLine(numParticles, cloudSize);
 		else if(dimension == 2)
-			cloud = Cloud::initializeGrid2D(numParticles, cloudSize);
+			cloud = Cloud::initializeSquare(numParticles, cloudSize);
 		else if(dimension == 3)
-			cloud = Cloud::initializeGrid3D(numParticles, cloudSize);
+			cloud = Cloud::initializeCube(numParticles, cloudSize);
 		else //this should never happen
 		{
 			cout << "Error: Impossible case reached when determining dimension "
@@ -513,37 +539,94 @@ int main (int argc, char * const argv[])
 	numForces = getNumForces(usedForces);
 	forceArray = new Force*[numForces];
 	unsigned int index = 0;
-	if (usedForces & ConfinementForceFlag)
-		forceArray[index++] = new ConfinementForce(cloud, confinementConst);
-	if (usedForces & DragForceFlag) 
-		forceArray[index++] = new DragForce(cloud, gamma);
-	if (usedForces & ShieldedCoulombForceFlag) 
-		forceArray[index++] = new ShieldedCoulombForce(cloud, shieldingConstant);
-	if (usedForces & RectConfinementForceFlag)
-		forceArray[index++] = new RectConfinementForce(cloud, confinementConstX, confinementConstY, confinementConstZ);
-	if (usedForces & ThermalForceFlag)
-		forceArray[index++] = new ThermalForce(cloud, thermRed);
-	if (usedForces & ThermalForceLocalizedFlag)
-		forceArray[index++] = new ThermalForceLocalized(cloud, thermRed, thermRed1, heatRadius);
-	if (usedForces & DrivingForceFlag)
-		forceArray[index++] = new DrivingForce(cloud, driveConst, waveAmplitude, waveShift);
-	if (usedForces & RotationalForceFlag)
-		forceArray[index++] = new RotationalForce(cloud, rmin, rmax, rotConst);
-	if (usedForces & TimeVaryingDragForceFlag)
-		forceArray[index++] = new TimeVaryingDragForce(cloud, dragScale, gamma);
-	if (usedForces & TimeVaryingThermalForceFlag)
-		forceArray[index++] = new TimeVaryingThermalForce(cloud, thermScale, thermOffset);
+	if(dimension == 1)
+	{
+		if (usedForces & ConfinementForceFlag)
+			forceArray[index++] = new ConfinementForce1D(cloud, confinementConst);
+		if (usedForces & DragForceFlag) 
+			forceArray[index++] = new DragForce1D(cloud, gamma);
+		if (usedForces & ShieldedCoulombForceFlag) 
+			forceArray[index++] = new ShieldedCoulombForce1D(cloud, shieldingConstant);
+		if (usedForces & RectConfinementForceFlag)
+			forceArray[index++] = new RectConfinementForce1D(cloud, confinementConstX);
+		if (usedForces & ThermalForceFlag)
+			forceArray[index++] = new ThermalForce1D(cloud, thermRed);
+		if (usedForces & ThermalForceLocalizedFlag)
+			forceArray[index++] = new ThermalForceLocalized1D(cloud, thermRed, thermRed1, heatRadius);
+		if (usedForces & DrivingForceFlag)
+			forceArray[index++] = new DrivingForce1D(cloud, driveConst, waveAmplitude, waveShift);
+		if (usedForces & RotationalForceFlag)
+		{
+			cout << "Error: RotationalForce not defined for 1D\n";
+			exit(1);
+		}
+		if (usedForces & TimeVaryingDragForceFlag)
+			forceArray[index++] = new TimeVaryingDragForce1D(cloud, dragScale, gamma);
+		if (usedForces & TimeVaryingThermalForceFlag)
+			forceArray[index++] = new TimeVaryingThermalForce1D(cloud, thermScale, thermOffset);
+	}
+	else if(dimension == 2)
+	{
+		if (usedForces & ConfinementForceFlag)
+			forceArray[index++] = new ConfinementForce2D(cloud, confinementConst);
+		if (usedForces & DragForceFlag) 
+			forceArray[index++] = new DragForce2D(cloud, gamma);
+		if (usedForces & ShieldedCoulombForceFlag) 
+			forceArray[index++] = new ShieldedCoulombForce2D(cloud, shieldingConstant);
+		if (usedForces & RectConfinementForceFlag)
+			forceArray[index++] = new RectConfinementForce2D(cloud, confinementConstX, confinementConstY);
+		if (usedForces & ThermalForceFlag)
+			forceArray[index++] = new ThermalForce2D(cloud, thermRed);
+		if (usedForces & ThermalForceLocalizedFlag)
+			forceArray[index++] = new ThermalForceLocalized2D(cloud, thermRed, thermRed1, heatRadius);
+		if (usedForces & DrivingForceFlag)
+			forceArray[index++] = new DrivingForce2D(cloud, driveConst, waveAmplitude, waveShift);
+		if (usedForces & RotationalForceFlag)
+			forceArray[index++] = new RotationalForce2D(cloud, rmin, rmax, rotConst);
+		if (usedForces & TimeVaryingDragForceFlag)
+			//cast to avoid ambiguous conversion:
+			forceArray[index++] = new (DragForce1D)((TimeVaryingDragForce1D)TimeVaryingDragForce2D(cloud, dragScale, gamma));
+		if (usedForces & TimeVaryingThermalForceFlag)
+			//cast to avoid ambiguous conversion:
+			forceArray[index++] = new (ThermalForce1D)((TimeVaryingThermalForce1D)TimeVaryingThermalForce2D(cloud, thermScale, thermOffset));
+	}
+	if(dimension == 3)
+	{
+		if (usedForces & ConfinementForceFlag)
+			forceArray[index++] = new ConfinementForce3D(cloud, confinementConst);
+		if (usedForces & DragForceFlag) 
+			forceArray[index++] = new DragForce3D(cloud, gamma);
+		if (usedForces & ShieldedCoulombForceFlag) 
+			forceArray[index++] = new ShieldedCoulombForce3D(cloud, shieldingConstant);
+		if (usedForces & RectConfinementForceFlag)
+			forceArray[index++] = new RectConfinementForce3D(cloud, confinementConstX, confinementConstY, confinementConstZ);
+		if (usedForces & ThermalForceFlag)
+			forceArray[index++] = new ThermalForce3D(cloud, thermRed);
+		if (usedForces & ThermalForceLocalizedFlag)
+			forceArray[index++] = new ThermalForceLocalized3D(cloud, thermRed, thermRed1, heatRadius);
+		if (usedForces & DrivingForceFlag)
+			forceArray[index++] = new DrivingForce3D(cloud, driveConst, waveAmplitude, waveShift);
+		if (usedForces & RotationalForceFlag)
+			forceArray[index++] = new RotationalForce3D(cloud, rmin, rmax, rotConst);
+		if (usedForces & TimeVaryingDragForceFlag)
+			//cast to avoid ambiguous conversion:
+			forceArray[index++] = new (DragForce1D)((TimeVaryingDragForce1D)((TimeVaryingDragForce2D)TimeVaryingDragForce3D(cloud, dragScale, gamma)));
+		if (usedForces & TimeVaryingThermalForceFlag)
+			//cast to avoid ambiguous conversion:
+			forceArray[index++] = new (ThermalForce1D)
+				((TimeVaryingThermalForce1D)((TimeVaryingThermalForce2D)TimeVaryingThermalForce3D(cloud, thermScale, thermOffset)));
+	}
 	
 	if(continueFileIndex) //initialize forces from old file
 	{
 		for (unsigned int i = 0; i < numForces; i++)
-			forceArray[i]->readForce(file, &error, dimension);
+			forceArray[i]->readForce(file, &error);
 		checkFitsError(error, __LINE__);
 	}
 	else                  //write forces to new file
 	{
 		for (unsigned int i = 0; i < numForces; i++)
-			forceArray[i]->writeForce(file, &error, dimension);
+			forceArray[i]->writeForce(file, &error);
 		checkFitsError(error, __LINE__);
 	}
 /*------------------------------------------------------------------------------
@@ -553,7 +636,7 @@ int main (int argc, char * const argv[])
 	//write initial data:
 	if (!continueFileIndex) 
 	{
-		cloud->writeCloudSetup(file, &error, dimension);
+		cloud->writeCloudSetup(file, &error);
 		checkFitsError(error, __LINE__);
 	}
 	else
@@ -594,9 +677,9 @@ int main (int argc, char * const argv[])
 				<< rk4.currentTime/endTime*100.0 << "% Complete)" << flush;
 
 			//call Runge-Kutta algorithm:
-			rk4.moveParticles1D(startTime += dataTimeStep);
+			rk4.moveParticles(startTime += dataTimeStep);
 			//write positions and velocities:
-			cloud->writeTimeStep1D(file, &error, rk4.currentTime);
+			cloud->writeTimeStep(file, &error, rk4.currentTime);
 		}
 	}
 	if(dimension == 2)
@@ -607,9 +690,9 @@ int main (int argc, char * const argv[])
 				<< rk4.currentTime/endTime*100.0 << "% Complete)" << flush;
 
 			//call Runge-Kutta algorithm:
-			rk4.moveParticles2D(startTime += dataTimeStep);
+			rk4.moveParticles(startTime += dataTimeStep);
 			//write positions and velocities:
-			cloud->writeTimeStep2D(file, &error, rk4.currentTime);
+			cloud->writeTimeStep(file, &error, rk4.currentTime);
 		}
 	}
 	if(dimension == 3)
@@ -620,9 +703,9 @@ int main (int argc, char * const argv[])
 				<< rk4.currentTime/endTime*100.0 << "% Complete)" << flush;
 
 			//call Runge-Kutta algorithm:
-			rk4.moveParticles3D(startTime += dataTimeStep);
+			rk4.moveParticles(startTime += dataTimeStep);
 			//write positions and velocities:
-			cloud->writeTimeStep3D(file, &error, rk4.currentTime);
+			cloud->writeTimeStep(file, &error, rk4.currentTime);
 		}
 	}
 /*------------------------------------------------------------------------------
