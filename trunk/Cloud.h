@@ -13,6 +13,8 @@
 #include "fitsio.h"
 #include "VectorCompatibility.h"
 
+typedef unsigned int cloud_size;
+
 class Cloud
 {	
 public:
