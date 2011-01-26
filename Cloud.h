@@ -18,11 +18,11 @@ typedef unsigned int cloud_size;
 class Cloud
 {	
 public:
-	Cloud(unsigned int numPar, double sizeOfCloud);	//overloaded constructor
+	Cloud(cloud_size numPar, double sizeOfCloud);	//overloaded constructor
 	~Cloud();
 
 // public variables:
-	unsigned int n;	// number of elements (particles)
+	cloud_size n;	// number of elements (particles)
 	double cloudSize;
 	double *k1, *k2, *k3, *k4; // velocityX (Runge-Kutta) tidbits
 	double *l1, *l2, *l3, *l4; // positionsX (Runge-Kutta) tidbits
@@ -37,22 +37,22 @@ public:
 	// Input: int index, initialPosX, intialPosY
 	// Preconditions: 0 <= index < number of particles
 	// Postconditions: x,y positions of particle #index set to initialPosX,initialPosY
-	void setPosition(const unsigned int index, const double initialPosX, const double initialPosY);
+	void setPosition(const cloud_size index, const double initialPosX, const double initialPosY);
 
 	// Input: int index
 	// Preconditions: 0 <= index < number of particles
 	// Postconditions: velocity vector of particle #index randomly set
-	void setVelocity(const unsigned int index);
+	void setVelocity(const cloud_size index);
 
 	// Input: int index
 	// Preconditions: 0 <= index < number of particles
 	// Postconditions: charge of particle #index randomly set, range 5900 to 6100 *1.6E-19
-	void setCharge(const unsigned int index);
+	void setCharge(const cloud_size index);
 
 	// Input: int index
 	// Preconditions: 0 <= index < number of particles
 	// Postconditions: mass of particle #index set according to radius, density
-	void setMass(const unsigned int index);
+	void setMass(const cloud_size index);
 
 	// Input: fitsfile *file, int *error
 	// Preconditions: fitsfile exists, error = 0
@@ -64,41 +64,41 @@ public:
 	// Postconditions: positions and velocities for current time step output to file
 	void writeTimeStep(fitsfile * const file, int * const error, double currentTime) const;
     
-	const __m128d getx1_pd(const unsigned int i) const;
-	const __m128d getx2_pd(const unsigned int i) const;
-	const __m128d getx3_pd(const unsigned int i) const;
-	const __m128d getx4_pd(const unsigned int i) const;
+	const __m128d getx1_pd(const cloud_size i) const;
+	const __m128d getx2_pd(const cloud_size i) const;
+	const __m128d getx3_pd(const cloud_size i) const;
+	const __m128d getx4_pd(const cloud_size i) const;
 
-	const __m128d getx1r_pd(const unsigned int i) const;
-	const __m128d getx2r_pd(const unsigned int i) const;
-	const __m128d getx3r_pd(const unsigned int i) const;
-	const __m128d getx4r_pd(const unsigned int i) const;
+	const __m128d getx1r_pd(const cloud_size i) const;
+	const __m128d getx2r_pd(const cloud_size i) const;
+	const __m128d getx3r_pd(const cloud_size i) const;
+	const __m128d getx4r_pd(const cloud_size i) const;
 	
-	const __m128d gety1_pd(const unsigned int i) const;
-	const __m128d gety2_pd(const unsigned int i) const;
-	const __m128d gety3_pd(const unsigned int i) const;
-	const __m128d gety4_pd(const unsigned int i) const;
+	const __m128d gety1_pd(const cloud_size i) const;
+	const __m128d gety2_pd(const cloud_size i) const;
+	const __m128d gety3_pd(const cloud_size i) const;
+	const __m128d gety4_pd(const cloud_size i) const;
     
-	const __m128d gety1r_pd(const unsigned int i) const;
-	const __m128d gety2r_pd(const unsigned int i) const;
-	const __m128d gety3r_pd(const unsigned int i) const;
-	const __m128d gety4r_pd(const unsigned int i) const;
+	const __m128d gety1r_pd(const cloud_size i) const;
+	const __m128d gety2r_pd(const cloud_size i) const;
+	const __m128d gety3r_pd(const cloud_size i) const;
+	const __m128d gety4r_pd(const cloud_size i) const;
     
-	const __m128d getVx1_pd(const unsigned int i) const;
-	const __m128d getVx2_pd(const unsigned int i) const;
-	const __m128d getVx3_pd(const unsigned int i) const;
-	const __m128d getVx4_pd(const unsigned int i) const;
+	const __m128d getVx1_pd(const cloud_size i) const;
+	const __m128d getVx2_pd(const cloud_size i) const;
+	const __m128d getVx3_pd(const cloud_size i) const;
+	const __m128d getVx4_pd(const cloud_size i) const;
 	
-	const __m128d getVy1_pd(const unsigned int i) const;
-	const __m128d getVy2_pd(const unsigned int i) const;
-	const __m128d getVy3_pd(const unsigned int i) const;
-	const __m128d getVy4_pd(const unsigned int i) const;
+	const __m128d getVy1_pd(const cloud_size i) const;
+	const __m128d getVy2_pd(const cloud_size i) const;
+	const __m128d getVy3_pd(const cloud_size i) const;
+	const __m128d getVy4_pd(const cloud_size i) const;
 
 // static functions:
 	// Input: int numParticles, double cloudSize
 	// Preconditions: both inputs positive
 	// Postconditions: cloud initialized on spatial grid with side length = 2*cloudSize
-	static Cloud * const initializeGrid(const unsigned int numParticles, const double cloudSize);
+	static Cloud * const initializeGrid(const cloud_size numParticles, const double cloudSize);
 
 	// Input: fitsFile *file, int *error
 	// Preconditions: fitsfile exists, error = 0
