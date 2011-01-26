@@ -12,6 +12,8 @@
 
 #include "Cloud.h"
 
+typedef unsigned int operator_index;
+
 class Operator {
 public:
 	Cloud * const cloud;
