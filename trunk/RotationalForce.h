@@ -36,7 +36,7 @@ private:
 	double rotationalConst;
 
 // private functions:
-	void force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY);
+	void force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY);
 };
 
 #endif // ROTATIONALFORCE_H

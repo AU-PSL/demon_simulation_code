@@ -38,7 +38,7 @@ private:
 	double heatVal2;
 
 // private functions:
-	void force(const unsigned int currentParticle, const __m128d displacementX, const __m128d displacementY);
+	void force(const cloud_index currentParticle, const __m128d displacementX, const __m128d displacementY);
 };
 
 #endif // THERMALFORCELOCALIZED_H

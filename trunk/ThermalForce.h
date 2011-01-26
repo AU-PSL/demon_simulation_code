@@ -34,7 +34,7 @@ private:
 	MTRand mt;
 
 // private functions:
-	void force(const unsigned int currentParticle);
+	void force(const cloud_index currentParticle);
 
 protected:
 // protected variables:

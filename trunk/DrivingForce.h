@@ -37,7 +37,7 @@ private:
 	static const double angFreq; // [rad*Hz]
 
 // private functions:
-	void force(const unsigned int currentParticle, const __m128d currentTime, const __m128d currentPositionX);
+	void force(const cloud_index currentParticle, const __m128d currentTime, const __m128d currentPositionX);
 };
 
 #endif // DRIVINGFORCE_H

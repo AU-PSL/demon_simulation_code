@@ -19,32 +19,32 @@ DrivingForce::DrivingForce(Cloud * const myCloud, const double drivingConst, con
 void DrivingForce::force1(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, vtime, cloud->getx1_pd(currentParticle));
 }
 
 void DrivingForce::force2(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, vtime, cloud->getx2_pd(currentParticle));
 }
 
 void DrivingForce::force3(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, vtime, cloud->getx3_pd(currentParticle));
 }
 
 void DrivingForce::force4(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, vtime, cloud->getx4_pd(currentParticle));
 }
 
-inline void DrivingForce::force(const unsigned int currentParticle, const __m128d currentTime, const __m128d currentPositionX)
+inline void DrivingForce::force(const cloud_index currentParticle, const __m128d currentTime, const __m128d currentPositionX)
 {	
 	// F = A*sin(k*x - w*t)*exp(-(x + x0)^2/B) is in the paper
 	// NOTE: This is different than the equation listed in the paper. The paper 
