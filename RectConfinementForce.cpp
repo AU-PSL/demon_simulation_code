@@ -14,29 +14,29 @@ RectConfinementForce::RectConfinementForce(Cloud * const myCloud, double confine
 
 void RectConfinementForce::force1(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
 }
 
 void RectConfinementForce::force2(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
 }
 
 void RectConfinementForce::force3(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
 }
 
 void RectConfinementForce::force4(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
 }
 
-inline void RectConfinementForce::force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY)
+inline void RectConfinementForce::force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY)
 {
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;

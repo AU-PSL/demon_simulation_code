@@ -35,7 +35,7 @@ protected:
 
 private:
 //private functions:
-	void force(const unsigned int currentParticle, const __m128d currentVelocityX, const __m128d currentVelocityY);
+	void force(const cloud_index currentParticle, const __m128d currentVelocityX, const __m128d currentVelocityY);
 };
 
 #endif // DRAGFORCE_H

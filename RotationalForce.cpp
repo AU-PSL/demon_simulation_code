@@ -17,29 +17,29 @@ RotationalForce::RotationalForce(Cloud * const myCloud, const double rmin, const
 
 void RotationalForce::force1(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
 }
 
 void RotationalForce::force2(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
 }
 
 void RotationalForce::force3(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
 }
 
 void RotationalForce::force4(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
 }
 
-inline void RotationalForce::force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY)
+inline void RotationalForce::force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY)
 {
 	const __m128d dustRadV = _mm_sqrt_pd(currentPositionX*currentPositionX + currentPositionY*currentPositionY);
 
