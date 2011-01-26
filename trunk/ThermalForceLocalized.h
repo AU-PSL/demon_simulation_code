@@ -38,7 +38,6 @@ private:
 	double heatVal2;
 
 // private functions:
-	void force(const unsigned int currentParticle, const double displacementX, const double displacementY);
 	void force(const unsigned int currentParticle, const __m128d displacementX, const __m128d displacementY);
 };
 
