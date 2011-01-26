@@ -24,6 +24,7 @@
 using namespace std;
 
 #define clear_line "\33[2K" // VT100 signal to clear line.
+typedef int file_index;
 
 void help()
 {
@@ -100,7 +101,7 @@ inline const bool isCharacter(const char c)
 
 // check file name options
 int checkFileOption(const int argc, char * const argv[], int i, const char option,
-					const string name, int * const file)
+					const string name, file_index * const file)
 {
 	if(i + 1 >= argc || argv[i + 1][0] == '-') {
 		cout << "Warning: -" << option << " option incomplete." << endl 
@@ -297,9 +298,9 @@ int main (int argc, char * const argv[])
 	double rmax = rmin + cloudSize/5.0; // outer ratius of shear layer
 	double rotConst = 1E-15;            // rotational force in shear layer
 	double dragScale = -1.0;            // used in TimeVaryingDragForce
-	int continueFileIndex = 0;          // Index of argv array that holds the file name of the fitsfile to continue. 
-	int finalsFileIndex = 0;            // Index of argv array that holds the file name of the fitsfile to use finals of.
-	int outputFileIndex = 0;            // Index of argv array that holds the file name of the fitsfile to output.
+	file_index continueFileIndex = 0;   // Index of argv array that holds the file name of the fitsfile to continue. 
+	file_index finalsFileIndex = 0;     // Index of argv array that holds the file name of the fitsfile to use finals of.
+	file_index outputFileIndex = 0;     // Index of argv array that holds the file name of the fitsfile to output.
 	force_flags usedForces = 0;         // bitpacked forces
 	cloud_index numParticles = 10;
 
