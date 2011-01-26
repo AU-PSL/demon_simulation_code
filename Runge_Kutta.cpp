@@ -15,7 +15,7 @@
 
 using namespace std;
 
-Runge_Kutta::Runge_Kutta(Cloud * const myCloud, Force **forces, const double timeStep, const unsigned int forcesSize, const double startTime)
+Runge_Kutta::Runge_Kutta(Cloud * const myCloud, Force **forces, const double timeStep, const force_index forcesSize, const double startTime)
 : cloud(myCloud), theForce(forces), numForces(forcesSize), init_dt(timeStep), currentTime(startTime), 
 numOperators(1), operations(new Operator*[numOperators])
 {
@@ -187,25 +187,25 @@ inline void Runge_Kutta::operate4(const double time) const
 
 inline void Runge_Kutta::force1(const double time) const
 {
- 	for(unsigned int i = 0; i < numForces; i++)
+ 	for(force_index i = 0; i < numForces; i++)
 		theForce[i]->force1(time);
 }
 
 inline void Runge_Kutta::force2(const double time) const
 {
- 	for(unsigned int i = 0; i < numForces; i++)
+ 	for(force_index i = 0; i < numForces; i++)
 		theForce[i]->force2(time);
 }
 
 inline void Runge_Kutta::force3(const double time) const
 {
- 	for(unsigned int i = 0; i < numForces; i++)
+ 	for(force_index i = 0; i < numForces; i++)
 		theForce[i]->force3(time);
 }
 
 inline void Runge_Kutta::force4(const double time) const
 {
- 	for(unsigned int i = 0; i < numForces; i++)
+ 	for(force_index i = 0; i < numForces; i++)
 		theForce[i]->force4(time);
 }
 
