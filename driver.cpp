@@ -73,7 +73,7 @@ void help()
 // check if force is used:
 void checkForce(const char option, const force_flags usedForces, const ForceFlag flag)
 {
-	if(usedForces & flag)
+	if (usedForces & flag)
 	{
 		cout << "Error: -" << option << " already set." << endl;
 		help();
@@ -85,7 +85,7 @@ void checkForce(const char option, const force_flags usedForces, const ForceFlag
 void checkForce(char option1, char option2, force_flags usedForces, ForceFlag flag1, ForceFlag flag2)
 {
 	checkForce(option1, usedForces, flag1);
-	if(usedForces & flag2)
+	if (usedForces & flag2)
 	{
 		cout << "Error: -" << option1 << " cannot be used with -" << option2 << endl;
 		help();
@@ -103,7 +103,7 @@ inline const bool isCharacter(const char c)
 int checkFileOption(const int argc, char * const argv[], int i, const char option,
 					const string name, file_index * const file)
 {
-	if(i + 1 >= argc || argv[i + 1][0] == '-') {
+	if (i + 1 >= argc || argv[i + 1][0] == '-') {
 		cout << "Warning: -" << option << " option incomplete." << endl 
 		<< name << " missing." << endl;
 		help();
@@ -118,7 +118,7 @@ int checkFileOption(const int argc, char * const argv[], int i, const char optio
 int checkOption(const int argc, char * const argv[], int i, const char option, 
                 const string name, cloud_index * const value)
 {
-	if(i + 1 >= argc || argv[i + 1][0] == '-')
+	if (i + 1 >= argc || argv[i + 1][0] == '-')
 		cout << "Warning: -" << option << " option incomplete." << endl 
 		<< "Using default " << name << " (" << *value << ")." << endl;
 	else
@@ -130,7 +130,7 @@ int checkOption(const int argc, char * const argv[], int i, const char option,
 int checkOption(const int argc, char * const argv[], int i, const char option, 
                 const string name, double * const value)
 {
-	if(i + 1 >= argc || argv[i + 1][0] == '-')
+	if (i + 1 >= argc || argv[i + 1][0] == '-')
 		cout << "Warning: -" << option << " option incomplete." << endl 
 		<< "Using default " << name << " (" << *value << ")." << endl;
 	else
@@ -143,7 +143,7 @@ int checkOption(const int argc, char * const argv[], int i, const char option,
                 const string name1, double * const value1, 
                 const string name2, double * const value2)
 {
-	if(i + 1 >= argc || argv[i + 1][0] == '-')
+	if (i + 1 >= argc || argv[i + 1][0] == '-')
 		cout << "Warning: -" << option << " option incomplete." << endl
 		<< "Using default "<< name1 << " (" << *value1 << ") and " 
 		<< name2 << " (" << *value2 << ")." << endl;
@@ -161,7 +161,7 @@ int checkOption(const int argc, char * const argv[], int i, const char option,
                 const string name2, double * const value2, 
                 const string name3, double * const value3)
 {
-	if(i + 1 >= argc || argv[i + 1][0] == '-')
+	if (i + 1 >= argc || argv[i + 1][0] == '-')
 		cout << "Warning: -" << option << " option incomplete." << endl 
 		<< "Using default "<< name1 << " (" << *value1 << "), " 
 		<< name2 << " (" << *value2 << ") and " 
@@ -180,7 +180,7 @@ int checkOptionWithNeg(const int argc, char * const argv[], int i, const char op
                        const string name1, double * const value1, 
                        const string name2, double * const value2)
 {
-	if(i + 1 >= argc || (argv[i + 1][0] == '-' && isCharacter(argv[i + 1][1])))
+	if (i + 1 >= argc || (argv[i + 1][0] == '-' && isCharacter(argv[i + 1][1])))
 		cout << "Warning: -" << option << " option incomplete." << endl 
 		<< "Using default " << name1 << " (" << *value1 << ") and " 
 		<< name2 << " (" << *value2 << ")." << endl << endl;
@@ -222,7 +222,7 @@ const force_index getNumForces(const force_flags usedForces)
 // check fitsfile for errors:
 void checkFitsError(const int error, const int lineNumber)
 {
-	if(!error)
+	if (!error)
 		return;
 
 	char message[80];
@@ -241,7 +241,7 @@ void deleteFitsFile(char * const filename, int * const error)
 	int exists = 0;
 	fits_file_exists(filename, &exists, error);
 
-	if(exists)
+	if (exists)
 	{
 		cout << "Warning: Removing pre-existing \"" << filename << "\" file." << endl;
 		remove(filename); // required by fits, else can't create
@@ -253,7 +253,7 @@ void deleteFitsFile(char * const filename, int * const error)
 void fitsFileExists(char * const filename, int * const error) {
     int exists = 0;
     fits_file_exists(filename, &exists, error);
-    if(exists != 1)
+    if (exists != 1)
     {
         cout << "Error: Fits file \"" << filename << "\" does not exist." << endl;
         help();
@@ -345,7 +345,7 @@ int main (int argc, char * const argv[])
 				break;
 			case 'n': // set "n"umber of particles:
 				i = checkOption(argc, argv, i, 'n', "number of particles", &numParticles);
-				if((numParticles % 2) != 0)	// odd
+				if ((numParticles % 2) != 0)	// odd
 				{
 					cout << "Even number of particles required for SIMD." << endl 
 					<< "Incrementing number of particles to " << ++numParticles << endl;
@@ -375,7 +375,7 @@ int main (int argc, char * const argv[])
 				break;
 			case 't': // set "t"imestep:
 				i = checkOption(argc, argv, i, 't', "time step", &simTimeStep);
-				if(simTimeStep == 0.0) // prevent divide-by-zero error
+				if (simTimeStep == 0.0) // prevent divide-by-zero error
 				{
 					cout << "Error: simTimeStep set to 0.0 with -t." << endl 
 					<< "Terminating to prevent divide-by-zero." << endl;
@@ -422,7 +422,7 @@ int main (int argc, char * const argv[])
 	fitsfile *file;
 	int error = 0;
 
-	if(continueFileIndex)
+	if (continueFileIndex)
 	{
 		fitsFileExists(argv[continueFileIndex], &error);
 		
@@ -438,7 +438,7 @@ int main (int argc, char * const argv[])
 		cloud = Cloud::initializeFromFile(file, &error, &startTime);
 		checkFitsError(error, __LINE__);
 	}
-	else if(finalsFileIndex)
+	else if (finalsFileIndex)
 	{
 		fitsFileExists(argv[finalsFileIndex], &error);
 
@@ -460,7 +460,7 @@ int main (int argc, char * const argv[])
 	// Create a new file if we aren't continueing one.
 	if (!continueFileIndex)
 	{
-		if(outputFileIndex) // use specified file name
+		if (outputFileIndex) // use specified file name
 		{	
 			deleteFitsFile(argv[outputFileIndex], &error);
 			fits_create_file(&file, argv[outputFileIndex], &error);
@@ -514,7 +514,7 @@ int main (int argc, char * const argv[])
 	if (usedForces & TimeVaryingThermalForceFlag)
 		forceArray[index++] = new TimeVaryingThermalForce(cloud, thermScale, thermOffset);
 	
-	if(continueFileIndex) // initialize forces from old file
+	if (continueFileIndex) // initialize forces from old file
 	{
 		for (force_index i = 0; i < numForces; i++)
 			forceArray[i]->readForce(file, &error);
@@ -544,7 +544,7 @@ int main (int argc, char * const argv[])
 		checkFitsError(error, __LINE__);
 	}
 	
-	if(Mach) 
+	if (Mach) 
 	{
 		// reserve particle 1 for mach experiment
 		cloud->x[0] = -2.0*cloudSize;

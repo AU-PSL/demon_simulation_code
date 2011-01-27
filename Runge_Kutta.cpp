@@ -230,7 +230,7 @@ const double Runge_Kutta::modifyTimeStep(const cloud_index startIndex, const dou
 		const double sepy = cloud->y[j] - cloud->y[j + 1];
 
 		// if particles too close, reduce time step:
-		if(sqrt(sepx*sepx + sepy*sepy) <= dist)
+		if (sqrt(sepx*sepx + sepy*sepy) <= dist)
 			return modifyTimeStep(j, dist/redFactor, currentTimeStep/redFactor);
 
 		// load positions into vectors:

@@ -82,7 +82,7 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles, const double
 		cloud->setMass(i);
 
 		tempPosX -= gridUnit;
-		if(tempPosX <= -cloudSize) // end of row
+		if (tempPosX <= -cloudSize) // end of row
 		{
 			tempPosX = cloudSize; // reset
 			tempPosY -= gridUnit; // move to next row
@@ -99,18 +99,18 @@ Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error
 	long numTimeSteps;
 
 	// move to CLOUD HDU:
-	if(!*error)
+	if (!*error)
 		fits_movnam_hdu(file, BINARY_TBL, const_cast<char *> ("CLOUD"), 0, error);
 
 	// get number of particles:
-	if(!*error)
+	if (!*error)
 		fits_get_num_rows(file, &numParticles, error);
 
 	// create cloud:
 	Cloud * const cloud = new Cloud((cloud_index)numParticles, 0.0); // cloudSize not used in this case, so set to zero
 
 	// read mass and charge information:
-	if(!*error)
+	if (!*error)
 	{
 		// file, column #, starting row, first element, num elements, mass array, pointless pointer, error
 		fits_read_col_dbl(file, 1, 1, 1, numParticles, 0.0, cloud->charge, anyNull, error);
@@ -118,14 +118,14 @@ Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error
 	}
 
 	// move to TIME_STEP HDU:
-	if(!*error)
+	if (!*error)
 		fits_movnam_hdu(file, BINARY_TBL, const_cast<char *> ("TIME_STEP"), 0, error);
 
 	// get number of time steps:
-	if(!*error)
+	if (!*error)
 		fits_get_num_rows(file, &numTimeSteps, error);
 
-	if(!*error)
+	if (!*error)
 	{
 		if (currentTime)
 			fits_read_col_dbl(file, 1, numTimeSteps, 1, 1, 0.0, currentTime, anyNull, error);
@@ -164,7 +164,7 @@ void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const
 	if (!*error)
 		// file, storage type, num rows, num columns, ...
 		fits_create_tbl(file, BINARY_TBL, n, 2, ttypeCloud, tformCloud, tunitCloud, "CLOUD", error);	
-	if(!*error)
+	if (!*error)
 	{
 		// file, column #, starting row, first element, num elements, mass array, error
 		fits_write_col_dbl(file, 1, 1, 1, n, charge, error);
