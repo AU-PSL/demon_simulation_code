@@ -30,7 +30,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 	const __m128d v2 = _mm_set1_pd(2.0);
 	const __m128d v6 = _mm_set1_pd(6.0);
     
-	while(currentTime < endTime)
+	while (currentTime < endTime)
 	{
 		const double dt = modifyTimeStep(0, 1.0e-4, init_dt); // implement dynamic timstep (if necessary):
 		const __m128d vdt = _mm_set1_pd(dt); // store timestep as vector const
