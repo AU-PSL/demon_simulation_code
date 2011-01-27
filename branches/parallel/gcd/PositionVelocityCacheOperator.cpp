@@ -7,7 +7,6 @@
 *
 *===-----------------------------------------------------------------------===*/
 
-#include <dispatch/dispatch.h>
 #include "PositionVelocityCacheOperator.h"
 #include "VectorCompatibility.h"
 
@@ -19,7 +18,7 @@ void PositionVelocityCacheOperator::operation1(const double currentTime)
 void PositionVelocityCacheOperator::operation2(const double currentTime) 
 {
 	const __m128d twov = _mm_set1_pd(2.0);
-	dispatch_apply(cloud->n/2, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(size_t i) {
+	dispatch_apply(cloud->n/2, queue, ^(size_t i) {
 		const cloud_index offset = 2*i;
 		cloud->xCache[i] = _mm_load_pd(cloud->x + offset) + _mm_load_pd(cloud->l1 + offset)/twov;
 		cloud->yCache[i] = _mm_load_pd(cloud->y + offset) + _mm_load_pd(cloud->n1 + offset)/twov;
@@ -31,7 +30,7 @@ void PositionVelocityCacheOperator::operation2(const double currentTime)
 void PositionVelocityCacheOperator::operation3(const double currentTime) 
 {
 	const __m128d twov = _mm_set1_pd(2.0);
-	dispatch_apply(cloud->n/2, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(size_t i) {
+	dispatch_apply(cloud->n/2, queue, ^(size_t i) {
 		const cloud_index offset = 2*i;
 		cloud->xCache[i] = _mm_load_pd(cloud->x + offset) + _mm_load_pd(cloud->l2 + offset)/twov;
 		cloud->yCache[i] = _mm_load_pd(cloud->y + offset) + _mm_load_pd(cloud->n2 + offset)/twov;
@@ -42,7 +41,7 @@ void PositionVelocityCacheOperator::operation3(const double currentTime)
 
 void PositionVelocityCacheOperator::operation4(const double currentTime) 
 {
-	dispatch_apply(cloud->n/2, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(size_t i) {
+	dispatch_apply(cloud->n/2, queue, ^(size_t i) {
 		const cloud_index offset = 2*i;
 		cloud->xCache[i] = _mm_load_pd(cloud->x + offset) + _mm_load_pd(cloud->l3 + offset);
 		cloud->yCache[i] = _mm_load_pd(cloud->y + offset) + _mm_load_pd(cloud->n3 + offset);
