@@ -13,7 +13,7 @@
 #include "Force.h"
 
 class Operator;
-typedef unsigned int operator_index;
+typedef unsigned char operator_index;
 
 class Runge_Kutta
 {
