@@ -74,7 +74,7 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles, const double
 	srand((int)time(NULL)); // needed for Cloud::setCharge
     
 	// initialize dust cloud:
-	for(cloud_index i = 0; i < numParticles; i++)
+	for (cloud_index i = 0; i < numParticles; i++)
 	{
 		cloud->setPosition(i, tempPosX, tempPosY);
 		cloud->setVelocity(i);
