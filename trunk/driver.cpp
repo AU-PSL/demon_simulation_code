@@ -307,7 +307,7 @@ int main (int argc, char * const argv[])
 	// process command line flags:
 	for (int i = 1; i < argc; i++) // argv[0] is the name of the exicutable.
 	{
-		switch(argv[i][1])
+		switch (argv[i][1])
 		{
 			case 'c': // "c"ontinue from file:
 				i = checkFileOption(argc, argv, i, 'c', "Contine file", &continueFileIndex);
