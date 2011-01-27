@@ -17,7 +17,7 @@ class ThermalForce : public Force
 {	
 public:
 	ThermalForce(Cloud * const myCloud, const double redFactor);
-	~ThermalForce() {} // destructor
+	~ThermalForce(); // destructor
 
 // public functions:
 	// Note: currentTime parameter is necessary (due to parent class) but unused
@@ -32,6 +32,7 @@ public:
 private:
 // private variables:
 	MTRand mt;
+	dispatch_semaphore_t semaphore;
 
 // private functions:
 	void force(const cloud_index currentParticle);

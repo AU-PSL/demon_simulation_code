@@ -13,38 +13,53 @@
 #include "VectorCompatibility.h"
 
 ThermalForce::ThermalForce(Cloud * const myCloud, const double redFactor) 
-: Force(myCloud), mt(time(NULL)), heatVal(redFactor) {}
+: Force(myCloud), mt(time(NULL)), semaphore(dispatch_semaphore_create(1)), heatVal(redFactor) {}
+
+ThermalForce::~ThermalForce()
+{
+	dispatch_release(semaphore);
+}
 
 void ThermalForce::force1(const double currentTime)
 {
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	dispatch_apply(cloud->n/2, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(size_t currentParticle) {
+		currentParticle *= 2; 
 		force(currentParticle);
+	});
 }
 
 void ThermalForce::force2(const double currentTime)
 {
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	dispatch_apply(cloud->n/2, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(size_t currentParticle) {
+		currentParticle *= 2; 
 		force(currentParticle);
+	});
 }
 
 void ThermalForce::force3(const double currentTime)
 {
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	dispatch_apply(cloud->n/2, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(size_t currentParticle) {
+		currentParticle *= 2; 
 		force(currentParticle);
+	});
 }
 
 void ThermalForce::force4(const double currentTime)
 {
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	dispatch_apply(cloud->n/2, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(size_t currentParticle) {
+		currentParticle *= 2; 
 		force(currentParticle);
+	});
 }
 
 inline void ThermalForce::force(const cloud_index currentParticle)
 {	
 	// MT random number in (0,1)
+	dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
 	const __m128d thermV = _mm_set1_pd(heatVal)*_mm_set_pd(mt(), mt());
 	const double thetaL = mt()*2.0*M_PI;
 	const double thetaH = mt()*2.0*M_PI;
+	dispatch_semaphore_signal(semaphore);
 	
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;

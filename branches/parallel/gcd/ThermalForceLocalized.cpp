@@ -12,44 +12,60 @@
 #include <cmath>
 
 ThermalForceLocalized::ThermalForceLocalized(Cloud * const myCloud, const double thermRed1, const double thermRed2, const double specifiedRadius) 
-: Force(myCloud), mt(time(NULL)), heatingRadius(specifiedRadius), heatVal1(thermRed1), heatVal2(thermRed2) {}
+: Force(myCloud), mt(time(NULL)), heatingRadius(specifiedRadius), heatVal1(thermRed1), heatVal2(thermRed2), semaphore(dispatch_semaphore_create(1)) {}
+
+ThermalForceLocalized::~ThermalForceLocalized()
+{
+	dispatch_release(semaphore);
+}
 
 void ThermalForceLocalized::force1(const double currentTime)
 {
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	dispatch_apply(cloud->n/2, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(size_t currentParticle) {
+		currentParticle *= 2; 
 		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
+	});
 }
 
 void ThermalForceLocalized::force2(const double currentTime)
 {
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	dispatch_apply(cloud->n/2, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(size_t currentParticle) {
+		currentParticle *= 2; 
 		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
+	});
 }
 
 void ThermalForceLocalized::force3(const double currentTime)
 {
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	dispatch_apply(cloud->n/2, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(size_t currentParticle) {
+		currentParticle *= 2; 
 		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
+	});
 }
 
 void ThermalForceLocalized::force4(const double currentTime)
 {
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	dispatch_apply(cloud->n/2, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(size_t currentParticle) {
+		currentParticle *= 2; 
 		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
+	});
 }
 
 inline void ThermalForceLocalized::force(const cloud_index currentParticle, const __m128d displacementX, const __m128d displacementY)
 {
 	const __m128d radiusV = _mm_sqrt_pd(displacementX*displacementX + displacementY*displacementY);
+	dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
 	const double thetaL = mt()*2.0*M_PI;
 	const double thetaH = mt()*2.0*M_PI;
+	const __m128d randV = _mm_set_pd(mt(), mt());
+	dispatch_semaphore_signal(semaphore);
 	
 	double rL, rH;
 	_mm_storel_pd(&rL, radiusV);
 	_mm_storeh_pd(&rH, radiusV);
 	
 	const __m128d thermV = _mm_set_pd((rH < heatingRadius) ? heatVal1 : heatVal2, // _mm_set_pd() is backwards
-									  (rL < heatingRadius) ? heatVal1 : heatVal2)*_mm_set_pd(mt(), mt());
+									  (rL < heatingRadius) ? heatVal1 : heatVal2)*randV;
 	
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;

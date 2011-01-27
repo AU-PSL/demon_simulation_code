@@ -10,6 +10,7 @@
 #ifndef FORCE_H
 #define FORCE_H
 
+#include <dispatch/dispatch.h>
 #include "Cloud.h"
 
 typedef unsigned char force_index;

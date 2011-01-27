@@ -18,7 +18,7 @@ class ThermalForceLocalized : public Force
 {	
 public:
 	ThermalForceLocalized(Cloud * const myCloud, const double thermRed1, const double thermRed2, const double specifiedRadius);	//overloaded constructor
-	~ThermalForceLocalized() {} // destructor
+	~ThermalForceLocalized(); // destructor
 
 // public functions:
 	// Note: currentTime parameter is necessary (due to parent class) but unused
@@ -36,6 +36,7 @@ private:
 	double heatingRadius;
 	double heatVal1;
 	double heatVal2;
+	dispatch_semaphore_t semaphore;
 
 // private functions:
 	void force(const cloud_index currentParticle, const __m128d displacementX, const __m128d displacementY);

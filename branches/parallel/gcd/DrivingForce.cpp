@@ -19,29 +19,37 @@ DrivingForce::DrivingForce(Cloud * const myCloud, const double drivingConst, con
 void DrivingForce::force1(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	dispatch_apply(cloud->n/2, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(size_t currentParticle) {
+		currentParticle *= 2; 
 		force(currentParticle, vtime, cloud->getx1_pd(currentParticle));
+	});
 }
 
 void DrivingForce::force2(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	dispatch_apply(cloud->n/2, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(size_t currentParticle) {
+		currentParticle *= 2; 
 		force(currentParticle, vtime, cloud->getx2_pd(currentParticle));
+	});
 }
 
 void DrivingForce::force3(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	dispatch_apply(cloud->n/2, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(size_t currentParticle) {
+		currentParticle *= 2; 
 		force(currentParticle, vtime, cloud->getx3_pd(currentParticle));
+	});
 }
 
 void DrivingForce::force4(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
+	dispatch_apply(cloud->n/2, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(size_t currentParticle) {
+		currentParticle *= 2;
 		force(currentParticle, vtime, cloud->getx4_pd(currentParticle));
+	});
 }
 
 inline void DrivingForce::force(const cloud_index currentParticle, const __m128d currentTime, const __m128d currentPositionX)
