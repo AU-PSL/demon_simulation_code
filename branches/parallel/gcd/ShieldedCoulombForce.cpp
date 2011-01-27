@@ -73,7 +73,7 @@ void ShieldedCoulombForce::force2(const double currentTime)
 void ShieldedCoulombForce::force3(const double currentTime)
 {
 	const cloud_index numParticles = cloud->n;
-    dispatch_apply(cloud->n/2, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(size_t currentParticle) {
+	dispatch_apply(cloud->n/2, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(size_t currentParticle) {
 		currentParticle *= 2;
 		const __m128d vx1 = cloud->getx3_pd(currentParticle);
 		const __m128d vy1 = cloud->gety3_pd(currentParticle);
