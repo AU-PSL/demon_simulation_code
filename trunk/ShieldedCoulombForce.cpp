@@ -104,7 +104,7 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
 	const double displacement = sqrt(displacementX*displacementX + displacementY*displacementY);
 	const double valExp = displacement*shielding;
 
-	if(valExp < 10.0) // restrict to 10*(ion debye length)
+	if (valExp < 10.0) // restrict to 10*(ion debye length)
 	{
 		 // conclude force calculation:
 		const double displacement3 = displacement*displacement*displacement;
@@ -210,12 +210,12 @@ inline void ShieldedCoulombForce::forcer(const cloud_index currentParticle, cons
 void ShieldedCoulombForce::writeForce(fitsfile * const file, int * const error) const
 {
 	// move to primary HDU:
-	if(!*error)
+	if (!*error)
 		// file, # indicating primary HDU, HDU type, error
  		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
 	
 	// add flag indicating that the drag force is used:
-	if(!*error) 
+	if (!*error) 
 	{
 		long forceFlags = 0;
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &forceFlags, NULL, error);
@@ -223,15 +223,15 @@ void ShieldedCoulombForce::writeForce(fitsfile * const file, int * const error) 
 		// add ShieldedCoulombForce bit:
 		forceFlags |= ShieldedCoulombForceFlag; // compound bitwise OR
 
-		if(*error == KEY_NO_EXIST || *error == VALUE_UNDEFINED)
+		if (*error == KEY_NO_EXIST || *error == VALUE_UNDEFINED)
 			*error = 0; // clear above error.
 
 		// add or update keyword.
-		if(!*error) 
+		if (!*error) 
 			fits_update_key(file, TLONG, const_cast<char *> ("FORCES"), &forceFlags, const_cast<char *> ("Force configuration."), error);
 	}
 
-	if(!*error)
+	if (!*error)
 		// file, key name, value, precision (scientific format), comment
 		fits_write_key_dbl(file, const_cast<char *> ("shieldingConstant"), shielding, 6, const_cast<char *> ("[m^-1] (ShieldedCoulombForce)"), error);
 }
@@ -239,11 +239,11 @@ void ShieldedCoulombForce::writeForce(fitsfile * const file, int * const error) 
 void ShieldedCoulombForce::readForce(fitsfile * const file, int * const error)
 {
 	// move to primary HDU:
-	if(!*error)
+	if (!*error)
 		// file, # indicating primary HDU, HDU type, error
  		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
 	
-	if(!*error)
+	if (!*error)
 		// file, key name, value, don't read comment, error
 		fits_read_key_dbl(file, const_cast<char *> ("shieldingConstant"), &shielding, NULL, error);
 }
