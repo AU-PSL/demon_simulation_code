@@ -557,7 +557,7 @@ int main (int argc, char * const argv[])
 	Runge_Kutta rk4(cloud, forceArray, simTimeStep, numForces, startTime);
 
 	// execute simulation for desired length of time:
-	while(startTime < endTime)
+	while (startTime < endTime)
 	{
 		cout << clear_line << "\rCurrent Time: " << rk4.currentTime << "s (" 
 		<< rk4.currentTime/endTime*100.0 << "% Complete)" << flush;
