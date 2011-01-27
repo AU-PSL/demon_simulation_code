@@ -266,7 +266,7 @@ void fitsFileExists(char * const filename, int * const error) {
 
 int main (int argc, char * const argv[]) 
 {
-	long timer = time(NULL); // start timer
+	time_t timer = time(NULL); // start timer
 
 	// object declarations:
 	Cloud *cloud;
@@ -576,10 +576,10 @@ int main (int argc, char * const argv[])
 	fits_close_file(file, &error);
 
 	// calculate and display elapsed time:
-	long seconds = time(NULL) - timer;
-	long minutes = seconds/60;
-	long hours = minutes/60;
-	long days = hours/24;
+	time_t seconds = time(NULL) - timer;
+	time_t minutes = seconds/60;
+	time_t hours = minutes/60;
+	time_t days = hours/24;
 	hours -= days*24;
 	minutes -= hours*60 + days*1440;
 	seconds -= minutes*60 + hours*3600 + days*86400;
