@@ -101,7 +101,7 @@ inline const bool isCharacter(const char c)
 
 // check file name options
 int checkFileOption(const int argc, char * const argv[], int i, const char option,
-					const string name, file_index * const file)
+                    const string name, file_index * const file)
 {
 	if (i + 1 >= argc || argv[i + 1][0] == '-') {
 		cout << "Warning: -" << option << " option incomplete." << endl 
