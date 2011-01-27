@@ -35,7 +35,7 @@ class Force
 public:
 	Cloud * const cloud;
 	
-	Force(Cloud * const myCloud) : cloud(myCloud) {} 
+	Force(Cloud * const myCloud) : cloud(myCloud), queue(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)) {} 
 	virtual ~Force() {} // implementation of virtual destructor
 
 	// Note: currentTime parameter necessary for DrivingForce, unused in others
@@ -46,6 +46,9 @@ public:
 
 	virtual void writeForce(fitsfile * const file, int * const error) const=0;	// output force information to file
 	virtual void readForce(fitsfile * const file, int * const error)=0;	// read force information from file
+
+protected:
+	dispatch_queue_t queue;
 };
 
 #endif // FORCE_H
