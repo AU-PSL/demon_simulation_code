@@ -305,7 +305,7 @@ int main (int argc, char * const argv[])
 	cloud_index numParticles = 10;
 
 	// process command line flags:
-	for(int i = 1; i < argc; i++) // argv[0] is the name of the exicutable.
+	for (int i = 1; i < argc; i++) // argv[0] is the name of the exicutable.
 	{
 		switch(argv[i][1])
 		{
