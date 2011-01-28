@@ -13,7 +13,8 @@
 #include "Operator.h"
 #include <dispatch/dispatch.h>
 
-class PositionVelocityCacheOperator : public Operator {
+class PositionVelocityCacheOperator : public Operator 
+{
 public:
 	PositionVelocityCacheOperator(Cloud * const mycloud) : Operator(mycloud), queue(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)) {}
 	~PositionVelocityCacheOperator() {}
