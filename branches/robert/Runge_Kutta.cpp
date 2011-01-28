@@ -8,9 +8,6 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "Runge_Kutta.h"
-#include <cmath>
-#include <limits>
-#include "VectorCompatibility.h"
 
 using namespace std;
 

@@ -12,6 +12,9 @@
 
 #include "Force.h"
 #include "mtrand.h" //MT header
+#include <cmath>
+#include <ctime>
+#include "VectorCompatibility.h"
 
 class ThermalForce1D : public Force
 {
@@ -31,7 +34,7 @@ public:
 
 protected:
 //protected variables:
-	static double heatVal;
+	double heatVal;
 	MTRand mt;
 
 private:

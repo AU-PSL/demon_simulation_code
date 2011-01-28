@@ -140,11 +140,8 @@ public:
 		return static_cast<double>(rand_int32()) * (1. / 4294967296.); //divided by 2^32
 	}
 
-//EDIT: Changed MTRAND copy constructor to public to support multiple inheritance.
-//R. Jefferson - 2010.01.26
-	MTRand(const MTRand&);           //copy constructor not defined
-
 private:
+	MTRand(const MTRand&);           //copy constructor not defined
 	void operator = (const MTRand&); //assignment operator not defined
 };
 
