@@ -10,13 +10,11 @@
 #include "TimeVaryingDragForce.h"
 
 TimeVaryingDragForce1D::TimeVaryingDragForce1D(Cloud * const myCloud, const double scale, const double offset) 
-: DragForce1D(myCloud, -offset), scaleConst(scale), offsetConst(offset) {}
-
+: DragForce3D(myCloud, -offset), scaleConst(scale), offsetConst(offset) {}
 TimeVaryingDragForce2D::TimeVaryingDragForce2D(Cloud * const myCloud, const double scale, const double offset) 
-: DragForce2D(myCloud, -offset), TimeVaryingDragForce1D(myCloud, scale, offset) {}
-
+: TimeVaryingDragForce1D(myCloud, scale, offset) {}
 TimeVaryingDragForce3D::TimeVaryingDragForce3D(Cloud * const myCloud, const double scale, const double offset) 
-: DragForce3D(myCloud, -offset), TimeVaryingDragForce2D(myCloud, scale, offset) {}
+: TimeVaryingDragForce2D(myCloud, scale, offset) {}
 
 //1D:
 void TimeVaryingDragForce1D::force1(const double currentTime)

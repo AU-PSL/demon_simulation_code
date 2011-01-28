@@ -11,7 +11,6 @@
 #define RUNGA_KUTTA_H
 
 #include "Force.h"
-#include "VectorCompatibility.h"
 #include <cmath>
 #include <limits>
 

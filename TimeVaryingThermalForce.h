@@ -12,7 +12,9 @@
 
 #include "ThermalForce.h"
 
-class TimeVaryingThermalForce1D : public ThermalForce1D
+//TimeVaryingThermalForce1D inherits from ThermalForce3D (as opposed to ThermalForce1D) to circumvent
+// the need for multiple inheritance in TimeVaryingThermalForce2D/3D.
+class TimeVaryingThermalForce1D : public ThermalForce3D
 {
 public:
 	TimeVaryingThermalForce1D(Cloud * const myCloud, const double scale, const double offset); //overloaded constructor
@@ -37,7 +39,7 @@ private:
 	double heatValOffset;
 };
 
-class TimeVaryingThermalForce2D : public TimeVaryingThermalForce1D, public ThermalForce2D
+class TimeVaryingThermalForce2D : public TimeVaryingThermalForce1D
 {
 public:
 	TimeVaryingThermalForce2D(Cloud * const myCloud, const double scale, const double offset); //overloaded constructor
@@ -50,7 +52,7 @@ public:
 	void force4(const double currentTime);
 };
 
-class TimeVaryingThermalForce3D : public TimeVaryingThermalForce2D, public ThermalForce3D
+class TimeVaryingThermalForce3D : public TimeVaryingThermalForce2D
 {
 public:
 	TimeVaryingThermalForce3D(Cloud * const myCloud, const double scale, const double offset); //overloaded constructor

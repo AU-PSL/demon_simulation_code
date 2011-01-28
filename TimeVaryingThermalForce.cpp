@@ -10,11 +10,11 @@
 #include "TimeVaryingThermalForce.h"
 
 TimeVaryingThermalForce1D::TimeVaryingThermalForce1D(Cloud * const myCloud, const double scale, const double offset) 
-: ThermalForce1D(myCloud, offset), heatValScale(scale), heatValOffset(offset) {}
+: ThermalForce3D(myCloud, offset), heatValScale(scale), heatValOffset(offset) {}
 TimeVaryingThermalForce2D::TimeVaryingThermalForce2D(Cloud * const myCloud, const double scale, const double offset) 
-: ThermalForce2D(myCloud, offset), TimeVaryingThermalForce1D(myCloud, scale, offset) {}
+: TimeVaryingThermalForce1D(myCloud, scale, offset) {}
 TimeVaryingThermalForce3D::TimeVaryingThermalForce3D(Cloud * const myCloud, const double scale, const double offset) 
-: ThermalForce3D(myCloud, offset), TimeVaryingThermalForce2D(myCloud, scale, offset) {}
+: TimeVaryingThermalForce2D(myCloud, scale, offset) {}
 
 //1D:
 void TimeVaryingThermalForce1D::force1(const double currentTime)

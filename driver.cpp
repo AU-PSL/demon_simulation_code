@@ -7,18 +7,22 @@
 *
 *===-----------------------------------------------------------------------===*/
 
+//Force classes:
 #include "ConfinementForce.h"
 #include "DragForce.h"
 #include "DrivingForce.h"
 #include "RectConfinementForce.h"
 #include "RotationalForce.h"
-#include "Runge_Kutta.h"
 #include "ShieldedCoulombForce.h"
 #include "ThermalForce.h"
 #include "ThermalForceLocalized.h"
 #include "TimeVaryingDragForce.h"
 #include "TimeVaryingThermalForce.h"
 
+//Runge-Kutta class:
+#include "Runge_Kutta.h"
+
+//Other dependencies:
 #include <ctime>
 #include <iostream>
 using namespace std;
@@ -584,11 +588,9 @@ int main (int argc, char * const argv[])
 		if (usedForces & RotationalForceFlag)
 			forceArray[index++] = new RotationalForce2D(cloud, rmin, rmax, rotConst);
 		if (usedForces & TimeVaryingDragForceFlag)
-			//cast to avoid ambiguous conversion:
-			forceArray[index++] = new (DragForce1D)((TimeVaryingDragForce1D)TimeVaryingDragForce2D(cloud, dragScale, gamma));
+			forceArray[index++] = new TimeVaryingDragForce2D(cloud, dragScale, gamma);
 		if (usedForces & TimeVaryingThermalForceFlag)
-			//cast to avoid ambiguous conversion:
-			forceArray[index++] = new (ThermalForce1D)((TimeVaryingThermalForce1D)TimeVaryingThermalForce2D(cloud, thermScale, thermOffset));
+			forceArray[index++] = new TimeVaryingThermalForce2D(cloud, thermScale, thermOffset);
 	}
 	if(dimension == 3)
 	{
@@ -609,12 +611,9 @@ int main (int argc, char * const argv[])
 		if (usedForces & RotationalForceFlag)
 			forceArray[index++] = new RotationalForce3D(cloud, rmin, rmax, rotConst);
 		if (usedForces & TimeVaryingDragForceFlag)
-			//cast to avoid ambiguous conversion:
-			forceArray[index++] = new (DragForce1D)((TimeVaryingDragForce1D)((TimeVaryingDragForce2D)TimeVaryingDragForce3D(cloud, dragScale, gamma)));
+			forceArray[index++] = new TimeVaryingDragForce3D(cloud, dragScale, gamma);
 		if (usedForces & TimeVaryingThermalForceFlag)
-			//cast to avoid ambiguous conversion:
-			forceArray[index++] = new (ThermalForce1D)
-				((TimeVaryingThermalForce1D)((TimeVaryingThermalForce2D)TimeVaryingThermalForce3D(cloud, thermScale, thermOffset)));
+			forceArray[index++] = new TimeVaryingThermalForce3D(cloud, thermScale, thermOffset);
 	}
 	
 	if(continueFileIndex) //initialize forces from old file

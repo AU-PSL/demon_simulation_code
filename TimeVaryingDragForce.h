@@ -12,7 +12,9 @@
 
 #include "DragForce.h"
 
-class TimeVaryingDragForce1D : public DragForce1D
+//TimeVaryingDragForce1D inherits from DragForce3D (as opposed to DragForce1D) to circumvent
+// the need for multiple inheritence in TimeVaryingDragForce2D/3D.
+class TimeVaryingDragForce1D : public DragForce3D
 {
 public:
 	TimeVaryingDragForce1D(Cloud * const myCloud, const double scale, const double offset); //overloaded constructor
@@ -37,30 +39,30 @@ private:
 	double offsetConst; //[s^-1]
 };
 
-class TimeVaryingDragForce2D : public TimeVaryingDragForce1D, public DragForce2D
+class TimeVaryingDragForce2D : public TimeVaryingDragForce1D
 {
 public:
 	TimeVaryingDragForce2D(Cloud * const myCloud, const double scale, const double offset); //overloaded constructor
 	~TimeVaryingDragForce2D() {} //destructor
 
 //public functions:
-	void force1(const double currentTime); //rk substep 1
-	void force2(const double currentTime); //rk substep 2
-	void force3(const double currentTime); //rk substep 3
-	void force4(const double currentTime); //rk substep 4
+	void force1(const double currentTime);
+	void force2(const double currentTime);
+	void force3(const double currentTime);
+	void force4(const double currentTime);
 };
 
-class TimeVaryingDragForce3D : public TimeVaryingDragForce2D, public DragForce3D
+class TimeVaryingDragForce3D : public TimeVaryingDragForce2D
 {
 public:
 	TimeVaryingDragForce3D(Cloud * const myCloud, const double scale, const double offset); //overloaded constructor
 	~TimeVaryingDragForce3D() {} //destructor
 
 //public functions:
-	void force1(const double currentTime); //rk substep 1
-	void force2(const double currentTime); //rk substep 2
-	void force3(const double currentTime); //rk substep 3
-	void force4(const double currentTime); //rk substep 4
+	void force1(const double currentTime);
+	void force2(const double currentTime);
+	void force3(const double currentTime);
+	void force4(const double currentTime);
 };
 
 #endif /* TIMEVARYINGDRAGFORCE_H */

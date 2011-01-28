@@ -8,15 +8,9 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "ThermalForce.h"
-#include <cmath>
-#include <ctime>
-#include "VectorCompatibility.h"
 
 //Constructors:
-ThermalForce1D::ThermalForce1D(Cloud * const myCloud, const double redFactor) : Force(myCloud), mt(time(NULL))
-{
-	heatVal = redFactor; //nonstatic variables cannot be included in class initialization list
-}
+ThermalForce1D::ThermalForce1D(Cloud * const myCloud, const double redFactor) : Force(myCloud), mt(time(NULL)), heatVal(redFactor) {}
 ThermalForce2D::ThermalForce2D(Cloud * const myCloud, const double redFactor) : ThermalForce1D(myCloud, redFactor) {}
 ThermalForce3D::ThermalForce3D(Cloud * const myCloud, const double redFactor) : ThermalForce2D(myCloud, redFactor) {}
 

@@ -10,10 +10,7 @@
 #include "DragForce.h"
 
 //Constructors:
-DragForce1D::DragForce1D(Cloud * const myCloud, const double gamma) : Force(myCloud)
-{
-	dragConst = -gamma; //nonstatic variables cannot be included in class initialization list
-}
+DragForce1D::DragForce1D(Cloud * const myCloud, const double gamma) : Force(myCloud), dragConst(-gamma) {}
 DragForce2D::DragForce2D(Cloud * const myCloud, const double gamma) : DragForce1D(myCloud, gamma) {}
 DragForce3D::DragForce3D(Cloud * const myCloud, const double gamma) : DragForce2D(myCloud, gamma) {}
 
