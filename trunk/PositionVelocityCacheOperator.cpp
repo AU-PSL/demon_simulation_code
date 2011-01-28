@@ -28,7 +28,8 @@ void PositionVelocityCacheOperator::operation2(const double currentTime)
 	}
 }
 
-void PositionVelocityCacheOperator::operation3(const double currentTime) {
+void PositionVelocityCacheOperator::operation3(const double currentTime) 
+{
 	const __m128d twov = _mm_set1_pd(2.0);
 	for (cloud_index i = 0, e = cloud->n/2; i < e; i++) 
 	{
@@ -40,7 +41,8 @@ void PositionVelocityCacheOperator::operation3(const double currentTime) {
 	}
 }
 
-void PositionVelocityCacheOperator::operation4(const double currentTime) {
+void PositionVelocityCacheOperator::operation4(const double currentTime) 
+{
 	for (cloud_index i = 0, e = cloud->n/2; i < e; i++) 
 	{
 		const cloud_index offset = 2*i;
