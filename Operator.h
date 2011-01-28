@@ -12,7 +12,8 @@
 
 #include "Cloud.h"
 
-class Operator {
+class Operator 
+{
 public:
 	Cloud * const cloud;
 	Operator(Cloud * const myCloud) : cloud(myCloud) {}

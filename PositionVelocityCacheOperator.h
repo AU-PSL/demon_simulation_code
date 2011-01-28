@@ -12,7 +12,8 @@
 
 #include "Operator.h"
 
-class PositionVelocityCacheOperator : public Operator {
+class PositionVelocityCacheOperator : public Operator 
+{
 public:
 	PositionVelocityCacheOperator(Cloud * const mycloud) : Operator(mycloud) {}
 	~PositionVelocityCacheOperator() {}
