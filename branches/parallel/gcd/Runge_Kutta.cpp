@@ -228,18 +228,16 @@ const double Runge_Kutta::modifyTimeStep(const double currentDist, const double 
 	// loop through entire cloud, or until reduction occures
 	dispatch_apply(cloud->n/2, queue, ^(size_t j) {
 		j *= 2;
-	
-	start:
+
 		// caculate separation distance b/t adjacent elements:
 		const double sepx = cloud->x[j] - cloud->x[j + 1];
 		const double sepy = cloud->y[j] - cloud->y[j + 1];
 
 		// if particles too close, reduce time step:
-		if (sqrt(sepx*sepx + sepy*sepy) <= dist)
+		while (sqrt(sepx*sepx + sepy*sepy) <= dist)
 		{
 			dist /= redFactor;
 			timeStep /= redFactor;
-			goto start; // Reduce timestep and distance start over.
 		}
 
 		// load positions into vectors:
@@ -263,12 +261,10 @@ const double Runge_Kutta::modifyTimeStep(const double currentDist, const double 
 			double low, high;
 			_mm_storel_pd(&low, comp);
 			_mm_storeh_pd(&high, comp);
-			if (isnan(low) || isnan(high))	// if either are too close, reduce time step
+			while (isnan(low) || isnan(high))	// if either are too close, reduce time step
 			{
 				dist /= redFactor;
 				timeStep /= redFactor;
-				i -= 2; // This iteration needs to be repeated.
-				continue; // Reduce timestep and distance start over.
 			}
 
 			// calculate j,i+1 and j+1,i separation distances:
@@ -280,12 +276,10 @@ const double Runge_Kutta::modifyTimeStep(const double currentDist, const double 
             
 			_mm_storel_pd(&low, comp);
 			_mm_storeh_pd(&high, comp);
-			if (isnan(low) || isnan(high))	// if either are too close, reduce time step
+			while (isnan(low) || isnan(high))	// if either are too close, reduce time step
 			{
 				dist /= redFactor;
 				timeStep /= redFactor;
-				i -= 2; // This iteration needs to be repeated.
-				continue; // Reduce timestep and distance start over.
 			}
 		}
 	});
