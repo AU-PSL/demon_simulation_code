@@ -215,11 +215,11 @@ inline void Runge_Kutta::force4(const double time) const
 * particle spacings are outside the specified distance use the current timestep.
 * This allows fine grain control of reduced timesteps.
 ------------------------------------------------------------------------------*/
-const double Runge_Kutta::modifyTimeStep(const cloud_index startIndex, const double dist, const double currentTimeStep) const
+const double Runge_Kutta::modifyTimeStep(const cloud_index startIndex, const double currentDist, const double currentTimeStep) const
 {
 	// set constants:	
 	const cloud_index numPar = cloud->n;
-	const __m128d distv = _mm_set1_pd(dist);
+	const __m128d distv = _mm_set1_pd(currentDist);
 	const double redFactor = 10.0;
 
 	// loop through entire cloud, or until reduction occures
@@ -230,8 +230,8 @@ const double Runge_Kutta::modifyTimeStep(const cloud_index startIndex, const dou
 		const double sepy = cloud->y[j] - cloud->y[j + 1];
 
 		// if particles too close, reduce time step:
-		if (sqrt(sepx*sepx + sepy*sepy) <= dist)
-			return modifyTimeStep(j, dist/redFactor, currentTimeStep/redFactor);
+		if (sqrt(sepx*sepx + sepy*sepy) <= currentDist)
+			return modifyTimeStep(j, currentDist/redFactor, currentTimeStep/redFactor);
 
 		// load positions into vectors:
 		const __m128d vx1 = cloud->getx1_pd(j);	// x vector
@@ -255,7 +255,7 @@ const double Runge_Kutta::modifyTimeStep(const cloud_index startIndex, const dou
 			_mm_storel_pd(&low, comp);
 			_mm_storeh_pd(&high, comp);
 			if (isnan(low) || isnan(high))	// if either are too close, reduce time step
-				return modifyTimeStep(j, dist/redFactor, currentTimeStep/redFactor);
+				return modifyTimeStep(j, currentDist/redFactor, currentTimeStep/redFactor);
 
 			// calculate j,i+1 and j+1,i separation distances:
 			vx2 = vx1 - _mm_loadr_pd(px2);
@@ -267,7 +267,7 @@ const double Runge_Kutta::modifyTimeStep(const cloud_index startIndex, const dou
 			_mm_storel_pd(&low, comp);
 			_mm_storeh_pd(&high, comp);
 			if (isnan(low) || isnan(high))	// if either are too close, reduce time step
-				return modifyTimeStep(j, dist/redFactor, currentTimeStep/redFactor);
+				return modifyTimeStep(j, currentDist/redFactor, currentTimeStep/redFactor);
 		}
 	}
     
