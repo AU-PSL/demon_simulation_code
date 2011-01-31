@@ -290,5 +290,5 @@ const double Runge_Kutta::modifyTimeStep(const double currentDist, const double 
 	});
     
 	// reset time step:
-	return currentTimeStep;
+	return timeStep;
 }
