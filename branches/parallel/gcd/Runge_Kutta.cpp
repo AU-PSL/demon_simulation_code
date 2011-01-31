@@ -221,6 +221,7 @@ const double Runge_Kutta::modifyTimeStep(const double currentDist, const double 
 	const cloud_index numPar = cloud->n;
 	const double redFactor = 10.0;
 
+	// __block attribute is only allowed on local variables.
 	__block double dist = currentDist;
 	__block double timeStep = currentTimeStep;
 	
