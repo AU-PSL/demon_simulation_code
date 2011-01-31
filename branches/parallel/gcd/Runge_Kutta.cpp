@@ -32,7 +32,7 @@ void Runge_Kutta::moveParticles(const double endTime)
     
 	while (currentTime < endTime)
 	{
-		const double dt = modifyTimeStep(0, 1.0e-4, init_dt); // implement dynamic timstep (if necessary):
+		const double dt = modifyTimeStep(1.0e-4, init_dt); // implement dynamic timstep (if necessary):
 		const __m128d vdt = _mm_set1_pd(dt); // store timestep as vector const
         
 		operate1(currentTime);
@@ -215,23 +215,31 @@ inline void Runge_Kutta::force4(const double time) const
 * particle spacings are outside the specified distance use the current timestep.
 * This allows fine grain control of reduced timesteps.
 ------------------------------------------------------------------------------*/
-const double Runge_Kutta::modifyTimeStep(const cloud_index startIndex, const double currentDist, const double currentTimeStep) const
+const double Runge_Kutta::modifyTimeStep(const double currentDist, const double currentTimeStep) const
 {
 	// set constants:	
 	const cloud_index numPar = cloud->n;
-	const __m128d distv = _mm_set1_pd(currentDist);
 	const double redFactor = 10.0;
 
+	__block double dist = currentDist;
+	__block double timeStep = currentTimeStep;
+	
 	// loop through entire cloud, or until reduction occures
-	for (cloud_index j = startIndex, e = numPar - 1; j < e; j += 2)
-	{
+	dispatch_apply(cloud->n/2, queue, ^(size_t j) {
+		j *= 2;
+	
+	start:
 		// caculate separation distance b/t adjacent elements:
 		const double sepx = cloud->x[j] - cloud->x[j + 1];
 		const double sepy = cloud->y[j] - cloud->y[j + 1];
 
 		// if particles too close, reduce time step:
-		if (sqrt(sepx*sepx + sepy*sepy) <= currentDist)
-			return modifyTimeStep(j, currentDist/redFactor, currentTimeStep/redFactor);
+		if (sqrt(sepx*sepx + sepy*sepy) <= dist)
+		{
+			dist /= redFactor;
+			timeStep /= redFactor;
+			goto start; // Reduce timestep and distance start over.
+		}
 
 		// load positions into vectors:
 		const __m128d vx1 = cloud->getx1_pd(j);	// x vector
@@ -249,27 +257,37 @@ const double Runge_Kutta::modifyTimeStep(const cloud_index startIndex, const dou
 			__m128d vy2 = vy1 - _mm_load_pd(py2);
            
 			// check separation distances against dist:
-			__m128d comp = _mm_cmple_pd(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), distv);
+			__m128d comp = _mm_cmple_pd(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(dist));
             
 			double low, high;
 			_mm_storel_pd(&low, comp);
 			_mm_storeh_pd(&high, comp);
 			if (isnan(low) || isnan(high))	// if either are too close, reduce time step
-				return modifyTimeStep(j, currentDist/redFactor, currentTimeStep/redFactor);
+			{
+				dist /= redFactor;
+				timeStep /= redFactor;
+				i -= 2; // This iteration needs to be repeated.
+				continue; // Reduce timestep and distance start over.
+			}
 
 			// calculate j,i+1 and j+1,i separation distances:
 			vx2 = vx1 - _mm_loadr_pd(px2);
 			vy2 = vy1 - _mm_loadr_pd(py2);
            
 			// check separation distances against dist: 
-			comp = _mm_cmple_pd(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), distv);
+			comp = _mm_cmple_pd(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(dist));
             
 			_mm_storel_pd(&low, comp);
 			_mm_storeh_pd(&high, comp);
 			if (isnan(low) || isnan(high))	// if either are too close, reduce time step
-				return modifyTimeStep(j, currentDist/redFactor, currentTimeStep/redFactor);
+			{
+				dist /= redFactor;
+				timeStep /= redFactor;
+				i -= 2; // This iteration needs to be repeated.
+				continue; // Reduce timestep and distance start over.
+			}
 		}
-	}
+	});
     
 	// reset time step:
 	return currentTimeStep;
