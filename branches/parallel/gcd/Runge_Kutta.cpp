@@ -265,6 +265,8 @@ const double Runge_Kutta::modifyTimeStep(const double currentDist, const double 
 			{
 				dist /= redFactor;
 				timeStep /= redFactor;
+				i -= 2;
+				continue;
 			}
 
 			// calculate j,i+1 and j+1,i separation distances:
@@ -280,6 +282,8 @@ const double Runge_Kutta::modifyTimeStep(const double currentDist, const double 
 			{
 				dist /= redFactor;
 				timeStep /= redFactor;
+				i -= 2;
+				continue;
 			}
 		}
 	});
