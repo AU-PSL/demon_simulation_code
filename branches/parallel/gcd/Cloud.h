@@ -18,12 +18,11 @@ typedef size_t cloud_index;
 class Cloud
 {	
 public:
-	Cloud(cloud_index numPar, double sizeOfCloud);	//overloaded constructor
+	Cloud(cloud_index numPar);
 	~Cloud();
 
 // public variables:
-	cloud_index n;	// number of elements (particles)
-	double cloudSize;
+	const cloud_index n; // number of elements (particles)
 	double *k1, *k2, *k3, *k4; // velocityX (Runge-Kutta) tidbits
 	double *l1, *l2, *l3, *l4; // positionsX (Runge-Kutta) tidbits
 	double *m1, *m2, *m3, *m4; // velocityY (Runge-Kutta) tidbits
@@ -32,6 +31,8 @@ public:
 	double *charge, *mass;
 	double *forceX, *forceY;
 	__m128d *xCache, *yCache, *VxCache, *VyCache;
+	
+	static const double interParticleSpacing;
 
 // public functions:
 	// Input: int index, initialPosX, intialPosY
@@ -44,15 +45,11 @@ public:
 	// Postconditions: velocity vector of particle #index randomly set
 	void setVelocity(const cloud_index index);
 
-	// Input: int index
-	// Preconditions: 0 <= index < number of particles
 	// Postconditions: charge of particle #index randomly set, range 5900 to 6100 *1.6E-19
-	void setCharge(const cloud_index index);
+	void setCharge();
 
-	// Input: int index
-	// Preconditions: 0 <= index < number of particles
 	// Postconditions: mass of particle #index set according to radius, density
-	void setMass(const cloud_index index);
+	void setMass();
 
 	// Input: fitsfile *file, int *error
 	// Preconditions: fitsfile exists, error = 0
@@ -98,7 +95,7 @@ public:
 	// Input: int numParticles, double cloudSize
 	// Preconditions: both inputs positive
 	// Postconditions: cloud initialized on spatial grid with side length = 2*cloudSize
-	static Cloud * const initializeGrid(const cloud_index numParticles, const double cloudSize);
+	static Cloud * const initializeGrid(const cloud_index numParticles);
 
 	// Input: fitsFile *file, int *error
 	// Preconditions: fitsfile exists, error = 0

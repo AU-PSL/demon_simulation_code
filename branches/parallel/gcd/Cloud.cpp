@@ -13,7 +13,9 @@
 
 using namespace std;
 
-Cloud::Cloud(cloud_index numPar, double sizeOfCloud) : n(numPar), cloudSize(sizeOfCloud),
+const double Cloud::interParticleSpacing = 0.0003;
+
+Cloud::Cloud(cloud_index numPar) : n(numPar),
 k1(new double[n]), k2(new double[n]), k3(new double[n]), k4(new double[n]),
 l1(new double[n]), l2(new double[n]), l3(new double[n]), l4(new double[n]),
 m1(new double[n]), m2(new double[n]), m3(new double[n]), m4(new double[n]),
@@ -49,43 +51,48 @@ inline void Cloud::setVelocity(const cloud_index index)
 	Vy[index] = 0.0;
 }
 
-inline void Cloud::setCharge(const cloud_index index)
+inline void Cloud::setCharge()
 {
-	charge[index] = (rand()%201 + 5900)*1.6E-19;
+	srand((int)time(NULL));
+	for (cloud_index i = 0; i < n; i++)
+		charge[i] = (rand()%201 + 5900)*1.6E-19;
 }
 
-inline void Cloud::setMass(const cloud_index index)
+inline void Cloud::setMass()
 {
 	const double radius = 1.45E-6;
 	const double particleDensity = 2200.0;
-	mass[index] = (4.0/3.0)*M_PI*radius*radius*radius*particleDensity;
+	const double particleMass = (4.0/3.0)*M_PI*radius*radius*radius*particleDensity;
+	for (cloud_index i = 0; i < n; i++)
+		mass[i] = particleMass;
 }
 
-Cloud * const Cloud::initializeGrid(const cloud_index numParticles, const double cloudSize)
+Cloud * const Cloud::initializeGrid(const cloud_index numParticles)
 {
-	Cloud * const cloud = new Cloud(numParticles, cloudSize);
+	Cloud * const cloud = new Cloud(numParticles);
 
-	const double sqrtNumPar = floor(sqrt(numParticles));
-	const double gridUnit = 2.0*cloudSize/sqrtNumPar; // number of particles per row/column
-	double tempPosX = cloudSize; // position of first particle
-	double tempPosY = cloudSize;
-
-	// seed rand function with time(NULL):
-	srand((int)time(NULL)); // needed for Cloud::setCharge
+	const cloud_index sqrtNumPar = (cloud_index)floor(sqrt(numParticles));
+	
+	// For even numbers of partciles on a row center the row over the origin.
+	const double cloudSize = (double)sqrtNumPar/2.0*interParticleSpacing 
+		- ((sqrtNumPar%2) ? interParticleSpacing/2.0 : 0.0); // cloud halfwidth.
+	double tempPosX = cloudSize; // position of first particle.
+	double tempPosY = cloudSize; // position of first particle.
     
 	// initialize dust cloud:
-	for (cloud_index i = 0; i < numParticles; i++)
+	cloud->setCharge();
+	cloud->setMass();
+	for (cloud_index i = 0, j = 0; i < numParticles; i++, j++)
 	{
 		cloud->setPosition(i, tempPosX, tempPosY);
 		cloud->setVelocity(i);
-		cloud->setCharge(i);
-		cloud->setMass(i);
-
-		tempPosX -= gridUnit;
-		if (tempPosX <= -cloudSize) // end of row
+		
+		tempPosX -= interParticleSpacing;
+		if (j == sqrtNumPar - 1) // end of row
 		{
+			j = 0;
 			tempPosX = cloudSize; // reset
-			tempPosY -= gridUnit; // move to next row
+			tempPosY -= interParticleSpacing; // move to next row
 		}
 	}
 
@@ -107,7 +114,7 @@ Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error
 		fits_get_num_rows(file, &numParticles, error);
 
 	// create cloud:
-	Cloud * const cloud = new Cloud((cloud_index)numParticles, 0.0); // cloudSize not used in this case, so set to zero
+	Cloud * const cloud = new Cloud((cloud_index)numParticles);
 
 	// read mass and charge information:
 	if (!*error)
