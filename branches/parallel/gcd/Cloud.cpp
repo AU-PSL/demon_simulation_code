@@ -74,26 +74,17 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles)
 	const cloud_index sqrtNumPar = (cloud_index)floor(sqrt(numParticles));
 	
 	// For even numbers of partciles on a row center the row over the origin.
-	const double cloudSize = (double)sqrtNumPar/2.0*interParticleSpacing 
+	const double cloudHalfSize = (double)sqrtNumPar/2.0*interParticleSpacing 
 		- ((sqrtNumPar%2) ? interParticleSpacing/2.0 : 0.0); // cloud halfwidth.
-	double tempPosX = cloudSize; // position of first particle.
-	double tempPosY = cloudSize; // position of first particle.
-    
-	// initialize dust cloud:
+
 	cloud->setCharge();
 	cloud->setMass();
 	for (cloud_index i = 0, j = 0; i < numParticles; i++, j++)
 	{
-		cloud->setPosition(i, tempPosX, tempPosY);
+		cloud->setPosition(i, 
+			cloudHalfSize - (double)(i%sqrtNumPar)*interParticleSpacing, 
+			cloudHalfSize - (double)(i/sqrtNumPar)*interParticleSpacing);
 		cloud->setVelocity(i);
-		
-		tempPosX -= interParticleSpacing;
-		if (j == sqrtNumPar - 1) // end of row
-		{
-			j = 0;
-			tempPosX = cloudSize; // reset
-			tempPosY -= interParticleSpacing; // move to next row
-		}
 	}
 
 	return cloud;
