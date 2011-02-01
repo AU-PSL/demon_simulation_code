@@ -79,7 +79,7 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles)
 
 	cloud->setCharge();
 	cloud->setMass();
-	for (cloud_index i = 0, j = 0; i < numParticles; i++, j++)
+	for (cloud_index i = 0; i < numParticles; i++)
 	{
 		cloud->setPosition(i, 
 			cloudHalfSize - (double)(i%sqrtNumPar)*interParticleSpacing, 
