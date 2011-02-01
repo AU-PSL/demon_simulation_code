@@ -13,6 +13,8 @@
 
 using namespace std;
 
+const double Cloud::interParticleSpacing = 0.0003;
+
 Cloud::Cloud(cloud_index numPar) : n(numPar),
 k1(new double[n]), k2(new double[n]), k3(new double[n]), k4(new double[n]),
 l1(new double[n]), l2(new double[n]), l3(new double[n]), l4(new double[n]),
@@ -61,29 +63,33 @@ inline void Cloud::setMass(const cloud_index index)
 	mass[index] = (4.0/3.0)*M_PI*radius*radius*radius*particleDensity;
 }
 
-Cloud * const Cloud::initializeGrid(const cloud_index numParticles, const double cloudSize)
+Cloud * const Cloud::initializeGrid(const cloud_index numParticles)
 {
 	Cloud * const cloud = new Cloud(numParticles);
 
-	const double sqrtNumPar = floor(sqrt(numParticles));
-	const double gridUnit = 2.0*cloudSize/sqrtNumPar; // number of particles per row/column
-	double tempPosX = cloudSize; // position of first particle
-	double tempPosY = cloudSize;
+	const cloud_index sqrtNumPar = (cloud_index)floor(sqrt(numParticles));
+	const double gridUnit = interParticleSpacing; // typical interparticle spacing of a plasma crystal.
+	
+	// For even numbers of partciles on a row center the row over the origin.
+	const double cloudSize = (double)sqrtNumPar/2.0*gridUnit - ((sqrtNumPar%2) ? gridUnit/2.0 : 0.0); // cloud halfwidth.
+	double tempPosX = cloudSize; // position of first particle.
+	double tempPosY = cloudSize; // position of first particle.
 
 	// seed rand function with time(NULL):
 	srand((int)time(NULL)); // needed for Cloud::setCharge
     
 	// initialize dust cloud:
-	for (cloud_index i = 0; i < numParticles; i++)
+	for (cloud_index i = 0, j = 0; i < numParticles; i++, j++)
 	{
 		cloud->setPosition(i, tempPosX, tempPosY);
 		cloud->setVelocity(i);
 		cloud->setCharge(i);
 		cloud->setMass(i);
-
+		
 		tempPosX -= gridUnit;
-		if (tempPosX <= -cloudSize) // end of row
+		if (j == sqrtNumPar - 1) // end of row
 		{
+			j = 0;
 			tempPosX = cloudSize; // reset
 			tempPosY -= gridUnit; // move to next row
 		}
