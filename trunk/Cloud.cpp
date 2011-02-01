@@ -68,10 +68,10 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles)
 	Cloud * const cloud = new Cloud(numParticles);
 
 	const cloud_index sqrtNumPar = (cloud_index)floor(sqrt(numParticles));
-	const double gridUnit = interParticleSpacing; // typical interparticle spacing of a plasma crystal.
 	
 	// For even numbers of partciles on a row center the row over the origin.
-	const double cloudSize = (double)sqrtNumPar/2.0*gridUnit - ((sqrtNumPar%2) ? gridUnit/2.0 : 0.0); // cloud halfwidth.
+	const double cloudSize = (double)sqrtNumPar/2.0*interParticleSpacing 
+		- ((sqrtNumPar%2) ? interParticleSpacing/2.0 : 0.0); // cloud halfwidth.
 	double tempPosX = cloudSize; // position of first particle.
 	double tempPosY = cloudSize; // position of first particle.
 
@@ -86,12 +86,12 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles)
 		cloud->setCharge(i);
 		cloud->setMass(i);
 		
-		tempPosX -= gridUnit;
+		tempPosX -= interParticleSpacing;
 		if (j == sqrtNumPar - 1) // end of row
 		{
 			j = 0;
 			tempPosX = cloudSize; // reset
-			tempPosY -= gridUnit; // move to next row
+			tempPosY -= interParticleSpacing; // move to next row
 		}
 	}
 
