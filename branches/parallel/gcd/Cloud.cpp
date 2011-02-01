@@ -10,6 +10,7 @@
 #include "Cloud.h"
 #include <cmath>
 #include <sstream>
+#include <dispatch/dispatch.h>
 
 using namespace std;
 
@@ -54,8 +55,9 @@ inline void Cloud::setVelocity(const cloud_index index)
 inline void Cloud::setCharge()
 {
 	srand((int)time(NULL));
-	for (cloud_index i = 0; i < n; i++)
+	dispatch_apply(n, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(cloud_index i) {
 		charge[i] = (rand()%201 + 5900)*1.6E-19;
+	});
 }
 
 inline void Cloud::setMass()
@@ -63,8 +65,9 @@ inline void Cloud::setMass()
 	const double radius = 1.45E-6;
 	const double particleDensity = 2200.0;
 	const double particleMass = (4.0/3.0)*M_PI*radius*radius*radius*particleDensity;
-	for (cloud_index i = 0; i < n; i++)
+	dispatch_apply(n, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(cloud_index i) {
 		mass[i] = particleMass;
+	});
 }
 
 Cloud * const Cloud::initializeGrid(const cloud_index numParticles)
@@ -79,13 +82,12 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles)
 
 	cloud->setCharge();
 	cloud->setMass();
-	for (cloud_index i = 0; i < numParticles; i++)
-	{
+	dispatch_apply(numParticles, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(cloud_index i) {
 		cloud->setPosition(i, 
 			cloudHalfSize - (double)(i%sqrtNumPar)*interParticleSpacing, 
 			cloudHalfSize - (double)(i/sqrtNumPar)*interParticleSpacing);
 		cloud->setVelocity(i);
-	}
+	});
 
 	return cloud;
 }
