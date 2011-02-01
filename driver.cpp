@@ -455,7 +455,7 @@ int main (int argc, char * const argv[])
 		checkFitsError(error, __LINE__);
 	}
 	else // initialize new cloud on grid:
-		cloud = Cloud::initializeGrid(numParticles, cloudSize);
+		cloud = Cloud::initializeGrid(numParticles);
 
 	// Create a new file if we aren't continueing one.
 	if (!continueFileIndex)

@@ -22,7 +22,7 @@ public:
 	~Cloud();
 
 // public variables:
-	cloud_index n; // number of elements (particles)
+	const cloud_index n; // number of elements (particles)
 	double *k1, *k2, *k3, *k4; // velocityX (Runge-Kutta) tidbits
 	double *l1, *l2, *l3, *l4; // positionsX (Runge-Kutta) tidbits
 	double *m1, *m2, *m3, *m4; // velocityY (Runge-Kutta) tidbits
@@ -31,6 +31,8 @@ public:
 	double *charge, *mass;
 	double *forceX, *forceY;
 	__m128d *xCache, *yCache, *VxCache, *VyCache;
+	
+	static const double interParticleSpacing;
 
 // public functions:
 	// Input: int index, initialPosX, intialPosY
@@ -97,7 +99,7 @@ public:
 	// Input: int numParticles, double cloudSize
 	// Preconditions: both inputs positive
 	// Postconditions: cloud initialized on spatial grid with side length = 2*cloudSize
-	static Cloud * const initializeGrid(const cloud_index numParticles, const double cloudSize);
+	static Cloud * const initializeGrid(const cloud_index numParticles);
 
 	// Input: fitsFile *file, int *error
 	// Preconditions: fitsfile exists, error = 0
