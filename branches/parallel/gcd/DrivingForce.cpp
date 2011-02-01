@@ -19,7 +19,7 @@ DrivingForce::DrivingForce(Cloud * const myCloud, const double drivingConst, con
 void DrivingForce::force1(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	dispatch_apply(cloud->n/2, queue, ^(size_t currentParticle) {
+	dispatch_apply(cloud->n/2, queue, ^(cloud_index currentParticle) {
 		currentParticle *= 2; 
 		force(currentParticle, vtime, cloud->getx1_pd(currentParticle));
 	});
@@ -28,7 +28,7 @@ void DrivingForce::force1(const double currentTime)
 void DrivingForce::force2(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	dispatch_apply(cloud->n/2, queue, ^(size_t currentParticle) {
+	dispatch_apply(cloud->n/2, queue, ^(cloud_index currentParticle) {
 		currentParticle *= 2; 
 		force(currentParticle, vtime, cloud->getx2_pd(currentParticle));
 	});
@@ -37,7 +37,7 @@ void DrivingForce::force2(const double currentTime)
 void DrivingForce::force3(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	dispatch_apply(cloud->n/2, queue, ^(size_t currentParticle) {
+	dispatch_apply(cloud->n/2, queue, ^(cloud_index currentParticle) {
 		currentParticle *= 2; 
 		force(currentParticle, vtime, cloud->getx3_pd(currentParticle));
 	});
@@ -46,7 +46,7 @@ void DrivingForce::force3(const double currentTime)
 void DrivingForce::force4(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	dispatch_apply(cloud->n/2, queue, ^(size_t currentParticle) {
+	dispatch_apply(cloud->n/2, queue, ^(cloud_index currentParticle) {
 		currentParticle *= 2;
 		force(currentParticle, vtime, cloud->getx4_pd(currentParticle));
 	});

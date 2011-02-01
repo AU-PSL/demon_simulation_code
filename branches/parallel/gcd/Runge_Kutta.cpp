@@ -37,7 +37,7 @@ void Runge_Kutta::moveParticles(const double endTime)
         
 		operate1(currentTime);
 		force1(currentTime); // compute net force1
-		dispatch_apply(cloud->n/2, queue, ^(size_t i) {
+		dispatch_apply(cloud->n/2, queue, ^(cloud_index i) {
 			i *= 2;
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass into vector
 
@@ -58,7 +58,7 @@ void Runge_Kutta::moveParticles(const double endTime)
         
 		operate2(currentTime + dt/2.0);
 		force2(currentTime + dt/2.0); // compute net force2
-		dispatch_apply(cloud->n/2, queue, ^(size_t i) {
+		dispatch_apply(cloud->n/2, queue, ^(cloud_index i) {
 			i *= 2;
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
 
@@ -79,7 +79,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 
 		operate3(currentTime + dt/2.0);
 		force3(currentTime + dt/2.0); // compute net force3
-		dispatch_apply(cloud->n/2, queue, ^(size_t i) {
+		dispatch_apply(cloud->n/2, queue, ^(cloud_index i) {
 			i *= 2;
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
 
@@ -100,7 +100,7 @@ void Runge_Kutta::moveParticles(const double endTime)
         
 		operate4(currentTime + dt/2.0);
 		force4(currentTime + dt); // compute net force4
-		dispatch_apply(cloud->n/2, queue, ^(size_t i) {
+		dispatch_apply(cloud->n/2, queue, ^(cloud_index i) {
 			i *= 2;
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
 
@@ -118,7 +118,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 			_mm_store_pd(pFy, _mm_setzero_pd());
 		});
 
-		dispatch_apply(cloud->n/2, queue, ^(size_t i) {
+		dispatch_apply(cloud->n/2, queue, ^(cloud_index i) {
 			i *= 2;
 			// load ith and (i+1)th k's into vectors:
 			const __m128d vk1 = _mm_load_pd(cloud->k1 + i);
@@ -226,7 +226,7 @@ const double Runge_Kutta::modifyTimeStep(const double currentDist, const double 
 	__block double timeStep = currentTimeStep;
 	
 	// loop through entire cloud, or until reduction occures
-	dispatch_apply(cloud->n/2, queue, ^(size_t j) {
+	dispatch_apply(cloud->n/2, queue, ^(cloud_index j) {
 		j *= 2;
 
 		// caculate separation distance b/t adjacent elements:
