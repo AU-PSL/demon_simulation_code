@@ -51,18 +51,20 @@ inline void Cloud::setVelocity(const cloud_index index)
 	Vy[index] = 0.0;
 }
 
-inline void Cloud::setCharge(const cloud_index index)
+inline void Cloud::setCharge()
 {
-	if (index == 0)
-		srand((int)time(NULL));
-	charge[index] = (rand()%201 + 5900)*1.6E-19;
+	srand((int)time(NULL));
+	for (cloud_index i = 0; i < n; i++)
+		charge[i] = (rand()%201 + 5900)*1.6E-19;
 }
 
-inline void Cloud::setMass(const cloud_index index)
+inline void Cloud::setMass()
 {
 	const double radius = 1.45E-6;
 	const double particleDensity = 2200.0;
-	mass[index] = (4.0/3.0)*M_PI*radius*radius*radius*particleDensity;
+	const double particleMass = (4.0/3.0)*M_PI*radius*radius*radius*particleDensity;
+	for (cloud_index i = 0; i < n; i++)
+		mass[i] = particleMass;
 }
 
 Cloud * const Cloud::initializeGrid(const cloud_index numParticles)
@@ -78,12 +80,12 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles)
 	double tempPosY = cloudSize; // position of first particle.
     
 	// initialize dust cloud:
+	cloud->setCharge();
+	cloud->setMass();
 	for (cloud_index i = 0, j = 0; i < numParticles; i++, j++)
 	{
 		cloud->setPosition(i, tempPosX, tempPosY);
 		cloud->setVelocity(i);
-		cloud->setCharge(i);
-		cloud->setMass(i);
 		
 		tempPosX -= interParticleSpacing;
 		if (j == sqrtNumPar - 1) // end of row

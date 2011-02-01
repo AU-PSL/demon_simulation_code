@@ -45,15 +45,11 @@ public:
 	// Postconditions: velocity vector of particle #index randomly set
 	void setVelocity(const cloud_index index);
 
-	// Input: int index
-	// Preconditions: 0 <= index < number of particles
 	// Postconditions: charge of particle #index randomly set, range 5900 to 6100 *1.6E-19
-	void setCharge(const cloud_index index);
+	void setCharge();
 
-	// Input: int index
-	// Preconditions: 0 <= index < number of particles
 	// Postconditions: mass of particle #index set according to radius, density
-	void setMass(const cloud_index index);
+	void setMass();
 
 	// Input: fitsfile *file, int *error
 	// Preconditions: fitsfile exists, error = 0
