@@ -53,6 +53,8 @@ inline void Cloud::setVelocity(const cloud_index index)
 
 inline void Cloud::setCharge(const cloud_index index)
 {
+	if (index == 0)
+		srand((int)time(NULL));
 	charge[index] = (rand()%201 + 5900)*1.6E-19;
 }
 
@@ -74,9 +76,6 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles)
 		- ((sqrtNumPar%2) ? interParticleSpacing/2.0 : 0.0); // cloud halfwidth.
 	double tempPosX = cloudSize; // position of first particle.
 	double tempPosY = cloudSize; // position of first particle.
-
-	// seed rand function with time(NULL):
-	srand((int)time(NULL)); // needed for Cloud::setCharge
     
 	// initialize dust cloud:
 	for (cloud_index i = 0, j = 0; i < numParticles; i++, j++)
