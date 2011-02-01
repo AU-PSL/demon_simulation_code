@@ -13,7 +13,7 @@
 
 using namespace std;
 
-Cloud::Cloud(cloud_index numPar, double sizeOfCloud) : n(numPar), cloudSize(sizeOfCloud),
+Cloud::Cloud(cloud_index numPar) : n(numPar),
 k1(new double[n]), k2(new double[n]), k3(new double[n]), k4(new double[n]),
 l1(new double[n]), l2(new double[n]), l3(new double[n]), l4(new double[n]),
 m1(new double[n]), m2(new double[n]), m3(new double[n]), m4(new double[n]),
@@ -63,7 +63,7 @@ inline void Cloud::setMass(const cloud_index index)
 
 Cloud * const Cloud::initializeGrid(const cloud_index numParticles, const double cloudSize)
 {
-	Cloud * const cloud = new Cloud(numParticles, cloudSize);
+	Cloud * const cloud = new Cloud(numParticles);
 
 	const double sqrtNumPar = floor(sqrt(numParticles));
 	const double gridUnit = 2.0*cloudSize/sqrtNumPar; // number of particles per row/column
@@ -107,7 +107,7 @@ Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error
 		fits_get_num_rows(file, &numParticles, error);
 
 	// create cloud:
-	Cloud * const cloud = new Cloud((cloud_index)numParticles, 0.0); // cloudSize not used in this case, so set to zero
+	Cloud * const cloud = new Cloud((cloud_index)numParticles); // cloudSize not used in this case, so set to zero
 
 	// read mass and charge information:
 	if (!*error)

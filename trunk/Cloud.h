@@ -18,12 +18,11 @@ typedef unsigned int cloud_index;
 class Cloud
 {	
 public:
-	Cloud(cloud_index numPar, double sizeOfCloud);	//overloaded constructor
+	Cloud(cloud_index numPar);
 	~Cloud();
 
 // public variables:
-	cloud_index n;	// number of elements (particles)
-	double cloudSize;
+	cloud_index n; // number of elements (particles)
 	double *k1, *k2, *k3, *k4; // velocityX (Runge-Kutta) tidbits
 	double *l1, *l2, *l3, *l4; // positionsX (Runge-Kutta) tidbits
 	double *m1, *m2, *m3, *m4; // velocityY (Runge-Kutta) tidbits
