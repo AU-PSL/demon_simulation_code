@@ -72,7 +72,7 @@ void help()
 }
 
 // check if force is used or conflicts with a perviously set force.
-void checkForce(force_flags usedForces, const force_index numChecks, ...)
+void checkForce(force_flags &usedForces, const force_index numChecks, ...)
 {
 	va_list arglist;
 	va_start(arglist, numChecks);
@@ -102,6 +102,7 @@ void checkForce(force_flags usedForces, const force_index numChecks, ...)
 	}
 	
 	va_end(arglist);
+	usedForces |= firstFlag;
 }
 
 // check whether character is alphabetical:
@@ -328,7 +329,6 @@ int main (int argc, char * const argv[])
 				break;
 			case 'D': // use TimeVarying"D"ragForce:
 				checkForce(usedForces, 1, 'D', TimeVaryingDragForceFlag);
-				usedForces |= TimeVaryingDragForceFlag;
 				// dragScale needs to allow negative numbers:
 				i = checkOptionWithNeg(argc, argv, i, 'D', "scale factor", &dragScale, "offset", &gamma);
 				break;
@@ -346,7 +346,6 @@ int main (int argc, char * const argv[])
 				exit(0);
 			case 'L': // perform "L"ocalized heating experiment:
 				checkForce(usedForces, 3, 'L', TimeVaryingDragForceFlag, 'T', ThermalForceFlag, 'v', TimeVaryingThermalForceFlag);
-				usedForces |= ThermalForceLocalizedFlag;
 				i = checkOption(argc, argv, i, 'L', "radius", &heatRadius, "heat factor1", &thermRed, "heat factor2", &thermRed1);
 				break;
 			case 'M': // perform "M"ach Cone experiment:
@@ -372,7 +371,6 @@ int main (int argc, char * const argv[])
 				break;		
 			case 'R': // use "R"ectangular confinement:
 				checkForce(usedForces, 1, 'R', RectConfinementForceFlag);
-				usedForces |= RectConfinementForceFlag;
 				i = checkOption(argc, argv, i, 'R', "confine constantX", &confinementConstX, "confine constantY", &confinementConstY);
 				break;
 			case 's': // set "s"hielding constant:
@@ -380,7 +378,6 @@ int main (int argc, char * const argv[])
 				break;
 			case 'S': // create rotational "S"hear layer:
 				checkForce(usedForces, 1, 'S', RotationalForceFlag);
-				usedForces |= RotationalForceFlag;
 				i = checkOption(argc, argv, i, 'S', "force constant", &rotConst, "rmin", &rmin, "rmax", &rmax);
 				break;
 			case 't': // set "t"imestep:
@@ -395,17 +392,14 @@ int main (int argc, char * const argv[])
 				break;
 			case 'T': // set "T"emperature reduction factor:
 				checkForce(usedForces, 3, 'T', ThermalForceFlag, 'L',ThermalForceLocalizedFlag, 'v', TimeVaryingThermalForceFlag);
-				usedForces |= ThermalForceFlag;
 				i = checkOption(argc, argv, i, 'T', "heat factor", &thermRed);
 				break;
 			case 'v': // use time ""arying thermal force:
 				checkForce(usedForces, 3, 'v', TimeVaryingThermalForceFlag, 'L',ThermalForceLocalizedFlag, 'T', ThermalForceFlag);
-				usedForces |= TimeVaryingThermalForceFlag;
 				i = checkOptionWithNeg(argc, argv, i, 'v', "heat value scale", &thermScale, "heat value offset", &thermOffset);
 				break;
 			case 'w': // drive "w"aves:
 				checkForce(usedForces, 1, 'w', DrivingForceFlag);
-				usedForces |= DrivingForceFlag;
 				i = checkOption(argc, argv, i, 'w', "amplitude", &waveAmplitude, "wave shift", &waveShift, "driving constant", &driveConst);
 				break;
 			default: // Handle unknown options by issuing error.
