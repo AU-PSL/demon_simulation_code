@@ -22,10 +22,18 @@
 #include <ctime>
 #include <iostream>
 #include <cstdarg>
+#include <cassert>
 using namespace std;
 
 #define clear_line "\33[2K" // VT100 signal to clear line.
 typedef int file_index;
+
+enum clFlagType
+{
+	CI, // Cloud Index
+	D, // Double
+	F // File index
+};
 
 void help()
 {
@@ -80,7 +88,8 @@ void checkForce(force_flags &usedForces, const force_index numChecks, ...)
 	const char firstOption = (char)va_arg(arglist, int);
 	const ForceFlag firstFlag = (ForceFlag)va_arg(arglist, int);
 	
-	if (usedForces & firstFlag) {
+	if (usedForces & firstFlag) 
+	{
 		cout << "Error: option -" << firstOption << " already set." << endl;
 		help();
 		va_end(arglist);
@@ -105,103 +114,80 @@ void checkForce(force_flags &usedForces, const force_index numChecks, ...)
 	usedForces |= firstFlag;
 }
 
-// check whether character is alphabetical:
-inline const bool isCharacter(const char c)
+bool isUnsigned(const char *val)
 {
-	return (c > 'a' && c < 'z') || (c > 'A' && c < 'Z');
+	for (const char *c = val; *c != '\0'; c++)
+		if (*c < '0' || *c > '9')
+			return false;
+	return true;
 }
 
-// check file name options
-int checkFileOption(const int argc, char * const argv[], int i, const char option,
-                    const string name, file_index * const file)
+bool isDouble(const char *val)
 {
-	if (i + 1 >= argc || argv[i + 1][0] == '-') {
-		cout << "Warning: -" << option << " option incomplete." << endl 
-		<< name << " missing." << endl;
-		help();
-		exit(i);
-	}
-	else
-		*file = ++i;
-	return i;
+	for (const char *c = val; *c != '\0'; c++)
+		if ((*c < '0' || *c > '9') && *c != 'e' && *c != 'E' && *c != '.' && *c != '-')
+			return false;
+	return true;
 }
 
-// check for one command line flag, use default value if absent:
-int checkOption(const int argc, char * const argv[], int i, const char option, 
-                const string name, cloud_index * const value)
+bool isOption(const char *val)
 {
-	if (i + 1 >= argc || argv[i + 1][0] == '-')
-		cout << "Warning: -" << option << " option incomplete." << endl 
-		<< "Using default " << name << " (" << *value << ")." << endl;
-	else
-		*value = atoi(argv[++i]);
-	return i;
+	return val[0] == '-' && val[2] == '\0';
 }
 
-// check for one command line flag, use default value if absent:
-int checkOption(const int argc, char * const argv[], int i, const char option, 
-                const string name, double * const value)
+template <typename T>
+void optionWarning(const char option, const char *name, const T val)
 {
-	if (i + 1 >= argc || argv[i + 1][0] == '-')
-		cout << "Warning: -" << option << " option incomplete." << endl 
-		<< "Using default " << name << " (" << *value << ")." << endl;
-	else
-		*value = atof(argv[++i]);
-	return i;
+	cout << "Warning: -" << option << " option incomplete. Using default " 
+	<< name << " (" << val << ")." << endl;
 }
 
-// check for two command line flags, use default values if absent:
-int checkOption(const int argc, char * const argv[], int i, const char option, 
-                const string name1, double * const value1, 
-                const string name2, double * const value2)
+// Check commandline options. Use defaults if values are missing.
+void checkOption(const int argc, char * const argv[], int &optionIndex, const char option, unsigned numOptions, ...)
 {
-	if (i + 1 >= argc || argv[i + 1][0] == '-')
-		cout << "Warning: -" << option << " option incomplete." << endl
-		<< "Using default "<< name1 << " (" << *value1 << ") and " 
-		<< name2 << " (" << *value2 << ")." << endl;
-	else
+	++optionIndex;
+	va_list arglist;
+	va_start(arglist, numOptions);
+	
+	for (unsigned int i = 0; i < numOptions; i++)
 	{
-		*value1 = atof(argv[++i]);
-		i = checkOption(argc, argv, i, option, name2, value2);
+		const char *name = va_arg(arglist, char *);
+		const clFlagType type = (clFlagType)va_arg(arglist, int);
+		void *val = va_arg(arglist, void *);
+		
+		switch (type) {
+			case CI: 
+			{
+				cloud_index *ci = (cloud_index *)val;
+				if (optionIndex < argc && isUnsigned(argv[optionIndex]))
+					*ci = atoi(argv[optionIndex++]);
+				else
+					optionWarning<cloud_index> (option, name, *ci);
+				break;
+			}
+			case D:
+			{
+				double *d = (double *)val;
+				if (optionIndex < argc && isDouble(argv[optionIndex]))
+					*d = atoi(argv[optionIndex++]);
+				else
+					optionWarning<double> (option, name, *d);
+				break;
+			}
+			case F:
+			{
+				const char *defaultFileName = va_arg(arglist, char *);
+				file_index *fi = (file_index *)val;
+				if (optionIndex < argc && !isDouble(argv[optionIndex]) && !isUnsigned(argv[optionIndex]) && !isOption(argv[optionIndex]))
+					*fi = optionIndex++;
+				else
+					optionWarning<const char *> (option, name, defaultFileName);
+				break;
+			}
+			default:
+				assert("Undefined Argument Type");
+		}
 	}
-	return i;
-}
-
-// check for three command line flags, use default values if absent:
-int checkOption(const int argc, char * const argv[], int i, const char option, 
-                const string name1, double * const value1, 
-                const string name2, double * const value2, 
-                const string name3, double * const value3)
-{
-	if (i + 1 >= argc || argv[i + 1][0] == '-')
-		cout << "Warning: -" << option << " option incomplete." << endl 
-		<< "Using default "<< name1 << " (" << *value1 << "), " 
-		<< name2 << " (" << *value2 << ") and " 
-		<< name3 << " (" << *value3 << ")." << endl;
-	else
-	{
-		*value1 = atof(argv[++i]);
-		i = checkOption(argc, argv, i, option, name2, value2, name3, value3);
-	}
-	return i;
-}
-
-// check for two command line flags in the case of a negative argument, use 
-// default values if absent:
-int checkOptionWithNeg(const int argc, char * const argv[], int i, const char option, 
-                       const string name1, double * const value1, 
-                       const string name2, double * const value2)
-{
-	if (i + 1 >= argc || (argv[i + 1][0] == '-' && isCharacter(argv[i + 1][1])))
-		cout << "Warning: -" << option << " option incomplete." << endl 
-		<< "Using default " << name1 << " (" << *value1 << ") and " 
-		<< name2 << " (" << *value2 << ")." << endl << endl;
-	else
-	{
-		*value1 = atof(argv[++i]);
-		i = checkOption(argc, argv, i, option, name2, value2);
-	}
-	return i;
 }
 
 // count number of forces in use:
@@ -322,85 +308,82 @@ int main (int argc, char * const argv[])
 		switch (argv[i][1])
 		{
 			case 'c': // "c"ontinue from file:
-				i = checkFileOption(argc, argv, i, 'c', "Contine file", &continueFileIndex);
+				checkOption(argc, argv, i, 'c', 1, "contine file", F, &continueFileIndex, "");
 				break;
 			case 'C': // set "C"onfinementConst:
-				i = checkOption(argc, argv, i, 'C', "confinementConst", &confinementConst);
+				checkOption(argc, argv, i, 'C', 1, "confinementConst", D, &confinementConst);
 				break;
 			case 'D': // use TimeVarying"D"ragForce:
 				checkForce(usedForces, 1, 'D', TimeVaryingDragForceFlag);
-				// dragScale needs to allow negative numbers:
-				i = checkOptionWithNeg(argc, argv, i, 'D', "scale factor", &dragScale, "offset", &gamma);
+				checkOption(argc, argv, i, 'D', 2, "scale factor", D, &dragScale, "offset", D, &gamma);
 				break;
 			case 'e': // set "e"nd time:
-				i = checkOption(argc, argv, i, 'e', "end time", &endTime);
+				checkOption(argc, argv, i, 'e', 1, "end time", D, &endTime);
 				break;		
 			case 'f': // use "f"inal positions and velocities from previous run:
-				i = checkFileOption(argc, argv, i, 'f', "Finals file", &finalsFileIndex);
+				checkOption(argc, argv, i, 'f', 1, "finals file", F, &finalsFileIndex, "");
 				break;
 			case 'g': // set "g"amma:
-				i = checkOption(argc, argv, i, 'g', "gamma", &gamma);
+				checkOption(argc, argv, i, 'g', 1, "gamma", D, &gamma);
 				break;
 			case 'h': // display "h"elp:
 				help();
 				exit(0);
 			case 'L': // perform "L"ocalized heating experiment:
 				checkForce(usedForces, 3, 'L', TimeVaryingDragForceFlag, 'T', ThermalForceFlag, 'v', TimeVaryingThermalForceFlag);
-				i = checkOption(argc, argv, i, 'L', "radius", &heatRadius, "heat factor1", &thermRed, "heat factor2", &thermRed1);
+				checkOption(argc, argv, i, 'L', 3, "radius", D, &heatRadius, "heat factor1", D, &thermRed, "heat factor2", D, &thermRed1);
 				break;
 			case 'M': // perform "M"ach Cone experiment:
 				Mach = true;
-				i = checkOption(argc, argv, i, 'M', "velocity", &machSpeed, "mass", &massFactor);
+				checkOption(argc, argv, i, 'M', 2, "velocity", D, &machSpeed, "mass", D, &massFactor);
 				break;
 			case 'n': // set "n"umber of particles:
-				i = checkOption(argc, argv, i, 'n', "number of particles", &numParticles);
-				if ((numParticles % 2) != 0)	// odd
-				{
-					cout << "Even number of particles required for SIMD." << endl 
-					<< "Incrementing number of particles to " << ++numParticles << endl;
-				}
+				checkOption(argc, argv, i, 'n', 1, "number of particles", CI, &numParticles);
+				if (numParticles%2) // odd
+					cout << "Warning: -n requires even number of particles. Incrementing number of particles to (" 
+					<< ++numParticles << ")." << endl;
 				break;
 			case 'o': // set dataTimeStep, which conrols "o"utput rate:
-				checkOption(argc, argv, i, 'o', "data time step", &dataTimeStep);
+				checkOption(argc, argv, i, 'o', 1, "data time step", D, &dataTimeStep);
 				break;
 			case 'O': // name "O"utput file:
-				i = checkFileOption(argc, argv, i, 'O', "Output file", &outputFileIndex);
+				checkOption(argc, argv, i, 'O', 1, "output file", F, &outputFileIndex, "data.fits");
 				break;
+			 // FIXME: Consider Removing this option
 			case 'r': // set cloud "r"adius:
-				i = checkOption(argc, argv, i, 'r', "cloud size", &cloudSize);
+				checkOption(argc, argv, i, 'r', 1, "cloud size", D, &cloudSize);
 				break;		
 			case 'R': // use "R"ectangular confinement:
 				checkForce(usedForces, 1, 'R', RectConfinementForceFlag);
-				i = checkOption(argc, argv, i, 'R', "confine constantX", &confinementConstX, "confine constantY", &confinementConstY);
+				checkOption(argc, argv, i, 'R', 2, "confine constantX", D, &confinementConstX, "confine constantY", D, &confinementConstY);
 				break;
 			case 's': // set "s"hielding constant:
-				checkOption(argc, argv, i, 's', "shielding constant", &shieldingConstant);
+				checkOption(argc, argv, i, 's', 1, "shielding constant", D, &shieldingConstant);
 				break;
 			case 'S': // create rotational "S"hear layer:
 				checkForce(usedForces, 1, 'S', RotationalForceFlag);
-				i = checkOption(argc, argv, i, 'S', "force constant", &rotConst, "rmin", &rmin, "rmax", &rmax);
+				checkOption(argc, argv, i, 'S', 3, "force constant", D, &rotConst, "rmin", D, &rmin, "rmax", D, &rmax);
 				break;
 			case 't': // set "t"imestep:
-				i = checkOption(argc, argv, i, 't', "time step", &simTimeStep);
+				checkOption(argc, argv, i, 't', 1, "time step", D, &simTimeStep);
 				if (simTimeStep == 0.0) // prevent divide-by-zero error
 				{
-					cout << "Error: simTimeStep set to 0.0 with -t." << endl 
-					<< "Terminating to prevent divide-by-zero." << endl;
+					cout << "Error: simTimeStep set to 0.0 with -t. Terminating to prevent divide-by-zero." << endl;
 					help();
 					exit(1);
 				}
 				break;
 			case 'T': // set "T"emperature reduction factor:
 				checkForce(usedForces, 3, 'T', ThermalForceFlag, 'L',ThermalForceLocalizedFlag, 'v', TimeVaryingThermalForceFlag);
-				i = checkOption(argc, argv, i, 'T', "heat factor", &thermRed);
+				checkOption(argc, argv, i, 'T', 1, "heat factor", D, &thermRed);
 				break;
 			case 'v': // use time ""arying thermal force:
 				checkForce(usedForces, 3, 'v', TimeVaryingThermalForceFlag, 'L',ThermalForceLocalizedFlag, 'T', ThermalForceFlag);
-				i = checkOptionWithNeg(argc, argv, i, 'v', "heat value scale", &thermScale, "heat value offset", &thermOffset);
+				checkOption(argc, argv, i, 'v', 2, "heat value scale", D, &thermScale, "heat value offset", D, &thermOffset);
 				break;
 			case 'w': // drive "w"aves:
 				checkForce(usedForces, 1, 'w', DrivingForceFlag);
-				i = checkOption(argc, argv, i, 'w', "amplitude", &waveAmplitude, "wave shift", &waveShift, "driving constant", &driveConst);
+				checkOption(argc, argv, i, 'w', 3, "amplitude", D, &waveAmplitude, "wave shift", D, &waveShift, "driving constant", D, &driveConst);
 				break;
 			default: // Handle unknown options by issuing error.
 				cout << "Error: Unknown option " << argv[i] << endl;
