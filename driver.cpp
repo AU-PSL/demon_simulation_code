@@ -216,9 +216,11 @@ void checkOption(const int argc, char * const argv[], int &optionIndex, const ch
 				break;
 			}
 			default:
+				va_end(arglist);
 				assert("Undefined Argument Type");
 		}
 	}
+	va_end(arglist);
 }
 
 void parseCommandLineOptions(int argc, char * const argv[])
