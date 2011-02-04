@@ -31,8 +31,8 @@ typedef int file_index;
 enum clFlagType
 {
 	CI, // Cloud Index
-	D, // Double
-	F // File index
+	D,  // Double
+	F   // File index
 };
 
 bool Mach = false;                  // true -> perform Mach Cone experiment
@@ -382,11 +382,6 @@ void fitsFileExists(char * const filename, int * const error) {
 int main (int argc, char * const argv[]) 
 {
 	time_t timer = time(NULL); // start timer
-
-	// object declarations:
-	Cloud *cloud;
-	Force **forceArray; // new pointer to Force object (will set to array)
-	
 	parseCommandLineOptions(argc, argv);
 
 	if (!(usedForces & TimeVaryingDragForceFlag))
@@ -403,6 +398,7 @@ int main (int argc, char * const argv[])
 	// declare fits file and error:
 	fitsfile *file = NULL;
 	int error = 0;
+	Cloud *cloud;
 
 	if (continueFileIndex)
 	{
@@ -473,7 +469,8 @@ int main (int argc, char * const argv[])
 	cout << "Status: Initializing forces." << endl;
     
 	const force_index numForces = getNumForces();
-	forceArray = new Force*[numForces];
+	Force **forceArray = new Force*[numForces];
+	
 	force_index index = 0;
 	if (usedForces & ConfinementForceFlag)
 		forceArray[index++] = new ConfinementForce(cloud, confinementConst);
