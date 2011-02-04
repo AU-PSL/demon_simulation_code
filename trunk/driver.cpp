@@ -366,12 +366,6 @@ int main (int argc, char * const argv[])
 				break;
 			case 't': // set "t"imestep:
 				checkOption(argc, argv, i, 't', 1, "time step", D, &simTimeStep);
-				if (simTimeStep == 0.0) // prevent divide-by-zero error
-				{
-					cout << "Error: simTimeStep set to 0.0 with -t. Terminating to prevent divide-by-zero." << endl;
-					help();
-					exit(1);
-				}
 				break;
 			case 'T': // set "T"emperature reduction factor:
 				checkForce(usedForces, 3, 'T', ThermalForceFlag, 'L',ThermalForceLocalizedFlag, 'v', TimeVaryingThermalForceFlag);
