@@ -23,6 +23,7 @@
 #include <iostream>
 #include <cstdarg>
 #include <cassert>
+#include <cctype>
 using namespace std;
 
 #define clear_line "\33[2K" // VT100 signal to clear line.
@@ -50,8 +51,8 @@ double thermRed = 1E-14;            // default thermal reduction factor
 double thermRed1 = thermRed;        // default outer reduction factor (-L)
 double thermScale = 1E-14;          // default for TimeVaryingThermalForce
 double thermOffset = 0.0;           // default for TimeVaryingThermalForce
-double heatRadius = .001;           // apply thermal force only within this radius
-double driveConst = .00001;         // used in DrivingForce.cpp for waves
+double heatRadius = 0.001;          // apply thermal force only within this radius
+double driveConst = 0.00001;        // used in DrivingForce.cpp for waves
 double waveAmplitude = 1E-13;       // driving wave amplitude (default comparable to other forces throughout cloud)
 double waveShift = 0.007;           // driving wave shift
 double machSpeed = 0.2;             // firing speed for Mach Cone experiment
@@ -148,7 +149,7 @@ void checkForce(const force_index numChecks, ...)
 bool isUnsigned(const char *val)
 {
 	for (const char *c = val; *c != '\0'; c++)
-		if (*c < '0' || *c > '9')
+		if (!isdigit(*c))
 			return false;
 	return true;
 }
@@ -156,14 +157,14 @@ bool isUnsigned(const char *val)
 bool isDouble(const char *val)
 {
 	for (const char *c = val; *c != '\0'; c++)
-		if ((*c < '0' || *c > '9') && *c != 'e' && *c != 'E' && *c != '.' && *c != '-')
+		if (!isdigit(*c) && *c != 'e' && *c != 'E' && *c != '.' && *c != '-')
 			return false;
 	return true;
 }
 
 bool isOption(const char *val)
 {
-	return val[0] == '-' && val[2] == '\0';
+	return val[0] == '-' && isalpha(val[1]) && val[2] == '\0';
 }
 
 template <typename T>
@@ -199,7 +200,7 @@ void checkOption(const int argc, char * const argv[], int &optionIndex, const ch
 			case D:
 			{
 				double *d = (double *)val;
-				if (optionIndex < argc && isDouble(argv[optionIndex]))
+				if (optionIndex < argc && !isOption(argv[optionIndex]) && isDouble(argv[optionIndex]))
 					*d = atoi(argv[optionIndex++]);
 				else
 					optionWarning<double> (option, name, *d);
@@ -209,7 +210,7 @@ void checkOption(const int argc, char * const argv[], int &optionIndex, const ch
 			{
 				const char *defaultFileName = va_arg(arglist, char *);
 				file_index *fi = (file_index *)val;
-				if (optionIndex < argc && !isDouble(argv[optionIndex]) && !isUnsigned(argv[optionIndex]) && !isOption(argv[optionIndex]))
+				if (optionIndex < argc && !isOption(argv[optionIndex]) && !isDouble(argv[optionIndex]) && !isUnsigned(argv[optionIndex]))
 					*fi = optionIndex++;
 				else
 					optionWarning<const char *> (option, name, defaultFileName);
@@ -225,7 +226,9 @@ void checkOption(const int argc, char * const argv[], int &optionIndex, const ch
 
 void parseCommandLineOptions(int argc, char * const argv[])
 {
-	for (int i = 1; i < argc; i++) // argv[0] is the name of the exicutable.
+	// argv[0] is the name of the exicutable. Increment is not needed since the
+	// checkOption increments i internally.
+	for (int i = 1; i < argc;)
 	{
 		switch (argv[i][1])
 		{
