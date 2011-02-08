@@ -201,7 +201,7 @@ void checkOption(const int argc, char * const argv[], int &optionIndex, const ch
 			{
 				double *d = (double *)val;
 				if (optionIndex < argc && !isOption(argv[optionIndex]) && isDouble(argv[optionIndex]))
-					*d = atoi(argv[optionIndex++]);
+					*d = atof(argv[optionIndex++]);
 				else
 					optionWarning<double> (option, name, *d);
 				break;
