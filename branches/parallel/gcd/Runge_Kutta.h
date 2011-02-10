@@ -39,6 +39,7 @@ private:
 	const operator_index numOperators;
 	Operator ** const operations;
 	dispatch_queue_t queue;
+	dispatch_semaphore_t sema;
     
 // private functions:
 	void operate1(const double currentTime) const; // rk substep 1

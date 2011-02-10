@@ -17,7 +17,8 @@ using namespace std;
 
 Runge_Kutta::Runge_Kutta(Cloud * const myCloud, Force **forces, const double timeStep, const force_index forcesSize, const double startTime)
 : cloud(myCloud), theForce(forces), numForces(forcesSize), init_dt(timeStep), currentTime(startTime), 
-numOperators(1), operations(new Operator*[numOperators]), queue(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0))
+numOperators(1), operations(new Operator*[numOperators]), queue(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)),
+sema(dispatch_semaphore_create(1))
 {
 	// Operators are order dependent.
 	operations[0] = new PositionVelocityCacheOperator(cloud);
@@ -26,6 +27,7 @@ numOperators(1), operations(new Operator*[numOperators]), queue(dispatch_get_glo
 Runge_Kutta::~Runge_Kutta()
 {
 	dispatch_release(queue);
+	dispatch_release(sema);
 }
 
 // 4th order Runge-Kutta algorithm:
@@ -241,8 +243,13 @@ const double Runge_Kutta::modifyTimeStep(const double currentDist, const double 
 		// if particles too close, reduce time step:
 		while (sqrt(sepx*sepx + sepy*sepy) <= dist)
 		{
-			dist /= redFactor;
-			timeStep /= redFactor;
+			// Only one thread should modify the distance and timesStep at a time.
+			dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
+			// Retest condition to make sure a different thread hasn't already reduced.
+			if (sqrt(sepx*sepx + sepy*sepy) <= dist)
+				dist /= redFactor;
+				timeStep /= redFactor;
+			dispatch_semaphore_signal(sema);
 		}
 
 		// load positions into vectors:
@@ -268,8 +275,13 @@ const double Runge_Kutta::modifyTimeStep(const double currentDist, const double 
 			_mm_storeh_pd(&high, comp);
 			while (isnan(low) || isnan(high))	// if either are too close, reduce time step
 			{
-				dist /= redFactor;
+				// Only one thread should modify the distance and timesStep at a time.
+				dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
+				// Retest condition to make sure a different thread hasn't already reduced.
+				if (sqrt(sepx*sepx + sepy*sepy) <= dist)
+					dist /= redFactor;
 				timeStep /= redFactor;
+				dispatch_semaphore_signal(sema);
 				i -= 2;
 				continue;
 			}
@@ -285,8 +297,13 @@ const double Runge_Kutta::modifyTimeStep(const double currentDist, const double 
 			_mm_storeh_pd(&high, comp);
 			while (isnan(low) || isnan(high))	// if either are too close, reduce time step
 			{
-				dist /= redFactor;
+				// Only one thread should modify the distance and timesStep at a time.
+				dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
+				// Retest condition to make sure a different thread hasn't already reduced.
+				if (sqrt(sepx*sepx + sepy*sepy) <= dist)
+					dist /= redFactor;
 				timeStep /= redFactor;
+				dispatch_semaphore_signal(sema);
 				i -= 2;
 				continue;
 			}
