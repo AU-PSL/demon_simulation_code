@@ -13,53 +13,85 @@
 #include "VectorCompatibility.h"
 
 ThermalForce::ThermalForce(Cloud * const myCloud, const double redFactor) 
-: Force(myCloud), mt(time(NULL)), semaphore(dispatch_semaphore_create(1)), heatVal(redFactor) {}
+: Force(myCloud), mt(time(NULL)), evenRandCache(new RandCache[myCloud->n/2]), 
+oddRandCache(new RandCache[myCloud->n/2]),
+evenRandGroup(dispatch_group_create()), oddRandGroup(dispatch_group_create()),
+randQueue(dispatch_queue_create("com.DEMON.ThermalForce", NULL)), 
+heatVal(redFactor) 
+{
+	dispatch_group_async(oddRandGroup, randQueue, ^{
+		for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
+			oddRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+	});
+}
 
 ThermalForce::~ThermalForce()
 {
-	dispatch_release(semaphore);
+	delete[] evenRandCache;
+	delete[] oddRandCache;
+	dispatch_release(evenRandGroup);
+	dispatch_release(oddRandGroup);
+	dispatch_release(randQueue);
 }
 
 void ThermalForce::force1(const double currentTime)
 {
+	dispatch_group_async(evenRandGroup, randQueue, ^{
+		for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
+			evenRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+	});
+	
+	dispatch_group_wait(oddRandGroup, DISPATCH_TIME_FOREVER);
 	dispatch_apply(cloud->n/2, queue, ^(cloud_index currentParticle) {
-		currentParticle *= 2; 
-		force(currentParticle);
+		force(currentParticle*2, oddRandCache[currentParticle]);
 	});
 }
 
 void ThermalForce::force2(const double currentTime)
 {
+	dispatch_group_async(oddRandGroup, randQueue, ^{
+		for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
+			oddRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+	});
+	
+	dispatch_group_wait(evenRandGroup, DISPATCH_TIME_FOREVER);
 	dispatch_apply(cloud->n/2, queue, ^(cloud_index currentParticle) {
-		currentParticle *= 2; 
-		force(currentParticle);
+		force(currentParticle*2, evenRandCache[currentParticle]);
 	});
 }
 
 void ThermalForce::force3(const double currentTime)
 {
+	dispatch_group_async(evenRandGroup, randQueue, ^{
+		for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
+			evenRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+	});
+	
+	dispatch_group_wait(oddRandGroup, DISPATCH_TIME_FOREVER);
 	dispatch_apply(cloud->n/2, queue, ^(cloud_index currentParticle) {
-		currentParticle *= 2; 
-		force(currentParticle);
+		force(currentParticle*2, oddRandCache[currentParticle]);
 	});
 }
 
 void ThermalForce::force4(const double currentTime)
 {
+	dispatch_group_async(oddRandGroup, randQueue, ^{
+		for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
+			oddRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+	});
+	
+	dispatch_group_wait(evenRandGroup, DISPATCH_TIME_FOREVER);
 	dispatch_apply(cloud->n/2, queue, ^(cloud_index currentParticle) {
-		currentParticle *= 2; 
-		force(currentParticle);
+		force(currentParticle*2, evenRandCache[currentParticle]);
 	});
 }
 
-inline void ThermalForce::force(const cloud_index currentParticle)
+inline void ThermalForce::force(const cloud_index currentParticle, const RandCache &rc)
 {	
 	// MT random number in (0,1)
-	dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-	const __m128d thermV = _mm_set1_pd(heatVal)*_mm_set_pd(mt(), mt());
-	const double thetaL = mt()*2.0*M_PI;
-	const double thetaH = mt()*2.0*M_PI;
-	dispatch_semaphore_signal(semaphore);
+	const __m128d thermV = _mm_set1_pd(heatVal)*rc.r;
+	const double thetaL = rc.l*2.0*M_PI;
+	const double thetaH = rc.h*2.0*M_PI;
 	
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;

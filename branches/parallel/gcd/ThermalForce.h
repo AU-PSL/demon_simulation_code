@@ -30,12 +30,26 @@ public:
 	virtual void readForce(fitsfile * const file, int * const error);
 
 private:
+// privare class
+	class RandCache {
+	public:
+		__m128d r;
+		double l, h;
+		
+		RandCache(const __m128d r_ = _mm_set1_pd(0.0), 
+		          const double l_ = 0.0, const double h_ = 0.0) 
+		: r(r_), l(l_), h(h_) {}
+	};
+	
 // private variables:
 	MTRand mt;
-	dispatch_semaphore_t semaphore;
-
+	
+	RandCache *evenRandCache, *oddRandCache;
+	dispatch_group_t evenRandGroup, oddRandGroup;
+	dispatch_queue_t randQueue;
+		
 // private functions:
-	void force(const cloud_index currentParticle);
+	void force(const cloud_index currentParticle, const RandCache &rc);
 
 protected:
 // protected variables:
