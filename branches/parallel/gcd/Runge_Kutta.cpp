@@ -23,6 +23,11 @@ numOperators(1), operations(new Operator*[numOperators]), queue(dispatch_get_glo
 	operations[0] = new PositionVelocityCacheOperator(cloud);
 }
 
+Runge_Kutta::~Runge_Kutta()
+{
+	dispatch_release(queue);
+}
+
 // 4th order Runge-Kutta algorithm:
 void Runge_Kutta::moveParticles(const double endTime)
 {
