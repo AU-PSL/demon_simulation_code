@@ -246,9 +246,11 @@ const double Runge_Kutta::modifyTimeStep(const double currentDist, const double 
 			// Only one thread should modify the distance and timesStep at a time.
 			dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
 			// Retest condition to make sure a different thread hasn't already reduced.
-			if (sqrt(sepx*sepx + sepy*sepy) <= dist)
+			if (sqrt(sepx*sepx + sepy*sepy) <= dist) 
+			{
 				dist /= redFactor;
 				timeStep /= redFactor;
+			}
 			dispatch_semaphore_signal(sema);
 		}
 
@@ -279,8 +281,10 @@ const double Runge_Kutta::modifyTimeStep(const double currentDist, const double 
 				dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
 				// Retest condition to make sure a different thread hasn't already reduced.
 				if (sqrt(sepx*sepx + sepy*sepy) <= dist)
+				{
 					dist /= redFactor;
-				timeStep /= redFactor;
+					timeStep /= redFactor;
+				}
 				dispatch_semaphore_signal(sema);
 				i -= 2;
 				continue;
@@ -301,8 +305,10 @@ const double Runge_Kutta::modifyTimeStep(const double currentDist, const double 
 				dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
 				// Retest condition to make sure a different thread hasn't already reduced.
 				if (sqrt(sepx*sepx + sepy*sepy) <= dist)
+				{
 					dist /= redFactor;
-				timeStep /= redFactor;
+					timeStep /= redFactor;
+				}
 				dispatch_semaphore_signal(sema);
 				i -= 2;
 				continue;
