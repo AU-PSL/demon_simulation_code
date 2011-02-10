@@ -12,9 +12,8 @@
 #include <ctime>
 #include "VectorCompatibility.h"
 
-ThermalForce::ThermalForce(Cloud * const myCloud, const double redFactor) 
-: Force(myCloud), mt(time(NULL)), evenRandCache(new RandCache[myCloud->n/2]), 
-oddRandCache(new RandCache[myCloud->n/2]),
+ThermalForce::ThermalForce(Cloud * const myCloud, const double redFactor) : Force(myCloud), mt(time(NULL)), 
+evenRandCache(new RandCache[myCloud->n/2]), oddRandCache(new RandCache[myCloud->n/2]), 
 evenRandGroup(dispatch_group_create()), oddRandGroup(dispatch_group_create()),
 randQueue(dispatch_queue_create("com.DEMON.ThermalForce", NULL)), 
 heatVal(redFactor) 
