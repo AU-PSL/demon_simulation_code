@@ -373,7 +373,7 @@ void deleteFitsFile(char * const filename, int * const error)
 void fitsFileExists(char * const filename, int * const error) {
     int exists = 0;
     fits_file_exists(filename, &exists, error);
-    if (exists != 1)
+    if (!exists)
     {
         cout << "Error: Fits file \"" << filename << "\" does not exist." << endl;
         help();
