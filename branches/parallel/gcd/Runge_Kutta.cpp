@@ -268,14 +268,15 @@ const double Runge_Kutta::modifyTimeStep(const double currentDist, const double 
 			// calculate j,i and j+1,i+1 separation distances:
 			__m128d vx2 = vx1 - _mm_load_pd(px2);
 			__m128d vy2 = vy1 - _mm_load_pd(py2);
-           
+			
+		recheck1:
 			// check separation distances against dist:
 			__m128d comp = _mm_cmple_pd(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(dist));
             
 			double low, high;
 			_mm_storel_pd(&low, comp);
 			_mm_storeh_pd(&high, comp);
-			while (isnan(low) || isnan(high))	// if either are too close, reduce time step
+			if (isnan(low) || isnan(high))	// if either are too close, reduce time step
 			{
 				// Only one thread should modify the distance and timesStep at a time.
 				dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
@@ -286,20 +287,20 @@ const double Runge_Kutta::modifyTimeStep(const double currentDist, const double 
 					timeStep /= redFactor;
 				}
 				dispatch_semaphore_signal(sema);
-				i -= 2;
-				continue;
+				goto recheck1;
 			}
 
 			// calculate j,i+1 and j+1,i separation distances:
 			vx2 = vx1 - _mm_loadr_pd(px2);
 			vy2 = vy1 - _mm_loadr_pd(py2);
            
-			// check separation distances against dist: 
+		recheck2:
+			// check separation distances against dist:
 			comp = _mm_cmple_pd(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(dist));
             
 			_mm_storel_pd(&low, comp);
 			_mm_storeh_pd(&high, comp);
-			while (isnan(low) || isnan(high))	// if either are too close, reduce time step
+			if (isnan(low) || isnan(high))	// if either are too close, reduce time step
 			{
 				// Only one thread should modify the distance and timesStep at a time.
 				dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
@@ -310,8 +311,7 @@ const double Runge_Kutta::modifyTimeStep(const double currentDist, const double 
 					timeStep /= redFactor;
 				}
 				dispatch_semaphore_signal(sema);
-				i -= 2;
-				continue;
+				goto recheck2;
 			}
 		}
 	});
