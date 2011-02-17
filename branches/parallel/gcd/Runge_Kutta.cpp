@@ -269,53 +269,50 @@ const double Runge_Kutta::modifyTimeStep(const double currentDist, const double 
 			__m128d vx2 = vx1 - _mm_load_pd(px2);
 			__m128d vy2 = vy1 - _mm_load_pd(py2);
 			
-		recheck1:
-			// check separation distances against dist:
-			__m128d comp = _mm_cmple_pd(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(dist));
-            
-			double low, high;
-			_mm_storel_pd(&low, comp);
-			_mm_storeh_pd(&high, comp);
-			if (isnan(low) || isnan(high))	// if either are too close, reduce time step
+			// check separation distances against dist. If either are too close, reduce time step.
+			while (lessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(dist)))
 			{
 				// Only one thread should modify the distance and timesStep at a time.
 				dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
 				// Retest condition to make sure a different thread hasn't already reduced.
-				if (isnan(low) || isnan(high))
+				if (lessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(dist)))
 				{
 					dist /= redFactor;
 					timeStep /= redFactor;
 				}
 				dispatch_semaphore_signal(sema);
-				goto recheck1;
 			}
 
 			// calculate j,i+1 and j+1,i separation distances:
 			vx2 = vx1 - _mm_loadr_pd(px2);
 			vy2 = vy1 - _mm_loadr_pd(py2);
-           
-		recheck2:
-			// check separation distances against dist:
-			comp = _mm_cmple_pd(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(dist));
-            
-			_mm_storel_pd(&low, comp);
-			_mm_storeh_pd(&high, comp);
-			if (isnan(low) || isnan(high))	// if either are too close, reduce time step
+
+			// check separation distances against dist. If either are too close, reduce time step.
+			while (lessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(dist)))
 			{
 				// Only one thread should modify the distance and timesStep at a time.
 				dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
 				// Retest condition to make sure a different thread hasn't already reduced.
-				if (isnan(low) || isnan(high))
+				if (lessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(dist)))
 				{
 					dist /= redFactor;
 					timeStep /= redFactor;
 				}
 				dispatch_semaphore_signal(sema);
-				goto recheck2;
 			}
 		}
 	});
     
 	// reset time step:
 	return timeStep;
+}
+
+bool Runge_Kutta::lessThanOrEqualTo(const __m128d a, const __m128d b) {
+	__m128d comp = _mm_cmple_pd(a, b);
+	
+	double low, high;
+	_mm_storel_pd(&low, comp);
+	_mm_storeh_pd(&high, comp);
+	
+	return isnan(low) || isnan(high);
 }

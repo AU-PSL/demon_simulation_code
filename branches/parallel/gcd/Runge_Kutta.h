@@ -51,7 +51,9 @@ private:
 	void force2(const double currentTime) const; // rk substep 2
 	void force3(const double currentTime) const; // rk substep 3
 	void force4(const double currentTime) const; // rk substep 4
+	
 	const double modifyTimeStep(const double currentDist, const double currentTimeStep) const;
+	static bool lessThanOrEqualTo(const __m128d a, const __m128d b);
 };
 
 #endif // RUNGE_KUTTA_H
