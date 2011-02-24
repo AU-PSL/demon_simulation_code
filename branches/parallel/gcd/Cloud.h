@@ -18,7 +18,7 @@ typedef size_t cloud_index;
 class Cloud
 {	
 public:
-	Cloud(cloud_index numPar);
+	Cloud(const cloud_index numPar);
 	~Cloud();
 
 // public variables:
