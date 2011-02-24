@@ -270,12 +270,12 @@ const double Runge_Kutta::modifyTimeStep(const double currentDist, const double 
 			__m128d vy2 = vy1 - _mm_load_pd(py2);
 			
 			// check separation distances against dist. If either are too close, reduce time step.
-			while (lessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(dist)))
+			while (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(dist)))
 			{
 				// Only one thread should modify the distance and timesStep at a time.
 				dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
 				// Retest condition to make sure a different thread hasn't already reduced.
-				if (lessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(dist)))
+				if (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(dist)))
 				{
 					dist /= redFactor;
 					timeStep /= redFactor;
@@ -288,12 +288,12 @@ const double Runge_Kutta::modifyTimeStep(const double currentDist, const double 
 			vy2 = vy1 - _mm_loadr_pd(py2);
 
 			// check separation distances against dist. If either are too close, reduce time step.
-			while (lessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(dist)))
+			while (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(dist)))
 			{
 				// Only one thread should modify the distance and timesStep at a time.
 				dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
 				// Retest condition to make sure a different thread hasn't already reduced.
-				if (lessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(dist)))
+				if (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(dist)))
 				{
 					dist /= redFactor;
 					timeStep /= redFactor;
@@ -307,7 +307,7 @@ const double Runge_Kutta::modifyTimeStep(const double currentDist, const double 
 	return timeStep;
 }
 
-bool Runge_Kutta::lessThanOrEqualTo(const __m128d a, const __m128d b) {
+inline bool Runge_Kutta::isLessThanOrEqualTo(const __m128d a, const __m128d b) {
 	__m128d comp = _mm_cmple_pd(a, b);
 	
 	double low, high;

@@ -40,19 +40,19 @@ Cloud::~Cloud()
 	delete[] VxCache; delete[] VyCache;
 }
 
-inline void Cloud::setPosition(const cloud_index index, const double xVal, const double yVal)
+inline void Cloud::setPosition(const cloud_index index, const double xVal, const double yVal) const
 {
 	x[index] = xVal;
 	y[index] = yVal;
 }
 
-inline void Cloud::setVelocity(const cloud_index index)
+inline void Cloud::setVelocity(const cloud_index index) const
 {
 	Vx[index] = 0.0;
 	Vy[index] = 0.0;
 }
 
-inline void Cloud::setCharge()
+inline void Cloud::setCharge() const
 {
 	srand((int)time(NULL));
 	dispatch_apply(n, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(cloud_index i) {
@@ -60,7 +60,7 @@ inline void Cloud::setCharge()
 	});
 }
 
-inline void Cloud::setMass()
+inline void Cloud::setMass() const
 {
 	const double radius = 1.45E-6;
 	const double particleDensity = 2200.0;
