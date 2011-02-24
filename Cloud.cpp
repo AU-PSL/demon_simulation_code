@@ -15,7 +15,7 @@ using namespace std;
 
 const double Cloud::interParticleSpacing = 0.0003;
 
-Cloud::Cloud(cloud_index numPar) : n(numPar),
+Cloud::Cloud(const cloud_index numPar) : n(numPar),
 k1(new double[n]), k2(new double[n]), k3(new double[n]), k4(new double[n]),
 l1(new double[n]), l2(new double[n]), l3(new double[n]), l4(new double[n]),
 m1(new double[n]), m2(new double[n]), m3(new double[n]), m4(new double[n]),
