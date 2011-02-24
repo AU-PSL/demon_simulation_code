@@ -23,14 +23,14 @@ public:
 
 // public variables:
 	const cloud_index n; // number of elements (particles)
-	double *k1, *k2, *k3, *k4; // velocityX (Runge-Kutta) tidbits
-	double *l1, *l2, *l3, *l4; // positionsX (Runge-Kutta) tidbits
-	double *m1, *m2, *m3, *m4; // velocityY (Runge-Kutta) tidbits
-	double *n1, *n2, *n3, *n4; // positionsY (Runge-Kutta) tidbits
-	double *x, *y, *Vx, *Vy; // current positions and velocities=
-	double *charge, *mass;
-	double *forceX, *forceY;
-	__m128d *xCache, *yCache, *VxCache, *VyCache;
+	double * const k1, * const k2, * const k3, * const k4; // velocityX (Runge-Kutta) tidbits
+	double * const l1, * const l2, * const l3, * const l4; // positionsX (Runge-Kutta) tidbits
+	double * const m1, * const m2, * const m3, * const m4; // velocityY (Runge-Kutta) tidbits
+	double * const n1, * const n2, * const n3, * const n4; // positionsY (Runge-Kutta) tidbits
+	double * const x, * const y, * const Vx, * const Vy; // current positions and velocities=
+	double * const charge, * const mass;
+	double * const forceX, * const forceY;
+	__m128d * const xCache, * const yCache, * const VxCache, * const VyCache;
 	
 	static const double interParticleSpacing;
 
@@ -38,18 +38,18 @@ public:
 	// Input: int index, initialPosX, intialPosY
 	// Preconditions: 0 <= index < number of particles
 	// Postconditions: x,y positions of particle #index set to initialPosX,initialPosY
-	void setPosition(const cloud_index index, const double initialPosX, const double initialPosY);
+	void setPosition(const cloud_index index, const double initialPosX, const double initialPosY) const;
 
 	// Input: int index
 	// Preconditions: 0 <= index < number of particles
 	// Postconditions: velocity vector of particle #index randomly set
-	void setVelocity(const cloud_index index);
+	void setVelocity(const cloud_index index) const;
 
 	// Postconditions: charge of particle #index randomly set, range 5900 to 6100 *1.6E-19
-	void setCharge();
+	void setCharge() const;
 
 	// Postconditions: mass of particle #index set according to radius, density
-	void setMass();
+	void setMass() const;
 
 	// Input: fitsfile *file, int *error
 	// Preconditions: fitsfile exists, error = 0
