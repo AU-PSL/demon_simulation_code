@@ -250,28 +250,29 @@ const double Runge_Kutta::modifyTimeStep(cloud_index outerIndex, cloud_index inn
 			__m128d vy2 = vy1 - _mm_load_pd(py2);
            
 			// check separation distances against dist:
-			__m128d comp = _mm_cmple_pd(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), distv);
-            
-			double low, high;
-			_mm_storel_pd(&low, comp);
-			_mm_storeh_pd(&high, comp);
-			if (isnan(low) || isnan(high))	// if either are too close, reduce time step
+			if (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), distv))	// if either are too close, reduce time step
 				return modifyTimeStep(outerIndex, innerIndex, currentDist/redFactor, currentTimeStep/redFactor);
 
 			// calculate j,i+1 and j+1,i separation distances:
 			vx2 = vx1 - _mm_loadr_pd(px2);
 			vy2 = vy1 - _mm_loadr_pd(py2);
            
-			// check separation distances against dist: 
-			comp = _mm_cmple_pd(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), distv);
-            
-			_mm_storel_pd(&low, comp);
-			_mm_storeh_pd(&high, comp);
-			if (isnan(low) || isnan(high))	// if either are too close, reduce time step
+			// check separation distances against dist:
+			if (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), distv))	// if either are too close, reduce time step
 				return modifyTimeStep(outerIndex, innerIndex, currentDist/redFactor, currentTimeStep/redFactor);
 		}
 	}
     
 	// reset time step:
 	return currentTimeStep;
+}
+
+inline bool Runge_Kutta::isLessThanOrEqualTo(const __m128d a, const __m128d b) {
+	__m128d comp = _mm_cmple_pd(a, b);
+	
+	double low, high;
+	_mm_storel_pd(&low, comp);
+	_mm_storeh_pd(&high, comp);
+	
+	return isnan(low) || isnan(high);
 }
