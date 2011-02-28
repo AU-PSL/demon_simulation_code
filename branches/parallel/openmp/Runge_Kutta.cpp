@@ -228,7 +228,6 @@ inline void Runge_Kutta::force4(const double time) const
 * particle spacings are outside the specified distance use the current timestep.
 * This allows fine grain control of reduced timesteps.
 ------------------------------------------------------------------------------*/
-//const double Runge_Kutta::modifyTimeStep(cloud_index outerIndex, cloud_index innerIndex, const double currentDist, const double currentTimeStep) const
 const double Runge_Kutta::modifyTimeStep(double currentDist, double currentTimeStep) const
 {
 	// set constants:	
@@ -238,7 +237,7 @@ const double Runge_Kutta::modifyTimeStep(double currentDist, double currentTimeS
 	// loop through entire cloud, or until reduction occures. Reset innerIndex after each loop iteration.
 	const cloud_index e = cloud->n - 1;
 
-#pragma omp parallel for
+#pragma omp parallel for shared(currentDist, currentTimeStep)
 	for (cloud_index outerIndex = 0; outerIndex < e; outerIndex += 2)
 	{
 		// caculate separation distance b/t adjacent elements:
