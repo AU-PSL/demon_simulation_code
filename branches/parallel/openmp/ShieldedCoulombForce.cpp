@@ -11,11 +11,28 @@
 #include <cmath>
 
 ShieldedCoulombForce::ShieldedCoulombForce(Cloud * const myCloud, const double shieldingConstant)
-: Force(myCloud), shielding(shieldingConstant) {}
+: Force(myCloud), shielding(shieldingConstant), locks(new omp_lock_t[myCloud->n/2]) 
+{
+	const cloud_index numParticles = cloud->n/2;
+#pragma omp parallel for
+	for (cloud_index i = 0; i < numParticles; i++)
+		omp_init_lock(locks + i);
+}
+
+ShieldedCoulombForce::~ShieldedCoulombForce() 
+{
+	const cloud_index numParticles = cloud->n/2;
+#pragma omp parallel for
+	for (cloud_index i = 0; i < numParticles; i++)
+		omp_destroy_lock(locks + i);
+}
 
 void ShieldedCoulombForce::force1(const double currentTime)
 {
-	for (cloud_index currentParticle = 0, numParticles = cloud->n, e = cloud->n - 1; currentParticle < e; currentParticle += 2) 
+	const cloud_index numParticles = cloud->n;
+	const cloud_index e = cloud->n - 1;
+#pragma omp parallel for
+	for (cloud_index currentParticle = 0; currentParticle < e; currentParticle += 2) 
 	{
 		const __m128d vx1 = cloud->getx1_pd(currentParticle);
 		const __m128d vy1 = cloud->gety1_pd(currentParticle);
@@ -37,7 +54,10 @@ void ShieldedCoulombForce::force1(const double currentTime)
 
 void ShieldedCoulombForce::force2(const double currentTime)
 {
-	for (cloud_index currentParticle = 0, numParticles = cloud->n, e = cloud->n - 1; currentParticle < e; currentParticle += 2) 
+	const cloud_index numParticles = cloud->n;
+	const cloud_index e = cloud->n - 1;
+#pragma omp parallel for
+	for (cloud_index currentParticle = 0; currentParticle < e; currentParticle += 2) 
 	{
 		const __m128d vx1 = cloud->getx2_pd(currentParticle);
 		const __m128d vy1 = cloud->gety2_pd(currentParticle);
@@ -58,7 +78,10 @@ void ShieldedCoulombForce::force2(const double currentTime)
 
 void ShieldedCoulombForce::force3(const double currentTime)
 {
-    for (cloud_index currentParticle = 0, numParticles = cloud->n, e = cloud->n - 1; currentParticle < e; currentParticle += 2) 
+	const cloud_index numParticles = cloud->n;
+	const cloud_index e = cloud->n - 1;
+#pragma omp parallel for
+    for (cloud_index currentParticle = 0; currentParticle < e; currentParticle += 2) 
 	{
 		const __m128d vx1 = cloud->getx3_pd(currentParticle);
 		const __m128d vy1 = cloud->gety3_pd(currentParticle);
@@ -79,7 +102,10 @@ void ShieldedCoulombForce::force3(const double currentTime)
 
 void ShieldedCoulombForce::force4(const double currentTime)
 {
-	for (cloud_index currentParticle = 0, numParticles = cloud->n, e = cloud->n - 1; currentParticle < e; currentParticle += 2) 
+	const cloud_index numParticles = cloud->n;
+	const cloud_index e = cloud->n - 1;
+#pragma omp parallel for
+	for (cloud_index currentParticle = 0; currentParticle < e; currentParticle += 2) 
 	{
 		const __m128d vx1 = cloud->getx4_pd(currentParticle);
 		const __m128d vy1 = cloud->gety4_pd(currentParticle);
@@ -110,12 +136,15 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
 		const double displacement3 = displacement*displacement*displacement;
 		// set to charges multiplied by Coulomb's constant:
 		const double exponential = (cloud->charge[currentParticle]*cloud->charge[iParticle])/(4.0*M_PI*8.85E-12)*(1.0 + valExp)/(displacement3*exp(valExp));
+		
+		omp_set_lock(locks + currentParticle/2);
 		cloud->forceX[currentParticle] += exponential*displacementX;
 		cloud->forceY[currentParticle] += exponential*displacementY;
 
 		// equal and opposite force:
 		cloud->forceX[iParticle] -= exponential*displacementX;
 		cloud->forceY[iParticle] -= exponential*displacementY;
+		omp_unset_lock(locks + currentParticle/2);
 	}
 }
 
@@ -153,14 +182,18 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
 
 	double *pFx = cloud->forceX + currentParticle;
 	double *pFy = cloud->forceY + currentParticle;
+	omp_set_lock(locks + currentParticle/2);
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + forcevX);
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + forcevY);
+	omp_unset_lock(locks + currentParticle/2);
 
 	// equal and opposite force:
 	pFx = cloud->forceX + iParticle;
 	pFy = cloud->forceY + iParticle;
+	omp_set_lock(locks + iParticle/2);
 	_mm_store_pd(pFx, _mm_load_pd(pFx) - forcevX);
 	_mm_store_pd(pFy, _mm_load_pd(pFy) - forcevY);
+	omp_unset_lock(locks + iParticle/2);
 }
 
 inline void ShieldedCoulombForce::forcer(const cloud_index currentParticle, const cloud_index iParticle, const __m128d displacementX, const __m128d displacementY)
@@ -197,14 +230,18 @@ inline void ShieldedCoulombForce::forcer(const cloud_index currentParticle, cons
 
 	double *pFx = cloud->forceX + currentParticle;
 	double *pFy = cloud->forceY + currentParticle;
+	omp_set_lock(locks + currentParticle/2);
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + forcevX);
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + forcevY);
+	omp_unset_lock(locks + currentParticle/2);
 
 	// equal and opposite force:
 	pFx = cloud->forceX + iParticle;
-	pFy = cloud->forceY + iParticle; 
+	pFy = cloud->forceY + iParticle;
+	omp_set_lock(locks + iParticle/2);
 	_mm_storer_pd(pFx, _mm_loadr_pd(pFx) - forcevX);
 	_mm_storer_pd(pFy, _mm_loadr_pd(pFy) - forcevY);
+	omp_unset_lock(locks + iParticle/2);
 }
 
 void ShieldedCoulombForce::writeForce(fitsfile * const file, int * const error) const

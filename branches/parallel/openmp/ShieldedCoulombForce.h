@@ -12,12 +12,13 @@
 
 #include "Force.h"
 #include "VectorCompatibility.h"
+#include "omp.h"
 
 class ShieldedCoulombForce : public Force
 {	
 public:
 	ShieldedCoulombForce(Cloud * const myCloud, const double shieldingConstant);
-	~ShieldedCoulombForce() {} //destructor
+	~ShieldedCoulombForce();
 
 // public functions:
 	// Note: currentTime parameter is necessary (due to parent class) but unused
@@ -32,6 +33,7 @@ public:
 private:
 // public variables:
 	double shielding;
+	omp_lock_t *locks;
 
 // private functions:
 	void force(const cloud_index currentParticle, const cloud_index iParticle, const double displacementX, const double displacementY);
