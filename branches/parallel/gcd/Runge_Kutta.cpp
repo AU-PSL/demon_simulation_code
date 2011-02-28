@@ -233,7 +233,7 @@ const double Runge_Kutta::modifyTimeStep(const double currentDist, const double 
 	__block double timeStep = currentTimeStep;
 	
 	// loop through entire cloud, or until reduction occures
-	dispatch_apply(cloud->n/2, queue, ^(cloud_index j) {
+	dispatch_apply(numPar/2, queue, ^(cloud_index j) {
 		j *= 2;
 
 		// caculate separation distance b/t adjacent elements:
