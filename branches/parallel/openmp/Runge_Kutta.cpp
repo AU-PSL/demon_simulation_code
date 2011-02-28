@@ -21,6 +21,12 @@ numOperators(1), operations(new Operator*[numOperators])
 {
 	// Operators are order dependent.
 	operations[0] = new PositionVelocityCacheOperator(cloud);
+	omp_init_lock(&lock);
+}
+
+Runge_Kutta::~Runge_Kutta() 
+{
+	omp_destroy_lock(&lock);
 }
 
 // 4th order Runge-Kutta algorithm:
@@ -33,12 +39,14 @@ void Runge_Kutta::moveParticles(const double endTime)
 	while (currentTime < endTime)
 	{
 		// Second argument must be 2 more than the first.
-		const double dt = modifyTimeStep(0, 2, 1.0e-4, init_dt); // implement dynamic timstep (if necessary):
+		const double dt = modifyTimeStep(1.0e-4, init_dt); // implement dynamic timstep (if necessary):
 		const __m128d vdt = _mm_set1_pd(dt); // store timestep as vector const
         
 		operate1(currentTime);
 		force1(currentTime); // compute net force1
-		for (cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) // calculate k1 and l1 for entire cloud
+		const cloud_index numParticles = cloud->n;
+#pragma omp parallel for
+		for (cloud_index i = 0; i < numParticles; i += 2) // calculate k1 and l1 for entire cloud
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass into vector
 
@@ -59,7 +67,8 @@ void Runge_Kutta::moveParticles(const double endTime)
         
 		operate2(currentTime + dt/2.0);
 		force2(currentTime + dt/2.0); // compute net force2
-		for (cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) // calculate k2 and l2 for entire cloud
+#pragma omp parallel for
+		for (cloud_index i = 0; i < numParticles; i += 2) // calculate k2 and l2 for entire cloud
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
 
@@ -80,7 +89,8 @@ void Runge_Kutta::moveParticles(const double endTime)
 
 		operate3(currentTime + dt/2.0);
 		force3(currentTime + dt/2.0); // compute net force3
-		for (cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) // calculate k3 and l3 for entire cloud
+#pragma omp parallel for
+		for (cloud_index i = 0; i < numParticles; i += 2) // calculate k3 and l3 for entire cloud
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
 
@@ -101,7 +111,8 @@ void Runge_Kutta::moveParticles(const double endTime)
         
 		operate4(currentTime + dt/2.0);
 		force4(currentTime + dt); // compute net force4
-		for (cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) // calculate k4 and l4 for entire cloud
+#pragma omp parallel for
+		for (cloud_index i = 0; i < numParticles; i += 2) // calculate k4 and l4 for entire cloud
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
 
@@ -119,7 +130,8 @@ void Runge_Kutta::moveParticles(const double endTime)
 			_mm_store_pd(pFy, _mm_setzero_pd());
 		}
 
-		for (cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) // calculate next position and next velocity for entire cloud
+#pragma omp parallel for
+		for (cloud_index i = 0; i < numParticles; i += 2) // calculate next position and next velocity for entire cloud
 		{
 			// load ith and (i+1)th k's into vectors:
 			const __m128d vk1 = _mm_load_pd(cloud->k1 + i);
@@ -216,30 +228,41 @@ inline void Runge_Kutta::force4(const double time) const
 * particle spacings are outside the specified distance use the current timestep.
 * This allows fine grain control of reduced timesteps.
 ------------------------------------------------------------------------------*/
-const double Runge_Kutta::modifyTimeStep(cloud_index outerIndex, cloud_index innerIndex, const double currentDist, const double currentTimeStep) const
+//const double Runge_Kutta::modifyTimeStep(cloud_index outerIndex, cloud_index innerIndex, const double currentDist, const double currentTimeStep) const
+const double Runge_Kutta::modifyTimeStep(double currentDist, double currentTimeStep) const
 {
 	// set constants:	
 	const cloud_index numPar = cloud->n;
-	const __m128d distv = _mm_set1_pd(currentDist);
 	const double redFactor = 10.0;
 
 	// loop through entire cloud, or until reduction occures. Reset innerIndex after each loop iteration.
-	for (cloud_index e = numPar - 1; outerIndex < e; outerIndex += 2, innerIndex = outerIndex + 2)
+	const cloud_index e = cloud->n - 1;
+
+#pragma omp parallel for
+	for (cloud_index outerIndex = 0; outerIndex < e; outerIndex += 2)
 	{
 		// caculate separation distance b/t adjacent elements:
 		const double sepx = cloud->x[outerIndex] - cloud->x[outerIndex + 1];
 		const double sepy = cloud->y[outerIndex] - cloud->y[outerIndex + 1];
 
 		// if particles too close, reduce time step:
-		if (sqrt(sepx*sepx + sepy*sepy) <= currentDist)
-			return modifyTimeStep(outerIndex, innerIndex, currentDist/redFactor, currentTimeStep/redFactor);
-
+		while (sqrt(sepx*sepx + sepy*sepy) <= currentDist) 
+		{
+			omp_set_lock(const_cast<omp_lock_t *> (&lock));
+			if (sqrt(sepx*sepx + sepy*sepy) <= currentDist)
+			{
+				currentDist /= redFactor;
+				currentTimeStep /= redFactor;
+			}
+			omp_unset_lock(const_cast<omp_lock_t *> (&lock));
+		}
+		
 		// load positions into vectors:
 		const __m128d vx1 = cloud->getx1_pd(outerIndex);	// x vector
 		const __m128d vy1 = cloud->gety1_pd(outerIndex);	// y vector
 
 		// calculate separation distance b/t nonadjacent elements:
-		for (; innerIndex < numPar; innerIndex += 2)
+		for (cloud_index innerIndex = outerIndex + 2; innerIndex < numPar; innerIndex += 2)
 		{
 			// assign position pointers:
 			const double * const px2 = cloud->x + innerIndex;
@@ -249,17 +272,37 @@ const double Runge_Kutta::modifyTimeStep(cloud_index outerIndex, cloud_index inn
 			__m128d vx2 = vx1 - _mm_load_pd(px2);
 			__m128d vy2 = vy1 - _mm_load_pd(py2);
            
-			// check separation distances against dist:
-			if (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), distv))	// if either are too close, reduce time step
-				return modifyTimeStep(outerIndex, innerIndex, currentDist/redFactor, currentTimeStep/redFactor);
-
+			// check separation distances against dist. If either are too close, reduce time step.
+			while (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(currentDist)))
+			{
+				// Only one thread should modify the distance and timesStep at a time.
+				omp_set_lock(const_cast<omp_lock_t *> (&lock));
+				// Retest condition to make sure a different thread hasn't already reduced.
+				if (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(currentDist)))
+				{
+					currentDist /= redFactor;
+					currentTimeStep /= redFactor;
+				}
+				omp_unset_lock(const_cast<omp_lock_t *> (&lock));
+			}
+				
 			// calculate j,i+1 and j+1,i separation distances:
 			vx2 = vx1 - _mm_loadr_pd(px2);
 			vy2 = vy1 - _mm_loadr_pd(py2);
            
-			// check separation distances against dist:
-			if (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), distv))	// if either are too close, reduce time step
-				return modifyTimeStep(outerIndex, innerIndex, currentDist/redFactor, currentTimeStep/redFactor);
+			// check separation distances against dist. If either are too close, reduce time step.
+			while (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(currentDist)))
+			{
+				// Only one thread should modify the distance and timesStep at a time.
+				omp_set_lock(const_cast<omp_lock_t *> (&lock));
+				// Retest condition to make sure a different thread hasn't already reduced.
+				if (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(currentDist)))
+				{
+					currentDist /= redFactor;
+					currentTimeStep /= redFactor;
+				}
+				omp_unset_lock(const_cast<omp_lock_t *> (&lock));
+			}
 		}
 	}
     

@@ -11,6 +11,7 @@
 #define RUNGA_KUTTA_H
 
 #include "Force.h"
+#include <omp.h>
 
 class Operator;
 typedef unsigned char operator_index;
@@ -19,7 +20,8 @@ class Runge_Kutta
 {
 public:
 	Runge_Kutta(Cloud * const myCloud, Force ** const forces, const double timeStep, const force_index forcesSize, double startTime);	//overloaded constructor
-
+	~Runge_Kutta();
+	
 // public variables:
 	Cloud * const cloud; // pointer to cloud object
 	Force ** const theForce; // pointer to Force object
@@ -37,6 +39,7 @@ private:
 // private variables:
 	const operator_index numOperators;
 	Operator ** const operations;
+	omp_lock_t lock;
     
 // private functions:
 	void operate1(const double currentTime) const; // rk substep 1
@@ -49,7 +52,8 @@ private:
 	void force3(const double currentTime) const; // rk substep 3
 	void force4(const double currentTime) const; // rk substep 4
 
-	const double modifyTimeStep(cloud_index outerIndex, cloud_index innerIndex, const double currentDist, const double currentTimeStep) const;
+	//const double modifyTimeStep(cloud_index outerIndex, cloud_index innerIndex, const double currentDist, const double currentTimeStep) const;
+	const double modifyTimeStep(double currentDist, double currentTimeStep) const;
 	static bool isLessThanOrEqualTo(const __m128d a, const __m128d b);
 };
 
