@@ -20,7 +20,7 @@ class Runge_Kutta
 {
 public:
 	Runge_Kutta(Cloud * const myCloud, Force ** const forces, const double timeStep, const force_index forcesSize, double startTime);	//overloaded constructor
-	~Runge_Kutta();
+	~Runge_Kutta() {}
 	
 // public variables:
 	Cloud * const cloud; // pointer to cloud object
@@ -39,7 +39,6 @@ private:
 // private variables:
 	const operator_index numOperators;
 	Operator ** const operations;
-	omp_lock_t lock;
     
 // private functions:
 	void operate1(const double currentTime) const; // rk substep 1
