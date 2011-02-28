@@ -67,7 +67,7 @@ inline void Cloud::setMass() const
 	const double radius = 1.45E-6;
 	const double particleDensity = 2200.0;
 	const double particleMass = (4.0/3.0)*M_PI*radius*radius*radius*particleDensity;
-#pragma omp parallel for
+#pragma omp parallel for schedule(static)
 	for (cloud_index i = 0; i < n; i++)
 		mass[i] = particleMass;
 }
@@ -84,7 +84,7 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles)
 
 	cloud->setCharge();
 	cloud->setMass();
-#pragma omp parallel for
+#pragma omp parallel for schedule(static)
 	for (cloud_index i = 0; i < numParticles; i++)
 	{
 		cloud->setPosition(i, 

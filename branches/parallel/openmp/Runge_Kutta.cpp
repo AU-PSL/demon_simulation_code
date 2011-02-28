@@ -39,7 +39,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 		operate1(currentTime);
 		force1(currentTime); // compute net force1
 		const cloud_index numParticles = cloud->n;
-#pragma omp parallel for
+#pragma omp parallel for schedule(static)
 		for (cloud_index i = 0; i < numParticles; i += 2) // calculate k1 and l1 for entire cloud
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass into vector
@@ -61,7 +61,7 @@ void Runge_Kutta::moveParticles(const double endTime)
         
 		operate2(currentTime + dt/2.0);
 		force2(currentTime + dt/2.0); // compute net force2
-#pragma omp parallel for
+#pragma omp parallel for schedule(static)
 		for (cloud_index i = 0; i < numParticles; i += 2) // calculate k2 and l2 for entire cloud
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
@@ -83,7 +83,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 
 		operate3(currentTime + dt/2.0);
 		force3(currentTime + dt/2.0); // compute net force3
-#pragma omp parallel for
+#pragma omp parallel for schedule(static)
 		for (cloud_index i = 0; i < numParticles; i += 2) // calculate k3 and l3 for entire cloud
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
@@ -105,7 +105,7 @@ void Runge_Kutta::moveParticles(const double endTime)
         
 		operate4(currentTime + dt/2.0);
 		force4(currentTime + dt); // compute net force4
-#pragma omp parallel for
+#pragma omp parallel for schedule(static)
 		for (cloud_index i = 0; i < numParticles; i += 2) // calculate k4 and l4 for entire cloud
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
@@ -124,7 +124,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 			_mm_store_pd(pFy, _mm_setzero_pd());
 		}
 
-#pragma omp parallel for
+#pragma omp parallel for schedule(static)
 		for (cloud_index i = 0; i < numParticles; i += 2) // calculate next position and next velocity for entire cloud
 		{
 			// load ith and (i+1)th k's into vectors:
@@ -231,7 +231,7 @@ const double Runge_Kutta::modifyTimeStep(double currentDist, double currentTimeS
 	// loop through entire cloud, or until reduction occures. Reset innerIndex after each loop iteration.
 	const cloud_index e = cloud->n - 1;
 
-#pragma omp parallel for shared(currentDist, currentTimeStep)
+#pragma omp parallel for shared(currentDist, currentTimeStep) schedule(dynamic)
 	for (cloud_index outerIndex = 0; outerIndex < e; outerIndex += 2)
 	{
 		// caculate separation distance b/t adjacent elements:
@@ -241,7 +241,7 @@ const double Runge_Kutta::modifyTimeStep(double currentDist, double currentTimeS
 		// if particles too close, reduce time step:
 		while (sqrt(sepx*sepx + sepy*sepy) <= currentDist) 
 		{
-#pragma omp critical 
+#pragma omp critical (timestep)
 {
 			if (sqrt(sepx*sepx + sepy*sepy) <= currentDist)
 			{
@@ -270,7 +270,7 @@ const double Runge_Kutta::modifyTimeStep(double currentDist, double currentTimeS
 			while (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(currentDist)))
 			{
 				// Only one thread should modify the distance and timesStep at a time.
-#pragma omp critical 
+#pragma omp critical (timestep)
 {
 				// Retest condition to make sure a different thread hasn't already reduced.
 				if (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(currentDist)))
@@ -289,7 +289,7 @@ const double Runge_Kutta::modifyTimeStep(double currentDist, double currentTimeS
 			while (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(currentDist)))
 			{
 				// Only one thread should modify the distance and timesStep at a time.
-#pragma omp critical 
+#pragma omp critical (timestep)
 {
 				// Retest condition to make sure a different thread hasn't already reduced.
 				if (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(currentDist)))

@@ -19,7 +19,7 @@ void PositionVelocityCacheOperator::operation2(const double currentTime)
 {
 	const __m128d twov = _mm_set1_pd(2.0);
 	const cloud_index e = cloud->n/2;
-#pragma omp parallel for
+#pragma omp parallel for schedule(static)
 	for (cloud_index i = 0; i < e; i++) 
 	{
 		const cloud_index offset = 2*i;
@@ -34,7 +34,7 @@ void PositionVelocityCacheOperator::operation3(const double currentTime)
 {
 	const __m128d twov = _mm_set1_pd(2.0);
 	const cloud_index e = cloud->n/2;
-#pragma omp parallel for
+#pragma omp parallel for schedule(static)
 	for (cloud_index i = 0; i < e; i++) 
 	{
 		const cloud_index offset = 2*i;
@@ -48,7 +48,7 @@ void PositionVelocityCacheOperator::operation3(const double currentTime)
 void PositionVelocityCacheOperator::operation4(const double currentTime) 
 {
 	const cloud_index e = cloud->n/2;
-#pragma omp parallel for
+#pragma omp parallel for schedule(static)
 	for (cloud_index i = 0; i < e; i++) 
 	{
 		const cloud_index offset = 2*i;
