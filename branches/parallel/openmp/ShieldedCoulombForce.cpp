@@ -30,7 +30,7 @@ ShieldedCoulombForce::~ShieldedCoulombForce()
 void ShieldedCoulombForce::force1(const double currentTime)
 {
 	const cloud_index numParticles = cloud->n;
-	const cloud_index e = cloud->n - 1;
+	const cloud_index e = numParticles - 1;
 #pragma omp parallel for schedule(dynamic)
 	for (cloud_index currentParticle = 0; currentParticle < e; currentParticle += 2) 
 	{
@@ -55,7 +55,7 @@ void ShieldedCoulombForce::force1(const double currentTime)
 void ShieldedCoulombForce::force2(const double currentTime)
 {
 	const cloud_index numParticles = cloud->n;
-	const cloud_index e = cloud->n - 1;
+	const cloud_index e = numParticles - 1;
 #pragma omp parallel for schedule(dynamic)
 	for (cloud_index currentParticle = 0; currentParticle < e; currentParticle += 2) 
 	{
@@ -79,7 +79,7 @@ void ShieldedCoulombForce::force2(const double currentTime)
 void ShieldedCoulombForce::force3(const double currentTime)
 {
 	const cloud_index numParticles = cloud->n;
-	const cloud_index e = cloud->n - 1;
+	const cloud_index e = numParticles - 1;
 #pragma omp parallel for schedule(dynamic)
     for (cloud_index currentParticle = 0; currentParticle < e; currentParticle += 2) 
 	{
@@ -103,7 +103,7 @@ void ShieldedCoulombForce::force3(const double currentTime)
 void ShieldedCoulombForce::force4(const double currentTime)
 {
 	const cloud_index numParticles = cloud->n;
-	const cloud_index e = cloud->n - 1;
+	const cloud_index e = numParticles - 1;
 #pragma omp parallel for schedule(dynamic)
 	for (cloud_index currentParticle = 0; currentParticle < e; currentParticle += 2) 
 	{
