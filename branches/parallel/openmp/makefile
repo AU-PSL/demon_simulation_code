@@ -29,7 +29,7 @@ $(LIBS): $(OBJS)
 	ar rcs $(@) $(OBJS)
 
 $driver.o: driver.cpp
-	$(CXX) -c driver.cpp driver.o
+	$(CXX) -c driver.cpp
 
 clean:
 	-rm $(OBJS) driver.o
