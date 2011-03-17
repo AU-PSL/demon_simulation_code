@@ -124,10 +124,8 @@ void ThermalForce::writeForce(fitsfile * const file, int * const error) const
 	}
 
 	if (!*error)
-	{
 		// file, key name, value, precision (scientific format), comment
 		fits_write_key_dbl(file, const_cast<char *> ("heatingValue"), heatVal, 6, const_cast<char *> ("[N] (ThermalForce)"), error);
-	}
 }
 
 void ThermalForce::readForce(fitsfile * const file, int * const error)
@@ -138,8 +136,6 @@ void ThermalForce::readForce(fitsfile * const file, int * const error)
  		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
 	
 	if (!*error)
-	{
 		// file, key name, value, don't read comment, error
 		fits_read_key_dbl(file, const_cast<char *> ("heatingValue"), &heatVal, NULL, error);
-	}
 }
