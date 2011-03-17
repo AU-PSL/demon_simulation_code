@@ -31,7 +31,7 @@ public:
 	void readForce(fitsfile * const file, int * const error);
 
 private:
-// privare class
+// private class
 	class RandCache {
 	public:
 		__m128d r;
