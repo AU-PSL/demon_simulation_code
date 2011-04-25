@@ -255,7 +255,7 @@ void parseCommandLineOptions(int argc, char * const argv[])
 				help();
 				exit(0);
 			case 'L': // perform "L"ocalized heating experiment:
-				checkForce(3, 'L', TimeVaryingDragForceFlag, 'T', ThermalForceFlag, 'v', TimeVaryingThermalForceFlag);
+				checkForce(3, 'L', ThermalForceLocalizedFlag, 'T', ThermalForceFlag, 'v', TimeVaryingThermalForceFlag);
 				checkOption(argc, argv, i, 'L', 3, "radius", D, &heatRadius, "heat factor1", D, &thermRed, "heat factor2", D, &thermRed1);
 				break;
 			case 'M': // perform "M"ach Cone experiment:
@@ -293,11 +293,11 @@ void parseCommandLineOptions(int argc, char * const argv[])
 				checkOption(argc, argv, i, 't', 1, "time step", D, &simTimeStep);
 				break;
 			case 'T': // set "T"emperature reduction factor:
-				checkForce(3, 'T', ThermalForceFlag, 'L',ThermalForceLocalizedFlag, 'v', TimeVaryingThermalForceFlag);
+				checkForce(3, 'T', ThermalForceFlag, 'L', ThermalForceLocalizedFlag, 'v', TimeVaryingThermalForceFlag);
 				checkOption(argc, argv, i, 'T', 1, "heat factor", D, &thermRed);
 				break;
 			case 'v': // use time ""arying thermal force:
-				checkForce(3, 'v', TimeVaryingThermalForceFlag, 'L',ThermalForceLocalizedFlag, 'T', ThermalForceFlag);
+				checkForce(3, 'v', TimeVaryingThermalForceFlag, 'L', ThermalForceLocalizedFlag, 'T', ThermalForceFlag);
 				checkOption(argc, argv, i, 'v', 2, "heat value scale", D, &thermScale, "heat value offset", D, &thermOffset);
 				break;
 			case 'w': // drive "w"aves:
