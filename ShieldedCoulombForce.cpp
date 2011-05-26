@@ -682,7 +682,7 @@ inline void ShieldedCoulombForce3D::forcer(const unsigned int currentParticle, c
 	double *pFz = cloud->forceZ + currentParticle;
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + forcevX);
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + forcevY);
-	_mm_store_pd(pFz, _mm_load_pd(pFy) + forcevZ);
+	_mm_store_pd(pFz, _mm_load_pd(pFz) + forcevZ);
 
 	//equal and opposite force:
 	pFx = cloud->forceX + iParticle;

@@ -492,11 +492,11 @@ int main (int argc, char * const argv[])
 	else //initialize new cloud on grid:
 	{
 		if(dimension == 1)
-			cloud = Cloud::initializeLine(numParticles, cloudSize);
+			cloud = Cloud::initializeLine(numParticles);
 		else if(dimension == 2)
-			cloud = Cloud::initializeSquare(numParticles, cloudSize);
+			cloud = Cloud::initializeSquare(numParticles);
 		else if(dimension == 3)
-			cloud = Cloud::initializeCube(numParticles, cloudSize);
+			cloud = Cloud::initializeCube(numParticles);
 		else //this should never happen
 		{
 			cout << "Error: Impossible case reached when determining dimension "
@@ -665,6 +665,8 @@ int main (int argc, char * const argv[])
  -----------------------------------------------------------------------------*/
 	cout << "Status: Commencing Runge-Kutta." << endl << endl;
 
+	cout << "Dimension = " << dimension << endl;
+
 	Runge_Kutta rk4(cloud, forceArray, simTimeStep, numForces, startTime);
 
 	//execute simulation for desired length of time:
@@ -733,7 +735,7 @@ int main (int argc, char * const argv[])
 		delete forceArray[i];
 
 	delete[] forceArray;
-	delete cloud;
+//	delete cloud;
 
 	return 0;
 }
