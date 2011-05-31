@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		4DB543DC12A5FBF100D7008F /* libcfitsio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DB543DB12A5FBF100D7008F /* libcfitsio.a */; };
+		4DDDB4F912BA7E62003AC69F /* Operator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DDDB4F812BA7E62003AC69F /* Operator.h */; };
+		4DDDB4FF12BA7FF4003AC69F /* PositionVelocityCacheOperator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DDDB4FD12BA7FF4003AC69F /* PositionVelocityCacheOperator.h */; };
+		4DDDB50012BA7FF4003AC69F /* PositionVelocityCacheOperator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4DDDB4FE12BA7FF4003AC69F /* PositionVelocityCacheOperator.cpp */; };
 		E1B3A959129D710500599DFF /* VectorCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B3A958129D710500599DFF /* VectorCompatibility.h */; };
 		E1FD94351299994F00EBC94D /* Cloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FD942F1299994C00EBC94D /* Cloud.cpp */; };
 		E1FD94361299994F00EBC94D /* Cloud.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FD94301299994F00EBC94D /* Cloud.h */; };
@@ -51,8 +54,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		4D95C47912B43D770086B123 /* makefile.include */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = makefile.include; path = ../makefile.include; sourceTree = SOURCE_ROOT; };
 		4DB543DB12A5FBF100D7008F /* libcfitsio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcfitsio.a; path = /Users/mark/Programs/cfitsio/libcfitsio.a; sourceTree = "<absolute>"; };
+		4DDDB4F812BA7E62003AC69F /* Operator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Operator.h; path = ../Operator.h; sourceTree = SOURCE_ROOT; };
+		4DDDB4FD12BA7FF4003AC69F /* PositionVelocityCacheOperator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PositionVelocityCacheOperator.h; path = ../PositionVelocityCacheOperator.h; sourceTree = SOURCE_ROOT; };
+		4DDDB4FE12BA7FF4003AC69F /* PositionVelocityCacheOperator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PositionVelocityCacheOperator.cpp; path = ../PositionVelocityCacheOperator.cpp; sourceTree = SOURCE_ROOT; };
 		D2AAC046055464E500DB518D /* libSimulation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSimulation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E16C487E12A587AE004F3B02 /* LICENSE.TXT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.TXT; path = ../LICENSE.TXT; sourceTree = SOURCE_ROOT; };
 		E16C488412A58E39004F3B02 /* README.TXT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.TXT; path = ../README.TXT; sourceTree = "<group>"; };
@@ -126,7 +131,6 @@
 				E1FD947812999A8900EBC94D /* driver.cpp */,
 				E144C5B3129998DF00CF0AF3 /* Simulation */,
 				E16C488512A58EA6004F3B02 /* makefile */,
-				4D95C47912B43D770086B123 /* makefile.include */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -138,6 +142,15 @@
 				E1FD946A12999A2800EBC94D /* DEMON */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		4DDDB4F512BA7E11003AC69F /* Operators */ = {
+			isa = PBXGroup;
+			children = (
+				4DDDB4FD12BA7FF4003AC69F /* PositionVelocityCacheOperator.h */,
+				4DDDB4FE12BA7FF4003AC69F /* PositionVelocityCacheOperator.cpp */,
+			);
+			name = Operators;
 			sourceTree = "<group>";
 		};
 		C6A0FF2B0290797F04C91782 /* Documentation */ = {
@@ -156,7 +169,10 @@
 				E1FD942F1299994C00EBC94D /* Cloud.cpp */,
 				E1FD94481299996F00EBC94D /* Runge_Kutta.h */,
 				E1FD94471299996F00EBC94D /* Runge_Kutta.cpp */,
+				E1FD943D1299996300EBC94D /* Force.h */,
 				E1FD9466129999C200EBC94D /* Forces */,
+				4DDDB4F812BA7E62003AC69F /* Operator.h */,
+				4DDDB4F512BA7E11003AC69F /* Operators */,
 				E1FD94421299996F00EBC94D /* mtrand.h */,
 				E1FD94411299996F00EBC94D /* mtrand.cpp */,
 				E1B3A958129D710500599DFF /* VectorCompatibility.h */,
@@ -202,7 +218,6 @@
 		E1FD9466129999C200EBC94D /* Forces */ = {
 			isa = PBXGroup;
 			children = (
-				E1FD943D1299996300EBC94D /* Force.h */,
 				E1AE30D81299F19000775EDE /* ConfinementForces */,
 				E1AE30D71299F17700775EDE /* Drag Forces */,
 				E1FD94461299996F00EBC94D /* RotationalForce.h */,
@@ -238,6 +253,8 @@
 				E1FD94621299996F00EBC94D /* TimeVaryingDragForce.h in Headers */,
 				E1FD94641299996F00EBC94D /* TimeVaryingThermalForce.h in Headers */,
 				E1B3A959129D710500599DFF /* VectorCompatibility.h in Headers */,
+				4DDDB4F912BA7E62003AC69F /* Operator.h in Headers */,
+				4DDDB4FF12BA7FF4003AC69F /* PositionVelocityCacheOperator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -321,6 +338,7 @@
 				E1FD945F1299996F00EBC94D /* ThermalForceLocalized.cpp in Sources */,
 				E1FD94611299996F00EBC94D /* TimeVaryingDragForce.cpp in Sources */,
 				E1FD94631299996F00EBC94D /* TimeVaryingThermalForce.cpp in Sources */,
+				4DDDB50012BA7FF4003AC69F /* PositionVelocityCacheOperator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -383,11 +401,13 @@
 				GCC_ENABLE_SSE42_EXTENSIONS = YES;
 				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
 				SDKROOT = macosx10.6;
+				USER_HEADER_SEARCH_PATHS = /Users/mark/Programs/cfitsio;
 			};
 			name = Debug;
 		};
@@ -403,6 +423,7 @@
 				GCC_ENABLE_SSE42_EXTENSIONS = YES;
 				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_STRICT_ALIASING = YES;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = NO;
 				GCC_TREAT_NONCONFORMANT_CODE_ERRORS_AS_WARNINGS = NO;
@@ -436,6 +457,7 @@
 				PREBINDING = NO;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = macosx10.6;
+				USER_HEADER_SEARCH_PATHS = /Users/mark/Programs/cfitsio;
 			};
 			name = Release;
 		};

@@ -34,6 +34,7 @@ public:
 	double *charge, *mass;
 	double *forceX, *forceY, *forceZ;
 	__m128d *xCache, *yCache, *zCache, *VxCache, *VyCache, *VzCache;
+    __m128d *xCache, *yCache, *VxCache, *VyCache;
 
 	static const double interParticleSpacing;
 
@@ -73,6 +74,11 @@ public:
 	const __m128d getx2_pd(const cloud_index i) const;
 	const __m128d getx3_pd(const cloud_index i) const;
 	const __m128d getx4_pd(const cloud_index i) const;
+
+    const __m128d getx1r_pd(const unsigned int i) const;
+	const __m128d getx2r_pd(const unsigned int i) const;
+	const __m128d getx3r_pd(const unsigned int i) const;
+	const __m128d getx4r_pd(const unsigned int i) const;
 	
 	const __m128d gety1_pd(const cloud_index i) const;
 	const __m128d gety2_pd(const cloud_index i) const;
@@ -88,7 +94,12 @@ public:
 	const __m128d getVx2_pd(const cloud_index i) const;
 	const __m128d getVx3_pd(const cloud_index i) const;
 	const __m128d getVx4_pd(const cloud_index i) const;
-	
+    
+    const __m128d gety1r_pd(const unsigned int i) const;
+	const __m128d gety2r_pd(const unsigned int i) const;
+	const __m128d gety3r_pd(const unsigned int i) const;
+	const __m128d gety4r_pd(const unsigned int i) const;
+    
 	const __m128d getVy1_pd(const cloud_index i) const;
 	const __m128d getVy2_pd(const cloud_index i) const;
 	const __m128d getVy3_pd(const cloud_index i) const;
