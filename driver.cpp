@@ -332,7 +332,7 @@ int main (int argc, char * const argv[])
 	unsigned int numForces = 3;
 
 	//process command line flags:
-	for(int i = 1; i < argc; i++) // argv[0] is the name of the exicutable.
+	for(int i = 1; i < argc; i++) // argv[0] is the name of the executable.
 	{
 		switch(argv[i][1])
 		{
