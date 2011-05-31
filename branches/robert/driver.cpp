@@ -332,7 +332,7 @@ int main (int argc, char * const argv[])
 	unsigned int numForces = 3;
 
 	//process command line flags:
-	for(int i = 0; i < argc; i++)
+	for(int i = 1; i < argc; i++) // argv[0] is the name of the exicutable.
 	{
 		switch(argv[i][1])
 		{
@@ -368,8 +368,7 @@ int main (int argc, char * const argv[])
 				break;
 			case 'h': //display "h"elp:
 				help();
-				exit(1);
-				break;
+				exit(0);
 			case 'L': //perform "L"ocalized heating experiment:
 				checkForce('L', 'T', usedForces, ThermalForceLocalizedFlag, ThermalForceFlag);
 				checkForce('L', 'v', usedForces, ThermalForceLocalizedFlag, TimeVaryingThermalForceFlag);
@@ -437,8 +436,10 @@ int main (int argc, char * const argv[])
 				usedForces |= DrivingForceFlag;
 				i = checkOption(argc, argv, i, 'w', "amplitude", &waveAmplitude, "wave shift", &waveShift, "driving constant", &driveConst);
 				break;
-			default: //default (expressionless)
-				break;
+			default:  //unknown options yield error
+				cout << "Error: Unknown option " << argv[i] << endl;
+				help();
+				exit(0);
 		}
 	}
 
