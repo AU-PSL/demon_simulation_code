@@ -44,8 +44,6 @@ Cloud::~Cloud()
 	delete[] forceX; delete[] forceY; delete[] forceZ;
 	delete[] xCache; delete[] yCache; delete[] zCache;
 	delete[] VxCache; delete[] VxCache; delete[] VzCache;
-    delete[] xCache; delete[] yCache; 
-    delete[] VxCache; delete[] VyCache;
 }
 
 inline void Cloud::setPosition(const cloud_index index, const double xVal, const double yVal, const double zVal)

@@ -58,7 +58,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 			_mm_store_pd(pFz, _mm_setzero_pd());
 		}
 
-		operate2(currentTime + dt/2.0)
+		operate2(currentTime + dt/2.0);
 		force2(currentTime + dt/2.0);      //compute net force2
 		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 2nd substep components
 		{
