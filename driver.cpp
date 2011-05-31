@@ -310,7 +310,7 @@ int main (int argc, char * const argv[])
 	double shieldingConstant = 2E4;      //corresponds to 10*(ion debye length)
 	double gamma = 10.0;
 	double thermRed = 1E-14;             //default thermal reduction factor
-	double thermRed1 = thermRed;         //default inner reduction factor (-L)
+	double thermRed1 = thermRed;         //default outer reduction factor (-L)
 	double thermScale = 1E-14;           //default for TimeVaryingThermalForce
 	double thermOffset = 0.0;            //default for TimeVaryingThermalForce
 	double heatRadius = .001;            //apply thermal force only within this radius
@@ -320,7 +320,7 @@ int main (int argc, char * const argv[])
 	double machSpeed = 0.2;              //firing speed for Mach Cone experiment
 	double massFactor = 100;             //mass multiplier for fired Mach Cone particle
 	double rmin = cloudSize/2.0;         //inner radius of shear layer
-	double rmax = rmin + cloudSize/5.0;  //outer ratius of shear layer
+	double rmax = rmin + cloudSize/5.0;  //outer radius of shear layer
 	double rotConst = 1E-15;             //rotational force in shear layer
 	double dragScale = -1.0;             //used in TimeVaryingDragForce
 	int continueFileIndex = 0;           //Index of argv array that holds the file name of the fitsfile to continue. 
