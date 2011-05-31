@@ -14,6 +14,8 @@
 #include <cmath>
 #include <limits>
 
+class Operator;
+
 class Runge_Kutta
 {
 public:
@@ -34,8 +36,17 @@ public:
 	void moveParticles(const double endTime);
 
 private:
+//private variables:
+    const unsigned int numOperators;
+    Operator ** const operations;
+    
 //private functions:
-	void force1(const double currentTime) const; //rk substep 1
+	void operate1(const double currentTime) const; //rk substep 1
+	void operate2(const double currentTime) const; //rk substep 2
+	void operate3(const double currentTime) const; //rk substep 3
+	void operate4(const double currentTime) const; //rk substep 4
+  
+    void force1(const double currentTime) const; //rk substep 1
 	void force2(const double currentTime) const; //rk substep 2
 	void force3(const double currentTime) const; //rk substep 3
 	void force4(const double currentTime) const; //rk substep 4
