@@ -455,7 +455,7 @@ int main (int argc, char * const argv[])
 	cout << "Status: Initializing cloud." << endl;
 
 	//declare fits file and error:
-	fitsfile *file;
+	fitsfile *file = NULL;
 	int error = 0;
 
 	if(continueFileIndex)

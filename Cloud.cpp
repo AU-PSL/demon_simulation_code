@@ -152,8 +152,8 @@ Cloud * const Cloud::initializeCube(const cloud_index numParticles)
 Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error, double * const currentTime)
 {
 	int *anyNull = NULL;
-	long numParticles;
-	long numTimeSteps;
+	long numParticles = 0;
+	long numTimeSteps = 0;
 
 	//move to CLOUD HDU:
 	if(!*error)
