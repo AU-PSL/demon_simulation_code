@@ -25,10 +25,53 @@
 //Other dependencies:
 #include <ctime>
 #include <iostream>
+#include <cstdarg>
+#include <cassert>
+#include <cctype>
 using namespace std;
 
 #define clear_line "\33[2K" // VT100 signal to clear line.
 typedef int file_index;
+
+enum clFlagType
+{
+	CI, // Cloud Index
+	D,  // Double
+	F   // File index
+};
+
+int dimension = 2;                  //spatial dimension
+bool Mach = false;                  // true -> perform Mach Cone experiment
+double startTime = 0.0;
+double dataTimeStep = 0.01;
+double simTimeStep = dataTimeStep/100.0;
+double endTime = 5.0;
+double cloudSize = 0.01;            // one-half side length (aka "radius")
+double confinementConst = 1E-13;    // confinementForce
+double confinementConstX = 1E-13;   // RectConfinementForce
+double confinementConstY = 1E-12;   // RectConfinementForce
+double confinementConstZ = 1E-12;   // RectConfinementForce (3D)
+double shieldingConstant = 2E4;     // corresponds to 10*(ion debye length)
+double Gamma = 10.0;
+double thermRed = 1E-14;            // default thermal reduction factor
+double thermRed1 = thermRed;        // default outer reduction factor (-L)
+double thermScale = 1E-14;          // default for TimeVaryingThermalForce
+double thermOffset = 0.0;           // default for TimeVaryingThermalForce
+double heatRadius = 0.001;          // apply thermal force only within this radius
+double driveConst = 0.00001;        // used in DrivingForce.cpp for waves
+double waveAmplitude = 1E-13;       // driving wave amplitude (default comparable to other forces throughout cloud)
+double waveShift = 0.007;           // driving wave shift
+double machSpeed = 0.2;             // firing speed for Mach Cone experiment
+double massFactor = 100;            // mass multiplier for fired Mach Cone particle
+double rmin = cloudSize/2.0;        // inner radius of shear layer
+double rmax = rmin + cloudSize/5.0; // outer ratius of shear layer
+double rotConst = 1E-15;            // rotational force in shear layer
+double dragScale = -1.0;            // used in TimeVaryingDragForce
+file_index continueFileIndex = 0;   // Index of argv array that holds the file name of the fitsfile to continue. 
+file_index finalsFileIndex = 0;     // Index of argv array that holds the file name of the fitsfile to use finals of.
+file_index outputFileIndex = 0;     // Index of argv array that holds the file name of the fitsfile to output.
+force_flags usedForces = 0;         // bitpacked forces
+cloud_index numParticles = 10;
 
 void help()
 {
@@ -74,149 +117,214 @@ void help()
           << " -w creates acoustic waves along the x-axis (best with -R)." << endl << endl;
 }
 
-//check if force is used:
-void checkForce(const char option, const force_flags usedForces, const ForceFlag flag)
+//check if force is used or conflicts with a previously set force:
+void checkForce(const force_index numChecks, ...)
 {
-	if(usedForces & flag)
+	va_list arglist;
+	va_start(arglist, numChecks);
+	
+	const char firstOption = (char)va_arg(arglist, int);
+	const ForceFlag firstFlag = (ForceFlag)va_arg(arglist, long);
+	
+	if (usedForces & firstFlag) 
 	{
-		cout << "Error: -" << option << " already set." << endl;
+		cout << "Error: option -" << firstOption << " already set." << endl;
 		help();
+		va_end(arglist);
 		exit(1);
 	}
-}
-
-//check if using two incompatible forces:
-void checkForce(char option1, char option2, force_flags usedForces, ForceFlag flag1, ForceFlag flag2)
-{
-	checkForce(option1, usedForces, flag1);
-	if(usedForces & flag2)
+	
+	for (force_index i = 0; i < numChecks; i++)
 	{
-		cout << "Error: -" << option1 << " cannot be used with -" << option2 << endl;
-		help();
-		exit(1);
+		const char nextOption = (char)va_arg(arglist, int);
+		const ForceFlag nextFlag = (ForceFlag)va_arg(arglist, int);
+		
+		if (usedForces & nextFlag)
+		{
+			cout << "Error: option -" << firstOption << " conflicts with option -" << nextOption << endl;
+			help();
+			va_end(arglist);
+			exit(1);
+		}
 	}
+	
+	va_end(arglist);
+	usedForces |= firstFlag;
 }
 
-//check whether character is alphabetical:
-inline const bool isCharacter(const char c)
+bool isUnsigned(const char *val)
 {
-	return (c > 'a' && c < 'z') || (c > 'A' && c < 'Z');
+	for (const char *c = val; *c != '\0'; c++)
+		if (!isdigit(*c))
+			return false;
+	return true;
 }
 
-//check file name exists:
-int checkFileOption(const int argc, char * const argv[], int i, const char option,
-	const string name, file_index * const file)
+bool isDouble(const char *val)
 {
-	if(i+1 >= argc || argv[i+1][0] == '-')
+	for (const char *c = val; *c != '\0'; c++)
+		if (!isdigit(*c) && *c != 'e' && *c != 'E' && *c != '.' && *c != '-')
+			return false;
+	return true;
+}
+
+bool isOption(const char *val)
+{
+	return val[0] == '-' && isalpha(val[1]) && val[2] == '\0';
+}
+
+template <typename T>
+void optionWarning(const char option, const char *name, const T val)
+{
+	cout << "Warning: -" << option << " option incomplete. Using default " 
+	<< name << " (" << val << ")." << endl;
+}
+
+// Check commandline options. Use defaults if values are missing.
+void checkOption(const int argc, char * const argv[], int &optionIndex, const char option, unsigned numOptions, ...)
+{
+	++optionIndex;
+	va_list arglist;
+	va_start(arglist, numOptions);
+	
+	for (unsigned int i = 0; i < numOptions; i++)
 	{
-		cout << "Warning: -" << option << " option incomplete." << endl
-			<< name << " missing." << endl;
-		help();
-		exit(i);
-	}
-	else
-		*file = ++i;
-
-	return i;
-}
-
-//check for one command line flag, use default value if absent:
-int checkOption(const int argc, char * const argv[], int i, const char option, 
-	const string name, double * const value)
-{
-	if(i+1 >= argc || argv[i+1][0] == '-')
-		cout << "Warning: -" << option << " option incomplete." << endl 
-			<< "Using default " << name << " (" << *value << ")." << endl;
-	else
-		*value = atof(argv[++i]);
-
-	return i;
-}
-
-//check for one command line flag, use default value if absent (overloaded for int values):
-int checkOption(const int argc, char * const argv[], int i, const char option, 
-	const string name, int * const value)
-{
-	if(i+1 >= argc || argv[i+1][0] == '-')
-		cout << "Warning: -" << option << " option incomplete." << endl 
-			<< "Using default " << name << " (" << *value << ")." << endl;
-	else
-		*value = atoi(argv[++i]);
-
-	return i;
-}
-
-//check for one command line flag, use default value if absent (overloaded for unsigned int values):
-int checkOption(const int argc, char * const argv[], int i, const char option, 
-	const string name, unsigned int * const value)
-{
-	if(i+1 >= argc || argv[i+1][0] == '-')
-		cout << "Warning: -" << option << " option incomplete." << endl 
-			<< "Using default " << name << " (" << *value << ")." << endl;
-	else
-		*value = atoi(argv[++i]);
-
-	return i;
-}
-
-//check for two command line flags, use default values if absent:
-int checkOption(const int argc, char * const argv[], int i, const char option, 
-	const string name1, double * const value1, 
-	const string name2, double * const value2)
-{
-	if(i+1 >= argc || argv[i+1][0] == '-')
-		cout << "Warning: -" << option << " option incomplete." << endl
-			<< "Using default "<< name1 << " (" << *value1 << ") and " 
-			<< name2 << " (" << *value2 << ")." << endl;
-	else
-	{
-		*value1 = atof(argv[++i]);
-		i = checkOption(argc, argv, i, option, name2, value2);
-	}
-
-	return i;
-}
-
-//check for three command line flags, use default values if absent:
-int checkOption(const int argc, char * const argv[], int i, const char option, 
-	const string name1, double * const value1, 
-	const string name2, double * const value2, 
-	const string name3, double * const value3)
-{
-	if(i+1 >= argc || argv[i+1][0] == '-')
-		cout << "Warning: -" << option << " option incomplete." << endl 
-			<< "Using default "<< name1 << " (" << *value1 << "), " 
-			<< name2 << " (" << *value2 << ") and " 
-			<< name3 << " (" << *value3 << ")." << endl;
-	else
-	{
-		*value1 = atof(argv[++i]);
-		i = checkOption(argc, argv, i, option, name2, value2, name3, value3);
+		const char *name = va_arg(arglist, char *);
+		const clFlagType type = (clFlagType)va_arg(arglist, int);
+		void *val = va_arg(arglist, void *);
+		
+		switch (type) {
+			case CI: 
+			{
+				cloud_index *ci = (cloud_index *)val;
+				if (optionIndex < argc && isUnsigned(argv[optionIndex]))
+					*ci = atoi(argv[optionIndex++]);
+				else
+					optionWarning<cloud_index> (option, name, *ci);
+				break;
+			}
+			case D:
+			{
+				double *d = (double *)val;
+				if (optionIndex < argc && !isOption(argv[optionIndex]) && isDouble(argv[optionIndex]))
+					*d = atof(argv[optionIndex++]);
+				else
+					optionWarning<double> (option, name, *d);
+				break;
+			}
+			case F:
+			{
+				const char *defaultFileName = va_arg(arglist, char *);
+				file_index *fi = (file_index *)val;
+				if (optionIndex < argc && !isOption(argv[optionIndex]) && !isDouble(argv[optionIndex]) && !isUnsigned(argv[optionIndex]))
+					*fi = optionIndex++;
+				else
+					optionWarning<const char *> (option, name, defaultFileName);
+				break;
+			}
+			default:
+				va_end(arglist);
+				assert("Undefined Argument Type");
+		}
 	}
 
-	return i;
+	va_end(arglist);
 }
 
-//check for two command line flags in the case of a negative argument,
-//	use default values if absent:
-int checkOptionWithNeg(const int argc, char * const argv[], int i, const char option, 
-	const string name1, double * const value1, 
-	const string name2, double * const value2)
+void parseCommandLineOptions(int argc, char * const argv[])
 {
-	if(i+1 >= argc || (argv[i+1][0] == '-' && isCharacter(argv[i+1][1])))
-		cout << "Warning: -" << option << " option incomplete." << endl 
-			<< "Using default " << name1 << " (" << *value1 << ") and " 
-			<< name2 << " (" << *value2 << ")." << endl << endl;
-	else
+	// argv[0] is the name of the executable. Increment is not needed since the
+	// checkOption increments i internally.
+	for (int i = 1; i < argc;)
 	{
-		*value1 = atof(argv[++i]);
-		i = checkOption(argc, argv, i, option, name2, value2);
+		switch (argv[i][1])
+		{
+			case 'c': // "c"ontinue from file:
+				checkOption(argc, argv, i, 'c', 1, "contine file", F, &continueFileIndex, "");
+				break;
+			case 'C': // set "C"onfinementConst:
+				checkOption(argc, argv, i, 'C', 1, "confinementConst", D, &confinementConst);
+				break;
+			case 'd': // use TimeVaryingDragForce:
+				checkForce(1, 'd', TimeVaryingDragForceFlag);
+				checkOption(argc, argv, i, 'd', 2, "scale factor", D, &dragScale, "offset", D, &Gamma);
+				break;
+			case 'D': //set spatial "D"imension
+				checkOption(argc, argv, i, 'D', 1, "dimension", CI, &dimension);
+				if(dimension != 1 && dimension != 2 && dimension != 3)
+				{
+					cout << "Error: Invalid spatial dimension.\n";
+					help();
+					exit(1);
+				}
+			case 'e': // set "e"nd time:
+				checkOption(argc, argv, i, 'e', 1, "end time", D, &endTime);
+				break;		
+			case 'f': // use "f"inal positions and velocities from previous run:
+				checkOption(argc, argv, i, 'f', 1, "finals file", F, &finalsFileIndex, "");
+				break;
+			case 'g': // set "g"amma:
+				checkOption(argc, argv, i, 'g', 1, "gamma", D, &Gamma);
+				break;
+			case 'h': // display "h"elp:
+				help();
+				exit(0);
+			case 'L': // perform "L"ocalized heating experiment:
+				checkForce(3, 'L', ThermalForceLocalizedFlag, 'T', ThermalForceFlag, 'v', TimeVaryingThermalForceFlag);
+				checkOption(argc, argv, i, 'L', 3, "radius", D, &heatRadius, "heat factor1", D, &thermRed, "heat factor2", D, &thermRed1);
+				break;
+			case 'M': // perform "M"ach Cone experiment:
+				Mach = true;
+				checkOption(argc, argv, i, 'M', 2, "velocity", D, &machSpeed, "mass", D, &massFactor);
+				break;
+			case 'n': // set "n"umber of particles:
+				checkOption(argc, argv, i, 'n', 1, "number of particles", CI, &numParticles);
+				if (numParticles%2) // odd
+					cout << "Warning: -n requires even number of particles. Incrementing number of particles to (" 
+					<< ++numParticles << ")." << endl;
+				break;
+			case 'o': // set dataTimeStep, which conrols "o"utput rate:
+				checkOption(argc, argv, i, 'o', 1, "data time step", D, &dataTimeStep);
+				break;
+			case 'O': // name "O"utput file:
+				checkOption(argc, argv, i, 'O', 1, "output file", F, &outputFileIndex, "data.fits");
+				break;
+			case 'R': // use "R"ectangular confinement:
+				checkForce(1, 'R', RectConfinementForceFlag);
+				checkOption(argc, argv, i, 'R', 2, "confine constantX", D, &confinementConstX, "confine constantY", D, &confinementConstY);
+				break;
+			case 's': // set "s"hielding constant:
+				checkOption(argc, argv, i, 's', 1, "shielding constant", D, &shieldingConstant);
+				break;
+			case 'S': // create rotational "S"hear layer:
+				checkForce(1, 'S', RotationalForceFlag);
+				checkOption(argc, argv, i, 'S', 3, "force constant", D, &rotConst, "rmin", D, &rmin, "rmax", D, &rmax);
+				break;
+			case 't': // set "t"imestep:
+				checkOption(argc, argv, i, 't', 1, "time step", D, &simTimeStep);
+				break;
+			case 'T': // set "T"emperature reduction factor:
+				checkForce(3, 'T', ThermalForceFlag, 'L', ThermalForceLocalizedFlag, 'v', TimeVaryingThermalForceFlag);
+				checkOption(argc, argv, i, 'T', 1, "heat factor", D, &thermRed);
+				break;
+			case 'v': // use time ""arying thermal force:
+				checkForce(3, 'v', TimeVaryingThermalForceFlag, 'L', ThermalForceLocalizedFlag, 'T', ThermalForceFlag);
+				checkOption(argc, argv, i, 'v', 2, "heat value scale", D, &thermScale, "heat value offset", D, &thermOffset);
+				break;
+			case 'w': // drive "w"aves:
+				checkForce(1, 'w', DrivingForceFlag);
+				checkOption(argc, argv, i, 'w', 3, "amplitude", D, &waveAmplitude, "wave shift", D, &waveShift, "driving constant", D, &driveConst);
+				break;
+			default: // Handle unknown options by issuing error.
+				cout << "Error: Unknown option " << argv[i] << endl;
+				help();
+				exit(1);
+		}
 	}
-	return i;
 }
 
 //count number of forces in use:
-const force_index getNumForces(const force_flags usedForces)
+const force_index getNumForces()
 {
 	force_index i = 0;
 	if (usedForces & ConfinementForceFlag)
@@ -273,17 +381,16 @@ void deleteFitsFile(char * const filename, int * const error)
 	checkFitsError(*error, __LINE__);
 }
 
-//check if fits file exists:
-void fitsFileExists(char * const filename, int * const error)
-{
-	int exists = 0;
-	fits_file_exists(filename, &exists, error);
-	if(exists != 1)
-	{
-		cout << "Error: Fits file \"" << filename << "\" does not exist." << endl;
-		help();
-		exit(1);
-	}
+// Check if fits file exists
+void fitsFileExists(char * const filename, int * const error) {
+    int exists = 0;
+    fits_file_exists(filename, &exists, error);
+    if (!exists)
+    {
+        cout << "Error: Fits file \"" << filename << "\" does not exist." << endl;
+        help();
+        exit(1);
+    }
 
 	checkFitsError(*error, __LINE__);
 	cout << "Initializing with fits file \"" << filename << "\"." << endl;
@@ -292,157 +399,8 @@ void fitsFileExists(char * const filename, int * const error)
 int main (int argc, char * const argv[]) 
 {
 	time_t timer = time(NULL); //start timer
-
-	//object declarations:
-	Cloud *cloud;
-	Force **forceArray;                  //new pointer to Force object (will set to array)
+	parseCommandLineOptions(argc, argv);
 	
-	//declare variables and set default values:
-	bool Mach = false;                   //true -> perform Mach Cone experiment
-	double startTime = 0.0;
-	double simTimeStep = 0.0001;
-	double dataTimeStep = 0.01;
-	double endTime = 5;
-	double cloudSize = 0.01;             //one-half side length (aka "radius")
-	double confinementConst = 1E-13;     //confinementForce
-	double confinementConstX = 1E-13;    //RectConfinementForce
-	double confinementConstY = 1E-12;    //RectConfinementForce
-	double confinementConstZ = 1E-12;    //RectConfinementForce
-	double shieldingConstant = 2E4;      //corresponds to 10*(ion debye length)
-	double gamma = 10.0;
-	double thermRed = 1E-14;             //default thermal reduction factor
-	double thermRed1 = thermRed;         //default outer reduction factor (-L)
-	double thermScale = 1E-14;           //default for TimeVaryingThermalForce
-	double thermOffset = 0.0;            //default for TimeVaryingThermalForce
-	double heatRadius = .001;            //apply thermal force only within this radius
-	double driveConst = .00001;          //used in DrivingForce.cpp for waves
-	double waveAmplitude = 1E-13;        //driving wave amplitude (default comparable to other forces throughout cloud)
-	double waveShift = 0.007;            //driving wave shift
-	double machSpeed = 0.2;              //firing speed for Mach Cone experiment
-	double massFactor = 100;             //mass multiplier for fired Mach Cone particle
-	double rmin = cloudSize/2.0;         //inner radius of shear layer
-	double rmax = rmin + cloudSize/5.0;  //outer radius of shear layer
-	double rotConst = 1E-15;             //rotational force in shear layer
-	double dragScale = -1.0;             //used in TimeVaryingDragForce
-	file_index continueFileIndex = 0;    //index of argv array that holds continue fitsfile file name
-	file_index finalsFileIndex = 0;      //index of argv array that holds final fitsfile file name
-	file_index outputFileIndex = 0;      //index of argv array that holds output fitsfile file name
-	int dimension = 2;                   //1D, 2D, or 3D cloud
-	force_flags usedForces = 0;         //bitpacked forces
-	cloud_index numParticles = 10;
-
-	//process command line flags:
-	for(int i = 1; i < argc; i++) // argv[0] is the name of the executable.
-	{
-		switch(argv[i][1])
-		{
-			case 'c': //"c"ontinue from file:
-				i = checkFileOption(argc, argv, i, 'c', "Continue file", &continueFileIndex);
-				break;
-			case 'C': //set "C"onfinementConst:
-				i = checkOption(argc, argv, i, 'C', "confinementConst", &confinementConst);
-				break;
-			case 'd': //use TimeVarying"D"ragForce:
-				checkForce('d', usedForces, TimeVaryingDragForceFlag);
-				usedForces |= TimeVaryingDragForceFlag;
-				//dragScale needs to allow negative numbers:
-				i = checkOptionWithNeg(argc, argv, i, 'd', "scale factor", &dragScale, "offset", &gamma);
-				break;
-			case 'D': //set cloud "D"imension
-				i = checkOption(argc, argv, i, 'D', "dimension", &dimension);
-				if(dimension != 1 && dimension != 2 && dimension != 3)
-				{
-					cout << "Error: Invalid spatial dimension.\n";
-					help();
-					exit(1);
-				}
-				break;
-			case 'e': //set "e"nd time:
-				i = checkOption(argc, argv, i, 'e', "end time", &endTime);
-				break;
-			case 'f': //use "f"inal positions and velocities from previous run:
-				i = checkOption(argc, argv, i, 'f', "Finals file", &finalsFileIndex);
-				break;
-			case 'g': //set "g"amma:
-				i = checkOption(argc, argv, i, 'g', "gamma", &gamma);
-				break;
-			case 'h': //display "h"elp:
-				help();
-				exit(0);
-			case 'L': //perform "L"ocalized heating experiment:
-				checkForce('L', 'T', usedForces, ThermalForceLocalizedFlag, ThermalForceFlag);
-				checkForce('L', 'v', usedForces, ThermalForceLocalizedFlag, TimeVaryingThermalForceFlag);
-				usedForces |= ThermalForceLocalizedFlag;
-				i = checkOption(argc, argv, i, 'L', "radius", &heatRadius, "heat factor1", &thermRed, "heat factor2", &thermRed1);
-				break;
-			case 'M': //perform "M"ach Cone experiment:
-				Mach = true;
-				i = checkOption(argc, argv, i, 'M', "velocity", &machSpeed, "mass", &massFactor);
-				break;
-			case 'n': //set "n"umber of particles:
-				i = checkOption(argc, argv, i, 'n', "number of particles", &numParticles);
-				if((numParticles % 2) != 0)     //odd
-				{
-					cout << "Even number of particles required for SIMD." << endl 
-						<< "Incrementing number of particles to " << ++numParticles << endl;
-				}
-				break;
-			case 'o': //set dataTimeStep, which conrols "o"utput rate:
-				i = checkOption(argc, argv, i, 'o', "data time step", &dataTimeStep);
-				break;
-			case 'O': //name "O"utput file:
-				i = checkOption(argc, argv, i, 'O', "output file", &outputFileIndex);
-				break;
-			case 'r': //set cloud "r"adius:
-				i = checkOption(argc, argv, i, 'r', "cloud size", &cloudSize);
-				break;
-			case 'R': //use "R"ectangular confinement:
-				checkForce('R', usedForces, RectConfinementForceFlag);
-				usedForces |= RectConfinementForceFlag;
-				i = checkOption(argc, argv, i, 'R', "confine constantX", &confinementConstX, "confine constantY", &confinementConstY, "confine constantZ", &confinementConstZ);
-				break;
-			case 's': //set "s"hielding constant:
-				i = checkOption(argc, argv, i, 's', "shielding constant", &shieldingConstant);
-				break;
-			case 'S': //create rotational "S"hear layer:
-				checkForce('S', usedForces, RotationalForceFlag);
-				usedForces |= RotationalForceFlag;
-				i = checkOption(argc, argv, i, 'S', "force constant", &rotConst, "rmin", &rmin, "rmax", &rmax);
-				break;
-			case 't': //set "t"imestep:
-				i = checkOption(argc, argv, i, 't', "time step", &simTimeStep);
-				if(simTimeStep == 0.0) //prevent divide-by-zero error
-				{
-					cout << "Error: simTimeStep set to 0.0 with -t." << endl 
-						<< "Terminating to prevent divide-by-zero." << endl;
-					help();
-					exit(1);
-				}
-				break;
-			case 'T': //set "T"emperature reduction factor:
-				checkForce('T', 'L', usedForces, ThermalForceFlag, ThermalForceLocalizedFlag);
-				checkForce('T', 'v', usedForces, ThermalForceFlag, TimeVaryingThermalForceFlag);
-				usedForces |= ThermalForceFlag;
-				i = checkOption(argc, argv, i, 'T', "heat factor", &thermRed);
-				break;
-			case 'v': //use time ""arying thermal force:
-				checkForce('v', 'T', usedForces, TimeVaryingThermalForceFlag, ThermalForceFlag);
-				checkForce('v', 'L', usedForces, TimeVaryingThermalForceFlag, ThermalForceLocalizedFlag);
-				usedForces |= TimeVaryingThermalForceFlag;
-				i = checkOptionWithNeg(argc, argv, i, 'v', "heat value scale", &thermScale, "heat value offset", &thermOffset);
-				break;
-			case 'w': //drive "w"aves:
-				checkForce('w', usedForces, DrivingForceFlag);
-				usedForces |= DrivingForceFlag;
-				i = checkOption(argc, argv, i, 'w', "amplitude", &waveAmplitude, "wave shift", &waveShift, "driving constant", &driveConst);
-				break;
-			default:  //unknown options yield error
-				cout << "Error: Unknown option " << argv[i] << endl;
-				help();
-				exit(1);
-		}
-	}
-
 	if (!(usedForces & TimeVaryingDragForceFlag))
 		usedForces |= DragForceFlag;
 	if (!(usedForces & RectConfinementForceFlag))
@@ -457,6 +415,7 @@ int main (int argc, char * const argv[])
 	//declare fits file and error:
 	fitsfile *file = NULL;
 	int error = 0;
+	Cloud *cloud;
 
 	if(continueFileIndex)
 	{
@@ -535,21 +494,20 @@ int main (int argc, char * const argv[])
 	}	
 /*------------------------------------------------------------------------------
  * This concludes initialization of cloud.
- -----------------------------------------------------------------------------*/
-/*------------------------------------------------------------------------------
  * Initialize array of Force objects:
  -----------------------------------------------------------------------------*/
 	cout << "Status: Initializing forces." << endl;
 
-	const force_index numForces = getNumForces(usedForces);
-	forceArray = new Force*[numForces];
+	const force_index numForces = getNumForces();
+	Force **forceArray = new Force*[numForces];
+	
 	force_index index = 0;
 	if(dimension == 1)
 	{
 		if (usedForces & ConfinementForceFlag)
 			forceArray[index++] = new ConfinementForce1D(cloud, confinementConst);
 		if (usedForces & DragForceFlag) 
-			forceArray[index++] = new DragForce1D(cloud, gamma);
+			forceArray[index++] = new DragForce1D(cloud, Gamma);
 		if (usedForces & ShieldedCoulombForceFlag) 
 			forceArray[index++] = new ShieldedCoulombForce1D(cloud, shieldingConstant);
 		if (usedForces & RectConfinementForceFlag)
@@ -566,7 +524,7 @@ int main (int argc, char * const argv[])
 			exit(1);
 		}
 		if (usedForces & TimeVaryingDragForceFlag)
-			forceArray[index++] = new TimeVaryingDragForce1D(cloud, dragScale, gamma);
+			forceArray[index++] = new TimeVaryingDragForce1D(cloud, dragScale, Gamma);
 		if (usedForces & TimeVaryingThermalForceFlag)
 			forceArray[index++] = new TimeVaryingThermalForce1D(cloud, thermScale, thermOffset);
 	}
@@ -575,7 +533,7 @@ int main (int argc, char * const argv[])
 		if (usedForces & ConfinementForceFlag)
 			forceArray[index++] = new ConfinementForce2D(cloud, confinementConst);
 		if (usedForces & DragForceFlag) 
-			forceArray[index++] = new DragForce2D(cloud, gamma);
+			forceArray[index++] = new DragForce2D(cloud, Gamma);
 		if (usedForces & ShieldedCoulombForceFlag) 
 			forceArray[index++] = new ShieldedCoulombForce2D(cloud, shieldingConstant);
 		if (usedForces & RectConfinementForceFlag)
@@ -589,7 +547,7 @@ int main (int argc, char * const argv[])
 		if (usedForces & RotationalForceFlag)
 			forceArray[index++] = new RotationalForce2D(cloud, rmin, rmax, rotConst);
 		if (usedForces & TimeVaryingDragForceFlag)
-			forceArray[index++] = new TimeVaryingDragForce2D(cloud, dragScale, gamma);
+			forceArray[index++] = new TimeVaryingDragForce2D(cloud, dragScale, Gamma);
 		if (usedForces & TimeVaryingThermalForceFlag)
 			forceArray[index++] = new TimeVaryingThermalForce2D(cloud, thermScale, thermOffset);
 	}
@@ -598,7 +556,7 @@ int main (int argc, char * const argv[])
 		if (usedForces & ConfinementForceFlag)
 			forceArray[index++] = new ConfinementForce3D(cloud, confinementConst);
 		if (usedForces & DragForceFlag) 
-			forceArray[index++] = new DragForce3D(cloud, gamma);
+			forceArray[index++] = new DragForce3D(cloud, Gamma);
 		if (usedForces & ShieldedCoulombForceFlag) 
 			forceArray[index++] = new ShieldedCoulombForce3D(cloud, shieldingConstant);
 		if (usedForces & RectConfinementForceFlag)
@@ -612,7 +570,7 @@ int main (int argc, char * const argv[])
 		if (usedForces & RotationalForceFlag)
 			forceArray[index++] = new RotationalForce3D(cloud, rmin, rmax, rotConst);
 		if (usedForces & TimeVaryingDragForceFlag)
-			forceArray[index++] = new TimeVaryingDragForce3D(cloud, dragScale, gamma);
+			forceArray[index++] = new TimeVaryingDragForce3D(cloud, dragScale, Gamma);
 		if (usedForces & TimeVaryingThermalForceFlag)
 			forceArray[index++] = new TimeVaryingThermalForce3D(cloud, thermScale, thermOffset);
 	}
