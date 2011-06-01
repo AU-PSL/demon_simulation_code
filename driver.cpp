@@ -399,7 +399,7 @@ int main (int argc, char * const argv[])
 			case 'R': //use "R"ectangular confinement:
 				checkForce('R', usedForces, RectConfinementForceFlag);
 				usedForces |= RectConfinementForceFlag;
-				i = checkOption(argc, argv, i, 'R', "confine constantX", &confinementConstX, "confine constantY", &confinementConstY, "confine constantY", &confinementConstZ);
+				i = checkOption(argc, argv, i, 'R', "confine constantX", &confinementConstX, "confine constantY", &confinementConstY, "confine constantZ", &confinementConstZ);
 				break;
 			case 's': //set "s"hielding constant:
 				i = checkOption(argc, argv, i, 's', "shielding constant", &shieldingConstant);
