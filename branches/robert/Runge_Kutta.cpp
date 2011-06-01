@@ -282,7 +282,7 @@ const double Runge_Kutta::modifyTimeStep() const
 			__m128d vz2 = vz1 - _mm_load_pd(pz2);
 
 			//check separation distances against dist:
-			__m128d comp = _mm_cmple_pd(_mm_sqrt_pd(vx2*vx2 + vy2*vy2 + vz2*vz2), dist);
+			__m128d comp = _mm_cmple_pd(_mm_sqrt_pd(vx2*vx2 + vy2*vy2 + vz2*vz2), distv);
 
 			double low, high;
 			_mm_storel_pd(&low, comp);
@@ -296,7 +296,7 @@ const double Runge_Kutta::modifyTimeStep() const
 			vz2 = vz1 - _mm_loadr_pd(pz2);
 
 			//check separation distances against dist: 
-			comp = _mm_cmple_pd(_mm_sqrt_pd(vx2*vx2 + vy2*vy2 + vz2*vz2), dist);
+			comp = _mm_cmple_pd(_mm_sqrt_pd(vx2*vx2 + vy2*vy2 + vz2*vz2), distv);
 
 			_mm_storel_pd(&low, comp);
 			_mm_storeh_pd(&high, comp);
