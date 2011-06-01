@@ -26,7 +26,6 @@ public:
 	Force ** const theForce;      //pointer to Force object
 	const unsigned int numForces;
 	const double init_dt;         //store initial time step
-	const double red_dt;          //store reduced time step
 	double currentTime;
 
 //public functions:
@@ -37,8 +36,8 @@ public:
 
 private:
 //private variables:
-    const unsigned int numOperators;
-    Operator ** const operations;
+	const unsigned int numOperators;
+	Operator ** const operations;
     
 //private functions:
 	void operate1(const double currentTime) const; //rk substep 1
@@ -46,12 +45,12 @@ private:
 	void operate3(const double currentTime) const; //rk substep 3
 	void operate4(const double currentTime) const; //rk substep 4
   
-    void force1(const double currentTime) const; //rk substep 1
+	void force1(const double currentTime) const; //rk substep 1
 	void force2(const double currentTime) const; //rk substep 2
 	void force3(const double currentTime) const; //rk substep 3
 	void force4(const double currentTime) const; //rk substep 4
 
-	const double modifyTimeStep() const;
+	const double modifyTimeStep(const unsigned int startIndex, const double dist, const double currentTimeStep) const;
 };
 
 #endif /* RUNGE_KUTTA_H */

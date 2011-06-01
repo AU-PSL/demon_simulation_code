@@ -13,7 +13,7 @@
 using namespace std;
 
 Runge_Kutta::Runge_Kutta(Cloud * const myCloud, Force **forces, const double timeStep, const unsigned int forcesSize, const double startTime)
-: cloud(myCloud), theForce(forces), numForces(forcesSize), init_dt(timeStep), red_dt(timeStep/100.0), currentTime(startTime), 
+: cloud(myCloud), theForce(forces), numForces(forcesSize), init_dt(timeStep), currentTime(startTime), 
 numOperators(1), operations(new Operator*[numOperators])
 {
     // Operators are order dependent.
@@ -29,9 +29,8 @@ void Runge_Kutta::moveParticles(const double endTime)
 
 	while(currentTime < endTime)
 	{
-		const double dt = modifyTimeStep();  //implement dynamic timstep (if necessary):
-	
-		const __m128d vdt = _mm_set1_pd(dt); //store timestep as vector const
+		const double dt = modifyTimeStep(0, 1.0e-4, init_dt); //implement dynamic timstep (if necessary):
+		const __m128d vdt = _mm_set1_pd(dt);                  //store timestep as vector const
         
 		operate1(currentTime);
 		force1(currentTime); //compute net force1
@@ -239,20 +238,22 @@ inline void Runge_Kutta::force4(const double time) const
 		theForce[i]->force4(time);
 }
 
-/*--------------------------------------------------------------------------
-* If any two particles are within 100*(1.45E-6) meters of one another, then
-* use reduced time step. Do not reduce time step if already in reduced mode.
-* Resume normal time step once all particles are sufficiently separated.
---------------------------------------------------------------------------*/
-const double Runge_Kutta::modifyTimeStep() const
+/*------------------------------------------------------------------------------
+* If a particle spacing is less than the specified distance reduce timestep by a
+* factor of 10 and recheck with disance reduced by a factor of 10. Once all
+* particle spacings are outside the specified distance use the current timestep.
+* This allows fine grain control of reduced timesteps.
+------------------------------------------------------------------------------*/
+const double Runge_Kutta::modifyTimeStep(const unsigned int startIndex, const double dist, const double currentTimeStep) const
 {
 	//set constants:
 	const unsigned int numPar = cloud->n;
 	const double dist = 1.45e-4;
 	const __m128d distv = _mm_set1_pd(dist);
+	const double redFactor = 10.0;
 
 	//loop through entire cloud, or until reduction occures
-	for(unsigned int j = 0, e = numPar - 1; j < e; j += 2)
+	for(unsigned int j = startIndex, e = numPar - 1; j < e; j += 2)
 	{
 		//caculate separation distance b/t adjacent elements:
 		const double sepx = cloud->x[j] - cloud->x[j + 1];
@@ -261,7 +262,7 @@ const double Runge_Kutta::modifyTimeStep() const
 
 		//if particles too close, reduce time step:
 		if(sqrt(sepx*sepx + sepy*sepy + sepz*sepz) <= dist)
-			return red_dt;
+			return modifyTimeStep(j, dist/redFactor, currentTimeStep/redFactor);
 
 		//load positions into vectors:
 		const __m128d vx1 = cloud->getx1_pd(j); //x vector
@@ -288,7 +289,7 @@ const double Runge_Kutta::modifyTimeStep() const
 			_mm_storel_pd(&low, comp);
 			_mm_storeh_pd(&high, comp);
 			if (isnan(low) || isnan(high))  //if either are too close, reduce time step
-				return red_dt;
+				return modifyTimeStep(j, dist/redFactor, currentTimeStep/redFactor);
 
 			//calculate j,i+1 and j+1,i separation distances:
 			vx2 = vx1 - _mm_loadr_pd(px2);
@@ -301,10 +302,10 @@ const double Runge_Kutta::modifyTimeStep() const
 			_mm_storel_pd(&low, comp);
 			_mm_storeh_pd(&high, comp);
 			if (isnan(low) || isnan(high))  //if either are too close, reduce time step
-				return red_dt;
+				return modifyTimeStep(j, dist/redFactor, currentTimeStep/redFactor);
 		}
 	}
 
 	//reset time step:
-	return init_dt;
+	return currentTimeStep;
 }
