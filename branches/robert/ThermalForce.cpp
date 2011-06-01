@@ -17,80 +17,80 @@ ThermalForce3D::ThermalForce3D(Cloud * const myCloud, const double redFactor) : 
 //1D:
 void ThermalForce1D::force1(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
 
 void ThermalForce1D::force2(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
 
 void ThermalForce1D::force3(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
 
 void ThermalForce1D::force4(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
 
 //2D:
 void ThermalForce2D::force1(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
 
 void ThermalForce2D::force2(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
 
 void ThermalForce2D::force3(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
 
 void ThermalForce2D::force4(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
 
 //3D:
 void ThermalForce3D::force1(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
 
 void ThermalForce3D::force2(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
 
 void ThermalForce3D::force3(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
 
 void ThermalForce3D::force4(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
 
 //force methods:
-inline void ThermalForce1D::force(const unsigned int currentParticle)
+inline void ThermalForce1D::force(const cloud_index currentParticle)
 {
 	//MT returns random number in (0,1)
 	const double directionL = mt()*2.0 - 1.0; //random kick
@@ -101,7 +101,7 @@ inline void ThermalForce1D::force(const unsigned int currentParticle)
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + _mm_set_pd(directionH, directionL)); // _mm_set_pd() is backwards
 }
 
-inline void ThermalForce2D::force(const unsigned int currentParticle)
+inline void ThermalForce2D::force(const cloud_index currentParticle)
 {
 	//MT returns random number in (0,1)
 	const __m128d thermV = _mm_set1_pd(heatVal)*_mm_set_pd(mt(), mt()); //random strength
@@ -115,7 +115,7 @@ inline void ThermalForce2D::force(const unsigned int currentParticle)
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + thermV*_mm_set_pd(sin(phiH), sin(phiL)));
 }
 
-inline void ThermalForce3D::force(const unsigned int currentParticle)
+inline void ThermalForce3D::force(const cloud_index currentParticle)
 {
 	//MT returns random number in (0,1)
 	const __m128d thermV = _mm_set1_pd(heatVal)*_mm_set_pd(mt(), mt()); //random strength

@@ -36,7 +36,7 @@ protected:
 
 private:
 //private functions:
-	void force(const unsigned int currentParticle, const __m128d currentPositionX); //common force calculator
+	void force(const cloud_index currentParticle, const __m128d currentPositionX); //common force calculator
 };
 
 class ConfinementForce2D : public ConfinementForce1D
@@ -53,7 +53,7 @@ public:
 
 private:
 //private functions:
-	void force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY);
+	void force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY);
 };
 
 class ConfinementForce3D : public ConfinementForce2D
@@ -70,7 +70,7 @@ public:
 
 private:
 //private functions:
-	void force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY, const __m128d currentPositionZ);
+	void force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY, const __m128d currentPositionZ);
 };
 
 #endif /* CONFINEMENTFORCE_H */

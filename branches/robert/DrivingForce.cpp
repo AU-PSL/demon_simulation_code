@@ -25,35 +25,34 @@ DrivingForce3D::DrivingForce3D(Cloud * const myCloud, const double drivingConst,
 void DrivingForce1D::force1(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, vtime, cloud->getx1_pd(currentParticle));
 }
 
 void DrivingForce1D::force2(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, vtime, cloud->getx2_pd(currentParticle));
 }
 
 void DrivingForce1D::force3(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, vtime, cloud->getx3_pd(currentParticle));
 }
 
 void DrivingForce1D::force4(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, vtime, cloud->getx4_pd(currentParticle));
 }
 
 //force method:
-inline void DrivingForce1D::force(const unsigned int currentParticle, const __m128d currentTime, const __m128d currentPositionX)
+inline void DrivingForce1D::force(const cloud_index currentParticle, const __m128d currentTime, const __m128d currentPositionX)
 {
-	//N.B. F = A*sin(k*x - w*t)*exp(-(x + x0)^2/B) is the equation used in the paper, which differs from that below.
 	const __m128d distV = currentPositionX - _mm_set1_pd(shift);
 	const __m128d sinArg = _mm_set1_pd(waveNum)*currentPositionX - _mm_set1_pd(angFreq)*currentTime;
 	const __m128d expArg = _mm_set1_pd(-1.0)*distV*distV/_mm_set1_pd(driveConst);

@@ -41,7 +41,7 @@ protected:
 
 private:
 //private functions:
-	void force(const unsigned int currentParticle, const __m128d displacementX);
+	void force(const cloud_index currentParticle, const __m128d displacementX);
 };
 
 class ThermalForceLocalized2D : public ThermalForceLocalized1D
@@ -58,7 +58,7 @@ public:
 
 private:
 //private functions:
-	void force(const unsigned int currentParticle, const __m128d displacementX, const __m128d displacementY);
+	void force(const cloud_index currentParticle, const __m128d displacementX, const __m128d displacementY);
 };
 
 class ThermalForceLocalized3D : public ThermalForceLocalized2D
@@ -75,7 +75,7 @@ public:
 
 private:
 //private functions:
-	void force(const unsigned int currentParticle, const __m128d displacementX, const __m128d displacementY, const __m128d displacementZ);
+	void force(const cloud_index currentParticle, const __m128d displacementX, const __m128d displacementY, const __m128d displacementZ);
 };
 
 #endif /* THERMALFORCELOCALIZED_H */

@@ -19,80 +19,80 @@ ThermalForceLocalized3D::ThermalForceLocalized3D(Cloud * const myCloud, const do
 //1D:
 void ThermalForceLocalized1D::force1(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, cloud->getx1_pd(currentParticle));
 }
 
 void ThermalForceLocalized1D::force2(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, cloud->getx2_pd(currentParticle));
 }
 
 void ThermalForceLocalized1D::force3(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, cloud->getx3_pd(currentParticle));
 }
 
 void ThermalForceLocalized1D::force4(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, cloud->getx4_pd(currentParticle));
 }
 
 //2D:
 void ThermalForceLocalized2D::force1(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
 }
 
 void ThermalForceLocalized2D::force2(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
 }
 
 void ThermalForceLocalized2D::force3(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
 }
 
 void ThermalForceLocalized2D::force4(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
 }
 
 //3D:
 void ThermalForceLocalized3D::force1(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle), cloud->getz1_pd(currentParticle));
 }
 
 void ThermalForceLocalized3D::force2(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle), cloud->getz2_pd(currentParticle));
 }
 
 void ThermalForceLocalized3D::force3(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle), cloud->getz3_pd(currentParticle));
 }
 
 void ThermalForceLocalized3D::force4(const double currentTime)
 {
-	for (unsigned int currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle), cloud->getz4_pd(currentParticle));
 }
 
 //Force methods:
-inline void ThermalForceLocalized1D::force(const unsigned int currentParticle, const __m128d displacementX)
+inline void ThermalForceLocalized1D::force(const cloud_index currentParticle, const __m128d displacementX)
 {
 	const __m128d radiusV = _mm_sqrt_pd(displacementX*displacementX); //absolute value
 
@@ -112,7 +112,7 @@ inline void ThermalForceLocalized1D::force(const unsigned int currentParticle, c
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + thermV*_mm_set_pd(directionH, directionL)); // _mm_set_pd() is backwards
 }
 
-inline void ThermalForceLocalized2D::force(const unsigned int currentParticle, const __m128d displacementX, const __m128d displacementY)
+inline void ThermalForceLocalized2D::force(const cloud_index currentParticle, const __m128d displacementX, const __m128d displacementY)
 {
 	const __m128d radiusV = _mm_sqrt_pd(displacementX*displacementX + displacementY*displacementY);
 
@@ -133,7 +133,7 @@ inline void ThermalForceLocalized2D::force(const unsigned int currentParticle, c
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + thermV*_mm_set_pd(sin(phiH), sin(phiL)));
 }
 
-inline void ThermalForceLocalized3D::force(const unsigned int currentParticle, const __m128d displacementX, const __m128d displacementY, const __m128d displacementZ)
+inline void ThermalForceLocalized3D::force(const cloud_index currentParticle, const __m128d displacementX, const __m128d displacementY, const __m128d displacementZ)
 {
 	const __m128d radiusV = _mm_sqrt_pd(displacementX*displacementX + displacementY*displacementY + displacementZ*displacementZ);
 
