@@ -141,7 +141,7 @@ Cloud * const Cloud::initializeCube(const cloud_index numParticles)
 	{
 		cloud->setPosition(i,
 			cloudHalfSize - (double)(i%cbrtNumPar)*interParticleSpacing,
-			cloudHalfSize -(double)((i/cbrtNumPar)%cbrtNumPar)*interParticleSpacing,
+			cloudHalfSize - (double)((i/cbrtNumPar)%cbrtNumPar)*interParticleSpacing,
 			cloudHalfSize - (double)(i/(cbrtNumPar*cbrtNumPar))*interParticleSpacing);
 		cloud->setVelocity(i);
 	}

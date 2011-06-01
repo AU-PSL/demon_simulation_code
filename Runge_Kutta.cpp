@@ -248,7 +248,8 @@ const double Runge_Kutta::modifyTimeStep() const
 {
 	//set constants:
 	const unsigned int numPar = cloud->n;
-	const __m128d dist = _mm_set1_pd(1.45E-4);
+	const double dist = 1.45e-4;
+	const __m128d distv = _mm_set1_pd(dist);
 
 	//loop through entire cloud, or until reduction occures
 	for(unsigned int j = 0, e = numPar - 1; j < e; j += 2)
@@ -259,7 +260,7 @@ const double Runge_Kutta::modifyTimeStep() const
 		const double sepz = cloud->z[j] - cloud->z[j + 1];
 
 		//if particles too close, reduce time step:
-		if(sqrt(sepx*sepx + sepy*sepy + sepz*sepz) <= 1.45E-4)
+		if(sqrt(sepx*sepx + sepy*sepy + sepz*sepz) <= dist)
 			return red_dt;
 
 		//load positions into vectors:
