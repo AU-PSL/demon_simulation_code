@@ -37,8 +37,6 @@ public:
 	
 	static const double interParticleSpacing;
 
-	static const double interParticleSpacing;
-
 //public functions:
 	//Input: int index, initialPosX, intialPosY, initialPosZ
 	//Preconditions: 0 <= index < number of particles
