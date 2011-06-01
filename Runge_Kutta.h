@@ -20,12 +20,12 @@ typedef unsigned int operator_index;
 class Runge_Kutta
 {
 public:
-	Runge_Kutta(Cloud * const myCloud, Force ** const forces, const double timeStep, const unsigned int forcesSize, double startTime); //overloaded constructor
+	Runge_Kutta(Cloud * const myCloud, Force ** const forces, const double timeStep, const force_index forcesSize, double startTime);	//overloaded constructor
 
 //public variables:
 	Cloud * const cloud;          //pointer to cloud object
 	Force ** const theForce;      //pointer to Force object
-	const unsigned int numForces;
+	const force_index numForces;
 	const double init_dt;         //store initial time step
 	double currentTime;
 
