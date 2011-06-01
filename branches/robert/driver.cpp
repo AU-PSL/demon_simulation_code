@@ -215,9 +215,9 @@ int checkOptionWithNeg(const int argc, char * const argv[], int i, const char op
 }
 
 //count number of forces in use:
-const unsigned int getNumForces(const long usedForces)
+const force_index getNumForces(const long usedForces)
 {
-	unsigned int i = 0;
+	force_index i = 0;
 	if (usedForces & ConfinementForceFlag)
 		++i;
 	if (usedForces & DragForceFlag)
@@ -329,7 +329,6 @@ int main (int argc, char * const argv[])
 	int dimension = 2;                   //1D, 2D, or 3D cloud
 	long usedForces = 0;                 //bitpacked forces
 	unsigned int numParticles = 10;
-	unsigned int numForces = 3;
 
 	//process command line flags:
 	for(int i = 1; i < argc; i++) // argv[0] is the name of the executable.
@@ -541,9 +540,9 @@ int main (int argc, char * const argv[])
  -----------------------------------------------------------------------------*/
 	cout << "Status: Initializing forces." << endl;
 
-	numForces = getNumForces(usedForces);
+	const force_index numForces = getNumForces(usedForces);
 	forceArray = new Force*[numForces];
-	unsigned int index = 0;
+	force_index index = 0;
 	if(dimension == 1)
 	{
 		if (usedForces & ConfinementForceFlag)
@@ -619,13 +618,13 @@ int main (int argc, char * const argv[])
 	
 	if(continueFileIndex) //initialize forces from old file
 	{
-		for (unsigned int i = 0; i < numForces; i++)
+		for (force_index i = 0; i < numForces; i++)
 			forceArray[i]->readForce(file, &error);
 		checkFitsError(error, __LINE__);
 	}
 	else                  //write forces to new file
 	{
-		for (unsigned int i = 0; i < numForces; i++)
+		for (force_index i = 0; i < numForces; i++)
 			forceArray[i]->writeForce(file, &error);
 		checkFitsError(error, __LINE__);
 	}
@@ -732,7 +731,7 @@ int main (int argc, char * const argv[])
 		<< seconds << (seconds == 1 ? " second " : " seconds.") << endl;
 
 	//clean up objects:
-	for (unsigned int i = 0; i < numForces; i++)
+	for (force_index i = 0; i < numForces; i++)
 		delete forceArray[i];
 
 	delete[] forceArray;
