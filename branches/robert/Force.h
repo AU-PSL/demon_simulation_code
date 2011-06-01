@@ -13,6 +13,7 @@
 #include "Cloud.h"
 
 typedef unsigned int force_index;
+typedef long force_flags;
 
 // Binary assignments for the bit-packed FORCES keyword in Fits file:
 enum ForceFlag {
