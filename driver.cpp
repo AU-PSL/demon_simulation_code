@@ -74,7 +74,7 @@ void help()
 }
 
 //check if force is used:
-void checkForce(const char option, const long usedForces, const ForceFlag flag)
+void checkForce(const char option, const force_flags usedForces, const ForceFlag flag)
 {
 	if(usedForces & flag)
 	{
@@ -85,7 +85,7 @@ void checkForce(const char option, const long usedForces, const ForceFlag flag)
 }
 
 //check if using two incompatible forces:
-void checkForce(char option1, char option2, long usedForces, ForceFlag flag1, ForceFlag flag2)
+void checkForce(char option1, char option2, force_flags usedForces, ForceFlag flag1, ForceFlag flag2)
 {
 	checkForce(option1, usedForces, flag1);
 	if(usedForces & flag2)
@@ -215,7 +215,7 @@ int checkOptionWithNeg(const int argc, char * const argv[], int i, const char op
 }
 
 //count number of forces in use:
-const force_index getNumForces(const long usedForces)
+const force_index getNumForces(const force_flags usedForces)
 {
 	force_index i = 0;
 	if (usedForces & ConfinementForceFlag)
@@ -327,8 +327,8 @@ int main (int argc, char * const argv[])
 	int finalsFileIndex = 0;             //Index of argv array that holds the file name of the fitsfile to use finals of.
 	int outputFileIndex = 0;             //Index of argv array that holds the file name of the fitsfile to output.
 	int dimension = 2;                   //1D, 2D, or 3D cloud
-	long usedForces = 0;                 //bitpacked forces
-	unsigned int numParticles = 10;
+	force_flags usedForces = 0;         //bitpacked forces
+	cloud_index numParticles = 10;
 
 	//process command line flags:
 	for(int i = 1; i < argc; i++) // argv[0] is the name of the executable.
