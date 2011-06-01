@@ -34,7 +34,7 @@ protected:
 	double confineX;
 
 //protected functions:
-	void force(const unsigned int currentParticle, const __m128d currentPositionX);
+	void force(const cloud_index currentParticle, const __m128d currentPositionX);
 };
 
 class RectConfinementForce2D : public RectConfinementForce1D
@@ -57,7 +57,7 @@ protected:
 	double confineY;
 
 //protected functions:
-	void force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY);
+	void force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY);
 };
 
 class RectConfinementForce3D : public RectConfinementForce2D
@@ -80,7 +80,7 @@ protected:
 	double confineZ;
 
 //protected functions:
-	void force(const unsigned int currentParticle, const __m128d currentPositionX, const __m128d currentPositionY, const __m128d currentPositionZ);
+	void force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY, const __m128d currentPositionZ);
 };
 
 #endif /* RECTCONFINEMENTFORCE_H */

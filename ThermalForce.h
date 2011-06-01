@@ -39,7 +39,7 @@ protected:
 
 private:
 //private functions:
-	void force(const unsigned int currentParticle);
+	void force(const cloud_index currentParticle);
 };
 
 class ThermalForce2D : public ThermalForce1D
@@ -56,7 +56,7 @@ public:
 
 private:
 //private functions:
-	void force(const unsigned int currentParticle);
+	void force(const cloud_index currentParticle);
 };
 
 class ThermalForce3D : public ThermalForce2D
@@ -73,7 +73,7 @@ public:
 
 private:
 //private functions:
-	void force(const unsigned int currentParticle);
+	void force(const cloud_index currentParticle);
 };
 
 #endif /* THERMALFORCE_H */
