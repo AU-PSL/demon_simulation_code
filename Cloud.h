@@ -34,6 +34,8 @@ public:
 	double *charge, *mass;
 	double *forceX, *forceY, *forceZ;
 	__m128d *xCache, *yCache, *zCache, *VxCache, *VyCache, *VzCache;
+	
+	static const double interParticleSpacing;
 
 	static const double interParticleSpacing;
 
