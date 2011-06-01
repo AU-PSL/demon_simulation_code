@@ -21,19 +21,20 @@ public:
 	Cloud(cloud_index numPar); //overloaded constructor
 	~Cloud();
 
-//public variables:
-	cloud_index n;            //number of elements (particles)
-	double *k1, *k2, *k3, *k4; //velocityX (Runge-Kutta) tidbits
-	double *l1, *l2, *l3, *l4; //positionX (Runge-Kutta) tidbits
-	double *m1, *m2, *m3, *m4; //velocityY (Runge-Kutta) tidbits
-	double *n1, *n2, *n3, *n4; //positionY (Runge-Kutta) tidbits
-	double *o1, *o2, *o3, *o4; //velocityZ (Runge-Kutta) tidbits
-	double *p1, *p2, *p3, *p4; //positionZ (Rupge-Kutta) tidbits
-	double *x, *y, *z;         //current positions
-	double *Vx, *Vy, *Vz;      //current velocities
-	double *charge, *mass;
-	double *forceX, *forceY, *forceZ;
-	__m128d *xCache, *yCache, *zCache, *VxCache, *VyCache, *VzCache;
+// public variables:
+	const cloud_index n;                                   //number of elements (particles)
+	double * const k1, * const k2, * const k3, * const k4; //velocityX (Runge-Kutta) tidbits
+	double * const l1, * const l2, * const l3, * const l4; //positionsX (Runge-Kutta) tidbits
+	double * const m1, * const m2, * const m3, * const m4; //velocityY (Runge-Kutta) tidbits
+	double * const n1, * const n2, * const n3, * const n4; //positionsY (Runge-Kutta) tidbits
+	double * const o1, * const o2, * const o3, * const o4; //velocityZ (Runge-Kutta) tidbits
+	double * const p1, * const p2, * const p3, * const p4; //positionsZ (Runge-Kutta) tidbits
+	double * const x, * const y, * const z;                //current positions
+	double * const Vx, * const Vy, * const Vz;             //current velocities
+	double * const charge, * const mass;
+	double * const forceX, * const forceY, * const forceZ;
+	__m128d * const xCache, * const yCache, * const zCache;
+	__m128d * const VxCache, * const VyCache, * const VzCache;
 	
 	static const double interParticleSpacing;
 
@@ -41,22 +42,22 @@ public:
 	//Input: int index, initialPosX, intialPosY, initialPosZ
 	//Preconditions: 0 <= index < number of particles
 	//Postconditions: x,y,z position of particle #index set to initialPosX,initialPosY,initialPosZ
-	void setPosition(const cloud_index index, const double initialPosX, const double initialPosY, const double initialPosZ);
+	void setPosition(const cloud_index index, const double initialPosX, const double initialPosY, const double initialPosZ) const;
 
 	//Input: int index
 	//Preconditions: 0 <= index < number of particles
 	//Postconditions: velocity vector of particle #index initialized to zero vector
-	void setVelocity(const cloud_index index);
+	void setVelocity(const cloud_index index) const;
 
 	//Input: none
 	//Preconditions: none
 	//Postconditions: charge of each particle randomly set, range 5900 to 6100 electrons
-	void setCharge();
+	void setCharge() const;
 
 	//Input: none
 	//Preconditions: none
 	//Postconditions: mass of each particle set according to radius, density
-	void setMass();
+	void setMass() const;
 
 	//Input: fitsfile *file, int *error
 	//Preconditions: fitsfile exists, error = 0
