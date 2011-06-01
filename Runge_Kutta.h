@@ -15,6 +15,7 @@
 #include <limits>
 
 class Operator;
+typedef unsigned int operator_index;
 
 class Runge_Kutta
 {
@@ -36,7 +37,7 @@ public:
 
 private:
 //private variables:
-	const unsigned int numOperators;
+	const operator_index numOperators;
 	Operator ** const operations;
     
 //private functions:
