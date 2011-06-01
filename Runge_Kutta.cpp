@@ -248,7 +248,6 @@ const double Runge_Kutta::modifyTimeStep(const unsigned int startIndex, const do
 {
 	//set constants:
 	const unsigned int numPar = cloud->n;
-	const double dist = 1.45e-4;
 	const __m128d distv = _mm_set1_pd(dist);
 	const double redFactor = 10.0;
 
