@@ -33,10 +33,10 @@ void Runge_Kutta::moveParticles(const double endTime)
 		const __m128d vdt = _mm_set1_pd(dt);                  //store timestep as vector const
         
 		operate1(currentTime);
-		force1(currentTime); //compute net force1
-		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2)	//calculate k1 and l1 for entire cloud
+		force1(currentTime); // compute net force1
+		for(cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 1st RK substep components
 		{
-			const __m128d vmass = _mm_load_pd(cloud->mass + i);                //load ith and (i+1)th mass into vector
+			const __m128d vmass = _mm_load_pd(cloud->mass + i);               //load ith and (i+1)th mass into vector
 
 			//assign force pointers for stylistic purposes:
 			double * const pFx = cloud->forceX + i;
@@ -58,10 +58,10 @@ void Runge_Kutta::moveParticles(const double endTime)
 		}
 
 		operate2(currentTime + dt/2.0);
-		force2(currentTime + dt/2.0);      //compute net force2
-		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 2nd substep components
+		force2(currentTime + dt/2.0); // compute net force2
+		for(cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 2nd RK substep components
 		{
-			const __m128d vmass = _mm_load_pd(cloud->mass + i);                //load ith and (i+1)th mass
+			const __m128d vmass = _mm_load_pd(cloud->mass + i);               //load ith and (i+1)th mass
 
 			//assign force pointers:
 			double * const pFx = cloud->forceX + i;
@@ -83,10 +83,10 @@ void Runge_Kutta::moveParticles(const double endTime)
 		}
 
 		operate3(currentTime + dt/2.0);
-		force3(currentTime + dt/2.0);      //compute net force3
-		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 3rd substep components
+		force3(currentTime + dt/2.0); // compute net force3
+		for(cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 3rd RK substep components
 		{
-			const __m128d vmass = _mm_load_pd(cloud->mass + i);                //load ith and (i+1)th mass
+			const __m128d vmass = _mm_load_pd(cloud->mass + i);               //load ith and (i+1)th mass
 
 			//assign force pointers:
 			double * const pFx = cloud->forceX + i;
@@ -108,10 +108,10 @@ void Runge_Kutta::moveParticles(const double endTime)
 		}
 
 		operate4(currentTime + dt/2.0);
-		force4(currentTime + dt);          //compute net force4
-		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 4th substep components
+		force4(currentTime + dt); // compute net force4
+		for(cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 4th RK substep components
 		{
-			const __m128d vmass = _mm_load_pd(cloud->mass + i);                //load ith and (i+1)th mass
+			const __m128d vmass = _mm_load_pd(cloud->mass + i);               //load ith and (i+1)th mass
 
 			//assign force pointers:
 			double * const pFx = cloud->forceX + i;
@@ -131,7 +131,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 			_mm_store_pd(pFz, _mm_setzero_pd());
 		}
 
-		for(unsigned int i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate next position and next velocity for entire cloud
+		for(cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) // calculate next position and next velocity for entire cloud
 		{
 			//load ith and (i+1)th k's into vectors:
 			const __m128d vk1 = _mm_load_pd(cloud->k1 + i);
@@ -244,15 +244,15 @@ inline void Runge_Kutta::force4(const double time) const
 * particle spacings are outside the specified distance use the current timestep.
 * This allows fine grain control of reduced timesteps.
 ------------------------------------------------------------------------------*/
-const double Runge_Kutta::modifyTimeStep(const unsigned int startIndex, const double dist, const double currentTimeStep) const
+const double Runge_Kutta::modifyTimeStep(const cloud_index startIndex, const double dist, const double currentTimeStep) const
 {
 	//set constants:
-	const unsigned int numPar = cloud->n;
+	const cloud_index numPar = cloud->n;
 	const __m128d distv = _mm_set1_pd(dist);
 	const double redFactor = 10.0;
 
 	//loop through entire cloud, or until reduction occures
-	for(unsigned int j = startIndex, e = numPar - 1; j < e; j += 2)
+	for(cloud_index j = startIndex, e = numPar - 1; j < e; j += 2)
 	{
 		//caculate separation distance b/t adjacent elements:
 		const double sepx = cloud->x[j] - cloud->x[j + 1];
@@ -269,7 +269,7 @@ const double Runge_Kutta::modifyTimeStep(const unsigned int startIndex, const do
 		const __m128d vz1 = cloud->getz1_pd(j); //z vector
 
 		//calculate separation distance b/t nonadjacent elements:
-		for(unsigned int i = j + 2; i < numPar; i += 2)
+		for(cloud_index i = j + 2; i < numPar; i += 2)
 		{
 			//assign position pointers:
 			const double * const px2 = cloud->x + i;
