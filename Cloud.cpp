@@ -16,7 +16,7 @@ using namespace std;
 //typical spacing of physical clouds:
 const double Cloud::interParticleSpacing = 0.0003;
 
-Cloud::Cloud(cloud_index numPar) : n(numPar), 
+Cloud::Cloud(const cloud_index numPar) : n(numPar),
 k1(new double[n]), k2(new double[n]), k3(new double[n]), k4(new double[n]),
 l1(new double[n]), l2(new double[n]), l3(new double[n]), l4(new double[n]),
 m1(new double[n]), m2(new double[n]), m3(new double[n]), m4(new double[n]),
@@ -46,28 +46,28 @@ Cloud::~Cloud()
 	delete[] VxCache; delete[] VxCache; delete[] VzCache;
 }
 
-inline void Cloud::setPosition(const cloud_index index, const double xVal, const double yVal, const double zVal)
+inline void Cloud::setPosition(const cloud_index index, const double xVal, const double yVal, const double zVal) const
 {
 	x[index] = xVal;
 	y[index] = yVal;
 	z[index] = zVal;
 }
 
-inline void Cloud::setVelocity(const cloud_index index)
+inline void Cloud::setVelocity(const cloud_index index) const
 {
 	Vx[index] = 0.0;
 	Vy[index] = 0.0;
 	Vz[index] = 0.0;
 }
 
-inline void Cloud::setCharge()
+inline void Cloud::setCharge() const
 {
 	srand((int)time(NULL));
 	for(cloud_index i = 0; i < n; i++)
 		charge[i] = (rand()%201 + 5900)*1.6E-19;
 }
 
-inline void Cloud::setMass()
+inline void Cloud::setMass() const
 {
 	const double radius = 1.45E-6;
 	const double particleDensity = 2200.0;
