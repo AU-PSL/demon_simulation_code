@@ -28,6 +28,10 @@ Runge_Kutta::~Runge_Kutta()
 {
 	dispatch_release(queue);
 	dispatch_release(sema);
+
+	for (operator_index i = 0; i < numOperators; i++)
+		delete operations[i];
+	delete[] operations;
 }
 
 // 4th order Runge-Kutta algorithm:
