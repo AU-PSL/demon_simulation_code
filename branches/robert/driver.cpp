@@ -651,7 +651,7 @@ int main (int argc, char * const argv[])
 		delete forceArray[i];
 
 	delete[] forceArray;
-//	delete cloud;
+	delete cloud;
 
 	return 0;
 }
