@@ -40,7 +40,7 @@ enum clFlagType
 	F   // File index
 };
 
-int dimension = 2;                  //spatial dimension
+long dimension = 2;                 //spatial dimension
 bool Mach = false;                  // true -> perform Mach Cone experiment
 double startTime = 0.0;
 double dataTimeStep = 0.01;
@@ -426,6 +426,8 @@ int main (int argc, char * const argv[])
 		checkFitsError(error, __LINE__);
 		
 		//use the same forces:
+		fits_read_key_lng(file, const_cast<char *> ("NUM_DIMS"), &dimension, NULL, &error);
+		checkFitsError(error, __LINE__);
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &usedForces, NULL, &error);
 		checkFitsError(error, __LINE__);
 		
@@ -583,6 +585,10 @@ int main (int argc, char * const argv[])
 	}
 	else                  //write forces to new file
 	{
+		fits_write_key_lng(file, const_cast<char *> ("NUM_DIMS"), dimension, 
+			const_cast<char *> ("Number of dimensions."), &error);
+		checkFitsError(error, __LINE__);
+		
 		for (force_index i = 0; i < numForces; i++)
 			forceArray[i]->writeForce(file, &error);
 		checkFitsError(error, __LINE__);
