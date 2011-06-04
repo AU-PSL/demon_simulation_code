@@ -222,7 +222,6 @@ void ShieldedCoulombForce3D::force1(const double currentTime)
 
 void ShieldedCoulombForce3D::force2(const double currentTime)
 {
-	const __m128d v2 = _mm_set1_pd(2.0);
 	for (cloud_index currentParticle = 0, numParticles = cloud->n, e = cloud->n - 1; currentParticle < e; currentParticle += 2) 
 	{
 		const __m128d vx1 = cloud->getx2_pd(currentParticle);
@@ -247,7 +246,6 @@ void ShieldedCoulombForce3D::force2(const double currentTime)
 
 void ShieldedCoulombForce3D::force3(const double currentTime)
 {
-	const __m128d v2 = _mm_set1_pd(2.0);
 	for (cloud_index currentParticle = 0, numParticles = cloud->n, e = cloud->n - 1; currentParticle < e; currentParticle += 2) 
 	{
 		const __m128d vx1 = cloud->getx3_pd(currentParticle);
@@ -264,13 +262,6 @@ void ShieldedCoulombForce3D::force3(const double currentTime)
 		force(currentParticle, currentParticle + 1, x1 - x2, y1 - y2, z1 - z2);
 		for(cloud_index i = currentParticle + 2; i < numParticles; i += 2)
 		{
-			const double * const px2 = cloud->x + i; //increment memory location
-			const double * const py2 = cloud->y + i;
-			const double * const pz2 = cloud->z + i;
-			const double * const pl = cloud->l2 + i;
-			const double * const pn = cloud->n2 + i;
-			const double * const pp = cloud->p2 + i;
-
 			force(currentParticle, i, vx1 - cloud->getx3_pd(i), vy1 - cloud->gety3_pd(i), vz1 - cloud->getz3_pd(i));
 			forcer(currentParticle, i, vx1 - cloud->getx3r_pd(i), vy1 - cloud->gety3r_pd(i), vz1 - cloud->getz3r_pd(i));
 		}
@@ -295,13 +286,6 @@ void ShieldedCoulombForce3D::force4(const double currentTime)
 		force(currentParticle, currentParticle + 1, x1 - x2, y1 - y2, z1 - z2);
 		for(cloud_index i = currentParticle + 2; i < numParticles; i += 2)
 		{
-			const double * const px2 = cloud->x + i; //increment memory location
-			const double * const py2 = cloud->y + i;
-			const double * const pz2 = cloud->z + i;
-			const double * const pl = cloud->l3 + i;
-			const double * const pn = cloud->n3 + i;
-			const double * const pp = cloud->p3 + i;
-
 			force(currentParticle, i, vx1 - cloud->getx4_pd(i), vy1 - cloud->gety4_pd(i), vz1 - cloud->getz4_pd(i));
 			forcer(currentParticle, i, vx1 - cloud->getx4r_pd(i), vy1 - cloud->gety4r_pd(i), vz1 - cloud->getz4r_pd(i));
 		}
