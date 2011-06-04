@@ -622,52 +622,23 @@ int main (int argc, char * const argv[])
 /*------------------------------------------------------------------------------
  * Commence Runge-Kutta algorithm:
  -----------------------------------------------------------------------------*/
-	cout << "Status: Commencing Runge-Kutta." << endl << endl;
-
-	cout << "Dimension = " << dimension << endl;
+	cout << "Status: Commencing Runge-Kutta." << endl << endl
+		<< "Dimension = " << dimension << endl;
 
 	Runge_Kutta rk4(cloud, forceArray, simTimeStep, numForces, startTime);
 
 	//execute simulation for desired length of time:
-	if(dimension == 1) //condition farther up than necessary to avoid querying on each time step
+	while(startTime < endTime)
 	{
-		while(startTime < endTime)
-		{
-			cout << clear_line << "\rCurrent Time: " << rk4.currentTime << "s (" 
-				<< rk4.currentTime/endTime*100.0 << "% Complete)" << flush;
+		cout << clear_line << "\rCurrent Time: " << rk4.currentTime << "s (" 
+			<< rk4.currentTime/endTime*100.0 << "% Complete)" << flush;
 
-			//call Runge-Kutta algorithm:
-			rk4.moveParticles(startTime += dataTimeStep);
-			//write positions and velocities:
-			cloud->writeTimeStep(file, &error, rk4.currentTime);
-		}
+		//call Runge-Kutta algorithm:
+		rk4.moveParticles(startTime += dataTimeStep);
+		//write positions and velocities:
+		cloud->writeTimeStep(file, &error, rk4.currentTime);
 	}
-	if(dimension == 2)
-	{
-		while(startTime < endTime)
-		{
-			cout << clear_line << "\rCurrent Time: " << rk4.currentTime << "s (" 
-				<< rk4.currentTime/endTime*100.0 << "% Complete)" << flush;
 
-			//call Runge-Kutta algorithm:
-			rk4.moveParticles(startTime += dataTimeStep);
-			//write positions and velocities:
-			cloud->writeTimeStep(file, &error, rk4.currentTime);
-		}
-	}
-	if(dimension == 3)
-	{
-		while(startTime < endTime)
-		{
-			cout << clear_line << "\rCurrent Time: " << rk4.currentTime << "s (" 
-				<< rk4.currentTime/endTime*100.0 << "% Complete)" << flush;
-
-			//call Runge-Kutta algorithm:
-			rk4.moveParticles(startTime += dataTimeStep);
-			//write positions and velocities:
-			cloud->writeTimeStep(file, &error, rk4.currentTime);
-		}
-	}
 /*------------------------------------------------------------------------------
  * This concludes the Runge-Kutta algorithm.
  -----------------------------------------------------------------------------*/
