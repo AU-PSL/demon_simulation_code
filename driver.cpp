@@ -26,7 +26,7 @@
 #include <cctype>
 
 // Cannot include cmath because it causes a conflict with gamma.
-extern double sqrt(double);
+extern "C" double sqrt(double);
 
 using namespace std;
 
