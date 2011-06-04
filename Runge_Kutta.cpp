@@ -23,6 +23,13 @@ numOperators(1), operations(new Operator*[numOperators])
 	operations[0] = new PositionVelocityCacheOperator(cloud);
 }
 
+Runge_Kutta::~Runge_Kutta()
+{
+	for (operator_index i = 0; i < numOperators; i++)
+		delete operations[i];
+	delete[] operations;
+}
+
 // 4th order Runge-Kutta algorithm:
 void Runge_Kutta::moveParticles(const double endTime)
 {
