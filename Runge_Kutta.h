@@ -20,7 +20,8 @@ typedef unsigned char operator_index;
 class Runge_Kutta
 {
 public:
-	Runge_Kutta(Cloud * const myCloud, Force ** const forces, const double timeStep, const force_index forcesSize, double startTime);	//overloaded constructor
+	Runge_Kutta(Cloud * const myCloud, Force ** const forces, const double timeStep, const force_index forcesSize, double startTime);
+	~Runge_Kutta();
 
 //public variables:
 	Cloud * const cloud;          //pointer to cloud object
