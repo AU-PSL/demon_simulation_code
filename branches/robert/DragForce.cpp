@@ -92,7 +92,7 @@ void DragForce3D::force4(const double currentTime)
 //force methods:
 inline void DragForce1D::force(const cloud_index currentParticle, const __m128d currentVelocityX)
 {
-	const __m128d drag = _mm_set1_pd(dragConst)*_mm_load_pd(&cloud->mass[currentParticle]);
+	const __m128d drag = _mm_set1_pd(dragConst)*_mm_load_pd(cloud->mass + currentParticle);
 	double * const pFx = cloud->forceX + currentParticle;
 
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + drag*currentVelocityX);
@@ -100,7 +100,7 @@ inline void DragForce1D::force(const cloud_index currentParticle, const __m128d 
 
 inline void DragForce2D::force(const cloud_index currentParticle, const __m128d currentVelocityX, const __m128d currentVelocityY)
 {
-	const __m128d drag = _mm_set1_pd(dragConst)*_mm_load_pd(&cloud->mass[currentParticle]);
+	const __m128d drag = _mm_set1_pd(dragConst)*_mm_load_pd(cloud->mass + currentParticle);
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;
 
@@ -110,7 +110,7 @@ inline void DragForce2D::force(const cloud_index currentParticle, const __m128d 
 
 inline void DragForce3D::force(const cloud_index currentParticle, const __m128d currentVelocityX, const __m128d currentVelocityY, const __m128d currentVelocityZ)
 {
-	const __m128d drag = _mm_set1_pd(dragConst)*_mm_load_pd(&cloud->mass[currentParticle]);
+	const __m128d drag = _mm_set1_pd(dragConst)*_mm_load_pd(cloud->mass + currentParticle);
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;
 	double * const pFz = cloud->forceZ + currentParticle;
