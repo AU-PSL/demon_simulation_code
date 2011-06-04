@@ -116,15 +116,18 @@ public:
 	const __m128d getVz4_pd(const cloud_index i) const;
 
 //static functions:
-	static Cloud * const initializeLine(const cloud_index numParticles);   //1D
-	static Cloud * const initializeSquare(const cloud_index numParticles); //2D
-	static Cloud * const initializeCube(const cloud_index numParticles);   //3D
+	static Cloud * const initializeCloud(const cloud_index numParticles, long &numDimensions);
 
 	//Input: fitsFile *file, int *error
 	//Preconditions: fitsfile exists, error = 0
 	//Postconditions: cloud initialized with last time step of fitsfile,
 	//	forces and other simulation information extracted as well
 	static Cloud * const initializeFromFile(fitsfile * const file, int * const error, double * const currentTime);
+	
+private:
+	static Cloud * const initializeLine(const cloud_index numParticles);   //1D
+	static Cloud * const initializeSquare(const cloud_index numParticles); //2D
+	static Cloud * const initializeCube(const cloud_index numParticles);   //3D
 };
 
 #endif /* CLOUD_H */
