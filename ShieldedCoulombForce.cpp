@@ -296,7 +296,7 @@ void ShieldedCoulombForce3D::force4(const double currentTime)
 inline void ShieldedCoulombForce1D::force(const cloud_index currentParticle, const cloud_index iParticle, const double displacementX)
 {
 	// Calculate displacement between particles.
-	const double displacement = abs(displacementX);
+	const double displacement = fabs(displacementX);
 	const double valExp = displacement*shielding;
 
 	if(valExp < 10.0) //restrict to 10*(ion debye length)
