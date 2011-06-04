@@ -50,7 +50,7 @@ void MTRand_int32::seed(const unsigned long* array, int size) //init by array
 		++j;
 		j %= size;
 
-		if((++i) == n)
+		if ((++i) == n)
 		{
 			state[0] = state[n - 1];
 			i = 1;
@@ -61,7 +61,7 @@ void MTRand_int32::seed(const unsigned long* array, int size) //init by array
 	{
 		state[i] = (state[i] ^ ((state[i - 1] ^ (state[i - 1] >> 30)) * 1566083941UL)) - i;
 		state[i] &= 0xFFFFFFFFUL; //for > 32 bit machines
-		if((++i) == n)
+		if ((++i) == n)
 		{
 			state[0] = state[n - 1];
 			i = 1;

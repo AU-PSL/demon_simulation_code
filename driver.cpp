@@ -251,7 +251,7 @@ void parseCommandLineOptions(int argc, char * const argv[])
 				break;
 			case 'D': //set spatial "D"imension
 				checkOption(argc, argv, i, 'D', 1, "dimension", CI, &dimension);
-				if(dimension != 1 && dimension != 2 && dimension != 3)
+				if (dimension != 1 && dimension != 2 && dimension != 3)
 				{
 					cout << "Error: Invalid spatial dimension.\n";
 					help();
@@ -353,7 +353,7 @@ const force_index getNumForces()
 //check fitsfile for errors:
 void checkFitsError(const int error, const int lineNumber)
 {
-	if(!error)
+	if (!error)
 		return;
 
 	char message[80];
@@ -372,7 +372,7 @@ void deleteFitsFile(char * const filename, int * const error)
 	int exists = 0;
 	fits_file_exists(filename, &exists, error);
 
-	if(exists)
+	if (exists)
 	{
 		cout << "Warning: Removing pre-existing \"" << filename << "\" file." << endl;
 		remove(filename); //required by fits, else can't create
@@ -417,7 +417,7 @@ int main (int argc, char * const argv[])
 	int error = 0;
 	Cloud *cloud;
 
-	if(continueFileIndex)
+	if (continueFileIndex)
 	{
 		fitsFileExists(argv[continueFileIndex], &error);
 		
@@ -433,7 +433,7 @@ int main (int argc, char * const argv[])
 		cloud = Cloud::initializeFromFile(file, &error, &startTime);
 		checkFitsError(error, __LINE__);
 	}
-	else if(finalsFileIndex)
+	else if (finalsFileIndex)
 	{
 		fitsFileExists(argv[finalsFileIndex], &error);
 
@@ -451,11 +451,11 @@ int main (int argc, char * const argv[])
 	}
 	else //initialize new cloud on grid:
 	{
-		if(dimension == 1)
+		if (dimension == 1)
 			cloud = Cloud::initializeLine(numParticles);
-		else if(dimension == 2)
+		else if (dimension == 2)
 			cloud = Cloud::initializeSquare(numParticles);
-		else if(dimension == 3)
+		else if (dimension == 3)
 			cloud = Cloud::initializeCube(numParticles);
 		else //this should never happen
 		{
@@ -469,7 +469,7 @@ int main (int argc, char * const argv[])
 	// Create a new file if we aren't continueing one.
 	if (!continueFileIndex)
 	{
-		if(outputFileIndex) //use specified file name
+		if (outputFileIndex) //use specified file name
 		{
 			deleteFitsFile(argv[outputFileIndex], &error);
 			fits_create_file(&file, argv[outputFileIndex], &error);
@@ -502,7 +502,7 @@ int main (int argc, char * const argv[])
 	Force **forceArray = new Force*[numForces];
 	
 	force_index index = 0;
-	if(dimension == 1)
+	if (dimension == 1)
 	{
 		if (usedForces & ConfinementForceFlag)
 			forceArray[index++] = new ConfinementForce1D(cloud, confinementConst);
@@ -528,7 +528,7 @@ int main (int argc, char * const argv[])
 		if (usedForces & TimeVaryingThermalForceFlag)
 			forceArray[index++] = new TimeVaryingThermalForce1D(cloud, thermScale, thermOffset);
 	}
-	else if(dimension == 2)
+	else if (dimension == 2)
 	{
 		if (usedForces & ConfinementForceFlag)
 			forceArray[index++] = new ConfinementForce2D(cloud, confinementConst);
@@ -551,7 +551,7 @@ int main (int argc, char * const argv[])
 		if (usedForces & TimeVaryingThermalForceFlag)
 			forceArray[index++] = new TimeVaryingThermalForce2D(cloud, thermScale, thermOffset);
 	}
-	if(dimension == 3)
+	if (dimension == 3)
 	{
 		if (usedForces & ConfinementForceFlag)
 			forceArray[index++] = new ConfinementForce3D(cloud, confinementConst);
@@ -575,7 +575,7 @@ int main (int argc, char * const argv[])
 			forceArray[index++] = new TimeVaryingThermalForce3D(cloud, thermScale, thermOffset);
 	}
 	
-	if(continueFileIndex) //initialize forces from old file
+	if (continueFileIndex) //initialize forces from old file
 	{
 		for (force_index i = 0; i < numForces; i++)
 			forceArray[i]->readForce(file, &error);
@@ -603,7 +603,7 @@ int main (int argc, char * const argv[])
 		checkFitsError(error, __LINE__);
 	}
 
-	if(Mach) //TODO: make Mach 3D
+	if (Mach) //TODO: make Mach 3D
 	{
 		//reserve particle 1 for mach experiment
 		cloud->x[0] = -2.0*cloudSize;
@@ -622,7 +622,7 @@ int main (int argc, char * const argv[])
 	Runge_Kutta rk4(cloud, forceArray, simTimeStep, numForces, startTime);
 
 	//execute simulation for desired length of time:
-	while(startTime < endTime)
+	while (startTime < endTime)
 	{
 		cout << clear_line << "\rCurrent Time: " << rk4.currentTime << "s (" 
 			<< rk4.currentTime/endTime*100.0 << "% Complete)" << flush;
