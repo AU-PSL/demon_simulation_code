@@ -605,12 +605,6 @@ int main (int argc, char * const argv[])
 
 	if(Mach) //TODO: make Mach 3D
 	{
-		if(dimension != 2)
-		{
-			cout << "Error: Mach currently only supported when dimension = 2.\n";
-			exit(1);
-		}
-
 		//reserve particle 1 for mach experiment
 		cloud->x[0] = -2.0*cloudSize;
 		cloud->y[0] = 0.0;
