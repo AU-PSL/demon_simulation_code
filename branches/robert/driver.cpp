@@ -253,7 +253,7 @@ void parseCommandLineOptions(int argc, char * const argv[])
 				checkOption(argc, argv, i, 'D', 1, "dimension", CI, &dimension);
 				if (dimension != 1 && dimension != 2 && dimension != 3)
 				{
-					cout << "Error: Invalid spatial dimension.\n";
+					cout << "Error: Invalid spatial dimension." << endl;
 					help();
 					exit(1);
 				}
@@ -518,7 +518,7 @@ int main (int argc, char * const argv[])
 			forceArray[index++] = new DrivingForce1D(cloud, driveConst, waveAmplitude, waveShift);
 		if (usedForces & RotationalForceFlag)
 		{
-			cout << "Error: RotationalForce not defined for 1D\n";
+			cout << "Error: RotationalForce not defined for 1D" << endl;
 			exit(1);
 		}
 		if (usedForces & TimeVaryingDragForceFlag)
