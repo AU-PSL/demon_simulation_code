@@ -23,6 +23,13 @@ numOperators(1), operations(new Operator*[numOperators])
 	operations[0] = new PositionVelocityCacheOperator(cloud);
 }
 
+Runge_Kutta::~Runge_Kutta()
+{
+	for (operator_index i = 0; i < numOperators; i++)
+		delete operations[i];
+	delete[] operations;
+}
+
 // 4th order Runge-Kutta algorithm:
 void Runge_Kutta::moveParticles(const double endTime)
 {
@@ -39,7 +46,9 @@ void Runge_Kutta::moveParticles(const double endTime)
 		operate1(currentTime);
 		force1(currentTime); // compute net force1
 		const cloud_index numParticles = cloud->n;
-#pragma omp parallel for schedule(static)
+#pragma omp parallel
+{
+#pragma omp for schedule(static)
 		for (cloud_index i = 0; i < numParticles; i += 2) // calculate k1 and l1 for entire cloud
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass into vector
@@ -61,7 +70,7 @@ void Runge_Kutta::moveParticles(const double endTime)
         
 		operate2(currentTime + dt/2.0);
 		force2(currentTime + dt/2.0); // compute net force2
-#pragma omp parallel for schedule(static)
+#pragma omp for schedule(static)
 		for (cloud_index i = 0; i < numParticles; i += 2) // calculate k2 and l2 for entire cloud
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
@@ -83,7 +92,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 
 		operate3(currentTime + dt/2.0);
 		force3(currentTime + dt/2.0); // compute net force3
-#pragma omp parallel for schedule(static)
+#pragma omp for schedule(static)
 		for (cloud_index i = 0; i < numParticles; i += 2) // calculate k3 and l3 for entire cloud
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
@@ -105,7 +114,7 @@ void Runge_Kutta::moveParticles(const double endTime)
         
 		operate4(currentTime + dt/2.0);
 		force4(currentTime + dt); // compute net force4
-#pragma omp parallel for schedule(static)
+#pragma omp for schedule(static)
 		for (cloud_index i = 0; i < numParticles; i += 2) // calculate k4 and l4 for entire cloud
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
@@ -124,7 +133,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 			_mm_store_pd(pFy, _mm_setzero_pd());
 		}
 
-#pragma omp parallel for schedule(static)
+#pragma omp for schedule(static)
 		for (cloud_index i = 0; i < numParticles; i += 2) // calculate next position and next velocity for entire cloud
 		{
 			// load ith and (i+1)th k's into vectors:
@@ -163,6 +172,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 			_mm_store_pd(pVy, _mm_load_pd(pVy) + (vm1 + v2*(vm2 + vm3) + vm4)/v6);
 			_mm_store_pd(py, _mm_load_pd(py) + (vn1 + v2*(vn2 + vn3) + vn4)/v6);
 		}
+} // End Parallel code
 
 		currentTime += dt;
 	}
