@@ -453,19 +453,15 @@ int main (int argc, char * const argv[])
 	}
 	else //initialize new cloud on grid:
 	{
-		if (dimension == 1)
-			cloud = Cloud::initializeLine(numParticles);
-		else if (dimension == 2)
-			cloud = Cloud::initializeSquare(numParticles);
-		else if (dimension == 3)
-			cloud = Cloud::initializeCube(numParticles);
-		else //this should never happen
-		{
-			cout << "Error: Impossible case reached when determining dimension "
-				"prior to calling Cloud::initializeGrid.\n";
-			exit(1);
+		switch (dimension) {
+			case 1: cloud = Cloud::initializeLine(numParticles);   break;
+			case 2: cloud = Cloud::initializeSquare(numParticles); break;
+			case 3: cloud = Cloud::initializeCube(numParticles);   break;
+			default:
+				cout << "Error: Impossible case reached when determining dimension "
+				<< "prior to calling Cloud::initializeGrid." << endl;
+				exit(1);
 		}
-		
 	}
 
 	// Create a new file if we aren't continueing one.
