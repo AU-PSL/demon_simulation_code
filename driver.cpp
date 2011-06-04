@@ -609,7 +609,7 @@ int main (int argc, char * const argv[])
 		checkFitsError(error, __LINE__);
 	}
 
-	if (Mach) //TODO: make Mach 3D
+	if (Mach)
 	{
 		//reserve particle 1 for mach experiment
 		cloud->x[0] = -2.0*cloudSize;
