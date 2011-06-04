@@ -27,7 +27,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 	const __m128d v2 = _mm_set1_pd(2.0);
 	const __m128d v6 = _mm_set1_pd(6.0);
 
-	while(currentTime < endTime)
+	while (currentTime < endTime)
 	{
 		// Second argument must be 2 more than the first.
 		const double dt = modifyTimeStep(0, 2, 1.0e-4, init_dt); // implement dynamic timstep (if necessary):
@@ -35,7 +35,7 @@ void Runge_Kutta::moveParticles(const double endTime)
         
 		operate1(currentTime);
 		force1(currentTime); // compute net force1
-		for(cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 1st RK substep components
+		for (cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 1st RK substep components
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i);               //load ith and (i+1)th mass into vector
 
@@ -60,7 +60,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 
 		operate2(currentTime + dt/2.0);
 		force2(currentTime + dt/2.0); // compute net force2
-		for(cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 2nd RK substep components
+		for (cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 2nd RK substep components
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i);               //load ith and (i+1)th mass
 
@@ -85,7 +85,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 
 		operate3(currentTime + dt/2.0);
 		force3(currentTime + dt/2.0); // compute net force3
-		for(cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 3rd RK substep components
+		for (cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 3rd RK substep components
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i);               //load ith and (i+1)th mass
 
@@ -110,7 +110,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 
 		operate4(currentTime + dt/2.0);
 		force4(currentTime + dt); // compute net force4
-		for(cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 4th RK substep components
+		for (cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) //calculate 4th RK substep components
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i);               //load ith and (i+1)th mass
 
@@ -132,7 +132,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 			_mm_store_pd(pFz, _mm_setzero_pd());
 		}
 
-		for(cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) // calculate next position and next velocity for entire cloud
+		for (cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) // calculate next position and next velocity for entire cloud
 		{
 			//load ith and (i+1)th k's into vectors:
 			const __m128d vk1 = _mm_load_pd(cloud->k1 + i);
@@ -193,49 +193,49 @@ void Runge_Kutta::moveParticles(const double endTime)
 
 inline void Runge_Kutta::operate1(const double time) const
 {
- 	for(operator_index i = 0; i < numOperators; i++)
+ 	for (operator_index i = 0; i < numOperators; i++)
 		operations[i]->operation1(time);
 }
 
 inline void Runge_Kutta::operate2(const double time) const
 {
- 	for(operator_index i = 0; i < numOperators; i++)
+ 	for (operator_index i = 0; i < numOperators; i++)
 		operations[i]->operation2(time);
 }
 
 inline void Runge_Kutta::operate3(const double time) const
 {
- 	for(operator_index i = 0; i < numOperators; i++)
+ 	for (operator_index i = 0; i < numOperators; i++)
 		operations[i]->operation3(time);
 }
 
 inline void Runge_Kutta::operate4(const double time) const
 {
- 	for(operator_index i = 0; i < numOperators; i++)
+ 	for (operator_index i = 0; i < numOperators; i++)
 		operations[i]->operation4(time);
 }
 
 inline void Runge_Kutta::force1(const double time) const
 {
- 	for(force_index i = 0; i < numForces; i++)
+ 	for (force_index i = 0; i < numForces; i++)
 		theForce[i]->force1(time);
 }
 
 inline void Runge_Kutta::force2(const double time) const
 {
- 	for(force_index i = 0; i < numForces; i++)
+ 	for (force_index i = 0; i < numForces; i++)
 		theForce[i]->force2(time);
 }
 
 inline void Runge_Kutta::force3(const double time) const
 {
- 	for(force_index i = 0; i < numForces; i++)
+ 	for (force_index i = 0; i < numForces; i++)
 		theForce[i]->force3(time);
 }
 
 inline void Runge_Kutta::force4(const double time) const
 {
- 	for(force_index i = 0; i < numForces; i++)
+ 	for (force_index i = 0; i < numForces; i++)
 		theForce[i]->force4(time);
 }
 
@@ -261,7 +261,7 @@ const double Runge_Kutta::modifyTimeStep(cloud_index outerIndex, cloud_index inn
 		const double sepz = cloud->z[outerIndex] - cloud->z[outerIndex + 1];
 
 		//if particles too close, reduce time step:
-		if(sqrt(sepx*sepx + sepy*sepy + sepz*sepz) <= currentDist)
+		if (sqrt(sepx*sepx + sepy*sepy + sepz*sepz) <= currentDist)
 			return modifyTimeStep(outerIndex, innerIndex, currentDist/redFactor, currentTimeStep/redFactor);
 
 		// load positions into vectors:
@@ -283,7 +283,7 @@ const double Runge_Kutta::modifyTimeStep(cloud_index outerIndex, cloud_index inn
 			__m128d vz2 = vz1 - _mm_load_pd(pz2);
 
 			// check separation distances against dist:
-			if(isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2 + vz2*vz2), distv))
+			if (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2 + vz2*vz2), distv))
 				return modifyTimeStep(outerIndex, innerIndex, currentDist/redFactor, currentTimeStep/redFactor);
 
 			//calculate j,i+1 and j+1,i separation distances:

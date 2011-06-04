@@ -51,7 +51,7 @@ public:
 	//default constructor: uses default seed only if this is the first instance
 	MTRand_int32()
 	{
-		if(!init)
+		if (!init)
 		{
 			seed(5489UL);
 			init = true;
