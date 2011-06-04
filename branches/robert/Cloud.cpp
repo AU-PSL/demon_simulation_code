@@ -76,6 +76,18 @@ inline void Cloud::setMass() const
 		mass[i] = particleMass;
 }
 
+Cloud * const Cloud::initializeCloud(const cloud_index numParticles, long &numDimensions) {
+	numDimensions = (numDimensions > 3) ? 3 : 
+	                (numDimensions < 1) ? 1 : numDimensions;
+
+	switch (numDimensions) {
+		default:
+		case 1: return Cloud::initializeLine(numParticles);
+		case 2: return Cloud::initializeSquare(numParticles);
+		case 3: return Cloud::initializeCube(numParticles);
+	}
+}
+
 Cloud * const Cloud::initializeLine(const cloud_index numParticles)
 {
 	Cloud * const cloud = new Cloud(numParticles);

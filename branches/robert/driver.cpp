@@ -452,17 +452,7 @@ int main (int argc, char * const argv[])
 		checkFitsError(error, __LINE__);
 	}
 	else //initialize new cloud on grid:
-	{
-		switch (dimension) {
-			case 1: cloud = Cloud::initializeLine(numParticles);   break;
-			case 2: cloud = Cloud::initializeSquare(numParticles); break;
-			case 3: cloud = Cloud::initializeCube(numParticles);   break;
-			default:
-				cout << "Error: Impossible case reached when determining dimension "
-				<< "prior to calling Cloud::initializeGrid." << endl;
-				exit(1);
-		}
-	}
+		cloud = Cloud::initializeCloud(numParticles, dimension);
 
 	// Create a new file if we aren't continueing one.
 	if (!continueFileIndex)
