@@ -24,6 +24,10 @@
 #include <cstdarg>
 #include <cassert>
 #include <cctype>
+
+// Cannot include cmath because it causes a conflict with gamma.
+extern "C" double sqrt(double);
+
 using namespace std;
 
 #define clear_line "\33[2K" // VT100 signal to clear line.
@@ -41,7 +45,6 @@ double startTime = 0.0;
 double dataTimeStep = 0.01;
 double simTimeStep = dataTimeStep/100.0;
 double endTime = 5.0;
-double cloudSize = 0.01;            // one-half side length (aka "radius")
 double confinementConst = 1E-13;    // confinementForce
 double confinementConstX = 1E-13;   // RectConfinementForce
 double confinementConstY = 1E-12;   // RectConfinementForce
@@ -57,8 +60,10 @@ double waveAmplitude = 1E-13;       // driving wave amplitude (default comparabl
 double waveShift = 0.007;           // driving wave shift
 double machSpeed = 0.2;             // firing speed for Mach Cone experiment
 double massFactor = 100;            // mass multiplier for fired Mach Cone particle
-double rmin = cloudSize/2.0;        // inner radius of shear layer
-double rmax = rmin + cloudSize/5.0; // outer ratius of shear layer
+double rmin = 
+	Cloud::interParticleSpacing*5.0;  // inner radius of shear layer
+double rmax = 
+	Cloud::interParticleSpacing*10.0; // outer ratius of shear layer
 double rotConst = 1E-15;            // rotational force in shear layer
 double dragScale = -1.0;            // used in TimeVaryingDragForce
 file_index continueFileIndex = 0;   // Index of argv array that holds the file name of the fitsfile to continue. 
@@ -88,7 +93,6 @@ void help()
           << " -n 10                  set number of particles" << endl
           << " -o 0.01                set the data Output time step" << endl
           << " -O data.fits           set the name of the output file" << endl
-          << " -r 0.01                set cloud radius (one-half side length)" << endl
           << " -R 1E-13 1E-12         use RectConfinementForce; set confineConstX,Y" << endl
           << " -s 2E4                 set coulomb shelding constant" << endl
           << " -S 1E-15 0.005 0.007   use RotationalForce; set strength, rmin, rmax" << endl
@@ -273,11 +277,7 @@ void parseCommandLineOptions(int argc, char * const argv[])
 				break;
 			case 'O': // name "O"utput file:
 				checkOption(argc, argv, i, 'O', 1, "output file", F, &outputFileIndex, "data.fits");
-				break;
-				// FIXME: Consider Removing this option
-			case 'r': // set cloud "r"adius:
-				checkOption(argc, argv, i, 'r', 1, "cloud size", D, &cloudSize);
-				break;		
+				break;	
 			case 'R': // use "R"ectangular confinement:
 				checkForce(1, 'R', RectConfinementForceFlag);
 				checkOption(argc, argv, i, 'R', 2, "confine constantX", D, &confinementConstX, "confine constantY", D, &confinementConstY);
@@ -531,7 +531,7 @@ int main (int argc, char * const argv[])
 	if (Mach) 
 	{
 		// reserve particle 1 for mach experiment
-		cloud->x[0] = -2.0*cloudSize;
+		cloud->x[0] = -2.0*sqrt((double)numParticles)*Cloud::interParticleSpacing;
 		cloud->y[0] = 0.0;
 		cloud->Vx[0] = machSpeed;
 		cloud->Vy[0] = 0.0;
