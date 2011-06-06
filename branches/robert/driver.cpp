@@ -610,7 +610,7 @@ int main (int argc, char * const argv[])
 			case 1: cloud->x[0] = -(double)numParticles*Cloud::interParticleSpacing; break;
 			case 2: cloud->x[0] = -2.0*sqrt((double)numParticles)*Cloud::interParticleSpacing; break;
 			case 3: cloud->x[0] = -2.0*pow((double)numParticles, 0.333334)*Cloud::interParticleSpacing; break;
-				//Must divide by slighly more than 1/3 to avoid truncation errors.
+				//Must divide by slightly more than 1/3 to avoid truncation errors.
 		}
 		cloud->y[0] = 0.0;
 		cloud->Vx[0] = machSpeed;
