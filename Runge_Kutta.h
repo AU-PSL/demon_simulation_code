@@ -11,8 +11,6 @@
 #define RUNGA_KUTTA_H
 
 #include "Force.h"
-#include <cmath>
-#include <limits>
 
 class Operator;
 typedef unsigned char operator_index;

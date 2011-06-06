@@ -56,7 +56,7 @@ double confinementConstX = 1E-13;   // RectConfinementForce
 double confinementConstY = 1E-12;   // RectConfinementForce
 double confinementConstZ = 1E-12;   // RectConfinementForce (3D)
 double shieldingConstant = 2E4;     // corresponds to 10*(ion debye length)
-double Gamma = 10.0;
+double gamma = 10.0;
 double thermRed = 1E-14;            // default thermal reduction factor
 double thermRed1 = thermRed;        // default outer reduction factor (-L)
 double thermScale = 1E-14;          // default for TimeVaryingThermalForce
@@ -198,7 +198,8 @@ void checkOption(const int argc, char * const argv[], int &optionIndex, const ch
 		const clFlagType type = (clFlagType)va_arg(arglist, int);
 		void *val = va_arg(arglist, void *);
 		
-		switch (type) {
+		switch (type)
+		{
 			case CI: 
 			{
 				cloud_index *ci = (cloud_index *)val;
@@ -252,7 +253,7 @@ void parseCommandLineOptions(int argc, char * const argv[])
 				break;
 			case 'd': // use TimeVaryingDragForce:
 				checkForce(1, 'd', TimeVaryingDragForceFlag);
-				checkOption(argc, argv, i, 'd', 2, "scale factor", D, &dragScale, "offset", D, &Gamma);
+				checkOption(argc, argv, i, 'd', 2, "scale factor", D, &dragScale, "offset", D, &gamma);
 				break;
 			case 'D': //set spatial "D"imension
 				checkOption(argc, argv, i, 'D', 1, "dimension", CI, &dimension);
@@ -269,7 +270,7 @@ void parseCommandLineOptions(int argc, char * const argv[])
 				checkOption(argc, argv, i, 'f', 1, "finals file", F, &finalsFileIndex, "");
 				break;
 			case 'g': // set "g"amma:
-				checkOption(argc, argv, i, 'g', 1, "gamma", D, &Gamma);
+				checkOption(argc, argv, i, 'g', 1, "gamma", D, &gamma);
 				break;
 			case 'h': // display "h"elp:
 				help();
@@ -500,7 +501,7 @@ int main (int argc, char * const argv[])
 		if (usedForces & ConfinementForceFlag)
 			forceArray[index++] = new ConfinementForce1D(cloud, confinementConst);
 		if (usedForces & DragForceFlag) 
-			forceArray[index++] = new DragForce1D(cloud, Gamma);
+			forceArray[index++] = new DragForce1D(cloud, gamma);
 		if (usedForces & ShieldedCoulombForceFlag) 
 			forceArray[index++] = new ShieldedCoulombForce1D(cloud, shieldingConstant);
 		if (usedForces & RectConfinementForceFlag)
@@ -517,7 +518,7 @@ int main (int argc, char * const argv[])
 			exit(1);
 		}
 		if (usedForces & TimeVaryingDragForceFlag)
-			forceArray[index++] = new TimeVaryingDragForce1D(cloud, dragScale, Gamma);
+			forceArray[index++] = new TimeVaryingDragForce1D(cloud, dragScale, gamma);
 		if (usedForces & TimeVaryingThermalForceFlag)
 			forceArray[index++] = new TimeVaryingThermalForce1D(cloud, thermScale, thermOffset);
 	}
@@ -526,7 +527,7 @@ int main (int argc, char * const argv[])
 		if (usedForces & ConfinementForceFlag)
 			forceArray[index++] = new ConfinementForce2D(cloud, confinementConst);
 		if (usedForces & DragForceFlag) 
-			forceArray[index++] = new DragForce2D(cloud, Gamma);
+			forceArray[index++] = new DragForce2D(cloud, gamma);
 		if (usedForces & ShieldedCoulombForceFlag) 
 			forceArray[index++] = new ShieldedCoulombForce2D(cloud, shieldingConstant);
 		if (usedForces & RectConfinementForceFlag)
@@ -540,7 +541,7 @@ int main (int argc, char * const argv[])
 		if (usedForces & RotationalForceFlag)
 			forceArray[index++] = new RotationalForce2D(cloud, rmin, rmax, rotConst);
 		if (usedForces & TimeVaryingDragForceFlag)
-			forceArray[index++] = new TimeVaryingDragForce2D(cloud, dragScale, Gamma);
+			forceArray[index++] = new TimeVaryingDragForce2D(cloud, dragScale, gamma);
 		if (usedForces & TimeVaryingThermalForceFlag)
 			forceArray[index++] = new TimeVaryingThermalForce2D(cloud, thermScale, thermOffset);
 	}
@@ -549,7 +550,7 @@ int main (int argc, char * const argv[])
 		if (usedForces & ConfinementForceFlag)
 			forceArray[index++] = new ConfinementForce3D(cloud, confinementConst);
 		if (usedForces & DragForceFlag) 
-			forceArray[index++] = new DragForce3D(cloud, Gamma);
+			forceArray[index++] = new DragForce3D(cloud, gamma);
 		if (usedForces & ShieldedCoulombForceFlag) 
 			forceArray[index++] = new ShieldedCoulombForce3D(cloud, shieldingConstant);
 		if (usedForces & RectConfinementForceFlag)
@@ -563,7 +564,7 @@ int main (int argc, char * const argv[])
 		if (usedForces & RotationalForceFlag)
 			forceArray[index++] = new RotationalForce3D(cloud, rmin, rmax, rotConst);
 		if (usedForces & TimeVaryingDragForceFlag)
-			forceArray[index++] = new TimeVaryingDragForce3D(cloud, dragScale, Gamma);
+			forceArray[index++] = new TimeVaryingDragForce3D(cloud, dragScale, gamma);
 		if (usedForces & TimeVaryingThermalForceFlag)
 			forceArray[index++] = new TimeVaryingThermalForce3D(cloud, thermScale, thermOffset);
 	}
@@ -603,7 +604,8 @@ int main (int argc, char * const argv[])
 	if (Mach)
 	{
 		//reserve particle 1 for mach experiment
-		switch (dimension) {
+		switch (dimension)
+		{
 			case 1: cloud->x[0] = -(double)numParticles*Cloud::interParticleSpacing; break;
 			case 2: cloud->x[0] = -2.0*sqrt((double)numParticles)*Cloud::interParticleSpacing; break;
 			case 3: cloud->x[0] = -2.0*pow((double)numParticles, 1.0/3.0)*Cloud::interParticleSpacing; break;

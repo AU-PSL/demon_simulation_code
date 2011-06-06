@@ -9,6 +9,8 @@
 
 #include "Runge_Kutta.h"
 #include "PositionVelocityCacheOperator.h"
+#include <cmath>
+#include <limits>
 
 using namespace std;
 

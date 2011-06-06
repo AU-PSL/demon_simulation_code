@@ -8,6 +8,8 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "ThermalForce.h"
+#include <cmath>
+#include <ctime>
 
 //Constructors:
 ThermalForce1D::ThermalForce1D(Cloud * const myCloud, const double redFactor) : Force(myCloud), mt(time(NULL)), heatVal(redFactor) {}
