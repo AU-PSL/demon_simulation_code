@@ -12,7 +12,6 @@
 
 #include "Force.h"
 #include "VectorCompatibility.h"
-#include <cmath>
 
 class RotationalForce2D : public Force
 {

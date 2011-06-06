@@ -13,8 +13,6 @@
 #include "Force.h"
 #include "mtrand.h" //MT header
 #include "VectorCompatibility.h"
-#include <cmath>
-#include <ctime>
 
 class ThermalForceLocalized1D : public Force
 {

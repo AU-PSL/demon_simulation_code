@@ -8,6 +8,8 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "ThermalForceLocalized.h"
+#include <cmath>
+#include <ctime>
 
 ThermalForceLocalized1D::ThermalForceLocalized1D(Cloud * const myCloud, const double thermRed1, const double thermRed2, const double specifiedRadius) 
 : Force(myCloud), mt(time(NULL)), heatingRadius(specifiedRadius), heatVal1(thermRed1), heatVal2(thermRed2) {}

@@ -8,7 +8,7 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "RotationalForce.h"
-
+#include <cmath>
 using namespace std;
 
 //Constructors:

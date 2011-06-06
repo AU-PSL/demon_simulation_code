@@ -43,7 +43,7 @@ Cloud::~Cloud()
 	delete[] charge; delete[] mass; 
 	delete[] forceX; delete[] forceY; delete[] forceZ;
 	delete[] xCache; delete[] yCache; delete[] zCache;
-	delete[] VxCache; delete[] VxCache; delete[] VzCache;
+	delete[] VxCache; delete[] VyCache; delete[] VzCache;
 }
 
 inline void Cloud::setPosition(const cloud_index index, const double xVal, const double yVal, const double zVal) const
@@ -76,11 +76,13 @@ inline void Cloud::setMass() const
 		mass[i] = particleMass;
 }
 
-Cloud * const Cloud::initializeCloud(const cloud_index numParticles, long &numDimensions) {
+Cloud * const Cloud::initializeCloud(const cloud_index numParticles, long &numDimensions)
+{
 	numDimensions = (numDimensions > 3) ? 3 : 
 	                (numDimensions < 1) ? 1 : numDimensions;
 
-	switch (numDimensions) {
+	switch (numDimensions)
+	{
 		default:
 		case 1: return Cloud::initializeLine(numParticles);
 		case 2: return Cloud::initializeSquare(numParticles);
@@ -100,10 +102,10 @@ Cloud * const Cloud::initializeLine(const cloud_index numParticles)
 	cloud->setMass();
 
 	//initialize as a line centered on the x-axis:
-	for(cloud_index i = 0; i < numParticles; i++)
+	for (cloud_index i = 0; i < numParticles; i++)
 	{
 		cloud->setPosition(i,
-			cloudHalfSize - (double)(i)*interParticleSpacing, 0.0, 0.0);
+			cloudHalfSize - (double)i*interParticleSpacing, 0.0, 0.0);
 		cloud->setVelocity(i);
 	}
 

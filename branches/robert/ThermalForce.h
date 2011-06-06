@@ -12,8 +12,6 @@
 
 #include "Force.h"
 #include "mtrand.h" //MT header
-#include <cmath>
-#include <ctime>
 #include "VectorCompatibility.h"
 
 class ThermalForce1D : public Force
