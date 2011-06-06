@@ -10,7 +10,6 @@
 #include "Cloud.h"
 #include <cmath>
 #include <sstream>
-#include <iostream>
 
 using namespace std;
 
@@ -143,7 +142,7 @@ Cloud * const Cloud::initializeCube(const cloud_index numParticles)
 	Cloud * const cloud = new Cloud(numParticles);
 
 	const cloud_index cbrtNumPar = (cloud_index)floor(pow(numParticles, 0.333334));
-		//Must divide by slighly more than 1/3 to avoid truncation errors.
+		//Must divide by slightly more than 1/3 to avoid truncation errors.
 
 	//Ensure that a given row is centered for both odd and even numbers of particles:
 	const double cloudHalfSize = (double)cbrtNumPar/2.0*interParticleSpacing
