@@ -10,6 +10,7 @@
 #include "Cloud.h"
 #include <cmath>
 #include <sstream>
+#include <iostream>
 
 using namespace std;
 
@@ -96,7 +97,7 @@ Cloud * const Cloud::initializeLine(const cloud_index numParticles)
 
 	//Ensure that a given row is centered for both odd and even numbers of particles:
 	const double cloudHalfSize = (double)numParticles/2.0*interParticleSpacing
-		- ((numParticles%2) ? interParticleSpacing/2.0 : 0.0);
+		- ((numParticles%2) ? 0.0 : interParticleSpacing/2.0);
 
 	cloud->setCharge();
 	cloud->setMass();
@@ -120,7 +121,7 @@ Cloud * const Cloud::initializeSquare(const cloud_index numParticles)
 
 	//Ensure that a given row is centered for both odd and even numbers of particles:
 	const double cloudHalfSize = (double)sqrtNumPar/2.0*interParticleSpacing
-		- ((sqrtNumPar%2) ? interParticleSpacing/2.0 : 0.0);
+		- ((sqrtNumPar%2) ? 0.0 : interParticleSpacing/2.0);
 
 	cloud->setCharge();
 	cloud->setMass();
@@ -141,11 +142,12 @@ Cloud * const Cloud::initializeCube(const cloud_index numParticles)
 {
 	Cloud * const cloud = new Cloud(numParticles);
 
-	const cloud_index cbrtNumPar = (cloud_index)floor(pow(numParticles,1.0/3.0));
+	const cloud_index cbrtNumPar = (cloud_index)floor(pow(numParticles, 0.333334));
+		//Must divide by slighly more than 1/3 to avoid truncation errors.
 
 	//Ensure that a given row is centered for both odd and even numbers of particles:
 	const double cloudHalfSize = (double)cbrtNumPar/2.0*interParticleSpacing
-		- ((cbrtNumPar%2) ? interParticleSpacing/2.0 : 0.0);
+		- ((cbrtNumPar%2) ? 0.0 : interParticleSpacing/2.0);
 
 	cloud->setCharge();
 	cloud->setMass();
