@@ -45,7 +45,7 @@ enum clFlagType
 	F   // File index
 };
 
-long dimension = 2;                 //spatial dimension
+long dimension = 2;                 // spatial dimension
 bool Mach = false;                  // true -> perform Mach Cone experiment
 double startTime = 0.0;
 double dataTimeStep = 0.01;
@@ -263,6 +263,7 @@ void parseCommandLineOptions(int argc, char * const argv[])
 					help();
 					exit(1);
 				}
+				break;
 			case 'e': // set "e"nd time:
 				checkOption(argc, argv, i, 'e', 1, "end time", D, &endTime);
 				break;		

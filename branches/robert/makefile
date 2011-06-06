@@ -13,7 +13,7 @@ include makefile.include
 
 # Compling Flags
 #CXXFLAGS += -funroll-loops -m64 -Wall -mdynamic-no-pic -march=core2 -fomit-frame-pointer -falign-functions -mfpmath=sse -msse4.1 -fno-stack-protector -I $(CFITSIO)
-CXXFLAGS += -m64 -msse4.1 -I $(CFITSIO) -g
+CXXFLAGS += -m64 -msse4.1 -I $(CFITSIO)
 
 # Linking Flags
 LDFLAGS = $(CXXFLAGS) -L$(CFITSIO)
