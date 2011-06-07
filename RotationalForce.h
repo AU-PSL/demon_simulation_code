@@ -17,7 +17,7 @@ class RotationalForce2D : public Force
 {
 public:
 	RotationalForce2D(Cloud * const myCloud, const double rmin, const double rmax, const double rotConst);
-	~RotationalForce2D() {} //destructor
+	virtual ~RotationalForce2D() {} //destructor
 
 //public functions:
 	//Note: currentTime parameter is necessary (due to parent class) but unused

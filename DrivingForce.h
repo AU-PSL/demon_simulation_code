@@ -17,7 +17,7 @@ class DrivingForce1D : public Force
 {
 public:
 	DrivingForce1D(Cloud * const myCloud, const double dampConst, const double amp, const double drivingShift);
-	~DrivingForce1D() {} //destructor
+	virtual ~DrivingForce1D() {} //destructor
 
 //public functions:
 	void force1(const double currentTime); //rk substep 1
@@ -44,7 +44,7 @@ class DrivingForce2D : public DrivingForce1D
 {
 public:
 	DrivingForce2D(Cloud * const myCloud, const double dampConst, const double amp, const double drivingShift);
-	~DrivingForce2D() {};
+	virtual ~DrivingForce2D() {};
 };
 
 class DrivingForce3D : public DrivingForce2D

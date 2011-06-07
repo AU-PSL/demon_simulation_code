@@ -17,7 +17,7 @@ class DragForce1D : public Force
 {
 public:
 	DragForce1D(Cloud * const myCloud, const double gamma);
-	~DragForce1D() {} //destructor
+	virtual ~DragForce1D() {} //destructor
 
 //public functions:
 	//Note: currentTime parameter is necessary (due to parent class) but unused
@@ -42,7 +42,7 @@ class DragForce2D : public DragForce1D
 {
 public:
 	DragForce2D(Cloud * const myCloud, const double gamma);
-	~DragForce2D() {}
+	virtual ~DragForce2D() {}
 
 //public functions:
 	virtual void force1(const double currentTime);
@@ -59,7 +59,7 @@ class DragForce3D : public DragForce2D
 {
 public:
 	DragForce3D(Cloud * const myCloud, const double gamma);
-	~DragForce3D() {}
+	virtual ~DragForce3D() {}
 
 //public functions:
 	virtual void force1(const double currentTime);
