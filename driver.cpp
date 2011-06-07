@@ -257,12 +257,8 @@ void parseCommandLineOptions(int argc, char * const argv[])
 				break;
 			case 'D': //set spatial "D"imension
 				checkOption(argc, argv, i, 'D', 1, "dimension", CI, &dimension);
-				if (dimension != 1 && dimension != 2 && dimension != 3)
-				{
-					cout << "Error: Invalid spatial dimension." << endl;
-					help();
-					exit(1);
-				}
+				dimension = (dimension > 3) ? 3 : 
+				            (dimension < 1) ? 1 : dimension;
 				break;
 			case 'e': // set "e"nd time:
 				checkOption(argc, argv, i, 'e', 1, "end time", D, &endTime);
@@ -621,8 +617,7 @@ int main (int argc, char * const argv[])
 /*------------------------------------------------------------------------------
  * Commence Runge-Kutta algorithm:
  -----------------------------------------------------------------------------*/
-	cout << "Status: Commencing Runge-Kutta." << endl << endl
-		<< "Dimension = " << dimension << endl;
+	cout << "Status: Commencing " << dimension << "-D Runge-Kutta." << endl << endl;
 
 	Runge_Kutta rk4(cloud, forceArray, simTimeStep, numForces, startTime);
 

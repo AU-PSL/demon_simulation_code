@@ -116,7 +116,7 @@ public:
 	const __m128d getVz4_pd(const cloud_index i) const;
 
 //static functions:
-	static Cloud * const initializeCloud(const cloud_index numParticles, long &numDimensions);
+	static Cloud * const initializeCloud(const cloud_index numParticles, const long numDimensions);
 
 	//Input: fitsFile *file, int *error
 	//Preconditions: fitsfile exists, error = 0
