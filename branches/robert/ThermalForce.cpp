@@ -12,7 +12,7 @@
 #include <ctime>
 
 //Constructors:
-ThermalForce1D::ThermalForce1D(Cloud * const myCloud, const double redFactor) : Force(myCloud), mt(time(NULL)), heatVal(redFactor) {}
+ThermalForce1D::ThermalForce1D(Cloud * const myCloud, const double redFactor) : Force(myCloud), heatVal(redFactor), mt(time(NULL)) {}
 ThermalForce2D::ThermalForce2D(Cloud * const myCloud, const double redFactor) : ThermalForce1D(myCloud, redFactor) {}
 ThermalForce3D::ThermalForce3D(Cloud * const myCloud, const double redFactor) : ThermalForce2D(myCloud, redFactor) {}
 
