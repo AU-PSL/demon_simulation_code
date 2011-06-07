@@ -18,7 +18,7 @@ class ThermalForce1D : public Force
 {
 public:
 	ThermalForce1D(Cloud * const myCloud, const double redFactor);
-	~ThermalForce1D() {}; //destructor
+	virtual ~ThermalForce1D() {}; //destructor
 
 //public functions:
 	//Note: currentTime parameter is necessary (due to parent class) but unused
@@ -44,7 +44,7 @@ class ThermalForce2D : public ThermalForce1D
 {
 public:
 	ThermalForce2D(Cloud * const myCloud, const double redFactor);
-	~ThermalForce2D() {};
+	virtual ~ThermalForce2D() {};
 
 //public functions:
 	virtual void force1(const double currentTime);
@@ -61,7 +61,7 @@ class ThermalForce3D : public ThermalForce2D
 {
 public:
 	ThermalForce3D(Cloud * const myCloud, const double redFactor);
-	~ThermalForce3D() {};
+	virtual ~ThermalForce3D() {};
 
 //public functions:
 	virtual void force1(const double currentTime);
