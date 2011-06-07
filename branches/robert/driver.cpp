@@ -510,10 +510,7 @@ int main (int argc, char * const argv[])
 		if (usedForces & DrivingForceFlag)
 			forceArray[index++] = new DrivingForce1D(cloud, driveConst, waveAmplitude, waveShift);
 		if (usedForces & RotationalForceFlag)
-		{
-			cout << "Error: RotationalForce not defined for 1D" << endl;
-			exit(1);
-		}
+			cout << "Warning: Ignoring Rotational force for 1-D clouds." << endl;
 		if (usedForces & TimeVaryingDragForceFlag)
 			forceArray[index++] = new TimeVaryingDragForce1D(cloud, dragScale, gamma);
 		if (usedForces & TimeVaryingThermalForceFlag)
