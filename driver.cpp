@@ -601,8 +601,8 @@ int main (int argc, char * const argv[])
 		switch (dimension)
 		{
 			case 1: cloud->x[0] = -(double)cloud->n*Cloud::interParticleSpacing; break;
-			case 2: cloud->x[0] = -sqrt((double)cloud->n)*Cloud::interParticleSpacing; break;
-			case 3: cloud->x[0] = -pow((double)cloud->n, 0.333334)*Cloud::interParticleSpacing; break;
+			case 2: cloud->x[0] = -2.0*sqrt((double)cloud->n)*Cloud::interParticleSpacing; break;
+			case 3: cloud->x[0] = -2.0*pow((double)cloud->n, 0.333334)*Cloud::interParticleSpacing; break;
 				//Must divide by slightly more than 1/3 to avoid truncation errors.
 		}
 		cloud->y[0] = 0.0;
