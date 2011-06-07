@@ -78,7 +78,7 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles)
 	
 	// For even numbers of partciles on a row center the row over the origin.
 	const double cloudHalfSize = (double)sqrtNumPar/2.0*interParticleSpacing 
-		- ((sqrtNumPar%2) ? interParticleSpacing/2.0 : 0.0); // cloud halfwidth.
+		- ((sqrtNumPar%2) ? 0.0 : interParticleSpacing/2.0);
 
 	cloud->setCharge();
 	cloud->setMass();
