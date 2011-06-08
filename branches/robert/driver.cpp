@@ -292,7 +292,7 @@ void parseCommandLineOptions(int argc, char * const argv[])
 			case 'O': // name "O"utput file:
 				checkOption(argc, argv, i, 'O', 1, "output file", F, &outputFileIndex, "data.fits");
 				break;
-			case 'R': // use "R"ectangular confinement:
+			case 'R': // use "R"ectangular confinement: //TODO: Make dimension-specific
 				checkForce(1, 'R', RectConfinementForceFlag);
 				checkOption(argc, argv, i, 'R', 2, "confine constantX", D, &confinementConstX, "confine constantY", D, &confinementConstY);
 				break;
