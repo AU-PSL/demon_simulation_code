@@ -123,15 +123,15 @@ inline void ThermalForce3D::force(const cloud_index currentParticle)
 	const __m128d thermV = _mm_set1_pd(heatVal)*_mm_set_pd(mt(), mt()); //random strength
 	const double phiL = mt()*2.0*M_PI; //random azimuthal angle phi
 	const double phiH = mt()*2.0*M_PI;
-	const double thetaL = mt()*M_PI;   //random polar angle theta
-	const double thetaH = mt()*M_PI;
+	const double thetaL = acos(mt()*2.0 - 1.0); //random polar angle theta
+	const double thetaH = acos(mt()*2.0 - 1.0);
 
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;
 	double * const pFz = cloud->forceZ + currentParticle;
 
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + thermV*_mm_set_pd(sin(thetaH), sin(thetaL))*_mm_set_pd(cos(phiH), cos(phiL))); // _mm_set_pd() is backwards
-	_mm_store_pd(pFy, _mm_load_pd(pFy) + thermV*_mm_set_pd(sin(thetaH), cos(thetaL))*_mm_set_pd(sin(phiH), sin(phiL)));
+	_mm_store_pd(pFy, _mm_load_pd(pFy) + thermV*_mm_set_pd(sin(thetaH), sin(thetaL))*_mm_set_pd(sin(phiH), sin(phiL)));
 	_mm_store_pd(pFz, _mm_load_pd(pFz) + thermV*_mm_set_pd(cos(thetaH), cos(thetaL)));
 }
 
