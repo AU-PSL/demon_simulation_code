@@ -53,8 +53,8 @@ double simTimeStep = dataTimeStep/100.0;
 double endTime = 5.0;
 double confinementConst = 1E-13;    // confinementForce
 double confinementConstX = 1E-13;   // RectConfinementForce
-double confinementConstY = 1E-12;   // RectConfinementForce
-double confinementConstZ = 1E-12;   // RectConfinementForce (3D)
+double confinementConstY = 1E-13;   // RectConfinementForce
+double confinementConstZ = 1E-13;   // RectConfinementForce (3D)
 double shieldingConstant = 2E4;     // corresponds to 10*(ion debye length)
 double gamma = 10.0;
 double thermRed = 1E-14;            // default thermal reduction factor
@@ -99,7 +99,7 @@ void help()
           << " -n 10                  set number of particles" << endl
           << " -o 0.01                set the data Output time step" << endl
           << " -O data.fits           set the name of the output file" << endl
-          << " -R 1E-13 1E-12         use RectConfinementForce; set confineConstX,Y" << endl
+          << " -R 1E-13 1E-13 1E-13   use RectConfinementForce; set confineConstX,Y,Z" << endl
           << " -s 2E4                 set coulomb shelding constant" << endl
           << " -S 1E-15 0.005 0.007   use RotationalForce; set strength, rmin, rmax" << endl
           << " -t 0.0001              set the simulation time step" << endl
@@ -115,6 +115,7 @@ void help()
           << " -D may have argument 1, 2, or 3 for 1D, 2D, or 3D clouds, respectively." << endl
           << " -M is best used by loading up a previous cloud that has reached equalibrium." << endl
           << " -n expects even number, else will add 1 (required for SIMD)." << endl
+          << " -R ignores unnecessary confinement constants in lower dimensions." << endl
           << " -S creates a shear layer between rmin = cloudsize/2 and" << endl
           << "    rmax = rmin + cloudsize/5." << endl
           << " -T runs with heat; otherwise, runs cold." << endl
@@ -292,9 +293,9 @@ void parseCommandLineOptions(int argc, char * const argv[])
 			case 'O': // name "O"utput file:
 				checkOption(argc, argv, i, 'O', 1, "output file", F, &outputFileIndex, "data.fits");
 				break;
-			case 'R': // use "R"ectangular confinement: //TODO: Make dimension-specific
+			case 'R': // use "R"ectangular confinement:
 				checkForce(1, 'R', RectConfinementForceFlag);
-				checkOption(argc, argv, i, 'R', 2, "confine constantX", D, &confinementConstX, "confine constantY", D, &confinementConstY);
+				checkOption(argc, argv, i, 'R', 3, "confine constantX", D, &confinementConstX, "confine constantY", D, &confinementConstY, "confine constantZ", D, &confinementConstZ);
 				break;
 			case 's': // set "s"hielding constant:
 				checkOption(argc, argv, i, 's', 1, "shielding constant", D, &shieldingConstant);
