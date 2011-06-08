@@ -125,6 +125,7 @@ inline void ThermalForce3D::force(const cloud_index currentParticle)
 	const double phiH = mt()*2.0*M_PI;
 	const double thetaL = acos(mt()*2.0 - 1.0); //random polar angle theta
 	const double thetaH = acos(mt()*2.0 - 1.0);
+		//(see http://mathworld.wolfram.com/SpherePointPicking.html)
 
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;
