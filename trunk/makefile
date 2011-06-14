@@ -1,6 +1,6 @@
 # For each file add the object file that it needs
 # to be made.
-OBJS = Runge_Kutta.o Cloud.o ShieldedCoulombForce.o DragForce.o ConfinementForce.o RectConfinementForce.o ThermalForce.o DrivingForce.o ThermalForceLocalized.o RotationalForce.o mtrand.o TimeVaryingDragForce.o TimeVaryingThermalForce.o PositionVelocityCacheOperator.o
+OBJS = Runge_Kutta.o Cloud.o ShieldedCoulombForce.o DragForce.o ConfinementForce.o RectConfinementForce.o ThermalForce.o DrivingForce.o ThermalForceLocalized.o RotationalForce.o mtrand.o TimeVaryingDragForce.o TimeVaryingThermalForce.o PositionVelocityCacheOperator.o ChargeOperator.o FieldPotentialOperator.o
 SRCS = $(OBJS,.o=.cpp)
 HDRS = $(OBJS,.o=.h) Force.h Operator.h
 
@@ -12,7 +12,7 @@ LIBS = libSimulation.a
 include makefile.include
 
 # Compling Flags
-CXXFLAGS += -funroll-loops -m64 -Wall -mdynamic-no-pic -march=core2 -fomit-frame-pointer -falign-functions -mfpmath=sse -msse4.1 -fno-stack-protector -I $(CFITSIO)
+CXXFLAGS += -funroll-loops -m64 -Wall -mdynamic-no-pic -march=core2 -fomit-frame-pointer -falign-functions -mfpmath=sse -msse4.1 -fno-stack-protector -I $(CFITSIO) -g
 
 # Linking Flags
 LDFLAGS = $(CXXFLAGS) -L$(CFITSIO)
