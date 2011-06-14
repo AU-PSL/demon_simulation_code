@@ -31,12 +31,10 @@ public:
 
 private:
 // public variables:
-	double shielding;
+	double shielding; //TODO: shielding deprecated
 
 // private functions:
-	void force(const cloud_index currentParticle, const cloud_index iParticle, const double displacementX, const double displacementY);
-	void force(const cloud_index currentParticle, const cloud_index iParticle, const __m128d displacementX, const __m128d displacementY);
-	void forcer(const cloud_index currentParticle, const cloud_index iParticle, const __m128d displacementX, const __m128d displacementY);
+	void force(const cloud_index currentParticle, const __m128d charge, const __m128d Exfield, const __m128d Eyfield);
 };
 
 #endif // SHIELDEDCOULOMBFORCE_H
