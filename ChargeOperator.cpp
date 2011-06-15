@@ -21,8 +21,7 @@ void ChargeOperator::operation2(const double currentTime)
 	for (cloud_index i = 0, e = cloud->n/2; i < e; i++) 
 	{
 		const cloud_index offset = 2*i;
-//		cloud->qCache[i] = _mm_load_pd(cloud->charge + offset) + _mm_load_pd(cloud->q1 + offset)/twov;
-		cloud->qCache[i] = _mm_load_pd(cloud->charge + offset);
+		cloud->qCache[i] = _mm_load_pd(cloud->charge + offset) + _mm_load_pd(cloud->q1 + offset)/twov;
 	}
 }
 
@@ -32,8 +31,7 @@ void ChargeOperator::operation3(const double currentTime)
 	for (cloud_index i = 0, e = cloud->n/2; i < e; i++) 
 	{
 		const cloud_index offset = 2*i;
-//		cloud->qCache[i] = _mm_load_pd(cloud->charge + offset) + _mm_load_pd(cloud->q2 + offset)/twov;
-		cloud->qCache[i] = _mm_load_pd(cloud->charge + offset);
+		cloud->qCache[i] = _mm_load_pd(cloud->charge + offset) + _mm_load_pd(cloud->q2 + offset)/twov;
 	}
 }
 
@@ -42,7 +40,6 @@ void ChargeOperator::operation4(const double currentTime)
 	for (cloud_index i = 0, e = cloud->n/2; i < e; i++) 
 	{
 		const cloud_index offset = 2*i;
-//		cloud->qCache[i] = _mm_load_pd(cloud->charge + offset) + _mm_load_pd(cloud->q3 + offset);
-		cloud->qCache[i] = _mm_load_pd(cloud->charge + offset);
+		cloud->qCache[i] = _mm_load_pd(cloud->charge + offset) + _mm_load_pd(cloud->q3 + offset);
 	}
 }

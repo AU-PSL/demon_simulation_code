@@ -1,4 +1,4 @@
-/*===- ShieldedCoulombForce.cpp - libSimulation -===============================
+/*=== ShieldedCoulombForce.cpp - libSimulation -===============================
 *
 *                                  DEMON
 *
@@ -17,7 +17,8 @@ void ShieldedCoulombForce::force1(const double currentTime)
 {
 	for (cloud_index currentParticle = 0; currentParticle < cloud->n - 1; currentParticle += 2) 
 	{
-		force(currentParticle, cloud->getq1_pd(currentParticle), cloud->getEx1_pd(currentParticle), cloud->getEy1_pd(currentParticle));
+		force(currentParticle, cloud->getq1_pd(currentParticle),
+			_mm_load_pd(cloud->Ex + currentParticle), _mm_load_pd(cloud->Ey + currentParticle));
 	}
 }
 
@@ -25,7 +26,8 @@ void ShieldedCoulombForce::force2(const double currentTime)
 {
 	for (cloud_index currentParticle = 0; currentParticle < cloud->n - 1; currentParticle += 2) 
 	{
-		force(currentParticle, cloud->getq2_pd(currentParticle), cloud->getEx2_pd(currentParticle), cloud->getEy2_pd(currentParticle));
+		force(currentParticle, cloud->getq2_pd(currentParticle), 
+			_mm_load_pd(cloud->Ex + currentParticle), _mm_load_pd(cloud->Ey + currentParticle));
 	}
 }
 
@@ -33,7 +35,8 @@ void ShieldedCoulombForce::force3(const double currentTime)
 {
 	for (cloud_index currentParticle = 0; currentParticle < cloud->n - 1; currentParticle += 2) 
 	{
-		force(currentParticle, cloud->getq3_pd(currentParticle), cloud->getEx3_pd(currentParticle), cloud->getEy3_pd(currentParticle));
+		force(currentParticle, cloud->getq3_pd(currentParticle),
+			_mm_load_pd(cloud->Ex + currentParticle), _mm_load_pd(cloud->Ey + currentParticle));
 	}
 }
 
@@ -41,7 +44,8 @@ void ShieldedCoulombForce::force4(const double currentTime)
 {
 	for (cloud_index currentParticle = 0; currentParticle < cloud->n - 1; currentParticle += 2) 
 	{
-		force(currentParticle, cloud->getq4_pd(currentParticle), cloud->getEx4_pd(currentParticle), cloud->getEy4_pd(currentParticle));
+		force(currentParticle, cloud->getq4_pd(currentParticle),
+			_mm_load_pd(cloud->Ex + currentParticle), _mm_load_pd(cloud->Ey + currentParticle));
 	}
 }
 
