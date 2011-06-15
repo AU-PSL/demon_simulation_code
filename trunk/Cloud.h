@@ -35,7 +35,7 @@ public:
 	double * const charge, * const mass;
 	double * const forceX, * const forceY;
 	__m128d * const xCache, * const yCache, * const VxCache, * const VyCache;
-	__m128d * const phiCache, * const ExCache, * const EyCache, * const qCache;
+	__m128d * const qCache;
 	
 	static const double interParticleSpacing;
 	static const double electronMass;

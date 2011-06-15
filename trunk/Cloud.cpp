@@ -32,7 +32,6 @@ charge(new double[n]), mass(new double[n]),
 forceX(new double[n]), forceY(new double[n]), 
 xCache(new __m128d[n/2]), yCache(new __m128d[n/2]), 
 VxCache(new __m128d[n/2]), VyCache(new __m128d[n/2]),
-phiCache(new __m128d[n/2]), ExCache(new __m128d[n/2]), EyCache(new __m128d[n/2]),
 qCache(new __m128d[n/2]), dustDebye(ionDebye), particleRadius(1.45E-6),
 chargeConst1(setChargeConst1(particleRadius, plasmaDensity, electronDebye, ionDebye, ionMass)),
 chargeConst2(setChargeConst2(particleRadius, plasmaDensity, electronDebye, ionDebye, ionMass))
@@ -50,7 +49,6 @@ Cloud::~Cloud()
 	delete[] forceX; delete[] forceY;
 	delete[] xCache; delete[] yCache; 
 	delete[] VxCache; delete[] VyCache;
-	delete[] phiCache; delete[] ExCache; delete[] EyCache;
 	delete[] qCache;
 }
 
@@ -445,99 +443,3 @@ const __m128d Cloud::getq4r_pd(const cloud_index i) const
 	return _mm_shuffle_pd(qCache[j], qCache[j], _MM_SHUFFLE2(0, 1));
 }
 
-// phi Cache helper functions:
-const __m128d Cloud::getphi1_pd(const cloud_index i) const
-{
-	// Phi
-	return _mm_load_pd(phi + i);
-}
-
-const __m128d Cloud::getphi2_pd(const cloud_index i) const
-{
-	// Phi + phi1/2
-	return phiCache[i/2];
-}
-
-const __m128d Cloud::getphi3_pd(const cloud_index i) const
-{
-	// Phi + phi2/2
-	return phiCache[i/2];
-}
-
-const __m128d Cloud::getphi4_pd(const cloud_index i) const
-{
-	// Phi + phi3
-	return phiCache[i/2];
-}
-
-const __m128d Cloud::getphi1r_pd(const cloud_index i) const 
-{
-	return _mm_loadr_pd(phi + i);
-}
-
-const __m128d Cloud::getphi2r_pd(const cloud_index i) const 
-{
-	const cloud_index j = i/2;
-	return _mm_shuffle_pd(phiCache[j], phiCache[j], _MM_SHUFFLE2(0, 1));
-}
-
-const __m128d Cloud::getphi3r_pd(const cloud_index i) const 
-{
-	const cloud_index j = i/2;
-	return _mm_shuffle_pd(phiCache[j], phiCache[j], _MM_SHUFFLE2(0, 1));
-}
-
-const __m128d Cloud::getphi4r_pd(const cloud_index i) const 
-{
-	const cloud_index j = i/2;
-	return _mm_shuffle_pd(phiCache[j], phiCache[j], _MM_SHUFFLE2(0, 1));
-}
-
-// E Cache helper functions:
-const __m128d Cloud::getEx1_pd(const cloud_index i) const
-{
-	// Ex
-	return _mm_load_pd(Ex + i);
-}
-
-const __m128d Cloud::getEx2_pd(const cloud_index i) const
-{
-	// Ex + Ex1/2
-	return ExCache[i/2];
-}
-
-const __m128d Cloud::getEx3_pd(const cloud_index i) const
-{
-	// Ex + Ex2/2
-	return ExCache[i/2];
-}
-
-const __m128d Cloud::getEx4_pd(const cloud_index i) const
-{
-	// Ex + Ex3
-	return ExCache[i/2];
-}
-
-const __m128d Cloud::getEy1_pd(const cloud_index i) const
-{
-	// Ey
-	return _mm_load_pd(Ey + i);
-}
-
-const __m128d Cloud::getEy2_pd(const cloud_index i) const
-{
-	// Ey + Ey1/2
-	return EyCache[i/2];
-}
-
-const __m128d Cloud::getEy3_pd(const cloud_index i) const
-{
-	// Ey + Ey2/2
-	return EyCache[i/2];
-}
-
-const __m128d Cloud::getEy4_pd(const cloud_index i) const
-{
-	// Ey + Ey3
-	return EyCache[i/2];
-}
