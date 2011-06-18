@@ -14,35 +14,33 @@ ConfinementForce::ConfinementForce(Cloud * const myCloud, double confineConst) :
 void ConfinementForce::force1(const double currentTime)
 {
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
+		force(currentParticle/2, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
 }
 
 void ConfinementForce::force2(const double currentTime)
 {
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
+		force(currentParticle/2, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
 }
 
 void ConfinementForce::force3(const double currentTime)
 {
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
+		force(currentParticle/2, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
 }
 
 void ConfinementForce::force4(const double currentTime)
 {
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
+		force(currentParticle/2, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
 }
 
 inline void ConfinementForce::force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY)
 {
 	const __m128d cV = _mm_set1_pd(confine);
-	double * const pFx = cloud->forceX + currentParticle;
-	double * const pFy = cloud->forceY + currentParticle;
-
-	_mm_store_pd(pFx, _mm_load_pd(pFx) + cV*currentPositionX);
-	_mm_store_pd(pFy, _mm_load_pd(pFy) + cV*currentPositionY);
+	
+	cloud->forceX[currentParticle] += cV*currentPositionX;
+	cloud->forceY[currentParticle] += cV*currentPositionY;
 }
 
 void ConfinementForce::writeForce(fitsfile * const file, int * const error) const

@@ -20,28 +20,28 @@ void DrivingForce::force1(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle, vtime, cloud->getx1_pd(currentParticle));
+		force(currentParticle/2, vtime, cloud->getx1_pd(currentParticle));
 }
 
 void DrivingForce::force2(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle, vtime, cloud->getx2_pd(currentParticle));
+		force(currentParticle/2, vtime, cloud->getx2_pd(currentParticle));
 }
 
 void DrivingForce::force3(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle, vtime, cloud->getx3_pd(currentParticle));
+		force(currentParticle/2, vtime, cloud->getx3_pd(currentParticle));
 }
 
 void DrivingForce::force4(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force(currentParticle, vtime, cloud->getx4_pd(currentParticle));
+		force(currentParticle/2, vtime, cloud->getx4_pd(currentParticle));
 }
 
 inline void DrivingForce::force(const cloud_index currentParticle, const __m128d currentTime, const __m128d currentPositionX)
@@ -60,8 +60,7 @@ inline void DrivingForce::force(const cloud_index currentParticle, const __m128d
 	_mm_storel_pd(&expArgL, expArg);
 	_mm_storeh_pd(&expArgH, expArg);
 	
-	double * const pFx = cloud->forceX + currentParticle;
-	_mm_store_pd(pFx, _mm_load_pd(pFx) + _mm_set1_pd(amplitude)*_mm_set_pd(sin(sinArgH), sin(sinArgL))*_mm_set_pd(exp(expArgH), exp(expArgL))); // _mm_set_pd() is backwards
+	cloud->forceX[currentParticle] += _mm_set1_pd(amplitude)*_mm_set_pd(sin(sinArgH), sin(sinArgL))*_mm_set_pd(exp(expArgH), exp(expArgL)); // _mm_set_pd() is backwards
 }
 
 void DrivingForce::writeForce(fitsfile * const file, int * const error) const

@@ -15,34 +15,31 @@ RectConfinementForce::RectConfinementForce(Cloud * const myCloud, double confine
 void RectConfinementForce::force1(const double currentTime)
 {
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
+		force(currentParticle/2, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
 }
 
 void RectConfinementForce::force2(const double currentTime)
 {
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
+		force(currentParticle/2, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
 }
 
 void RectConfinementForce::force3(const double currentTime)
 {
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
+		force(currentParticle/2, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
 }
 
 void RectConfinementForce::force4(const double currentTime)
 {
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
+		force(currentParticle/2, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
 }
 
 inline void RectConfinementForce::force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY)
 {
-	double * const pFx = cloud->forceX + currentParticle;
-	double * const pFy = cloud->forceY + currentParticle;
-
-	_mm_store_pd(pFx, _mm_load_pd(pFx) + _mm_set1_pd(confineX)*currentPositionX);
-	_mm_store_pd(pFy, _mm_load_pd(pFy) + _mm_set1_pd(confineY)*currentPositionY);
+	cloud->forceX[currentParticle] += _mm_set1_pd(confineX)*currentPositionX;
+	cloud->forceY[currentParticle] += _mm_set1_pd(confineY)*currentPositionY;
 }
 
 void RectConfinementForce::writeForce(fitsfile * const file, int * const error) const

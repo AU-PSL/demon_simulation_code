@@ -10,44 +10,28 @@
 #include "FieldPotentialOperator.h"
 #include <cmath>
 
+const __m128d FieldPotentialOperator::coulomb = _mm_set1_pd(1.0/(4.0*M_PI*8.8542E-12));
+
 void FieldPotentialOperator::operation1(const double currentTime)
 {
 	for (cloud_index currentParticle = 0, numParticles = cloud->n, e = cloud->n - 1; currentParticle < e; currentParticle += 2) 
 	{
-		const __m128d x1v = cloud->getx1_pd(currentParticle);
-		const __m128d y1v = cloud->gety1_pd(currentParticle);
+		const __m128d vx1 = cloud->getx1_pd(currentParticle);
+		const __m128d vy1 = cloud->gety1_pd(currentParticle);
+		const __m128d vq1 = cloud->getq1_pd(currentParticle);
+		
 		double x1, x2, y1, y2;
-		_mm_storel_pd(&x1, x1v);
-		_mm_storeh_pd(&x2, x1v);
-		_mm_storel_pd(&y1, y1v);
-		_mm_storeh_pd(&y2, y1v);
-
-		const double dispX = x1 - x2;
-		const double dispY = y1 - y2;
-		const double disp = sqrt(dispX*dispX + dispY*dispY);
-		__m128d dispXv = _mm_set_pd(dispX, dispX);
-		__m128d dispYv = _mm_set_pd(dispY, dispY);
-		__m128d dispV = _mm_set_pd(disp, disp);
-
-		potential(currentParticle, disp, cloud->getq1r_pd(currentParticle));
-		field(currentParticle, dispV, dispXv, dispYv, _mm_load_pd(cloud->phi + currentParticle));
-
+		_mm_storel_pd(&x1, vx1);
+		_mm_storeh_pd(&x2, vx1);
+		_mm_storel_pd(&y1, vy1);
+		_mm_storeh_pd(&y2, vy1);
+		
+		fieldsAndPotentials(currentParticle/2, cloud->getq1r_pd(currentParticle), x1 - x2, y1 - y2);
+		
 		for (cloud_index i = currentParticle + 2; i < numParticles; i += 2)
 		{
-			dispXv = x1v - cloud->getx1_pd(i);
-			dispYv = y1v - cloud->gety1_pd(i);
-			dispV = _mm_sqrt_pd(dispXv*dispXv + dispYv*dispYv);
-			const __m128d dispXvr = x1v - cloud->getx1r_pd(i);
-			const __m128d dispYvr = y1v - cloud->gety1r_pd(i);
-			const __m128d dispVr = _mm_sqrt_pd(dispXvr*dispXvr + dispYvr*dispYvr);
-
-			potential(currentParticle, i, dispV, cloud->getq1_pd(currentParticle), cloud->getq1_pd(i));
-			potentialr(currentParticle, i, dispVr, cloud->getq1_pd(currentParticle), cloud->getq1r_pd(i));
-
-			field(currentParticle, i, dispV, dispXv, dispYv,
-				_mm_load_pd(cloud->phi + currentParticle), _mm_load_pd(cloud->phi + i));
-			fieldr(currentParticle, i, dispVr, dispXvr, dispYvr,
-				_mm_load_pd(cloud->phi + currentParticle), _mm_loadr_pd(cloud->phi + i));
+			fieldsAndPotentials(currentParticle/2, i/2, vq1, cloud->getq1_pd(i), vx1 - cloud->getx1_pd(i), vy1 - cloud->gety1_pd(i));
+			fieldsAndPotentialsr(currentParticle/2, i/2, vq1, cloud->getq1r_pd(i), vx1 - cloud->getx1r_pd(i), vy1 - cloud->gety1r_pd(i));
 		}
 	}
 }
@@ -56,40 +40,22 @@ void FieldPotentialOperator::operation2(const double currentTime)
 {
 	for (cloud_index currentParticle = 0, numParticles = cloud->n, e = cloud->n - 1; currentParticle < e; currentParticle += 2) 
 	{
-		const __m128d x2v = cloud->getx2_pd(currentParticle);
-		const __m128d y2v = cloud->gety2_pd(currentParticle);
+		const __m128d vx1 = cloud->getx2_pd(currentParticle);
+		const __m128d vy1 = cloud->gety2_pd(currentParticle);
+		const __m128d vq1 = cloud->getq2_pd(currentParticle);
+		
 		double x1, x2, y1, y2;
-		_mm_storel_pd(&x1, x2v);
-		_mm_storeh_pd(&x2, x2v);
-		_mm_storel_pd(&y1, y2v);
-		_mm_storeh_pd(&y2, y2v);
-
-		const double dispX = x1 - x2;
-		const double dispY = y1 - y2;
-		const double disp = sqrt(dispX*dispX + dispY*dispY);
-		__m128d dispXv = _mm_set_pd(dispX, dispX);
-		__m128d dispYv = _mm_set_pd(dispY, dispY);
-		__m128d dispV = _mm_set_pd(disp, disp);
-
-		potential(currentParticle, disp, cloud->getq2r_pd(currentParticle));
-		field(currentParticle, dispV, dispXv, dispYv, _mm_load_pd(cloud->phi + currentParticle));
-
+		_mm_storel_pd(&x1, vx1);
+		_mm_storeh_pd(&x2, vx1);
+		_mm_storel_pd(&y1, vy1);
+		_mm_storeh_pd(&y2, vy1);
+		
+		fieldsAndPotentials(currentParticle/2, cloud->getq2r_pd(currentParticle), x1 - x2, y1 - y2);
+		
 		for (cloud_index i = currentParticle + 2; i < numParticles; i += 2)
 		{
-			dispXv = x2v - cloud->getx2_pd(i);
-			dispYv = y2v - cloud->gety2_pd(i);
-			dispV = _mm_sqrt_pd(dispXv*dispXv + dispYv*dispYv);
-			const __m128d dispXvr = x2v - cloud->getx2r_pd(i);
-			const __m128d dispYvr = y2v - cloud->gety2r_pd(i);
-			const __m128d dispVr = _mm_sqrt_pd(dispXvr*dispXvr + dispYvr*dispYvr);
-
-			potential(currentParticle, i, dispV, cloud->getq2_pd(currentParticle), cloud->getq2_pd(i));
-			potentialr(currentParticle, i, dispVr, cloud->getq2_pd(currentParticle), cloud->getq2r_pd(i));
-
-			field(currentParticle, i, dispV, dispXv, dispYv, 
-				_mm_load_pd(cloud->phi + currentParticle), _mm_load_pd(cloud->phi + i));
-			fieldr(currentParticle, i, dispVr, dispXvr, dispYvr, 
-				_mm_load_pd(cloud->phi + currentParticle), _mm_loadr_pd(cloud->phi + i));
+			fieldsAndPotentials(currentParticle/2, i/2, vq1, cloud->getq1_pd(i), vx1 - cloud->getx2_pd(i), vy1 - cloud->gety2_pd(i));
+			fieldsAndPotentialsr(currentParticle/2, i/2, vq1, cloud->getq1r_pd(i), vx1 - cloud->getx2r_pd(i), vy1 - cloud->gety2r_pd(i));
 		}
 	}
 }
@@ -98,40 +64,22 @@ void FieldPotentialOperator::operation3(const double currentTime)
 {
 	for (cloud_index currentParticle = 0, numParticles = cloud->n, e = cloud->n - 1; currentParticle < e; currentParticle += 2) 
 	{
-		const __m128d x3v = cloud->getx3_pd(currentParticle);
-		const __m128d y3v = cloud->gety3_pd(currentParticle);
+		const __m128d vx1 = cloud->getx3_pd(currentParticle);
+		const __m128d vy1 = cloud->gety3_pd(currentParticle);
+		const __m128d vq1 = cloud->getq3_pd(currentParticle);
+		
 		double x1, x2, y1, y2;
-		_mm_storel_pd(&x1, x3v);
-		_mm_storeh_pd(&x2, x3v);
-		_mm_storel_pd(&y1, y3v);
-		_mm_storeh_pd(&y2, y3v);
-
-		const double dispX = x1 - x2;
-		const double dispY = y1 - y2;
-		const double disp = sqrt(dispX*dispX + dispY*dispY);
-		__m128d dispXv = _mm_set_pd(dispX, dispX);
-		__m128d dispYv = _mm_set_pd(dispY, dispY);
-		__m128d dispV = _mm_set_pd(disp, disp);
-
-		potential(currentParticle, disp, cloud->getq3r_pd(currentParticle));
-		field(currentParticle, dispV, dispXv, dispYv, _mm_load_pd(cloud->phi + currentParticle));
-
+		_mm_storel_pd(&x1, vx1);
+		_mm_storeh_pd(&x2, vx1);
+		_mm_storel_pd(&y1, vy1);
+		_mm_storeh_pd(&y2, vy1);
+		
+		fieldsAndPotentials(currentParticle/2, cloud->getq3r_pd(currentParticle), x1 - x2, y1 - y2);
+		
 		for (cloud_index i = currentParticle + 2; i < numParticles; i += 2)
 		{
-			dispXv = x3v - cloud->getx3_pd(i);
-			dispYv = y3v - cloud->gety3_pd(i);
-			dispV = _mm_sqrt_pd(dispXv*dispXv + dispYv*dispYv);
-			const __m128d dispXvr = x3v - cloud->getx3r_pd(i);
-			const __m128d dispYvr = y3v - cloud->gety3r_pd(i);
-			const __m128d dispVr = _mm_sqrt_pd(dispXvr*dispXvr + dispYvr*dispYvr);
-
-			potential(currentParticle, i, dispV, cloud->getq3_pd(currentParticle), cloud->getq3_pd(i));
-			potentialr(currentParticle, i, dispVr, cloud->getq3_pd(currentParticle), cloud->getq3r_pd(i));
-
-			field(currentParticle, i, dispV, dispXv, dispYv, 
-				_mm_load_pd(cloud->phi + currentParticle), _mm_load_pd(cloud->phi + i));
-			fieldr(currentParticle, i, dispVr, dispXvr, dispYvr,
-				_mm_load_pd(cloud->phi + currentParticle), _mm_loadr_pd(cloud->phi + i));
+			fieldsAndPotentials(currentParticle/2, i/2, vq1, cloud->getq3_pd(i), vx1 - cloud->getx3_pd(i), vy1 - cloud->gety3_pd(i));
+			fieldsAndPotentialsr(currentParticle/2, i/2, vq1, cloud->getq3r_pd(i), vx1 - cloud->getx3r_pd(i), vy1 - cloud->gety3r_pd(i));
 		}
 	}
 }
@@ -140,60 +88,50 @@ void FieldPotentialOperator::operation4(const double currentTime)
 {
 	for (cloud_index currentParticle = 0, numParticles = cloud->n, e = cloud->n - 1; currentParticle < e; currentParticle += 2) 
 	{
-		const __m128d x4v = cloud->getx4_pd(currentParticle);
-		const __m128d y4v = cloud->gety4_pd(currentParticle);
+		const __m128d vx1 = cloud->getx4_pd(currentParticle);
+		const __m128d vy1 = cloud->gety4_pd(currentParticle);
+		const __m128d vq1 = cloud->getq4_pd(currentParticle);
+		
 		double x1, x2, y1, y2;
-		_mm_storel_pd(&x1, x4v);
-		_mm_storeh_pd(&x2, x4v);
-		_mm_storel_pd(&y1, y4v);
-		_mm_storeh_pd(&y2, y4v);
-
-		const double dispX = x1 - x2;
-		const double dispY = y1 - y2;
-		const double disp = sqrt(dispX*dispX + dispY*dispY);
-		__m128d dispXv = _mm_set_pd(dispX, dispX);
-		__m128d dispYv = _mm_set_pd(dispY, dispY);
-		__m128d dispV = _mm_set_pd(disp, disp);
-
-		potential(currentParticle, disp, cloud->getq4r_pd(currentParticle));
-		field(currentParticle, dispV, dispXv, dispYv, _mm_load_pd(cloud->phi + currentParticle));
-
+		_mm_storel_pd(&x1, vx1);
+		_mm_storeh_pd(&x2, vx1);
+		_mm_storel_pd(&y1, vy1);
+		_mm_storeh_pd(&y2, vy1);
+		
+		fieldsAndPotentials(currentParticle/2, cloud->getq4r_pd(currentParticle), x1 - x2, y1 - y2);
+		
 		for (cloud_index i = currentParticle + 2; i < numParticles; i += 2)
 		{
-			dispXv = x4v - cloud->getx4_pd(i);
-			dispYv = y4v - cloud->gety4_pd(i);
-			dispV = _mm_sqrt_pd(dispXv*dispXv + dispYv*dispYv);
-			const __m128d dispXvr = x4v - cloud->getx4r_pd(i);
-			const __m128d dispYvr = y4v - cloud->gety4r_pd(i);
-			const __m128d dispVr = _mm_sqrt_pd(dispXvr*dispXvr + dispYvr*dispYvr);
-
-			potential(currentParticle, i, dispV, cloud->getq4_pd(currentParticle), cloud->getq4_pd(i));
-			potentialr(currentParticle, i, dispVr, cloud->getq4_pd(currentParticle), cloud->getq4r_pd(i));
-
-			field(currentParticle, i, dispV, dispXv, dispYv, 
-				_mm_load_pd(cloud->phi + currentParticle), _mm_load_pd(cloud->phi + i));
-			fieldr(currentParticle, i, dispVr, dispXvr, dispYvr, 
-				_mm_load_pd(cloud->phi + currentParticle), _mm_loadr_pd(cloud->phi + i));
+			fieldsAndPotentials(currentParticle/2, i/2, vq1, cloud->getq4_pd(i), vx1 - cloud->getx4_pd(i), vy1 - cloud->gety4_pd(i));
+			fieldsAndPotentialsr(currentParticle/2, i/2, vq1, cloud->getq4r_pd(i), vx1 - cloud->getx4r_pd(i), vy1 - cloud->gety4r_pd(i));
 		}
 	}
 }
 
-inline void FieldPotentialOperator::potential(const cloud_index currentParticle, const double disp, const __m128d charges)
+inline void FieldPotentialOperator::fieldsAndPotentials(const cloud_index currentParticle, const __m128d currentCharge,
+                                                        const double displacementX, const double displacementY)
 {
-	const double valExp = disp/cloud->dustDebye;
-
+	const double displacement = sqrt(displacementX*displacementX + displacementY*displacementY);
+	const double valExp = displacement/cloud->dustDebye;
+	
 	if (valExp < 10.0) // restrict to 10*(ion debye length)
 	{
-		const double temp = 1.0/(4.0*M_PI*8.85E-12*disp*exp(valExp));
-
-		_mm_store_pd(cloud->phi + currentParticle, _mm_load_pd(cloud->phi + currentParticle) -
-			_mm_set_pd(temp, temp)*charges);
+		const __m128d coeffient = coulomb/_mm_set1_pd(exp(valExp));
+		
+		cloud->phi[currentParticle] += currentCharge/_mm_set1_pd(displacement)*coeffient;
+		
+		const __m128d eField = currentCharge*_mm_set1_pd((1 + displacement/cloud->dustDebye)/(displacement*displacement*displacement))*coeffient;
+		cloud->Ex[currentParticle] += eField*_mm_set_pd(-displacementX, displacementX);
+		cloud->Ey[currentParticle] += eField*_mm_set_pd(-displacementY, displacementY);
 	}
 }
 
-inline void FieldPotentialOperator::potential(const cloud_index currentParticle, const cloud_index iParticle, const __m128d disp, const __m128d currentCharges, const __m128d iCharges)
+inline void FieldPotentialOperator::fieldsAndPotentials(const cloud_index currentParticle, const cloud_index iParticle,
+                                                        const __m128d currentCharge, const __m128d iCharge,
+                                                        const __m128d displacementX, const __m128d displacementY)
 {
-	const __m128d valExp = disp/_mm_set_pd(cloud->dustDebye, cloud->dustDebye);
+	const __m128d displacement = _mm_sqrt_pd(displacementX*displacementX + displacementY*displacementY);
+	const __m128d valExp = displacement/_mm_set1_pd(cloud->dustDebye);
 	
 	double valExpL, valExpH;
 	_mm_storel_pd(&valExpL, valExp);
@@ -203,25 +141,29 @@ inline void FieldPotentialOperator::potential(const cloud_index currentParticle,
 	const bool boolH = valExpH < 10.0;
 	if (!boolL && !boolH)
 		return;
-
-	double expL, expH;
-	_mm_storel_pd(&expL, valExp);
-	_mm_storeh_pd(&expH, valExp);
-
-	__m128d expv = _mm_set_pd(boolH ? exp(expH) : 0.0, // _mm_set_pd is backwards
-							  boolL ? exp(expL) : 0.0);
-
-	// conclude potential calculation:
-	const double k = 1.0/4.0*M_PI*8.85E-12;
-	__m128d temp = _mm_set_pd(k, k)/(disp*expv);
-
-	_mm_store_pd(cloud->phi + currentParticle, _mm_load_pd(cloud->phi + currentParticle) - temp*iCharges);
-	_mm_store_pd(cloud->phi + currentParticle, _mm_load_pd(cloud->phi + currentParticle) - temp*currentCharges);
+	
+	const __m128d expv = _mm_set_pd(boolH ? exp(-valExpH) : 0.0,
+									boolL ? exp(-valExpL) : 0.0);
+	const __m128d coeffient = coulomb*expv;
+	
+	cloud->phi[currentParticle] += iCharge/displacement*coeffient;
+	cloud->phi[iParticle] += currentCharge/displacement*coeffient;
+	
+	const __m128d coeffient2 = coeffient*(_mm_set1_pd(1) + displacement/_mm_set1_pd(cloud->dustDebye))/(displacement*displacement*displacement);
+	const __m128d xunit = displacementX*coeffient2;
+	const __m128d yunit = displacementY*coeffient2;
+	cloud->Ex[currentParticle] += iCharge*xunit;
+	cloud->Ey[currentParticle] += iCharge*yunit;
+	cloud->Ex[iParticle] -= currentCharge*xunit;
+	cloud->Ey[iParticle] -= currentCharge*yunit;
 }
 
-inline void FieldPotentialOperator::potentialr(const cloud_index currentParticle, const cloud_index iParticle, const __m128d disp, const __m128d currentCharges, const __m128d iCharges)
+inline void FieldPotentialOperator::fieldsAndPotentialsr(const cloud_index currentParticle, const cloud_index iParticle,
+                                                         const __m128d currentCharge, const __m128d iCharge,
+                                                         const __m128d displacementX, const __m128d displacementY)
 {
-	const __m128d valExp = disp/_mm_set_pd(cloud->dustDebye, cloud->dustDebye);
+	const __m128d displacement = _mm_sqrt_pd(displacementX*displacementX + displacementY*displacementY);
+	const __m128d valExp = displacement/_mm_set1_pd(cloud->dustDebye);
 	
 	double valExpL, valExpH;
 	_mm_storel_pd(&valExpL, valExp);
@@ -231,56 +173,23 @@ inline void FieldPotentialOperator::potentialr(const cloud_index currentParticle
 	const bool boolH = valExpH < 10.0;
 	if (!boolL && !boolH)
 		return;
-
-	double expL, expH;
-	_mm_storel_pd(&expL, valExp);
-	_mm_storeh_pd(&expH, valExp);
 	
-	__m128d expv = _mm_set_pd(boolH ? exp(expH) : 0.0, // _mm_set_pd is backwards
-							  boolL ? exp(expL) : 0.0);
-
-	// conclude potential calculation:
-	const double k = 1.0/4.0*M_PI*8.85E-12;
-	const __m128d temp = _mm_set_pd(k, k)/(disp*expv);
-	const __m128d temp2 = temp*currentCharges;
-
-	_mm_store_pd(cloud->phi + currentParticle, _mm_load_pd(cloud->phi + currentParticle) - temp*iCharges);
-	_mm_store_pd(cloud->phi + currentParticle, _mm_load_pd(cloud->phi + currentParticle) - 
-		_mm_shuffle_pd(temp2, temp2, _MM_SHUFFLE2(0, 1)));
+	const __m128d expv = _mm_set_pd(boolH ? exp(-valExpH) : 0.0,
+									boolL ? exp(-valExpL) : 0.0);
+	const __m128d coeffient = coulomb*expv;
+	
+	cloud->phi[currentParticle] += iCharge/displacement*coeffient;
+	const __m128d iPhi = currentCharge/displacement*coeffient;
+	cloud->phi[iParticle] += _mm_shuffle_pd(iPhi, iPhi, _MM_SHUFFLE2(0, 1));
+	
+	const __m128d coeffient2 = coeffient*(_mm_set1_pd(1) + displacement/_mm_set1_pd(cloud->dustDebye))/(displacement*displacement*displacement);
+	const __m128d xunit = displacementX*coeffient2;
+	const __m128d yunit = displacementY*coeffient2;
+	cloud->Ex[currentParticle] += iCharge*xunit;
+	cloud->Ey[currentParticle] += iCharge*yunit;
+	
+	const __m128d iEx = currentCharge*xunit;
+	const __m128d iEy = currentCharge*yunit;
+	cloud->Ex[iParticle] -= _mm_shuffle_pd(iEx, iEx, _MM_SHUFFLE2(0, 1));
+	cloud->Ey[iParticle] -= _mm_shuffle_pd(iEy, iEy, _MM_SHUFFLE2(0, 1));
 }
-
-inline void FieldPotentialOperator::field(const cloud_index currentParticle, const __m128d dispV, const __m128d dispXv, const __m128d dispYv, const __m128d phi)
-{
-	const double debye = cloud->dustDebye;
-	const __m128d temp = (_mm_set_pd(1.0,1.0) + dispV/_mm_set_pd(debye, debye))/(dispV*dispV)*phi;
-	_mm_store_pd(cloud->Ex + currentParticle, _mm_load_pd(cloud->Ex + currentParticle) + temp*dispXv);
-	_mm_store_pd(cloud->Ey + currentParticle, _mm_load_pd(cloud->Ey + currentParticle) + temp*dispYv);
-}
-
-inline void FieldPotentialOperator::field(const cloud_index currentParticle, const cloud_index iParticle, const __m128d dispV, const __m128d dispXv, const __m128d dispYv, const __m128d currentPhi, const __m128d iPhi)
-{
-	const double debye = cloud->dustDebye;
-	const __m128d temp = (_mm_set_pd(1.0,1.0) + dispV/_mm_set_pd(debye, debye))/(dispV*dispV);
-
-	_mm_store_pd(cloud->Ex + currentParticle, _mm_load_pd(cloud->Ex + currentParticle) + temp*currentPhi*dispXv);
-	_mm_store_pd(cloud->Ey + currentParticle, _mm_load_pd(cloud->Ey + currentParticle) + temp*currentPhi*dispYv);
-
-	_mm_store_pd(cloud->Ex + iParticle, _mm_load_pd(cloud->Ex + iParticle) + temp*iPhi*dispXv);
-	_mm_store_pd(cloud->Ey + iParticle, _mm_load_pd(cloud->Ey + iParticle) + temp*iPhi*dispYv);
-}
-
-inline void FieldPotentialOperator::fieldr(const cloud_index currentParticle, const cloud_index iParticle, const __m128d dispVr, const __m128d dispXvr, const __m128d dispYvr, const __m128d currentPhi, const __m128d iPhir)
-{
-	const double debye = cloud->dustDebye;
-	const __m128d temp = (_mm_set_pd(1.0,1.0) + dispVr/_mm_set_pd(debye, debye))/(dispVr*dispVr);
-	const __m128d temp2 = temp*iPhir;
-	const __m128d temp3 = temp2*dispXvr;
-	const __m128d temp4 = temp2*dispYvr;
-
-	_mm_store_pd(cloud->Ex + currentParticle, _mm_load_pd(cloud->Ex + currentParticle) + temp*currentPhi*dispXvr);
-	_mm_store_pd(cloud->Ey + currentParticle, _mm_load_pd(cloud->Ey + currentParticle) + temp*currentPhi*dispYvr);
-
-	_mm_store_pd(cloud->Ex + iParticle, _mm_load_pd(cloud->Ex + iParticle) + _mm_shuffle_pd(temp3, temp3, _MM_SHUFFLE2(0, 1)));
-	_mm_store_pd(cloud->Ey + iParticle, _mm_load_pd(cloud->Ey + iParticle) + _mm_shuffle_pd(temp4, temp4, _MM_SHUFFLE2(0, 1)));
-}
-

@@ -23,8 +23,8 @@ numOperators(3), operations(new Operator*[numOperators])
 {
 	// Operators are order dependent.
 	operations[0] = new PositionVelocityCacheOperator(cloud);
-	operations[1] = new FieldPotentialOperator(cloud);
-	operations[2] = new ChargeOperator(cloud);
+	operations[1] = new ChargeOperator(cloud);
+	operations[2] = new FieldPotentialOperator(cloud);
 }
 
 Runge_Kutta::~Runge_Kutta()
@@ -40,52 +40,44 @@ void Runge_Kutta::moveParticles(const double endTime)
 	// create vector constants:
 	const __m128d v2 = _mm_set1_pd(2.0);
 	const __m128d v6 = _mm_set1_pd(6.0);
+	
+#ifdef CHARGE
+	const __m128d qConst1 = cloud->chargeConst1;
+	const __m128d qConst2 = cloud->chargeConst2;
+	const __m128d partRadius = _mm_set1_pd(cloud->particleRadius);
+#endif
     
 	while (currentTime < endTime)
 	{
-		const double dt = modifyTimeStep(0, 2, 1.0e-4, init_dt); // implement dynamic timstep (if necessary):
+		const double dt = modifyTimeStep(0, 2, cloud->dustDebye, init_dt); // implement dynamic timstep (if necessary):
 			// Second argument must be 2 more than the first.
 		const __m128d vdt = _mm_set1_pd(dt); // store timestep as vector const
-#ifdef CHARGE
-		const __m128d qConst1 = _mm_set1_pd(cloud->chargeConst1);
-		const __m128d qConst2 = _mm_set1_pd(cloud->chargeConst2);
-		const __m128d partRadius = _mm_set1_pd(cloud->particleRadius);
-#endif
 		
 		operate1(currentTime);
 		force1(currentTime); // compute net force1
 		for (cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) // calculate k1 and l1 for entire cloud
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass into vector
-
-			// assign pointers:
-			double * const pFx = cloud->forceX + i;
-			double * const pFy = cloud->forceY + i;
-			double * const pPhi = cloud->phi + i;
-			double * const pEx = cloud->Ex + i;
-			double * const pEy = cloud->Ey + i;
            
-			// calculate ith and (i+1)th tidbits: 
-			_mm_store_pd(cloud->k1 + i, vdt*_mm_load_pd(pFx)/vmass); // velocityX tidbit
+			// calculate ith and (i+1)th tidbits:
+			_mm_store_pd(cloud->k1 + i, vdt*cloud->forceX[i/2]/vmass); // velocityX tidbit
 			_mm_store_pd(cloud->l1 + i, vdt*cloud->getVx1_pd(i)); // positionX tidbit
-			_mm_store_pd(cloud->m1 + i, vdt*_mm_load_pd(pFy)/vmass); // velocityY tidbit
+			_mm_store_pd(cloud->m1 + i, vdt*cloud->forceY[i/2]/vmass); // velocityY tidbit
 			_mm_store_pd(cloud->n1 + i, vdt*cloud->getVy1_pd(i)); // positionY tidbit
 #ifdef CHARGE
-			_mm_store_pd(cloud->q1 + i, -vdt*(qConst1*_mm_load_pd(cloud->charge + i) +
-				qConst2*partRadius*_mm_load_pd(cloud->phi + i)));
-#else
-			_mm_store_pd(cloud->q1 + i, _mm_load_pd(cloud->charge + i));
+			_mm_store_pd(cloud->q1 + i, -vdt*(qConst1*cloud->getq1_pd(i) +
+				qConst2*partRadius*cloud->phi[i/2]));
 #endif
 				// see "Instability of Dust Acoustic Waves in an Accelerating Dusy Plasma"
 				// P. K. Shukla, M. Salimullah, G. E. Morfill
 				// Physica Scripta, Vol. 67, 354-356, 2003
 
 			// reset to zero:
-			_mm_store_pd(pFx, _mm_setzero_pd());
-			_mm_store_pd(pFy, _mm_setzero_pd());
-			_mm_store_pd(pPhi, _mm_setzero_pd());
-			_mm_store_pd(pEx, _mm_setzero_pd());
-			_mm_store_pd(pEy, _mm_setzero_pd());
+			cloud->forceX[i/2] = _mm_setzero_pd();
+			cloud->forceY[i/2] = _mm_setzero_pd();
+			cloud->phi[i/2] = _mm_setzero_pd();
+			cloud->Ex[i/2] = _mm_setzero_pd();
+			cloud->Ey[i/2] = _mm_setzero_pd();
 			
 		}
         
@@ -95,28 +87,22 @@ void Runge_Kutta::moveParticles(const double endTime)
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
 
-			// assign pointers:
-			double * const pFx = cloud->forceX + i;
-			double * const pFy = cloud->forceY + i;
-			double * const pPhi = cloud->phi + i;
-			double * const pEx = cloud->Ex + i;
-			double * const pEy = cloud->Ey + i;
-
-			// calculate ith and (i+1)th tidbits: 
-			_mm_store_pd(cloud->k2 + i, vdt*_mm_load_pd(pFx)/vmass); // velocityX tidbit
+			// calculate ith and (i+1)th tidbits:
+			_mm_store_pd(cloud->k2 + i, vdt*cloud->forceX[i/2]/vmass); // velocityX tidbit
 			_mm_store_pd(cloud->l2 + i, vdt*cloud->getVx2_pd(i)); // positionX tidbit
-			_mm_store_pd(cloud->m2 + i, vdt*_mm_load_pd(pFy)/vmass); // velocityY tidbit
+			_mm_store_pd(cloud->m2 + i, vdt*cloud->forceY[i/2]/vmass); // velocityY tidbit
 			_mm_store_pd(cloud->n2 + i, vdt*cloud->getVy2_pd(i)); // positionY tidbit
-			//_mm_store_pd(cloud->q2 + i, -vdt*(qConst1*cloud->getq1_pd(i) +
-			//	qConst2*partRadius*_mm_load_pd(cloud->phi + i)));
-			_mm_store_pd(cloud->q2 + i, _mm_load_pd(cloud->charge + i));
+#ifdef CHARGE
+			_mm_store_pd(cloud->q2 + i, -vdt*(qConst1*cloud->getq2_pd(i) +
+				qConst2*partRadius*cloud->phi[i/2]));
+#endif
 
 			// reset to zero:
-			_mm_store_pd(pFx, _mm_setzero_pd());
-			_mm_store_pd(pFy, _mm_setzero_pd());
-			_mm_store_pd(pPhi, _mm_setzero_pd());
-			_mm_store_pd(pEx, _mm_setzero_pd());
-			_mm_store_pd(pEy, _mm_setzero_pd());
+			cloud->forceX[i/2] = _mm_setzero_pd();
+			cloud->forceY[i/2] = _mm_setzero_pd();
+			cloud->phi[i/2] = _mm_setzero_pd();
+			cloud->Ex[i/2] = _mm_setzero_pd();
+			cloud->Ey[i/2] = _mm_setzero_pd();
 		}
 
 		operate3(currentTime + dt/2.0);
@@ -125,31 +111,22 @@ void Runge_Kutta::moveParticles(const double endTime)
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
 
-			// assign force pointers:
-			double * const pFx = cloud->forceX + i;
-			double * const pFy = cloud->forceY + i;
-			double * const pPhi = cloud->phi + i;
-			double * const pEx = cloud->Ex + i;
-			double * const pEy = cloud->Ey + i;
-
-			// calculate ith and (i+1)th tibits: 
-			_mm_store_pd(cloud->k3 + i, vdt*_mm_load_pd(pFx)/vmass); // velocityX tidbit
+			// calculate ith and (i+1)th tibits:
+			_mm_store_pd(cloud->k3 + i, vdt*cloud->forceX[i/2]/vmass); // velocityX tidbit
 			_mm_store_pd(cloud->l3 + i, vdt*cloud->getVx3_pd(i)); // positionX tidbit
-			_mm_store_pd(cloud->m3 + i, vdt*_mm_load_pd(pFy)/vmass); // velocityY tidbit
+			_mm_store_pd(cloud->m3 + i, vdt*cloud->forceY[i/2]/vmass); // velocityY tidbit
 			_mm_store_pd(cloud->n3 + i, vdt*cloud->getVy3_pd(i)); // positionY tidbit
 #ifdef CHARGE
-			_mm_store_pd(cloud->q3 + i, -vdt*(qConst1*cloud->getq2_pd(i) +
-				qConst2*partRadius*_mm_load_pd(cloud->phi + i)));
-#else
-			_mm_store_pd(cloud->q3 + i, _mm_load_pd(cloud->charge + i));
+			_mm_store_pd(cloud->q3 + i, -vdt*(qConst1*cloud->getq3_pd(i) +
+				qConst2*partRadius*cloud->phi[i/2]));
 #endif
 			
-			// reset forces to zero:
-			_mm_store_pd(pFx, _mm_setzero_pd());
-			_mm_store_pd(pFy, _mm_setzero_pd());
-			_mm_store_pd(pPhi, _mm_setzero_pd());
-			_mm_store_pd(pEx, _mm_setzero_pd());
-			_mm_store_pd(pEy, _mm_setzero_pd());
+			// reset to zero:
+			cloud->forceX[i/2] = _mm_setzero_pd();
+			cloud->forceY[i/2] = _mm_setzero_pd();
+			cloud->phi[i/2] = _mm_setzero_pd();
+			cloud->Ex[i/2] = _mm_setzero_pd();
+			cloud->Ey[i/2] = _mm_setzero_pd();
 		}
         
 		operate4(currentTime + dt/2.0);
@@ -157,31 +134,22 @@ void Runge_Kutta::moveParticles(const double endTime)
 		for (cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) // calculate k4 and l4 for entire cloud
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
-
-			// assign force pointers:
-			double * const pFx = cloud->forceX + i;
-			double * const pFy = cloud->forceY + i;
-			double * const pPhi = cloud->phi + i;
-			double * const pEx = cloud->Ex + i;
-			double * const pEy = cloud->Ey + i;
             
-			_mm_store_pd(cloud->k4 + i, vdt*_mm_load_pd(pFx)/vmass); // velocityX tidbit
+			_mm_store_pd(cloud->k4 + i, vdt*cloud->forceX[i/2]/vmass); // velocityX tidbit
 			_mm_store_pd(cloud->l4 + i, vdt*cloud->getVx4_pd(i)); // positionX tidbit
-			_mm_store_pd(cloud->m4 + i, vdt*_mm_load_pd(pFy)/vmass); // velocityY tidbit
+			_mm_store_pd(cloud->m4 + i, vdt*cloud->forceY[i/2]/vmass); // velocityY tidbit
 			_mm_store_pd(cloud->n4 + i, vdt*cloud->getVy4_pd(i)); // positionY tidbit
 #ifdef CHARGE
-			_mm_store_pd(cloud->q4 + i, -vdt*(qConst1*cloud->getq3_pd(i) +
-				qConst2*partRadius*_mm_load_pd(cloud->phi + i)));
-#else
-			_mm_store_pd(cloud->q4 + i, _mm_load_pd(cloud->charge + i));
+			_mm_store_pd(cloud->q4 + i, -vdt*(qConst1*cloud->getq4_pd(i) +
+				qConst2*partRadius*cloud->phi[i/2]));
 #endif
 			
-			// reset forces to zero:
-			_mm_store_pd(pFx, _mm_setzero_pd());
-			_mm_store_pd(pFy, _mm_setzero_pd());
-			_mm_store_pd(pPhi, _mm_setzero_pd());
-			_mm_store_pd(pEx, _mm_setzero_pd());
-			_mm_store_pd(pEy, _mm_setzero_pd());
+			// reset to zero:
+			cloud->forceX[i/2] = _mm_setzero_pd();
+			cloud->forceY[i/2] = _mm_setzero_pd();
+			cloud->phi[i/2] = _mm_setzero_pd();
+			cloud->Ex[i/2] = _mm_setzero_pd();
+			cloud->Ey[i/2] = _mm_setzero_pd();
 		}
 
 		for (cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) // calculate next position and next velocity for entire cloud
