@@ -7,10 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4DB543DC12A5FBF100D7008F /* libcfitsio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DB543DB12A5FBF100D7008F /* libcfitsio.a */; };
+		4D31D1BE13AD0B2D0043B4E2 /* FieldPotentialOperator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D31D1BC13AD0B2D0043B4E2 /* FieldPotentialOperator.cpp */; };
+		4D31D1BF13AD0B2D0043B4E2 /* FieldPotentialOperator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D31D1BD13AD0B2D0043B4E2 /* FieldPotentialOperator.h */; };
+		4D31D1C213AD0B3A0043B4E2 /* ChargeOperator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D31D1C013AD0B3A0043B4E2 /* ChargeOperator.cpp */; };
+		4D31D1C313AD0B3A0043B4E2 /* ChargeOperator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D31D1C113AD0B3A0043B4E2 /* ChargeOperator.h */; };
 		4DDDB4F912BA7E62003AC69F /* Operator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DDDB4F812BA7E62003AC69F /* Operator.h */; };
 		4DDDB4FF12BA7FF4003AC69F /* PositionVelocityCacheOperator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DDDB4FD12BA7FF4003AC69F /* PositionVelocityCacheOperator.h */; };
 		4DDDB50012BA7FF4003AC69F /* PositionVelocityCacheOperator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4DDDB4FE12BA7FF4003AC69F /* PositionVelocityCacheOperator.cpp */; };
+		4DF78C9812F1D6FC00DBE4FC /* libcfitsio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DF78C9712F1D6FC00DBE4FC /* libcfitsio.a */; };
 		E1B3A959129D710500599DFF /* VectorCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B3A958129D710500599DFF /* VectorCompatibility.h */; };
 		E1FD94351299994F00EBC94D /* Cloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FD942F1299994C00EBC94D /* Cloud.cpp */; };
 		E1FD94361299994F00EBC94D /* Cloud.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FD94301299994F00EBC94D /* Cloud.h */; };
@@ -54,10 +58,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		4DB543DB12A5FBF100D7008F /* libcfitsio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcfitsio.a; path = /Users/mark/Programs/cfitsio/libcfitsio.a; sourceTree = "<absolute>"; };
+		4D31D1BC13AD0B2D0043B4E2 /* FieldPotentialOperator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FieldPotentialOperator.cpp; path = ../FieldPotentialOperator.cpp; sourceTree = SOURCE_ROOT; };
+		4D31D1BD13AD0B2D0043B4E2 /* FieldPotentialOperator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FieldPotentialOperator.h; path = ../FieldPotentialOperator.h; sourceTree = SOURCE_ROOT; };
+		4D31D1C013AD0B3A0043B4E2 /* ChargeOperator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ChargeOperator.cpp; path = ../ChargeOperator.cpp; sourceTree = SOURCE_ROOT; };
+		4D31D1C113AD0B3A0043B4E2 /* ChargeOperator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChargeOperator.h; path = ../ChargeOperator.h; sourceTree = SOURCE_ROOT; };
 		4DDDB4F812BA7E62003AC69F /* Operator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Operator.h; path = ../Operator.h; sourceTree = SOURCE_ROOT; };
 		4DDDB4FD12BA7FF4003AC69F /* PositionVelocityCacheOperator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PositionVelocityCacheOperator.h; path = ../PositionVelocityCacheOperator.h; sourceTree = SOURCE_ROOT; };
 		4DDDB4FE12BA7FF4003AC69F /* PositionVelocityCacheOperator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PositionVelocityCacheOperator.cpp; path = ../PositionVelocityCacheOperator.cpp; sourceTree = SOURCE_ROOT; };
+		4DF78C9712F1D6FC00DBE4FC /* libcfitsio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcfitsio.a; path = /Users/mark/cfitsio/libcfitsio.a; sourceTree = "<absolute>"; };
 		D2AAC046055464E500DB518D /* libSimulation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSimulation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E16C487E12A587AE004F3B02 /* LICENSE.TXT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.TXT; path = ../LICENSE.TXT; sourceTree = SOURCE_ROOT; };
 		E16C488412A58E39004F3B02 /* README.TXT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.TXT; path = ../README.TXT; sourceTree = "<group>"; };
@@ -107,7 +115,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E1FD947112999A5700EBC94D /* libSimulation.a in Frameworks */,
-				4DB543DC12A5FBF100D7008F /* libcfitsio.a in Frameworks */,
+				4DF78C9812F1D6FC00DBE4FC /* libcfitsio.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -120,7 +128,7 @@
 				08FB7795FE84155DC02AAC07 /* Source */,
 				C6A0FF2B0290797F04C91782 /* Documentation */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
-				4DB543DB12A5FBF100D7008F /* libcfitsio.a */,
+				4DF78C9712F1D6FC00DBE4FC /* libcfitsio.a */,
 			);
 			name = Simulation;
 			sourceTree = "<group>";
@@ -149,6 +157,10 @@
 			children = (
 				4DDDB4FD12BA7FF4003AC69F /* PositionVelocityCacheOperator.h */,
 				4DDDB4FE12BA7FF4003AC69F /* PositionVelocityCacheOperator.cpp */,
+				4D31D1BD13AD0B2D0043B4E2 /* FieldPotentialOperator.h */,
+				4D31D1BC13AD0B2D0043B4E2 /* FieldPotentialOperator.cpp */,
+				4D31D1C113AD0B3A0043B4E2 /* ChargeOperator.h */,
+				4D31D1C013AD0B3A0043B4E2 /* ChargeOperator.cpp */,
 			);
 			name = Operators;
 			sourceTree = "<group>";
@@ -255,6 +267,8 @@
 				E1B3A959129D710500599DFF /* VectorCompatibility.h in Headers */,
 				4DDDB4F912BA7E62003AC69F /* Operator.h in Headers */,
 				4DDDB4FF12BA7FF4003AC69F /* PositionVelocityCacheOperator.h in Headers */,
+				4D31D1BF13AD0B2D0043B4E2 /* FieldPotentialOperator.h in Headers */,
+				4D31D1C313AD0B3A0043B4E2 /* ChargeOperator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,6 +314,10 @@
 /* Begin PBXProject section */
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				ORGANIZATIONNAME = "Plasma Sciences Laboratory";
+			};
 			buildConfigurationList = 1DEB91EF08733DB70010E9CD /* Build configuration list for PBXProject "Simulation" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;
@@ -339,6 +357,8 @@
 				E1FD94611299996F00EBC94D /* TimeVaryingDragForce.cpp in Sources */,
 				E1FD94631299996F00EBC94D /* TimeVaryingThermalForce.cpp in Sources */,
 				4DDDB50012BA7FF4003AC69F /* PositionVelocityCacheOperator.cpp in Sources */,
+				4D31D1BE13AD0B2D0043B4E2 /* FieldPotentialOperator.cpp in Sources */,
+				4D31D1C213AD0B3A0043B4E2 /* ChargeOperator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -383,10 +403,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../../cfitsio\"",
-				);
+				LIBRARY_SEARCH_PATHS = "";
 				PRODUCT_NAME = Simulation;
 			};
 			name = Release;
@@ -402,12 +419,15 @@
 				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = "";
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = macosx10.6;
-				USER_HEADER_SEARCH_PATHS = /Users/mark/Programs/cfitsio;
+				USER_HEADER_SEARCH_PATHS = /Users/mark/cfitsio;
 			};
 			name = Debug;
 		};
@@ -428,7 +448,7 @@
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = NO;
 				GCC_TREAT_NONCONFORMANT_CODE_ERRORS_AS_WARNINGS = NO;
 				GCC_UNROLL_LOOPS = YES;
-				GCC_VERSION = 4.2;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
@@ -453,11 +473,12 @@
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = "";
 				LLVM_LTO = NO;
 				PREBINDING = NO;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = macosx10.6;
-				USER_HEADER_SEARCH_PATHS = /Users/mark/Programs/cfitsio;
+				USER_HEADER_SEARCH_PATHS = /Users/mark/cfitsio;
 			};
 			name = Release;
 		};
@@ -466,6 +487,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
@@ -473,7 +495,7 @@
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../../../../Programs/cfitsio\"",
+					"\"$(SRCROOT)/../../../../../cfitsio\"",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = DEMON;
@@ -486,13 +508,14 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../../../../Programs/cfitsio\"",
+					"\"$(SRCROOT)/../../../../../cfitsio\"",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = DEMON;
