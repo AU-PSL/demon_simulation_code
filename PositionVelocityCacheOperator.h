@@ -24,4 +24,4 @@ public:
 	void operation4(const double currentTime);
 };
 
-#endif // POSITIONVELOCITYCACHEOPERATOR
+#endif // POSITIONVELOCITYCACHEOPERATOR_H
