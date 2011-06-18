@@ -27,9 +27,9 @@ m1(new double[n]), m2(new double[n]), m3(new double[n]), m4(new double[n]),
 n1(new double[n]), n2(new double[n]), n3(new double[n]), n4(new double[n]),
 q1(new double[n]), q2(new double[n]), q3(new double[n]), q4(new double[n]),
 x(new double[n]), y(new double[n]), Vx(new double[n]), Vy(new double[n]), 
-phi(new double[n]), Ex(new double[n]), Ey(new double[n]),
 charge(new double[n]), mass(new double[n]), 
-forceX(new double[n]), forceY(new double[n]), 
+forceX(new __m128d[n/2]), forceY(new __m128d[n/2]),
+phi(new __m128d[n/2]), Ex(new __m128d[n/2]), Ey(new __m128d[n/2]),
 xCache(new __m128d[n/2]), yCache(new __m128d[n/2]), 
 VxCache(new __m128d[n/2]), VyCache(new __m128d[n/2]),
 qCache(new __m128d[n/2]), dustDebye(ionDebye), particleRadius(1.45E-6),
@@ -52,7 +52,7 @@ Cloud::~Cloud()
 	delete[] qCache;
 }
 
-const double Cloud::setChargeConst1(const double particleRadius, const double plasmaDensity, const double electronDebye, const double ionDebye, const double ionMass)
+const __m128d Cloud::setChargeConst1(const double particleRadius, const double plasmaDensity, const double electronDebye, const double ionDebye, const double ionMass)
 {
 	const double ee = electronCharge*electronCharge;
 
@@ -63,10 +63,10 @@ const double Cloud::setChargeConst1(const double particleRadius, const double pl
 	const double scaleFactor = particleRadius/sqrt(2.0*M_PI);
 	const double firstTerm = electronFreq*exp(-electronEta)/electronDebye;
 
-	return scaleFactor*(firstTerm + ionFreq/ionDebye);
+	return _mm_set1_pd(scaleFactor*(firstTerm + ionFreq/ionDebye));
 }
 
-const double Cloud::setChargeConst2(const double particleRadius, const double plasmaDensity, const double electronDebye, const double ionDebye, const double ionMass)
+const __m128d Cloud::setChargeConst2(const double particleRadius, const double plasmaDensity, const double electronDebye, const double ionDebye, const double ionMass)
 {
 	const double ee = electronCharge*electronCharge;
 
@@ -78,7 +78,7 @@ const double Cloud::setChargeConst2(const double particleRadius, const double pl
 	const double scaleFactor = particleRadius/sqrt(2.0*M_PI);
 	const double firstTerm = electronFreq*exp(-electronEta)/electronDebye;
 
-	return scaleFactor*(firstTerm + ionFreq*(1.0 + ionEta)/ionDebye);
+	return _mm_set1_pd(scaleFactor*(firstTerm + ionFreq*(1.0 + ionEta)/ionDebye));
 }
 
 inline void Cloud::setPosition(const cloud_index index, const double xVal, const double yVal) const

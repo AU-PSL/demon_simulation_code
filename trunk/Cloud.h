@@ -19,8 +19,8 @@ class Cloud
 {	
 public:
 	Cloud(const cloud_index numPar, const double ionMass = 6.63352E-26,
-	const double plasmaDensity = 1.0E15, const double ionDebye = 370E-6,
-	const double electronDebye = 37E-6);
+	const double plasmaDensity = 1.0E15, const double ionDebye = 3.7E-5,
+	const double electronDebye = 3.7E-4);
 	~Cloud();
 
 // public variables:
@@ -31,9 +31,9 @@ public:
 	double * const n1, * const n2, * const n3, * const n4; // positionsY (Runge-Kutta) tidbits
 	double * const q1, * const q2, * const q3, * const q4; // charge (Runge-Kutta) tidbits
 	double * const x, * const y, * const Vx, * const Vy;   // current positions and velocities=
-	double * const phi, * const Ex, * const Ey; // electric potential, field X, field Y
 	double * const charge, * const mass;
-	double * const forceX, * const forceY;
+	__m128d * const forceX, * const forceY;
+	__m128d * const phi, * const Ex, * const Ey; // electric potential, field X, field Y
 	__m128d * const xCache, * const yCache, * const VxCache, * const VyCache;
 	__m128d * const qCache;
 	
@@ -44,7 +44,7 @@ public:
 
 	const double dustDebye;
 	const double particleRadius;
-	const double chargeConst1, chargeConst2;
+	const __m128d chargeConst1, chargeConst2;
 
 // public functions:
 	// Input: int index, initialPosX, intialPosY
@@ -146,8 +146,8 @@ public:
 	static Cloud * const initializeFromFile(fitsfile * const file, int * const error, double * const currentTime);
 
 private:
-	static const double setChargeConst1(const double particleRadius, const double plasmaDensity, const double electronDebye, const double ionDebye, const double ionMass);
-	static const double setChargeConst2(const double particleRadius, const double plasmaDensity, const double electronDebye, const double ionDebye, const double ionMass);
+	static const __m128d setChargeConst1(const double particleRadius, const double plasmaDensity, const double electronDebye, const double ionDebye, const double ionMass);
+	static const __m128d setChargeConst2(const double particleRadius, const double plasmaDensity, const double electronDebye, const double ionDebye, const double ionMass);
 
 };
 

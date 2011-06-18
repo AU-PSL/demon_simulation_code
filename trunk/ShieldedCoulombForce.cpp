@@ -15,50 +15,37 @@ ShieldedCoulombForce::ShieldedCoulombForce(Cloud * const myCloud, const double s
 
 void ShieldedCoulombForce::force1(const double currentTime)
 {
-	for (cloud_index currentParticle = 0; currentParticle < cloud->n - 1; currentParticle += 2) 
-	{
-		force(currentParticle, cloud->getq1_pd(currentParticle),
-			_mm_load_pd(cloud->Ex + currentParticle), _mm_load_pd(cloud->Ey + currentParticle));
-	}
+	for (cloud_index currentParticle = 0, numParticles = cloud->n/2; currentParticle < numParticles; currentParticle++)
+		force(currentParticle, cloud->getq1_pd(currentParticle*2),
+			cloud->Ex[currentParticle], cloud->Ey[currentParticle]);
 }
 
 void ShieldedCoulombForce::force2(const double currentTime)
 {
-	for (cloud_index currentParticle = 0; currentParticle < cloud->n - 1; currentParticle += 2) 
-	{
-		force(currentParticle, cloud->getq2_pd(currentParticle), 
-			_mm_load_pd(cloud->Ex + currentParticle), _mm_load_pd(cloud->Ey + currentParticle));
-	}
+	for (cloud_index currentParticle = 0, numParticles = cloud->n/2; currentParticle < numParticles; currentParticle++)
+		force(currentParticle, cloud->getq2_pd(currentParticle*2),
+			  cloud->Ex[currentParticle], cloud->Ey[currentParticle]);
 }
 
 void ShieldedCoulombForce::force3(const double currentTime)
 {
-	for (cloud_index currentParticle = 0; currentParticle < cloud->n - 1; currentParticle += 2) 
-	{
-		force(currentParticle, cloud->getq3_pd(currentParticle),
-			_mm_load_pd(cloud->Ex + currentParticle), _mm_load_pd(cloud->Ey + currentParticle));
-	}
+	for (cloud_index currentParticle = 0, numParticles = cloud->n/2; currentParticle < numParticles; currentParticle++)
+		force(currentParticle, cloud->getq3_pd(currentParticle*2),
+			  cloud->Ex[currentParticle], cloud->Ey[currentParticle]);
 }
 
 void ShieldedCoulombForce::force4(const double currentTime)
 {
-	for (cloud_index currentParticle = 0; currentParticle < cloud->n - 1; currentParticle += 2) 
-	{
-		force(currentParticle, cloud->getq4_pd(currentParticle),
-			_mm_load_pd(cloud->Ex + currentParticle), _mm_load_pd(cloud->Ey + currentParticle));
-	}
+	for (cloud_index currentParticle = 0, numParticles = cloud->n/2; currentParticle < numParticles; currentParticle++)
+		force(currentParticle, cloud->getq4_pd(currentParticle*2),
+			  cloud->Ex[currentParticle], cloud->Ey[currentParticle]);
 }
 
 inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const __m128d charge, const __m128d Exfield, const __m128d Eyfield)
 {	
-	const __m128d forcevX = charge*Exfield;
-	const __m128d forcevY = charge*Eyfield;
-
-	double *pFx = cloud->forceX + currentParticle;
-	double *pFy = cloud->forceY + currentParticle;
-
-	_mm_store_pd(pFx, _mm_load_pd(pFx) + forcevX);
-	_mm_store_pd(pFy, _mm_load_pd(pFy) + forcevY);
+	__m128d temp = charge*Exfield;
+	cloud->forceX[currentParticle] += charge*Exfield;
+	cloud->forceY[currentParticle] += charge*Eyfield;
 }
 
 

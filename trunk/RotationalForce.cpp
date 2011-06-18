@@ -18,25 +18,25 @@ RotationalForce::RotationalForce(Cloud * const myCloud, const double rmin, const
 void RotationalForce::force1(const double currentTime)
 {
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
+		force(currentParticle/2, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
 }
 
 void RotationalForce::force2(const double currentTime)
 {
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
+		force(currentParticle/2, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
 }
 
 void RotationalForce::force3(const double currentTime)
 {
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
+		force(currentParticle/2, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
 }
 
 void RotationalForce::force4(const double currentTime)
 {
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
+		force(currentParticle/2, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
 }
 
 inline void RotationalForce::force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY)
@@ -57,14 +57,8 @@ inline void RotationalForce::force(const cloud_index currentParticle, const __m1
 	__m128d cRotConst = _mm_set_pd(nanH ? rotationalConst : 0.0, // _mm_set_pd() is backwards.
 								   nanL ? rotationalConst : 0.0);
 	
-	// force in theta direction:
-	double * const pFx = cloud->forceX + currentParticle;
-	double * const pFy = cloud->forceY + currentParticle;
-	
-	// Fx = -c*x/r;
-	// Fy = c*y/r;
-	_mm_store_pd(pFx, _mm_load_pd(pFx) - cRotConst*currentPositionY/dustRadV);
-	_mm_store_pd(pFy, _mm_load_pd(pFy) + cRotConst*currentPositionX/dustRadV);
+	cloud->forceX[currentParticle] -= cRotConst*currentPositionY/dustRadV;
+	cloud->forceY[currentParticle] += cRotConst*currentPositionX/dustRadV;
 }
 
 void RotationalForce::writeForce(fitsfile * const file, int * const error) const
