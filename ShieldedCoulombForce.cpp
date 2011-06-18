@@ -42,8 +42,7 @@ void ShieldedCoulombForce::force4(const double currentTime)
 }
 
 inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const __m128d charge, const __m128d Exfield, const __m128d Eyfield)
-{	
-	__m128d temp = charge*Exfield;
+{
 	cloud->forceX[currentParticle] += charge*Exfield;
 	cloud->forceY[currentParticle] += charge*Eyfield;
 }
