@@ -67,6 +67,8 @@ void Runge_Kutta::moveParticles(const double endTime)
 #ifdef CHARGE
 			_mm_store_pd(cloud->q1 + i, -vdt*(qConst1*cloud->getq1_pd(i) +
 				qConst2*partRadius*cloud->phi[i/2]));
+#else
+			_mm_store_pd(cloud->q1 + i, _mm_setzero_pd());
 #endif
 				// see "Instability of Dust Acoustic Waves in an Accelerating Dusy Plasma"
 				// P. K. Shukla, M. Salimullah, G. E. Morfill
@@ -95,6 +97,8 @@ void Runge_Kutta::moveParticles(const double endTime)
 #ifdef CHARGE
 			_mm_store_pd(cloud->q2 + i, -vdt*(qConst1*cloud->getq2_pd(i) +
 				qConst2*partRadius*cloud->phi[i/2]));
+#else
+			_mm_store_pd(cloud->q2 + i, _mm_setzero_pd());
 #endif
 
 			// reset to zero:
@@ -119,6 +123,8 @@ void Runge_Kutta::moveParticles(const double endTime)
 #ifdef CHARGE
 			_mm_store_pd(cloud->q3 + i, -vdt*(qConst1*cloud->getq3_pd(i) +
 				qConst2*partRadius*cloud->phi[i/2]));
+#else
+			_mm_store_pd(cloud->q3 + i, _mm_setzero_pd());
 #endif
 			
 			// reset to zero:
@@ -142,6 +148,8 @@ void Runge_Kutta::moveParticles(const double endTime)
 #ifdef CHARGE
 			_mm_store_pd(cloud->q4 + i, -vdt*(qConst1*cloud->getq4_pd(i) +
 				qConst2*partRadius*cloud->phi[i/2]));
+#else
+			_mm_store_pd(cloud->q4 + i, _mm_setzero_pd());
 #endif
 			
 			// reset to zero:
