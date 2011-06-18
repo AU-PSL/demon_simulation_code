@@ -149,7 +149,7 @@ inline void FieldPotentialOperator::fieldsAndPotentials(const cloud_index curren
 	cloud->phi[currentParticle] += iCharge/displacement*coeffient;
 	cloud->phi[iParticle] += currentCharge/displacement*coeffient;
 	
-	const __m128d coeffient2 = coeffient*(_mm_set1_pd(1) + displacement/_mm_set1_pd(cloud->dustDebye))/(displacement*displacement*displacement);
+	const __m128d coeffient2 = coeffient*(_mm_set1_pd(1.0) + displacement/_mm_set1_pd(cloud->dustDebye))/(displacement*displacement*displacement);
 	const __m128d xunit = displacementX*coeffient2;
 	const __m128d yunit = displacementY*coeffient2;
 	cloud->Ex[currentParticle] += iCharge*xunit;
@@ -182,7 +182,7 @@ inline void FieldPotentialOperator::fieldsAndPotentialsr(const cloud_index curre
 	const __m128d iPhi = currentCharge/displacement*coeffient;
 	cloud->phi[iParticle] += _mm_shuffle_pd(iPhi, iPhi, _MM_SHUFFLE2(0, 1));
 	
-	const __m128d coeffient2 = coeffient*(_mm_set1_pd(1) + displacement/_mm_set1_pd(cloud->dustDebye))/(displacement*displacement*displacement);
+	const __m128d coeffient2 = coeffient*(_mm_set1_pd(1.0) + displacement/_mm_set1_pd(cloud->dustDebye))/(displacement*displacement*displacement);
 	const __m128d xunit = displacementX*coeffient2;
 	const __m128d yunit = displacementY*coeffient2;
 	cloud->Ex[currentParticle] += iCharge*xunit;
