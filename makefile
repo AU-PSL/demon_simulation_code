@@ -1,8 +1,6 @@
-# For each file add the object file that it needs
-# to be made.
-OBJS = Runge_Kutta.o Cloud.o ShieldedCoulombForce.o DragForce.o ConfinementForce.o RectConfinementForce.o ThermalForce.o DrivingForce.o ThermalForceLocalized.o RotationalForce.o mtrand.o TimeVaryingDragForce.o TimeVaryingThermalForce.o PositionVelocityCacheOperator.o ChargeOperator.o FieldPotentialOperator.o
-SRCS = $(OBJS,.o=.cpp)
-HDRS = $(OBJS,.o=.h) Force.h Operator.h
+HDRS = $(wildcard *.h)
+SRCS = $(filter-out driver.cpp, $(wildcard *.cpp))
+OBJS = $(filter-out driver.o, $(patsubst %.cpp, %.o, $(SRCS)))
 
 # Command name
 CMD = DEMON
@@ -12,24 +10,21 @@ LIBS = libSimulation.a
 include makefile.include
 
 # Compling Flags
-CXXFLAGS += -funroll-loops -m64 -Wall -mdynamic-no-pic -march=core2 -fomit-frame-pointer -falign-functions -mfpmath=sse -msse4.1 -fno-stack-protector -I $(CFITSIO) -g
+CXXFLAGS += -funroll-loops -m64 -Wall -mdynamic-no-pic -march=core2 -fomit-frame-pointer -falign-functions -mfpmath=sse -msse4.1 -fno-stack-protector -I $(CFITSIO)
 
 # Linking Flags
 LDFLAGS = $(CXXFLAGS) -L$(CFITSIO)
 
 # The below should never need to be changed.
-all: $(CMD) $(LIBS) $(HDRS)
+all: $(CMD)
 
-lib: $(LIBS) $(HDRS)
+lib: $(LIBS)
 
 $(CMD): $(LIBS) driver.o
 	$(CXX) $(LDFLAGS) -o $(@) $(LIBS) driver.o -lcfitsio
 
-$(LIBS): $(OBJS)
+$(LIBS): $(OBJS) $(HDRS)
 	ar rcs $(@) $(OBJS)
-
-$driver.o: driver.cpp
-	$(CXX) -c driver.cpp
 
 clean:
 	-rm $(OBJS) driver.o
