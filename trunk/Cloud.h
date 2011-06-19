@@ -113,26 +113,6 @@ public:
 	const __m128d getq3r_pd(const cloud_index i) const;
 	const __m128d getq4r_pd(const cloud_index i) const;
 
-	const __m128d getphi1_pd(const cloud_index i) const;
-	const __m128d getphi2_pd(const cloud_index i) const;
-	const __m128d getphi3_pd(const cloud_index i) const;
-	const __m128d getphi4_pd(const cloud_index i) const;
-
-	const __m128d getphi1r_pd(const cloud_index i) const;
-	const __m128d getphi2r_pd(const cloud_index i) const;
-	const __m128d getphi3r_pd(const cloud_index i) const;
-	const __m128d getphi4r_pd(const cloud_index i) const;
-
-	const __m128d getEx1_pd(const cloud_index i) const;
-	const __m128d getEx2_pd(const cloud_index i) const;
-	const __m128d getEx3_pd(const cloud_index i) const;
-	const __m128d getEx4_pd(const cloud_index i) const;
-	
-	const __m128d getEy1_pd(const cloud_index i) const;
-	const __m128d getEy2_pd(const cloud_index i) const;
-	const __m128d getEy3_pd(const cloud_index i) const;
-	const __m128d getEy4_pd(const cloud_index i) const;
-
 // static functions:
 	// Input: int numParticles, double cloudSize
 	// Preconditions: both inputs positive
