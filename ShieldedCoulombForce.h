@@ -34,7 +34,7 @@ private:
 	double shielding; //TODO: shielding deprecated
 
 // private functions:
-	void force(const cloud_index currentParticle, const __m128d charge, const __m128d Exfield, const __m128d Eyfield);
+	void force(const cloud_index currentParticle, const __m128d charge);
 };
 
 #endif // SHIELDEDCOULOMBFORCE_H

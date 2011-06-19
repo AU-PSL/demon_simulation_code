@@ -16,35 +16,31 @@ ShieldedCoulombForce::ShieldedCoulombForce(Cloud * const myCloud, const double s
 void ShieldedCoulombForce::force1(const double currentTime)
 {
 	for (cloud_index currentParticle = 0, numParticles = cloud->n/2; currentParticle < numParticles; currentParticle++)
-		force(currentParticle, cloud->getq1_pd(currentParticle*2),
-			cloud->Ex[currentParticle], cloud->Ey[currentParticle]);
+		force(currentParticle, cloud->getq1_pd(currentParticle*2));
 }
 
 void ShieldedCoulombForce::force2(const double currentTime)
 {
 	for (cloud_index currentParticle = 0, numParticles = cloud->n/2; currentParticle < numParticles; currentParticle++)
-		force(currentParticle, cloud->getq2_pd(currentParticle*2),
-			  cloud->Ex[currentParticle], cloud->Ey[currentParticle]);
+		force(currentParticle, cloud->getq2_pd(currentParticle*2));
 }
 
 void ShieldedCoulombForce::force3(const double currentTime)
 {
 	for (cloud_index currentParticle = 0, numParticles = cloud->n/2; currentParticle < numParticles; currentParticle++)
-		force(currentParticle, cloud->getq3_pd(currentParticle*2),
-			  cloud->Ex[currentParticle], cloud->Ey[currentParticle]);
+		force(currentParticle, cloud->getq3_pd(currentParticle*2));
 }
 
 void ShieldedCoulombForce::force4(const double currentTime)
 {
 	for (cloud_index currentParticle = 0, numParticles = cloud->n/2; currentParticle < numParticles; currentParticle++)
-		force(currentParticle, cloud->getq4_pd(currentParticle*2),
-			  cloud->Ex[currentParticle], cloud->Ey[currentParticle]);
+		force(currentParticle, cloud->getq4_pd(currentParticle*2));
 }
 
-inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const __m128d charge, const __m128d Exfield, const __m128d Eyfield)
+inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const __m128d charge)
 {
-	cloud->forceX[currentParticle] += charge*Exfield;
-	cloud->forceY[currentParticle] += charge*Eyfield;
+	cloud->forceX[currentParticle] += charge*cloud->Ex[currentParticle];
+	cloud->forceY[currentParticle] += charge*cloud->Ey[currentParticle];
 }
 
 
