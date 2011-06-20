@@ -75,10 +75,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 			// reset to zero:
 			cloud->forceX[i/2] = _mm_setzero_pd();
 			cloud->forceY[i/2] = _mm_setzero_pd();
-			cloud->phi[i/2] = _mm_setzero_pd();
-			cloud->Ex[i/2] = _mm_setzero_pd();
-			cloud->Ey[i/2] = _mm_setzero_pd();
-			
+			cloud->phi[i/2] = _mm_setzero_pd();			
 		}
         
 		operate2(currentTime + dt/2.0);
@@ -103,8 +100,6 @@ void Runge_Kutta::moveParticles(const double endTime)
 			cloud->forceX[i/2] = _mm_setzero_pd();
 			cloud->forceY[i/2] = _mm_setzero_pd();
 			cloud->phi[i/2] = _mm_setzero_pd();
-			cloud->Ex[i/2] = _mm_setzero_pd();
-			cloud->Ey[i/2] = _mm_setzero_pd();
 		}
 
 		operate3(currentTime + dt/2.0);
@@ -129,8 +124,6 @@ void Runge_Kutta::moveParticles(const double endTime)
 			cloud->forceX[i/2] = _mm_setzero_pd();
 			cloud->forceY[i/2] = _mm_setzero_pd();
 			cloud->phi[i/2] = _mm_setzero_pd();
-			cloud->Ex[i/2] = _mm_setzero_pd();
-			cloud->Ey[i/2] = _mm_setzero_pd();
 		}
         
 		operate4(currentTime + dt/2.0);
@@ -154,8 +147,6 @@ void Runge_Kutta::moveParticles(const double endTime)
 			cloud->forceX[i/2] = _mm_setzero_pd();
 			cloud->forceY[i/2] = _mm_setzero_pd();
 			cloud->phi[i/2] = _mm_setzero_pd();
-			cloud->Ex[i/2] = _mm_setzero_pd();
-			cloud->Ey[i/2] = _mm_setzero_pd();
 		}
 
 		for (cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) // calculate next position and next velocity for entire cloud
