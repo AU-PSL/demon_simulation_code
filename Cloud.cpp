@@ -113,11 +113,8 @@ Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error
 
 	// read mass and charge information:
 	if (!*error)
-	{
 		// file, column #, starting row, first element, num elements, mass array, pointless pointer, error
-		fits_read_col_dbl(file, 1, 1, 1, numParticles, 0.0, cloud->charge, anyNull, error);
-		fits_read_col_dbl(file, 2, 1, 1, numParticles, 0.0, cloud->mass, anyNull, error);
-	}
+		fits_read_col_dbl(file, 1, 1, 1, numParticles, 0.0, cloud->mass, anyNull, error);
 
 	// move to TIME_STEP HDU:
 	if (!*error)
@@ -136,6 +133,7 @@ Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error
 		fits_read_col_dbl(file, 3, numTimeSteps, 1, numParticles, 0.0, cloud->y, anyNull, error);
 		fits_read_col_dbl(file, 4, numTimeSteps, 1, numParticles, 0.0, cloud->Vx, anyNull, error);
 		fits_read_col_dbl(file, 5, numTimeSteps, 1, numParticles, 0.0, cloud->Vy, anyNull, error);
+		fits_read_col_dbl(file, 6, numTimeSteps, 1, numParticles, 0.0, cloud->charge, anyNull, error);
 	}
 
 	return cloud;
@@ -148,34 +146,34 @@ void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const
 	numStream << n << "D";
 	const string numString = numStream.str();
 
-	char *ttypeCloud[] = {const_cast<char *> ("CHARGE"), const_cast<char *> ("MASS")};
-	char *tformCloud[] = {const_cast<char *> ("D"), const_cast<char *> ("D")};
-	char *tunitCloud[] = {const_cast<char *> ("C"), const_cast<char *> ("kg")};	
+	char *ttypeCloud[] = {const_cast<char *> ("MASS")};
+	char *tformCloud[] = {const_cast<char *> ("D")};
+	char *tunitCloud[] = {const_cast<char *> ("kg")};	
 
 	char *ttypeRun[] = {const_cast<char *> ("TIME"),
 		const_cast<char *> ("X_POSITION"), const_cast<char *> ("Y_POSITION"), 
-		const_cast<char *> ("X_VELOCITY"), const_cast<char *> ("Y_VELOCITY")};
+		const_cast<char *> ("X_VELOCITY"), const_cast<char *> ("Y_VELOCITY"),
+		const_cast<char *> ("CHARGE")};
 	char *tformRun[] = {const_cast<char *> ("D"), 
 		const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str()), 
-		const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str())};
+		const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str()),
+		const_cast<char *> (numString.c_str())};
 	char *tunitRun[] = {const_cast<char *> ("s"),
 		const_cast<char *> ("m"), const_cast<char *> ("m"), 
-		const_cast<char *> ("m/s"), const_cast<char *> ("m/s")};
+		const_cast<char *> ("m/s"), const_cast<char *> ("m/s"),
+		const_cast<char *> ("C")};
 
 	// write mass and charge:
 	if (!*error)
 		// file, storage type, num rows, num columns, ...
-		fits_create_tbl(file, BINARY_TBL, n, 2, ttypeCloud, tformCloud, tunitCloud, "CLOUD", error);	
+		fits_create_tbl(file, BINARY_TBL, n, 1, ttypeCloud, tformCloud, tunitCloud, "CLOUD", error);	
 	if (!*error)
-	{
 		// file, column #, starting row, first element, num elements, mass array, error
-		fits_write_col_dbl(file, 1, 1, 1, n, charge, error);
-		fits_write_col_dbl(file, 2, 1, 1, n, mass, error);
-	}
+		fits_write_col_dbl(file, 1, 1, 1, n, mass, error);
 
 	// write position and velocity:
 	if (!*error)
-		fits_create_tbl(file, BINARY_TBL, 0, 5, ttypeRun, tformRun, tunitRun, "TIME_STEP", error);
+		fits_create_tbl(file, BINARY_TBL, 0, 6, ttypeRun, tformRun, tunitRun, "TIME_STEP", error);
 		// n.b. num rows automatically incremented.
 		// Increment from 0 as opposed to preallocating to ensure
 		// proper output in the event of program interruption.
@@ -187,6 +185,7 @@ void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const
 		fits_write_col_dbl(file, 3, 1, 1, n, y, error);
 		fits_write_col_dbl(file, 4, 1, 1, n, Vx, error);
 		fits_write_col_dbl(file, 5, 1, 1, n, Vy, error);
+		fits_write_col_dbl(file, 6, 1, 1, n, charge, error);
 	}
 
 	// write buffer, close file, reopen at same point:
@@ -204,6 +203,7 @@ void Cloud::writeTimeStep(fitsfile * const file, int * const error, double curre
 		fits_write_col_dbl(file, 3, numRows, 1, n, y, error);
 		fits_write_col_dbl(file, 4, numRows, 1, n, Vx, error);
 		fits_write_col_dbl(file, 5, numRows, 1, n, Vy, error);
+		fits_write_col_dbl(file, 6, numRows, 1, n, charge, error);
 	}
 
 	// write buffer, close file, reopen at same point:
