@@ -122,16 +122,19 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
 
 	if (valExp < 10.0) // restrict to 10*(ion debye length)
 	{
-		 // conclude force calculation:
-		const double displacement3 = displacement*displacement*displacement;
-		// set to charges multiplied by Coulomb's constant:
-		const double exponential = currentCharge*iCharge*coulomb*(1.0 + valExp)/(displacement3*exp(valExp));
-		cloud->forceX[currentParticle] += exponential*displacementX;
-		cloud->forceY[currentParticle] += exponential*displacementY;
+		// calculate phi
+		const double coeffient = coulomb/(displacement*exp(valExp));
+		cloud->phi[currentParticle] += coeffient*iCharge;
+		cloud->phi[iParticle] += coeffient*currentCharge;
+		
+		// calculate force
+		const double forceC = currentCharge*iCharge*coeffient*(1.0 + valExp)/(displacement*displacement);
+		cloud->forceX[currentParticle] += forceC*displacementX;
+		cloud->forceY[currentParticle] += forceC*displacementY;
 
 		// equal and opposite force:
-		cloud->forceX[iParticle] -= exponential*displacementX;
-		cloud->forceY[iParticle] -= exponential*displacementY;
+		cloud->forceX[iParticle] -= forceC*displacementX;
+		cloud->forceY[iParticle] -= forceC*displacementY;
 	}
 }
 
