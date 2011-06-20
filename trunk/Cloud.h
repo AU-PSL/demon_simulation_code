@@ -27,10 +27,12 @@ public:
 	double * const l1, * const l2, * const l3, * const l4; // positionsX (Runge-Kutta) tidbits
 	double * const m1, * const m2, * const m3, * const m4; // velocityY (Runge-Kutta) tidbits
 	double * const n1, * const n2, * const n3, * const n4; // positionsY (Runge-Kutta) tidbits
+	double * const q1, * const q2, * const q3, * const q4; // charge (Runge-Kutta) tidbits
 	double * const x, * const y, * const Vx, * const Vy; // current positions and velocities=
 	double * const charge, * const mass;
 	double * const forceX, * const forceY;
 	__m128d * const xCache, * const yCache, * const VxCache, * const VyCache;
+	__m128d * const qCache;
 	
 	static const double interParticleSpacing;
 
@@ -91,6 +93,16 @@ public:
 	const __m128d getVy3_pd(const cloud_index i) const;
 	const __m128d getVy4_pd(const cloud_index i) const;
 
+	const __m128d getq1_pd(const cloud_index i) const;
+	const __m128d getq2_pd(const cloud_index i) const;
+	const __m128d getq3_pd(const cloud_index i) const;
+	const __m128d getq4_pd(const cloud_index i) const;
+    
+	const __m128d getq1r_pd(const cloud_index i) const;
+	const __m128d getq2r_pd(const cloud_index i) const;
+	const __m128d getq3r_pd(const cloud_index i) const;
+	const __m128d getq4r_pd(const cloud_index i) const;
+	
 // static functions:
 	// Input: int numParticles, double cloudSize
 	// Preconditions: both inputs positive
