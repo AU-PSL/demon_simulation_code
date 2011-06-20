@@ -158,13 +158,18 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
 	__m128d expv = _mm_set_pd(boolH ? exp(-valExpH) : 0.0, // _mm_set_pd is backwards
 							  boolL ? exp(-valExpL) : 0.0);
 
-	// conclude force calculation:
-	const __m128d displacement3 = displacement*displacement*displacement;
-	// set to charges multiplied by Coulomb's constant:
-	const __m128d exponential = currentCharge*iCharge*_mm_set1_pd(coulomb)*(_mm_set1_pd(1.0) + valExp)/displacement3*expv;
+	// calculate phi
+	const __m128d coeffient = _mm_set1_pd(coulomb)/displacement*expv;
+	double *pPh = cloud->phi + currentParticle;
+	_mm_store_pd(pPh, _mm_load_pd(pPh) + coeffient*iCharge);
+	pPh = cloud->phi + iParticle;
+	_mm_store_pd(pPh, _mm_load_pd(pPh) + coeffient*currentCharge);
 	
-	const __m128d forcevX = exponential*displacementX;
-	const __m128d forcevY = exponential*displacementY;
+	// calculate force
+	const __m128d forceC = currentCharge*iCharge*coeffient*(_mm_set1_pd(1.0) + valExp)/(displacement*displacement);
+	
+	const __m128d forcevX = forceC*displacementX;
+	const __m128d forcevY = forceC*displacementY;
 
 	double *pFx = cloud->forceX + currentParticle;
 	double *pFy = cloud->forceY + currentParticle;
