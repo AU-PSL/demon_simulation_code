@@ -23,7 +23,7 @@ n1(new double[n]), n2(new double[n]), n3(new double[n]), n4(new double[n]),
 q1(new double[n]), q2(new double[n]), q3(new double[n]), q4(new double[n]),
 x(new double[n]), y(new double[n]), Vx(new double[n]), Vy(new double[n]), 
 charge(new double[n]), mass(new double[n]), 
-forceX(new double[n]), forceY(new double[n]), 
+forceX(new double[n]), forceY(new double[n]), phi(new double),
 xCache(new __m128d[n/2]), yCache(new __m128d[n/2]), 
 VxCache(new __m128d[n/2]), VyCache(new __m128d[n/2]),
 qCache(new __m128d[n/2]) {}
@@ -37,7 +37,7 @@ Cloud::~Cloud()
 	delete[] q1; delete[] q2; delete[] q3; delete[] q4;
 	delete[] x; delete[] y; delete[] Vx; delete[] Vy;
 	delete[] charge; delete[] mass; 
-	delete[] forceX; delete[] forceY;
+	delete[] forceX; delete[] forceY; delete[] phi;
 	delete[] xCache; delete[] yCache; 
 	delete[] VxCache; delete[] VyCache;
 	delete[] qCache;
