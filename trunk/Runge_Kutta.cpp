@@ -52,6 +52,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 			// assign force pointers for stylistic purposes:
 			double * const pFx = cloud->forceX + i;
 			double * const pFy = cloud->forceY + i;
+			double * const pPh = cloud->phi + i;
            
 			// calculate ith and (i+1)th tidbits: 
 			_mm_store_pd(cloud->k1 + i, vdt*_mm_load_pd(pFx)/vmass); // velocityX tidbit
@@ -64,6 +65,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 			// reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
 			_mm_store_pd(pFy, _mm_setzero_pd());
+			_mm_store_pd(pPh, _mm_setzero_pd());
 		}
         
 		operate2(currentTime + dt/2.0);
@@ -75,6 +77,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 			// assign force pointers:
 			double * const pFx = cloud->forceX + i;
 			double * const pFy = cloud->forceY + i;
+			double * const pPh = cloud->phi + i;
 
 			// calculate ith and (i+1)th tidbits: 
 			_mm_store_pd(cloud->k2 + i, vdt*_mm_load_pd(pFx)/vmass); // velocityX tidbit
@@ -87,6 +90,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 			// reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
 			_mm_store_pd(pFy, _mm_setzero_pd());
+			_mm_store_pd(pPh, _mm_setzero_pd());
 		}
 
 		operate3(currentTime + dt/2.0);
@@ -98,6 +102,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 			// assign force pointers:
 			double * const pFx = cloud->forceX + i;
 			double * const pFy = cloud->forceY + i;
+			double * const pPh = cloud->phi + i;
 
 			// calculate ith and (i+1)th tibits: 
 			_mm_store_pd(cloud->k3 + i, vdt*_mm_load_pd(pFx)/vmass); // velocityX tidbit
@@ -110,6 +115,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 			// reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
 			_mm_store_pd(pFy, _mm_setzero_pd());
+			_mm_store_pd(pPh, _mm_setzero_pd());
 		}
         
 		operate4(currentTime + dt/2.0);
@@ -121,6 +127,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 			// assign force pointers:
 			double * const pFx = cloud->forceX + i;
 			double * const pFy = cloud->forceY + i;
+			double * const pPh = cloud->phi + i;
             
 			_mm_store_pd(cloud->k4 + i, vdt*_mm_load_pd(pFx)/vmass); // velocityX tidbit
 			_mm_store_pd(cloud->l4 + i, vdt*cloud->getVx4_pd(i)); // positionX tidbit
@@ -132,6 +139,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 			// reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
 			_mm_store_pd(pFy, _mm_setzero_pd());
+			_mm_store_pd(pPh, _mm_setzero_pd());
 		}
 
 		for (cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) // calculate next position and next velocity for entire cloud
