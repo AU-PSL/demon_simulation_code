@@ -10,6 +10,8 @@
 #include "ShieldedCoulombForce.h"
 #include <cmath>
 
+const double ShieldedCoulombForce::coulomb = 1.0/(4.0*M_PI*8.85E-12);
+
 ShieldedCoulombForce::ShieldedCoulombForce(Cloud * const myCloud, const double shieldingConstant)
 : Force(myCloud), shielding(shieldingConstant) {}
 
@@ -109,7 +111,7 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
 		 // conclude force calculation:
 		const double displacement3 = displacement*displacement*displacement;
 		// set to charges multiplied by Coulomb's constant:
-		const double exponential = (cloud->charge[currentParticle]*cloud->charge[iParticle])/(4.0*M_PI*8.85E-12)*(1.0 + valExp)/(displacement3*exp(valExp));
+		const double exponential = (cloud->charge[currentParticle]*cloud->charge[iParticle])*coulomb*(1.0 + valExp)/(displacement3*exp(valExp));
 		cloud->forceX[currentParticle] += exponential*displacementX;
 		cloud->forceY[currentParticle] += exponential*displacementY;
 
@@ -144,9 +146,8 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
 	// conclude force calculation:
 	const __m128d displacement3 = displacement*displacement*displacement;
 	// set to charges multiplied by Coulomb's constant:
-	const double c = 4.0*M_PI*8.85E-12;
 	const __m128d exponential = _mm_load_pd(&cloud->charge[currentParticle])*_mm_load_pd(&cloud->charge[iParticle])
-		/_mm_set_pd(c, c)*(_mm_set1_pd(1.0) + valExp)/displacement3*expv;
+		*_mm_set1_pd(coulomb)*(_mm_set1_pd(1.0) + valExp)/displacement3*expv;
 	
 	const __m128d forcevX = exponential*displacementX;
 	const __m128d forcevY = exponential*displacementY;
@@ -188,9 +189,8 @@ inline void ShieldedCoulombForce::forcer(const cloud_index currentParticle, cons
 	// conclude force calculation:
 	const __m128d displacement3 = displacement*displacement*displacement;
 	// set to charges multiplied by Coulomb's constant:
-	const double c = 4.0*M_PI*8.85e-12;
 	const __m128d exponential = _mm_load_pd(&cloud->charge[currentParticle])*_mm_loadr_pd(&cloud->charge[iParticle])
-		/_mm_set_pd(c, c)*(_mm_set1_pd(1.0) + valExp)/displacement3*expv;
+		*_mm_set1_pd(coulomb)*(_mm_set1_pd(1.0) + valExp)/displacement3*expv;
 
 	const __m128d forcevX = exponential*displacementX;
 	const __m128d forcevY = exponential*displacementY;
