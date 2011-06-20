@@ -36,9 +36,15 @@ private:
 	static const double coulomb;
 
 // private functions:
-	void force(const cloud_index currentParticle, const cloud_index iParticle, const double displacementX, const double displacementY);
-	void force(const cloud_index currentParticle, const cloud_index iParticle, const __m128d displacementX, const __m128d displacementY);
-	void forcer(const cloud_index currentParticle, const cloud_index iParticle, const __m128d displacementX, const __m128d displacementY);
+	void force(const cloud_index currentParticle, const cloud_index iParticle, 
+	           const double currentCharge, const double iCharge,
+	           const double displacementX, const double displacementY);
+	void force(const cloud_index currentParticle, const cloud_index iParticle, 
+	           const __m128d currentCharge, const __m128d iCharge,
+	           const __m128d displacementX, const __m128d displacementY);
+	void forcer(const cloud_index currentParticle, const cloud_index iParticle,
+	            const __m128d currentCharge, const __m128d iCharge,
+	            const __m128d displacementX, const __m128d displacementY);
 };
 
 #endif // SHIELDEDCOULOMBFORCE_H
