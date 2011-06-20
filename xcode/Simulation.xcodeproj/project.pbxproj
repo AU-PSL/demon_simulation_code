@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4D31D1C213AD0B3A0043B4E2 /* ChargeOperator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D31D1C013AD0B3A0043B4E2 /* ChargeOperator.cpp */; };
-		4D31D1C313AD0B3A0043B4E2 /* ChargeOperator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D31D1C113AD0B3A0043B4E2 /* ChargeOperator.h */; };
 		4DDDB4F912BA7E62003AC69F /* Operator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DDDB4F812BA7E62003AC69F /* Operator.h */; };
 		4DDDB4FF12BA7FF4003AC69F /* PositionVelocityCacheOperator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DDDB4FD12BA7FF4003AC69F /* PositionVelocityCacheOperator.h */; };
 		4DDDB50012BA7FF4003AC69F /* PositionVelocityCacheOperator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4DDDB4FE12BA7FF4003AC69F /* PositionVelocityCacheOperator.cpp */; };
@@ -56,8 +54,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		4D31D1C013AD0B3A0043B4E2 /* ChargeOperator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ChargeOperator.cpp; path = ../ChargeOperator.cpp; sourceTree = SOURCE_ROOT; };
-		4D31D1C113AD0B3A0043B4E2 /* ChargeOperator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChargeOperator.h; path = ../ChargeOperator.h; sourceTree = SOURCE_ROOT; };
 		4DDDB4F812BA7E62003AC69F /* Operator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Operator.h; path = ../Operator.h; sourceTree = SOURCE_ROOT; };
 		4DDDB4FD12BA7FF4003AC69F /* PositionVelocityCacheOperator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PositionVelocityCacheOperator.h; path = ../PositionVelocityCacheOperator.h; sourceTree = SOURCE_ROOT; };
 		4DDDB4FE12BA7FF4003AC69F /* PositionVelocityCacheOperator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PositionVelocityCacheOperator.cpp; path = ../PositionVelocityCacheOperator.cpp; sourceTree = SOURCE_ROOT; };
@@ -153,8 +149,6 @@
 			children = (
 				4DDDB4FD12BA7FF4003AC69F /* PositionVelocityCacheOperator.h */,
 				4DDDB4FE12BA7FF4003AC69F /* PositionVelocityCacheOperator.cpp */,
-				4D31D1C113AD0B3A0043B4E2 /* ChargeOperator.h */,
-				4D31D1C013AD0B3A0043B4E2 /* ChargeOperator.cpp */,
 			);
 			name = Operators;
 			sourceTree = "<group>";
@@ -261,7 +255,6 @@
 				E1B3A959129D710500599DFF /* VectorCompatibility.h in Headers */,
 				4DDDB4F912BA7E62003AC69F /* Operator.h in Headers */,
 				4DDDB4FF12BA7FF4003AC69F /* PositionVelocityCacheOperator.h in Headers */,
-				4D31D1C313AD0B3A0043B4E2 /* ChargeOperator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -350,7 +343,6 @@
 				E1FD94611299996F00EBC94D /* TimeVaryingDragForce.cpp in Sources */,
 				E1FD94631299996F00EBC94D /* TimeVaryingThermalForce.cpp in Sources */,
 				4DDDB50012BA7FF4003AC69F /* PositionVelocityCacheOperator.cpp in Sources */,
-				4D31D1C213AD0B3A0043B4E2 /* ChargeOperator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

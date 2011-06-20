@@ -18,9 +18,7 @@ typedef unsigned int cloud_index;
 class Cloud
 {	
 public:
-	Cloud(const cloud_index numPar, const double ionMass = 6.63352E-26,
-	const double plasmaDensity = 1.0E15, const double ionDebye = 3.7E-5,
-	const double electronDebye = 3.7E-4);
+	Cloud(const cloud_index numPar);
 	~Cloud();
 
 // public variables:
@@ -29,21 +27,12 @@ public:
 	double * const l1, * const l2, * const l3, * const l4; // positionsX (Runge-Kutta) tidbits
 	double * const m1, * const m2, * const m3, * const m4; // velocityY (Runge-Kutta) tidbits
 	double * const n1, * const n2, * const n3, * const n4; // positionsY (Runge-Kutta) tidbits
-	double * const q1, * const q2, * const q3, * const q4; // charge (Runge-Kutta) tidbits
-	double * const x, * const y, * const Vx, * const Vy;   // current positions and velocities=
+	double * const x, * const y, * const Vx, * const Vy; // current positions and velocities=
 	double * const charge, * const mass;
-	__m128d * const forceX, * const forceY, * const phi; // electric potential
+	double * const forceX, * const forceY;
 	__m128d * const xCache, * const yCache, * const VxCache, * const VyCache;
-	__m128d * const qCache;
 	
 	static const double interParticleSpacing;
-	static const double electronMass;
-	static const double electronCharge;
-	static const double eps; //permittivity of free space
-
-	const double dustDebye;
-	const double particleRadius;
-	const __m128d chargeConst1, chargeConst2;
 
 // public functions:
 	// Input: int index, initialPosX, intialPosY
@@ -102,16 +91,6 @@ public:
 	const __m128d getVy3_pd(const cloud_index i) const;
 	const __m128d getVy4_pd(const cloud_index i) const;
 
-	const __m128d getq1_pd(const cloud_index i) const;
-	const __m128d getq2_pd(const cloud_index i) const;
-	const __m128d getq3_pd(const cloud_index i) const;
-	const __m128d getq4_pd(const cloud_index i) const;
-
-	const __m128d getq1r_pd(const cloud_index i) const;
-	const __m128d getq2r_pd(const cloud_index i) const;
-	const __m128d getq3r_pd(const cloud_index i) const;
-	const __m128d getq4r_pd(const cloud_index i) const;
-
 // static functions:
 	// Input: int numParticles, double cloudSize
 	// Preconditions: both inputs positive
@@ -123,11 +102,6 @@ public:
 	// Postconditions: cloud initialized with last time step of fitsfile,
 	// forces and other simulation information extracted as well
 	static Cloud * const initializeFromFile(fitsfile * const file, int * const error, double * const currentTime);
-
-private:
-	static const __m128d setChargeConst1(const double particleRadius, const double plasmaDensity, const double electronDebye, const double ionDebye, const double ionMass);
-	static const __m128d setChargeConst2(const double particleRadius, const double plasmaDensity, const double electronDebye, const double ionDebye, const double ionMass);
-
 };
 
 #endif // CLOUD_H
