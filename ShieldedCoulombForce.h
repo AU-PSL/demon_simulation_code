@@ -32,6 +32,8 @@ public:
 private:
 // public variables:
 	double shielding;
+	
+	static const double coulomb;
 
 // private functions:
 	void force(const cloud_index currentParticle, const cloud_index iParticle, const double displacementX, const double displacementY);
