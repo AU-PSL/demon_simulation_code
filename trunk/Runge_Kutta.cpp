@@ -13,18 +13,16 @@
 #include "VectorCompatibility.h"
 #include "PositionVelocityCacheOperator.h"
 #include "ChargeOperator.h"
-#include "FieldPotentialOperator.h"
 
 using namespace std;
 
 Runge_Kutta::Runge_Kutta(Cloud * const myCloud, Force **forces, const double timeStep, const force_index forcesSize, const double startTime)
 : cloud(myCloud), theForce(forces), numForces(forcesSize), init_dt(timeStep), currentTime(startTime), 
-numOperators(3), operations(new Operator*[numOperators])
+numOperators(2), operations(new Operator*[numOperators])
 {
 	// Operators are order dependent.
 	operations[0] = new PositionVelocityCacheOperator(cloud);
 	operations[1] = new ChargeOperator(cloud);
-	operations[2] = new FieldPotentialOperator(cloud);
 }
 
 Runge_Kutta::~Runge_Kutta()

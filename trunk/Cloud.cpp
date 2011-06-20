@@ -28,8 +28,7 @@ n1(new double[n]), n2(new double[n]), n3(new double[n]), n4(new double[n]),
 q1(new double[n]), q2(new double[n]), q3(new double[n]), q4(new double[n]),
 x(new double[n]), y(new double[n]), Vx(new double[n]), Vy(new double[n]), 
 charge(new double[n]), mass(new double[n]), 
-forceX(new __m128d[n/2]), forceY(new __m128d[n/2]),
-phi(new __m128d[n/2]), Ex(new __m128d[n/2]), Ey(new __m128d[n/2]),
+forceX(new __m128d[n/2]), forceY(new __m128d[n/2]), phi(new __m128d[n/2]),
 xCache(new __m128d[n/2]), yCache(new __m128d[n/2]), 
 VxCache(new __m128d[n/2]), VyCache(new __m128d[n/2]),
 qCache(new __m128d[n/2]), dustDebye(ionDebye), particleRadius(1.45E-6),
@@ -46,7 +45,7 @@ Cloud::~Cloud()
 	delete[] q1; delete[] q2; delete[] q3; delete[] q4;
 	delete[] x; delete[] y; delete[] Vx; delete[] Vy;
 	delete[] charge; delete[] mass; 
-	delete[] forceX; delete[] forceY;
+	delete[] forceX; delete[] forceY; delete[] phi;
 	delete[] xCache; delete[] yCache; 
 	delete[] VxCache; delete[] VyCache;
 	delete[] qCache;

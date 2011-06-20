@@ -32,8 +32,7 @@ public:
 	double * const q1, * const q2, * const q3, * const q4; // charge (Runge-Kutta) tidbits
 	double * const x, * const y, * const Vx, * const Vy;   // current positions and velocities=
 	double * const charge, * const mass;
-	__m128d * const forceX, * const forceY;
-	__m128d * const phi, * const Ex, * const Ey; // electric potential, field X, field Y
+	__m128d * const forceX, * const forceY, * const phi, // electric potential
 	__m128d * const xCache, * const yCache, * const VxCache, * const VyCache;
 	__m128d * const qCache;
 	
