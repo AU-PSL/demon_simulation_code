@@ -16,13 +16,13 @@ using namespace std;
 const double Cloud::interParticleSpacing = 0.0003;
 
 Cloud::Cloud(const cloud_index numPar) : n(numPar),
+x(new double[n]), y(new double[n]), Vx(new double[n]), Vy(new double[n]), 
+charge(new double[n]), mass(new double[n]),
 k1(new double[n]), k2(new double[n]), k3(new double[n]), k4(new double[n]),
 l1(new double[n]), l2(new double[n]), l3(new double[n]), l4(new double[n]),
 m1(new double[n]), m2(new double[n]), m3(new double[n]), m4(new double[n]),
 n1(new double[n]), n2(new double[n]), n3(new double[n]), n4(new double[n]),
 q1(new double[n]), q2(new double[n]), q3(new double[n]), q4(new double[n]),
-x(new double[n]), y(new double[n]), Vx(new double[n]), Vy(new double[n]), 
-charge(new double[n]), mass(new double[n]), 
 forceX(new double[n]), forceY(new double[n]), phi(new double),
 xCache(new __m128d[n/2]), yCache(new __m128d[n/2]), 
 VxCache(new __m128d[n/2]), VyCache(new __m128d[n/2]),
@@ -30,13 +30,13 @@ qCache(new __m128d[n/2]) {}
 
 Cloud::~Cloud() 
 {
+	delete[] x; delete[] y; delete[] Vx; delete[] Vy;
+	delete[] charge; delete[] mass; 
 	delete[] k1; delete[] k2; delete[] k3; delete[] k4;
 	delete[] l1; delete[] l2; delete[] l3; delete[] l4;
 	delete[] m1; delete[] m2; delete[] m3; delete[] m4;
 	delete[] n1; delete[] n2; delete[] n3; delete[] n4;
 	delete[] q1; delete[] q2; delete[] q3; delete[] q4;
-	delete[] x; delete[] y; delete[] Vx; delete[] Vy;
-	delete[] charge; delete[] mass; 
 	delete[] forceX; delete[] forceY; delete[] phi;
 	delete[] xCache; delete[] yCache; 
 	delete[] VxCache; delete[] VyCache;
