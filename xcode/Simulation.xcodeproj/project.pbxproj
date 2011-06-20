@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D3A684813AF3EBD00A74926 /* CacheOperator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A684613AF3EBD00A74926 /* CacheOperator.cpp */; };
+		4D3A684913AF3EBD00A74926 /* CacheOperator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D3A684713AF3EBD00A74926 /* CacheOperator.h */; };
 		4DDDB4F912BA7E62003AC69F /* Operator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DDDB4F812BA7E62003AC69F /* Operator.h */; };
-		4DDDB4FF12BA7FF4003AC69F /* PositionVelocityCacheOperator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DDDB4FD12BA7FF4003AC69F /* PositionVelocityCacheOperator.h */; };
-		4DDDB50012BA7FF4003AC69F /* PositionVelocityCacheOperator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4DDDB4FE12BA7FF4003AC69F /* PositionVelocityCacheOperator.cpp */; };
 		4DF78C9812F1D6FC00DBE4FC /* libcfitsio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DF78C9712F1D6FC00DBE4FC /* libcfitsio.a */; };
 		E1B3A959129D710500599DFF /* VectorCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B3A958129D710500599DFF /* VectorCompatibility.h */; };
 		E1FD94351299994F00EBC94D /* Cloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FD942F1299994C00EBC94D /* Cloud.cpp */; };
@@ -54,9 +54,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4D3A684613AF3EBD00A74926 /* CacheOperator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CacheOperator.cpp; path = ../CacheOperator.cpp; sourceTree = SOURCE_ROOT; };
+		4D3A684713AF3EBD00A74926 /* CacheOperator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CacheOperator.h; path = ../CacheOperator.h; sourceTree = SOURCE_ROOT; };
 		4DDDB4F812BA7E62003AC69F /* Operator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Operator.h; path = ../Operator.h; sourceTree = SOURCE_ROOT; };
-		4DDDB4FD12BA7FF4003AC69F /* PositionVelocityCacheOperator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PositionVelocityCacheOperator.h; path = ../PositionVelocityCacheOperator.h; sourceTree = SOURCE_ROOT; };
-		4DDDB4FE12BA7FF4003AC69F /* PositionVelocityCacheOperator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PositionVelocityCacheOperator.cpp; path = ../PositionVelocityCacheOperator.cpp; sourceTree = SOURCE_ROOT; };
 		4DF78C9712F1D6FC00DBE4FC /* libcfitsio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcfitsio.a; path = /Users/mark/cfitsio/libcfitsio.a; sourceTree = "<absolute>"; };
 		D2AAC046055464E500DB518D /* libSimulation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSimulation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E16C487E12A587AE004F3B02 /* LICENSE.TXT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.TXT; path = ../LICENSE.TXT; sourceTree = SOURCE_ROOT; };
@@ -147,8 +147,8 @@
 		4DDDB4F512BA7E11003AC69F /* Operators */ = {
 			isa = PBXGroup;
 			children = (
-				4DDDB4FD12BA7FF4003AC69F /* PositionVelocityCacheOperator.h */,
-				4DDDB4FE12BA7FF4003AC69F /* PositionVelocityCacheOperator.cpp */,
+				4D3A684713AF3EBD00A74926 /* CacheOperator.h */,
+				4D3A684613AF3EBD00A74926 /* CacheOperator.cpp */,
 			);
 			name = Operators;
 			sourceTree = "<group>";
@@ -254,7 +254,7 @@
 				E1FD94641299996F00EBC94D /* TimeVaryingThermalForce.h in Headers */,
 				E1B3A959129D710500599DFF /* VectorCompatibility.h in Headers */,
 				4DDDB4F912BA7E62003AC69F /* Operator.h in Headers */,
-				4DDDB4FF12BA7FF4003AC69F /* PositionVelocityCacheOperator.h in Headers */,
+				4D3A684913AF3EBD00A74926 /* CacheOperator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -342,7 +342,7 @@
 				E1FD945F1299996F00EBC94D /* ThermalForceLocalized.cpp in Sources */,
 				E1FD94611299996F00EBC94D /* TimeVaryingDragForce.cpp in Sources */,
 				E1FD94631299996F00EBC94D /* TimeVaryingThermalForce.cpp in Sources */,
-				4DDDB50012BA7FF4003AC69F /* PositionVelocityCacheOperator.cpp in Sources */,
+				4D3A684813AF3EBD00A74926 /* CacheOperator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
