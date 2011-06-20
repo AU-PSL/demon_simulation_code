@@ -10,7 +10,7 @@
 #include "ShieldedCoulombForce.h"
 #include <cmath>
 
-const double ShieldedCoulombForce::coulomb = 1.0/(4.0*M_PI*8.85E-12);
+const double ShieldedCoulombForce::coulomb = 1.0/(4.0*M_PI*8.8542E-12);
 
 ShieldedCoulombForce::ShieldedCoulombForce(Cloud * const myCloud, const double shieldingConstant)
 : Force(myCloud), shielding(shieldingConstant) {}
