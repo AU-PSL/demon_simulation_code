@@ -135,13 +135,9 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
 	const bool boolH = valExpH < 10.0;
 	if (!boolL && !boolH)
 		return;
-
-	double expL, expH;
-	_mm_storel_pd(&expL, valExp);
-	_mm_storeh_pd(&expH, valExp);
 	
-	__m128d expv = _mm_set_pd(boolH ? exp(-expH) : 0.0, // _mm_set_pd is backwards
-							  boolL ? exp(-expL) : 0.0);
+	__m128d expv = _mm_set_pd(boolH ? exp(-valExpH) : 0.0, // _mm_set_pd is backwards
+							  boolL ? exp(-valExpL) : 0.0);
 
 	// conclude force calculation:
 	const __m128d displacement3 = displacement*displacement*displacement;
@@ -179,12 +175,8 @@ inline void ShieldedCoulombForce::forcer(const cloud_index currentParticle, cons
 	if (!boolL && !boolH)
 		return;
 	
-	double expL, expH;
-	_mm_storel_pd(&expL, valExp);
-	_mm_storeh_pd(&expH, valExp);
-	
-	__m128d expv = _mm_set_pd(boolH ? exp(-expH) : 0.0, // _mm_set_pd is backwards
-							  boolL ? exp(-expL) : 0.0);
+	__m128d expv = _mm_set_pd(boolH ? exp(-valExpH) : 0.0, // _mm_set_pd is backwards
+							  boolL ? exp(-valExpL) : 0.0);
     
 	// conclude force calculation:
 	const __m128d displacement3 = displacement*displacement*displacement;
