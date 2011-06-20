@@ -14,27 +14,17 @@
 using namespace std;
 
 const double Cloud::interParticleSpacing = 0.0003;
-const double Cloud::electronMass = 9.109382E-31;
-const double Cloud::electronCharge = 1.6E-19;
-const double Cloud::eps = 8.85418781762E-12; //permittivity of free space (epsilon)
 
-Cloud::Cloud(const cloud_index numPar, const double ionMass,
-const double plasmaDensity, const double ionDebye,
-const double electronDebye) : n(numPar),
+Cloud::Cloud(const cloud_index numPar) : n(numPar),
 k1(new double[n]), k2(new double[n]), k3(new double[n]), k4(new double[n]),
 l1(new double[n]), l2(new double[n]), l3(new double[n]), l4(new double[n]),
 m1(new double[n]), m2(new double[n]), m3(new double[n]), m4(new double[n]),
 n1(new double[n]), n2(new double[n]), n3(new double[n]), n4(new double[n]),
-q1(new double[n]), q2(new double[n]), q3(new double[n]), q4(new double[n]),
 x(new double[n]), y(new double[n]), Vx(new double[n]), Vy(new double[n]), 
 charge(new double[n]), mass(new double[n]), 
-forceX(new __m128d[n/2]), forceY(new __m128d[n/2]), phi(new __m128d[n/2]),
+forceX(new double[n]), forceY(new double[n]), 
 xCache(new __m128d[n/2]), yCache(new __m128d[n/2]), 
-VxCache(new __m128d[n/2]), VyCache(new __m128d[n/2]),
-qCache(new __m128d[n/2]), dustDebye(ionDebye), particleRadius(1.45E-6),
-chargeConst1(setChargeConst1(particleRadius, plasmaDensity, electronDebye, ionDebye, ionMass)),
-chargeConst2(setChargeConst2(particleRadius, plasmaDensity, electronDebye, ionDebye, ionMass))
-{}
+VxCache(new __m128d[n/2]), VyCache(new __m128d[n/2]) {}
 
 Cloud::~Cloud() 
 {
@@ -42,42 +32,11 @@ Cloud::~Cloud()
 	delete[] l1; delete[] l2; delete[] l3; delete[] l4;
 	delete[] m1; delete[] m2; delete[] m3; delete[] m4;
 	delete[] n1; delete[] n2; delete[] n3; delete[] n4;
-	delete[] q1; delete[] q2; delete[] q3; delete[] q4;
 	delete[] x; delete[] y; delete[] Vx; delete[] Vy;
 	delete[] charge; delete[] mass; 
-	delete[] forceX; delete[] forceY; delete[] phi;
+	delete[] forceX; delete[] forceY;
 	delete[] xCache; delete[] yCache; 
 	delete[] VxCache; delete[] VyCache;
-	delete[] qCache;
-}
-
-const __m128d Cloud::setChargeConst1(const double particleRadius, const double plasmaDensity, const double electronDebye, const double ionDebye, const double ionMass)
-{
-	const double ee = electronCharge*electronCharge;
-
-	const double ionFreq = pow(((plasmaDensity*ee)/(eps*ionMass)), 2);
-	const double electronFreq = pow(((plasmaDensity*ee)/(eps*electronMass)), 2);
-	const double electronEta = 5900/(electronDebye*electronDebye*4.0*M_PI*particleRadius*plasmaDensity);
-
-	const double scaleFactor = particleRadius/sqrt(2.0*M_PI);
-	const double firstTerm = electronFreq*exp(-electronEta)/electronDebye;
-
-	return _mm_set1_pd(scaleFactor*(firstTerm + ionFreq/ionDebye));
-}
-
-const __m128d Cloud::setChargeConst2(const double particleRadius, const double plasmaDensity, const double electronDebye, const double ionDebye, const double ionMass)
-{
-	const double ee = electronCharge*electronCharge;
-
-	const double ionFreq = pow(((plasmaDensity*ee)/(eps*ionMass)), 2);
-	const double electronFreq = pow(((plasmaDensity*ee)/(eps*electronMass)), 2);
-	const double ionEta = 5900/(ionDebye*ionDebye*4.0*M_PI*particleRadius*plasmaDensity);
-	const double electronEta = 5900/(electronDebye*electronDebye*4.0*M_PI*particleRadius*plasmaDensity);
-
-	const double scaleFactor = particleRadius/sqrt(2.0*M_PI);
-	const double firstTerm = electronFreq*exp(-electronEta)/electronDebye;
-
-	return _mm_set1_pd(scaleFactor*(firstTerm + ionFreq*(1.0 + ionEta)/ionDebye));
 }
 
 inline void Cloud::setPosition(const cloud_index index, const double xVal, const double yVal) const
@@ -92,17 +51,18 @@ inline void Cloud::setVelocity(const cloud_index index) const
 	Vy[index] = 0.0;
 }
 
-void Cloud::setCharge() const
+inline void Cloud::setCharge() const
 {
 	srand((int)time(NULL));
 	for (cloud_index i = 0; i < n; i++)
-		charge[i] = (rand()%201 + 5900)*electronCharge;
+		charge[i] = (rand()%201 + 5900)*1.6E-19;
 }
 
 inline void Cloud::setMass() const
 {
+	const double radius = 1.45E-6;
 	const double particleDensity = 2200.0;
-	const double particleMass = (4.0/3.0)*M_PI*particleRadius*particleRadius*particleRadius*particleDensity;
+	const double particleMass = (4.0/3.0)*M_PI*radius*radius*radius*particleDensity;
 	for (cloud_index i = 0; i < n; i++)
 		mass[i] = particleMass;
 }
@@ -393,52 +353,3 @@ const __m128d Cloud::getVy4_pd(const cloud_index i) const
 	// Vy + m3
 	return VyCache[i/2];
 }
-
-// Charge helper functions -----------------------------------------------------
-const __m128d Cloud::getq1_pd(const cloud_index i) const
-{
-	// Q
-	return _mm_load_pd(charge + i);
-}
-
-const __m128d Cloud::getq2_pd(const cloud_index i) const
-{
-	// Q + q1/2
-	return qCache[i/2];
-}
-
-const __m128d Cloud::getq3_pd(const cloud_index i) const
-{
-	// Q + q2/2
-	return qCache[i/2];
-}
-
-const __m128d Cloud::getq4_pd(const cloud_index i) const
-{
-	// Q + q3
-	return qCache[i/2];
-}
-
-const __m128d Cloud::getq1r_pd(const cloud_index i) const 
-{
-	return _mm_loadr_pd(charge + i);
-}
-
-const __m128d Cloud::getq2r_pd(const cloud_index i) const 
-{
-	const cloud_index j = i/2;
-	return _mm_shuffle_pd(qCache[j], qCache[j], _MM_SHUFFLE2(0, 1));
-}
-
-const __m128d Cloud::getq3r_pd(const cloud_index i) const 
-{
-	const cloud_index j = i/2;
-	return _mm_shuffle_pd(qCache[j], qCache[j], _MM_SHUFFLE2(0, 1));
-}
-
-const __m128d Cloud::getq4r_pd(const cloud_index i) const 
-{
-	const cloud_index j = i/2;
-	return _mm_shuffle_pd(qCache[j], qCache[j], _MM_SHUFFLE2(0, 1));
-}
-

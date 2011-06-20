@@ -17,25 +17,25 @@ ThermalForce::ThermalForce(Cloud * const myCloud, const double redFactor)
 
 void ThermalForce::force1(const double currentTime)
 {
-	for (cloud_index currentParticle = 0, numParticles = cloud->n/2; currentParticle < numParticles; currentParticle++) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
 
 void ThermalForce::force2(const double currentTime)
 {
-	for (cloud_index currentParticle = 0, numParticles = cloud->n/2; currentParticle < numParticles; currentParticle++) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
 
 void ThermalForce::force3(const double currentTime)
 {
-	for (cloud_index currentParticle = 0, numParticles = cloud->n/2; currentParticle < numParticles; currentParticle++) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
 
 void ThermalForce::force4(const double currentTime)
 {
-	for (cloud_index currentParticle = 0, numParticles = cloud->n/2; currentParticle < numParticles; currentParticle++) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
 
@@ -46,8 +46,11 @@ inline void ThermalForce::force(const cloud_index currentParticle)
 	const double thetaL = mt()*2.0*M_PI;
 	const double thetaH = mt()*2.0*M_PI;
 	
-	cloud->forceX[currentParticle] += thermV*_mm_set_pd(sin(thetaH), sin(thetaL)); // _mm_set_pd() is backwards
-	cloud->forceY[currentParticle] += thermV*_mm_set_pd(cos(thetaH), cos(thetaL));
+	double * const pFx = cloud->forceX + currentParticle;
+	double * const pFy = cloud->forceY + currentParticle;
+	
+	_mm_store_pd(pFx, _mm_load_pd(pFx) + thermV*_mm_set_pd(sin(thetaH), sin(thetaL))); // _mm_set_pd() is backwards
+	_mm_store_pd(pFy, _mm_load_pd(pFy) + thermV*_mm_set_pd(cos(thetaH), cos(thetaL)));
 }
 
 void ThermalForce::writeForce(fitsfile * const file, int * const error) const

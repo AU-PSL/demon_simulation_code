@@ -146,8 +146,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 330238460;
-			PBXWorkspaceStateSaveDate = 330238460;
+			PBXPerProjectTemplateStateSaveDate = 330250260;
+			PBXWorkspaceStateSaveDate = 330250260;
 		};
 		perUserProjectItems = {
 			4DBFA1DD13AF09EB0000DB80 = 4DBFA1DD13AF09EB0000DB80 /* PBXTextBookmark */;
@@ -155,19 +155,19 @@
 			4DBFA1DF13AF09EB0000DB80 = 4DBFA1DF13AF09EB0000DB80 /* PBXTextBookmark */;
 			4DBFA1E013AF09EB0000DB80 = 4DBFA1E013AF09EB0000DB80 /* PBXTextBookmark */;
 			4DBFA1E113AF09EB0000DB80 = 4DBFA1E113AF09EB0000DB80 /* PBXTextBookmark */;
-			4DBFA1EE13AF0A0D0000DB80 /* PBXTextBookmark */ = 4DBFA1EE13AF0A0D0000DB80 /* PBXTextBookmark */;
-			4DBFA1EF13AF0A0D0000DB80 /* PBXTextBookmark */ = 4DBFA1EF13AF0A0D0000DB80 /* PBXTextBookmark */;
-			4DBFA1F013AF0A0D0000DB80 /* PBXTextBookmark */ = 4DBFA1F013AF0A0D0000DB80 /* PBXTextBookmark */;
-			4DBFA1F113AF0A0D0000DB80 /* PBXTextBookmark */ = 4DBFA1F113AF0A0D0000DB80 /* PBXTextBookmark */;
-			4DBFA1F213AF0A0D0000DB80 /* PBXTextBookmark */ = 4DBFA1F213AF0A0D0000DB80 /* PBXTextBookmark */;
-			4DBFA1F313AF0A0D0000DB80 /* PBXTextBookmark */ = 4DBFA1F313AF0A0D0000DB80 /* PBXTextBookmark */;
-			4DBFA1F813AF0AD50000DB80 /* PBXTextBookmark */ = 4DBFA1F813AF0AD50000DB80 /* PBXTextBookmark */;
-			4DBFA1F913AF0AD50000DB80 /* PBXTextBookmark */ = 4DBFA1F913AF0AD50000DB80 /* PBXTextBookmark */;
-			4DBFA1FA13AF0AD50000DB80 /* PBXTextBookmark */ = 4DBFA1FA13AF0AD50000DB80 /* PBXTextBookmark */;
-			4DBFA1FB13AF0AD50000DB80 /* PBXTextBookmark */ = 4DBFA1FB13AF0AD50000DB80 /* PBXTextBookmark */;
-			4DBFA1FE13AF0CEE0000DB80 /* PBXTextBookmark */ = 4DBFA1FE13AF0CEE0000DB80 /* PBXTextBookmark */;
-			4DBFA1FF13AF0CEE0000DB80 /* PBXTextBookmark */ = 4DBFA1FF13AF0CEE0000DB80 /* PBXTextBookmark */;
-			4DBFA20013AF0CEE0000DB80 /* PBXTextBookmark */ = 4DBFA20013AF0CEE0000DB80 /* PBXTextBookmark */;
+			4DBFA1EE13AF0A0D0000DB80 = 4DBFA1EE13AF0A0D0000DB80 /* PBXTextBookmark */;
+			4DBFA1EF13AF0A0D0000DB80 = 4DBFA1EF13AF0A0D0000DB80 /* PBXTextBookmark */;
+			4DBFA1F013AF0A0D0000DB80 = 4DBFA1F013AF0A0D0000DB80 /* PBXTextBookmark */;
+			4DBFA1F113AF0A0D0000DB80 = 4DBFA1F113AF0A0D0000DB80 /* PBXTextBookmark */;
+			4DBFA1F213AF0A0D0000DB80 = 4DBFA1F213AF0A0D0000DB80 /* PBXTextBookmark */;
+			4DBFA1F313AF0A0D0000DB80 = 4DBFA1F313AF0A0D0000DB80 /* PBXTextBookmark */;
+			4DBFA1F813AF0AD50000DB80 = 4DBFA1F813AF0AD50000DB80 /* PBXTextBookmark */;
+			4DBFA1F913AF0AD50000DB80 = 4DBFA1F913AF0AD50000DB80 /* PBXTextBookmark */;
+			4DBFA1FA13AF0AD50000DB80 = 4DBFA1FA13AF0AD50000DB80 /* PBXTextBookmark */;
+			4DBFA1FB13AF0AD50000DB80 = 4DBFA1FB13AF0AD50000DB80 /* PBXTextBookmark */;
+			4DBFA1FE13AF0CEE0000DB80 = 4DBFA1FE13AF0CEE0000DB80 /* PBXTextBookmark */;
+			4DBFA1FF13AF0CEE0000DB80 = 4DBFA1FF13AF0CEE0000DB80 /* PBXTextBookmark */;
+			4DBFA20013AF0CEE0000DB80 = 4DBFA20013AF0CEE0000DB80 /* PBXTextBookmark */;
 			4DC5980213AD85CB00BDABDE = 4DC5980213AD85CB00BDABDE /* PBXTextBookmark */;
 			4DC5980313AD85CB00BDABDE = 4DC5980313AD85CB00BDABDE /* PBXTextBookmark */;
 			4DC5980413AD85CB00BDABDE = 4DC5980413AD85CB00BDABDE /* PBXTextBookmark */;
@@ -189,11 +189,6 @@
 		name = FieldPotentialOperator.cpp;
 		path = "/Users/mark/School/Research And Dissertation/Bacon/Source/FieldPotentialOperator.cpp";
 		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1171, 2548}}";
-			sepNavSelRange = "{7978, 18}";
-			sepNavVisRange = "{6291, 1781}";
-		};
 	};
 	4D31D1BD13AD0B2D0043B4E2 /* FieldPotentialOperator.h */ = {
 		isa = PBXFileReference;
@@ -202,13 +197,14 @@
 		name = FieldPotentialOperator.h;
 		path = "/Users/mark/School/Research And Dissertation/Bacon/Source/FieldPotentialOperator.h";
 		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1171, 545}}";
-			sepNavSelRange = "{1341, 0}";
-			sepNavVisRange = "{0, 1509}";
-		};
 	};
 	4D31D1C013AD0B3A0043B4E2 /* ChargeOperator.cpp */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.cpp.cpp;
+		name = ChargeOperator.cpp;
+		path = "/Users/mark/School/Research And Dissertation/Bacon/Source/ChargeOperator.cpp";
+		sourceTree = "<absolute>";
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1171, 598}}";
 			sepNavSelRange = "{1080, 0}";
@@ -216,6 +212,12 @@
 		};
 	};
 	4D31D1C113AD0B3A0043B4E2 /* ChargeOperator.h */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.c.h;
+		name = ChargeOperator.h;
+		path = "/Users/mark/School/Research And Dissertation/Bacon/Source/ChargeOperator.h";
+		sourceTree = "<absolute>";
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1171, 545}}";
 			sepNavSelRange = "{0, 0}";
