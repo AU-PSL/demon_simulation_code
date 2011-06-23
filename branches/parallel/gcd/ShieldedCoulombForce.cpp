@@ -28,7 +28,7 @@ ShieldedCoulombForce::~ShieldedCoulombForce()
 void ShieldedCoulombForce::force1(const double currentTime)
 {
 	const cloud_index numParticles = cloud->n;
-	dispatch_apply(cloud->n/2, queue, ^(cloud_index currentParticle) {
+	dispatch_apply(numParticles/2, queue, ^(cloud_index currentParticle) {
 		currentParticle *= 2;
 		const __m128d vx1 = cloud->getx1_pd(currentParticle);
 		const __m128d vy1 = cloud->gety1_pd(currentParticle);
@@ -51,7 +51,7 @@ void ShieldedCoulombForce::force1(const double currentTime)
 void ShieldedCoulombForce::force2(const double currentTime)
 {
 	const cloud_index numParticles = cloud->n;
-	dispatch_apply(cloud->n/2, queue, ^(cloud_index currentParticle) {
+	dispatch_apply(numParticles/2, queue, ^(cloud_index currentParticle) {
 		currentParticle *= 2;
 		const __m128d vx1 = cloud->getx2_pd(currentParticle);
 		const __m128d vy1 = cloud->gety2_pd(currentParticle);
@@ -73,7 +73,7 @@ void ShieldedCoulombForce::force2(const double currentTime)
 void ShieldedCoulombForce::force3(const double currentTime)
 {
 	const cloud_index numParticles = cloud->n;
-	dispatch_apply(cloud->n/2, queue, ^(cloud_index currentParticle) {
+	dispatch_apply(numParticles/2, queue, ^(cloud_index currentParticle) {
 		currentParticle *= 2;
 		const __m128d vx1 = cloud->getx3_pd(currentParticle);
 		const __m128d vy1 = cloud->gety3_pd(currentParticle);
@@ -95,7 +95,7 @@ void ShieldedCoulombForce::force3(const double currentTime)
 void ShieldedCoulombForce::force4(const double currentTime)
 {
 	const cloud_index numParticles = cloud->n;
-	dispatch_apply(cloud->n/2, queue, ^(cloud_index currentParticle) {
+	dispatch_apply(numParticles/2, queue, ^(cloud_index currentParticle) {
 		currentParticle *= 2;
 		const __m128d vx1 = cloud->getx4_pd(currentParticle);
 		const __m128d vy1 = cloud->gety4_pd(currentParticle);
