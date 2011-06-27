@@ -39,6 +39,7 @@ private:
 // private variables:
 	const operator_index numOperators;
 	Operator ** const operations;
+	omp_lock_t *lock;
     
 // private functions:
 	void operate1(const double currentTime) const; // rk substep 1
