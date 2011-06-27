@@ -85,7 +85,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 			_mm_store_pd(cloud->m2 + i, vdt*_mm_load_pd(pFy)/vmass); // velocityY tidbit
 			_mm_store_pd(cloud->n2 + i, vdt*cloud->getVy2_pd(i)); // positionY tidbit
 			
-			_mm_store_pd(cloud->q1 + i, _mm_setzero_pd()); // charge tidbit
+			_mm_store_pd(cloud->q2 + i, _mm_setzero_pd()); // charge tidbit
 
 			// reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
@@ -110,7 +110,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 			_mm_store_pd(cloud->m3 + i, vdt*_mm_load_pd(pFy)/vmass); // velocityY tidbit
 			_mm_store_pd(cloud->n3 + i, vdt*cloud->getVy3_pd(i)); // positionY tidbit
 			
-			_mm_store_pd(cloud->q1 + i, _mm_setzero_pd()); // charge tidbit
+			_mm_store_pd(cloud->q3 + i, _mm_setzero_pd()); // charge tidbit
 
 			// reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
@@ -134,7 +134,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 			_mm_store_pd(cloud->m4 + i, vdt*_mm_load_pd(pFy)/vmass); // velocityY tidbit
 			_mm_store_pd(cloud->n4 + i, vdt*cloud->getVy4_pd(i)); // positionY tidbit
 			
-			_mm_store_pd(cloud->q1 + i, _mm_setzero_pd()); // charge tidbit
+			_mm_store_pd(cloud->q4 + i, _mm_setzero_pd()); // charge tidbit
 
 			// reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
