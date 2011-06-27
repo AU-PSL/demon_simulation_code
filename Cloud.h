@@ -36,6 +36,7 @@ public:
 	
 	static const double interParticleSpacing;
 	static const double electronCharge;
+	static const double epsilon0;
 
 // public functions:
 	// Input: int index, initialPosX, intialPosY
