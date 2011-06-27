@@ -15,6 +15,7 @@ using namespace std;
 
 const double Cloud::interParticleSpacing = 0.0003;
 const double Cloud::electronCharge = -1.602E-19;
+const double Cloud::epsilon0 = 8.8542E-12;
 
 Cloud::Cloud(const cloud_index numPar) : n(numPar),
 x(new double[n]), y(new double[n]), Vx(new double[n]), Vy(new double[n]), 
