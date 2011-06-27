@@ -35,6 +35,7 @@ public:
 	__m128d * const qCache;
 	
 	static const double interParticleSpacing;
+	static const double electronCharge;
 
 // public functions:
 	// Input: int index, initialPosX, intialPosY

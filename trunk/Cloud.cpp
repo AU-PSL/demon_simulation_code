@@ -14,6 +14,7 @@
 using namespace std;
 
 const double Cloud::interParticleSpacing = 0.0003;
+const double Cloud::electronCharge = -1.602E-19;
 
 Cloud::Cloud(const cloud_index numPar) : n(numPar),
 x(new double[n]), y(new double[n]), Vx(new double[n]), Vy(new double[n]), 
@@ -59,7 +60,7 @@ inline void Cloud::setCharge() const
 {
 	srand((int)time(NULL));
 	for (cloud_index i = 0; i < n; i++)
-		charge[i] = (rand()%201 + 5900)*1.6E-19;
+		charge[i] = (rand()%201 + 5900)*electronCharge;
 }
 
 inline void Cloud::setMass() const
