@@ -25,7 +25,7 @@ l1(new double[n]), l2(new double[n]), l3(new double[n]), l4(new double[n]),
 m1(new double[n]), m2(new double[n]), m3(new double[n]), m4(new double[n]),
 n1(new double[n]), n2(new double[n]), n3(new double[n]), n4(new double[n]),
 q1(new double[n]), q2(new double[n]), q3(new double[n]), q4(new double[n]),
-forceX(new double[n]), forceY(new double[n]), phi(new double),
+forceX(new double[n]), forceY(new double[n]), phi(new double[n]),
 xCache(new __m128d[n/2]), yCache(new __m128d[n/2]), 
 VxCache(new __m128d[n/2]), VyCache(new __m128d[n/2]),
 qCache(new __m128d[n/2]) {}
