@@ -541,6 +541,8 @@ int main (int argc, char * const argv[])
 	Runge_Kutta rk4(cloud, forceArray, simTimeStep, numForces, startTime);
 
 	// execute simulation for desired length of time:
+#pragma omp parallel 
+{
 	while (startTime < endTime)
 	{
 		cout << clear_line << "\rCurrent Time: " << rk4.currentTime << "s (" 
@@ -551,7 +553,7 @@ int main (int argc, char * const argv[])
 		// write positions and velocities:
 		cloud->writeTimeStep(file, &error, rk4.currentTime);
 	}
-
+} // End Parallel
 /*------------------------------------------------------------------------------
  * This concludes the Runge-Kutta algorithm. Clean up.
  -----------------------------------------------------------------------------*/

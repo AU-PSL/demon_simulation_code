@@ -49,8 +49,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 		operate1(currentTime);
 		force1(currentTime); // compute net force1
 		const cloud_index numParticles = cloud->n;
-#pragma omp parallel
-{
+
 #pragma omp for schedule(static)
 		for (cloud_index i = 0; i < numParticles; i += 2) // calculate k1 and l1 for entire cloud
 		{
@@ -175,7 +174,6 @@ void Runge_Kutta::moveParticles(const double endTime)
 			_mm_store_pd(pVy, _mm_load_pd(pVy) + (vm1 + v2*(vm2 + vm3) + vm4)/v6);
 			_mm_store_pd(py, _mm_load_pd(py) + (vn1 + v2*(vn2 + vn3) + vn4)/v6);
 		}
-} // End Parallel code
 
 		currentTime += dt;
 	}
