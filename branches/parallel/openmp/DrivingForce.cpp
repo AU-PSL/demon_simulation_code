@@ -20,7 +20,7 @@ void DrivingForce::force1(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	const cloud_index numParticles = cloud->n;
-#pragma omp parallel for schedule(static)
+#pragma omp for schedule(static)
 	for (cloud_index currentParticle = 0; currentParticle < numParticles; currentParticle += 2)  
 		force(currentParticle, vtime, cloud->getx1_pd(currentParticle));
 }
@@ -29,7 +29,7 @@ void DrivingForce::force2(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	const cloud_index numParticles = cloud->n;
-#pragma omp parallel for schedule(static)
+#pragma omp for schedule(static)
 	for (cloud_index currentParticle = 0; currentParticle < numParticles; currentParticle += 2)  
 		force(currentParticle, vtime, cloud->getx2_pd(currentParticle));
 }
@@ -38,7 +38,7 @@ void DrivingForce::force3(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	const cloud_index numParticles = cloud->n;
-#pragma omp parallel for schedule(static)
+#pragma omp for schedule(static)
 	for (cloud_index currentParticle = 0; currentParticle < numParticles; currentParticle += 2)  
 		force(currentParticle, vtime, cloud->getx3_pd(currentParticle));
 }
@@ -47,7 +47,7 @@ void DrivingForce::force4(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	const cloud_index numParticles = cloud->n;
-#pragma omp parallel for schedule(static)
+#pragma omp for schedule(static)
 	for (cloud_index currentParticle = 0; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, vtime, cloud->getx4_pd(currentParticle));
 }

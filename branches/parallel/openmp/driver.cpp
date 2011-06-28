@@ -541,7 +541,7 @@ int main (int argc, char * const argv[])
 	Runge_Kutta rk4(cloud, forceArray, simTimeStep, numForces, startTime);
 
 	// execute simulation for desired length of time:
-#pragma omp parallel 
+#pragma omp parallel
 {
 	while (startTime < endTime)
 	{
