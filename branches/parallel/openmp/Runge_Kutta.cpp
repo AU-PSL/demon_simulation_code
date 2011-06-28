@@ -21,13 +21,10 @@ numOperators(1), operations(new Operator*[numOperators])
 {
 	// Operators are order dependent.
 	operations[0] = new PositionVelocityCacheOperator(cloud);
-	omp_init_lock(lock);
 }
 
 Runge_Kutta::~Runge_Kutta()
-{
-	omp_destroy_lock(lock);
-	
+{	
 	for (operator_index i = 0; i < numOperators; i++)
 		delete operations[i];
 	delete[] operations;
@@ -252,13 +249,14 @@ const double Runge_Kutta::modifyTimeStep(double currentDist, double currentTimeS
 		// if particles too close, reduce time step:
 		while (sqrt(sepx*sepx + sepy*sepy) <= currentDist) 
 		{
-			omp_set_lock(lock);
+#pragma omp critical (timestep)
+{
 			if (sqrt(sepx*sepx + sepy*sepy) <= currentDist)
 			{
 				currentDist /= redFactor;
 				currentTimeStep /= redFactor;
 			}
-			omp_unset_lock(lock);
+}
 		}
 		
 		// load positions into vectors:
@@ -279,15 +277,16 @@ const double Runge_Kutta::modifyTimeStep(double currentDist, double currentTimeS
 			// check separation distances against dist. If either are too close, reduce time step.
 			while (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(currentDist)))
 			{
-				// Only one thread should modify the distance and timesStep at a time. 
+				// Only one thread should modify the distance and timesStep at a time.
+#pragma omp critical (timestep)
+{
 				// Retest condition to make sure a different thread hasn't already reduced.
-				omp_set_lock(lock);
 				if (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(currentDist)))
 				{
 					currentDist /= redFactor;
 					currentTimeStep /= redFactor;
 				}
-				omp_unset_lock(lock);
+}
 			}
 				
 			// calculate j,i+1 and j+1,i separation distances:
@@ -298,14 +297,15 @@ const double Runge_Kutta::modifyTimeStep(double currentDist, double currentTimeS
 			while (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(currentDist)))
 			{
 				// Only one thread should modify the distance and timesStep at a time.
+#pragma omp critical (timestep)
+{
 				// Retest condition to make sure a different thread hasn't already reduced.
-				omp_set_lock(lock);
 				if (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(currentDist)))
 				{
 					currentDist /= redFactor;
 					currentTimeStep /= redFactor;
 				}
-				omp_unset_lock(lock);
+}
 			}
 		}
 	}
