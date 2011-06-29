@@ -16,40 +16,55 @@ ThermalForceLocalized::ThermalForceLocalized(Cloud * const myCloud, const double
 
 void ThermalForceLocalized::force1(const double currentTime)
 {
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	const cloud_index numParticles = cloud->n;
+#pragma omp for schedule(static)
+	for (cloud_index currentParticle = 0; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
 }
 
 void ThermalForceLocalized::force2(const double currentTime)
 {
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	const cloud_index numParticles = cloud->n;
+#pragma omp for schedule(static)
+	for (cloud_index currentParticle = 0; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
 }
 
 void ThermalForceLocalized::force3(const double currentTime)
 {
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	const cloud_index numParticles = cloud->n;
+#pragma omp for schedule(static)
+	for (cloud_index currentParticle = 0; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
 }
 
 void ThermalForceLocalized::force4(const double currentTime)
 {
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	const cloud_index numParticles = cloud->n;
+#pragma omp for schedule(static)
+	for (cloud_index currentParticle = 0; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
 }
 
 inline void ThermalForceLocalized::force(const cloud_index currentParticle, const __m128d displacementX, const __m128d displacementY)
 {
 	const __m128d radiusV = _mm_sqrt_pd(displacementX*displacementX + displacementY*displacementY);
-	const double thetaL = mt()*2.0*M_PI;
-	const double thetaH = mt()*2.0*M_PI;
 	
 	double rL, rH;
 	_mm_storel_pd(&rL, radiusV);
 	_mm_storeh_pd(&rH, radiusV);
 	
-	const __m128d thermV = _mm_set_pd((rH < heatingRadius) ? heatVal1 : heatVal2, // _mm_set_pd() is backwards
-									  (rL < heatingRadius) ? heatVal1 : heatVal2)*_mm_set_pd(mt(), mt());
+	__m128d thermV = _mm_set_pd((rH < heatingRadius) ? heatVal1 : heatVal2, // _mm_set_pd() is backwards
+								(rL < heatingRadius) ? heatVal1 : heatVal2);
+	
+	double thetaL, thetaH;
+#pragma omp critical (heat)
+{
+	thermV *= _mm_set_pd(mt(), mt());
+	thetaL = mt()*2.0*M_PI;
+	thetaH = mt()*2.0*M_PI;
+}
+	
 	
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;
