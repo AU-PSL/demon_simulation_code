@@ -42,10 +42,12 @@ void Runge_Kutta::moveParticles(const double endTime)
 		// Second argument must be 2 more than the first.
 		const double dt = modifyTimeStep(0, 2, 1.0e-4, init_dt); // implement dynamic timstep (if necessary):
 		const __m128d vdt = _mm_set1_pd(dt); // store timestep as vector const
+		
+		const cloud_index numParticles = cloud->n;
         
 		operate1(currentTime);
 		force1(currentTime); // compute net force1
-		for (cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) // calculate k1 and l1 for entire cloud
+		for (cloud_index i = 0; i < numParticles; i += 2) // calculate k1 and l1 for entire cloud
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass into vector
 
@@ -72,7 +74,7 @@ void Runge_Kutta::moveParticles(const double endTime)
         
 		operate2(currentTime + dt/2.0);
 		force2(currentTime + dt/2.0); // compute net force2
-		for (cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) // calculate k2 and l2 for entire cloud
+		for (cloud_index i = 0; i < numParticles; i += 2) // calculate k2 and l2 for entire cloud
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
 
@@ -99,7 +101,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 
 		operate3(currentTime + dt/2.0);
 		force3(currentTime + dt/2.0); // compute net force3
-		for (cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) // calculate k3 and l3 for entire cloud
+		for (cloud_index i = 0; i < numParticles; i += 2) // calculate k3 and l3 for entire cloud
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
 
@@ -126,7 +128,7 @@ void Runge_Kutta::moveParticles(const double endTime)
         
 		operate4(currentTime + dt);
 		force4(currentTime + dt); // compute net force4
-		for (cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) // calculate k4 and l4 for entire cloud
+		for (cloud_index i = 0; i < numParticles; i += 2) // calculate k4 and l4 for entire cloud
 		{
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
 
@@ -150,7 +152,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 			_mm_store_pd(pPh, _mm_setzero_pd());
 		}
 
-		for (cloud_index i = 0, numParticles = cloud->n; i < numParticles; i += 2) // calculate next position and next velocity for entire cloud
+		for (cloud_index i = 0; i < numParticles; i += 2) // calculate next position and next velocity for entire cloud
 		{
 			// load ith and (i+1)th k's into vectors:
 			const __m128d vk1 = _mm_load_pd(cloud->k1 + i);
