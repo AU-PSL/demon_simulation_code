@@ -113,7 +113,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 			_mm_store_pd(pFy, _mm_setzero_pd());
 		}
         
-		operate4(currentTime + dt/2.0);
+		operate4(currentTime + dt);
 		force4(currentTime + dt); // compute net force4
 #pragma omp for schedule(static)
 		for (cloud_index i = 0; i < numParticles; i += 2) // calculate k4 and l4 for entire cloud
