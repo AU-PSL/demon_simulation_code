@@ -18,7 +18,7 @@ ThermalForce::ThermalForce(Cloud * const myCloud, const double redFactor)
 void ThermalForce::force1(const double currentTime)
 {
 	const cloud_index numParticles = cloud->n;
-#pragma omp for schedule(static)
+#pragma omp parallel for schedule(static)
 	for (cloud_index currentParticle = 0; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
@@ -26,7 +26,7 @@ void ThermalForce::force1(const double currentTime)
 void ThermalForce::force2(const double currentTime)
 {
 	const cloud_index numParticles = cloud->n;
-#pragma omp for schedule(static)
+#pragma omp parallel for schedule(static)
 	for (cloud_index currentParticle = 0; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
@@ -34,7 +34,7 @@ void ThermalForce::force2(const double currentTime)
 void ThermalForce::force3(const double currentTime)
 {
 	const cloud_index numParticles = cloud->n;
-#pragma omp for schedule(static)
+#pragma omp parallel for schedule(static)
 	for (cloud_index currentParticle = 0; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
@@ -42,7 +42,7 @@ void ThermalForce::force3(const double currentTime)
 void ThermalForce::force4(const double currentTime)
 {
 	const cloud_index numParticles = cloud->n;
-#pragma omp for schedule(static)
+#pragma omp parallel for schedule(static)
 	for (cloud_index currentParticle = 0; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }

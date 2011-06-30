@@ -14,7 +14,7 @@ ConfinementForce::ConfinementForce(Cloud * const myCloud, double confineConst) :
 void ConfinementForce::force1(const double currentTime)
 {
 	const cloud_index numParticles = cloud->n;
-#pragma omp for schedule(static)
+#pragma omp parallel for schedule(static)
 	for (cloud_index currentParticle = 0; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
 }
@@ -22,7 +22,7 @@ void ConfinementForce::force1(const double currentTime)
 void ConfinementForce::force2(const double currentTime)
 {
 	const cloud_index numParticles = cloud->n;
-#pragma omp for schedule(static)
+#pragma omp parallel for schedule(static)
 	for (cloud_index currentParticle = 0; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
 }
@@ -30,7 +30,7 @@ void ConfinementForce::force2(const double currentTime)
 void ConfinementForce::force3(const double currentTime)
 {
 	const cloud_index numParticles = cloud->n;
-#pragma omp for schedule(static)
+#pragma omp parallel for schedule(static)
 	for (cloud_index currentParticle = 0; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
 }
@@ -38,7 +38,7 @@ void ConfinementForce::force3(const double currentTime)
 void ConfinementForce::force4(const double currentTime)
 {
 	const cloud_index numParticles = cloud->n;
-#pragma omp for schedule(static)
+#pragma omp parallel for schedule(static)
 	for (cloud_index currentParticle = 0; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
 }

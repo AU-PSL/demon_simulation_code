@@ -15,7 +15,7 @@ DragForce::DragForce(Cloud * const myCloud, const double gamma)
 void DragForce::force1(const double currentTime)
 {
 	const cloud_index numParticles = cloud->n;
-#pragma omp for schedule(static)
+#pragma omp parallel for schedule(static)
 	for (cloud_index currentParticle = 0; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, cloud->getVx1_pd(currentParticle), cloud->getVy1_pd(currentParticle));
 }
@@ -23,7 +23,7 @@ void DragForce::force1(const double currentTime)
 void DragForce::force2(const double currentTime)
 {
 	const cloud_index numParticles = cloud->n;
-#pragma omp for schedule(static)
+#pragma omp parallel for schedule(static)
 	for (cloud_index currentParticle = 0; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, cloud->getVx2_pd(currentParticle), cloud->getVy2_pd(currentParticle));
 }
@@ -31,7 +31,7 @@ void DragForce::force2(const double currentTime)
 void DragForce::force3(const double currentTime)
 {
 	const cloud_index numParticles = cloud->n;
-#pragma omp for schedule(static)
+#pragma omp parallel for schedule(static)
 	for (cloud_index currentParticle = 0; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, cloud->getVx3_pd(currentParticle), cloud->getVy3_pd(currentParticle));
 }
@@ -39,7 +39,7 @@ void DragForce::force3(const double currentTime)
 void DragForce::force4(const double currentTime)
 {
 	const cloud_index numParticles = cloud->n;
-#pragma omp for schedule(static)
+#pragma omp parallel for schedule(static)
 	for (cloud_index currentParticle = 0; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, cloud->getVx4_pd(currentParticle), cloud->getVy4_pd(currentParticle));
 }
