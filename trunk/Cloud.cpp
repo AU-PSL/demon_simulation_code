@@ -15,7 +15,8 @@ using namespace std;
 
 const double Cloud::interParticleSpacing = 0.0003;
 const double Cloud::electronCharge = -1.602E-19;
-const double Cloud::epsilon0 = 8.8542E-12;
+const double Cloud::epsilon0 = 8.8541878E-12;
+const double Cloud::particleRadius = 1.45E-6;
 
 Cloud::Cloud(const cloud_index numPar) : n(numPar),
 x(new double[n]), y(new double[n]), Vx(new double[n]), Vy(new double[n]), 
@@ -66,9 +67,8 @@ inline void Cloud::setCharge() const
 
 inline void Cloud::setMass() const
 {
-	const double radius = 1.45E-6;
 	const double particleDensity = 2200.0;
-	const double particleMass = (4.0/3.0)*M_PI*radius*radius*radius*particleDensity;
+	const double particleMass = (4.0/3.0)*M_PI*particleRadius*particleRadius*particleRadius*particleDensity;
 	for (cloud_index i = 0; i < n; i++)
 		mass[i] = particleMass;
 }
