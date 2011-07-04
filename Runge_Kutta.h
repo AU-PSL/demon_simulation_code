@@ -28,8 +28,8 @@ public:
 	const double init_dt; // store initial time step
 	double currentTime;
 
-	double electronFreqTerm, ionFreqTerm, radTerm, etaDenominator;
-	double chargeConst1, chargeConst2;
+	__m128d electronFreqTerm, ionFreqTerm, radTerm, etaDenominator;
+	__m128d qConst1, qConst2;
 
 	static const double plasmaDensity;
 	static const double electronMass;
@@ -43,7 +43,7 @@ public:
 	// Postconditions: Runge-Kutta algorithm complete; position, velocity, time updated.
 	void moveParticles(const double endTime);
 
-	void setChargeConsts(const double * const charge);
+	void setChargeConsts(const __m128d charge);
 
 private:
 // private variables:
