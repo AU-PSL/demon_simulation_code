@@ -45,7 +45,8 @@ double startTime = 0.0;
 double dataTimeStep = 0.01;
 double simTimeStep = dataTimeStep/100.0;
 double endTime = 5.0;
-double confinementConst = 1E-13;    // confinementForce
+double plasmaPotential = 0.0;       // background potential offset
+double confinementConst = 1E2;      // confinementForce
 double confinementConstX = 1E-13;   // RectConfinementForce
 double confinementConstY = 1E-12;   // RectConfinementForce
 double shieldingConstant = 2E4;     // corresponds to 10*(ion debye length)
@@ -478,7 +479,7 @@ int main (int argc, char * const argv[])
 	
 	force_index index = 0;
 	if (usedForces & ConfinementForceFlag)
-		forceArray[index++] = new ConfinementForce(cloud, confinementConst);
+		forceArray[index++] = new ConfinementForce(cloud, confinementConst, plasmaPotential);
 	if (usedForces & DragForceFlag) 
 		forceArray[index++] = new DragForce(cloud, gamma);
 	if (usedForces & ShieldedCoulombForceFlag) 
