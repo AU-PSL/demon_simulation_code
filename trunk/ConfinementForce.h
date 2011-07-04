@@ -20,9 +20,6 @@ public:
 	// IMPORTANT: In the above constructor, confineConst must be positive!
 	~ConfinementForce() {} // destructor
 
-// public variables:
-	__m128d potentialOffset;
-
 // public functions:
 	// Note: currentTime parameter is necessary (due to parent class) but unused
 	void force1(const double currentTime); // rk substep 1
@@ -36,6 +33,7 @@ public:
 private:
 // private variables:
 	double confine;
+	double potentialOffset;
 
 // private functions:
 	void force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY, const __m128d charge);	// common force calculator

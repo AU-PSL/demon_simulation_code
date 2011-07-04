@@ -9,7 +9,7 @@
 
 #include "ConfinementForce.h"
 	
-ConfinementForce::ConfinementForce(Cloud * const myCloud, double confineConst, double plasmaPotential) : Force(myCloud), confine(-confineConst), potentialOffset(_mm_set1_pd(plasmaPotential)) {}
+ConfinementForce::ConfinementForce(Cloud * const myCloud, double confineConst, double plasmaPotential) : Force(myCloud), confine(confineConst), potentialOffset(plasmaPotential) {}
 
 void ConfinementForce::force1(const double currentTime)
 {
@@ -46,7 +46,7 @@ inline void ConfinementForce::force(const cloud_index currentParticle, const __m
 
 	const __m128d rr = currentPositionX*currentPositionX + currentPositionY*currentPositionY;
 	double * pPhi = cloud->phi + currentParticle;
-	_mm_store_pd(pPhi, _mm_set1_pd(-0.5)*cV*charge*rr + potentialOffset);
+	_mm_store_pd(pPhi, _mm_set1_pd(-0.5)*cV*rr + _mm_set1_pd(potentialOffset));
 }
 
 void ConfinementForce::writeForce(fitsfile * const file, int * const error) const
@@ -75,7 +75,11 @@ void ConfinementForce::writeForce(fitsfile * const file, int * const error) cons
 
 	if (!*error)
 		// file, key name, value, precision (scientific format), comment
-		fits_write_key_dbl(file, const_cast<char *> ("confineConst"), confine, 6, const_cast<char *> ("[N/m] (ConfinementForce)"), error);
+		fits_write_key_dbl(file, const_cast<char *> ("confineConst"), confine, 6, const_cast<char *> ("[V/m^2] (ConfinementForce)"), error);
+
+	// write background plasma potential offset:
+	if(!*error)
+		fits_write_key_dbl(file, const_cast<char *> ("plasmaPotential"), potentialOffset, 6, const_cast<char *> ("[V] (background plasma potential offset)"), error);
 }
 
 void ConfinementForce::readForce(fitsfile * const file, int * const error)
