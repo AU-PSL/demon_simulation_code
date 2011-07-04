@@ -160,10 +160,10 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
 
 	// calculate phi
 	const __m128d coeffient = _mm_set1_pd(coulomb)/displacement*expv;
-	double *pPh = cloud->phi + currentParticle;
-	_mm_store_pd(pPh, _mm_load_pd(pPh) + coeffient*iCharge);
-	pPh = cloud->phi + iParticle;
-	_mm_store_pd(pPh, _mm_load_pd(pPh) + coeffient*currentCharge);
+	double *pPhi = cloud->phi + currentParticle;
+	_mm_store_pd(pPhi, _mm_load_pd(pPhi) + coeffient*iCharge);
+	pPhi = cloud->phi + iParticle;
+	_mm_store_pd(pPhi, _mm_load_pd(pPhi) + coeffient*currentCharge);
 	
 	// calculate force
 	const __m128d forceC = currentCharge*iCharge*coeffient*(_mm_set1_pd(1.0) + valExp)/(displacement*displacement);
@@ -205,10 +205,10 @@ inline void ShieldedCoulombForce::forcer(const cloud_index currentParticle, cons
 	
 	// calculate phi
 	const __m128d coeffient = _mm_set1_pd(coulomb)/displacement*expv;
-	double *pPh = cloud->phi + currentParticle;
-	_mm_store_pd(pPh, _mm_load_pd(pPh) + coeffient*iCharge);
-	pPh = cloud->phi + iParticle;
-	_mm_storer_pd(pPh, _mm_loadr_pd(pPh) + coeffient*currentCharge);
+	double *pPhi = cloud->phi + currentParticle;
+	_mm_store_pd(pPhi, _mm_load_pd(pPhi) + coeffient*iCharge);
+	pPhi = cloud->phi + iParticle;
+	_mm_storer_pd(pPhi, _mm_loadr_pd(pPhi) + coeffient*currentCharge);
     
 	// calculate force
 	const __m128d forceC = currentCharge*iCharge*coeffient*(_mm_set1_pd(1.0) + valExp)/(displacement*displacement);
