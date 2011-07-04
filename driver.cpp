@@ -94,6 +94,7 @@ void help()
           << " -n 10                  set number of particles" << endl
           << " -o 0.01                set the data Output time step" << endl
           << " -O data.fits           set the name of the output file" << endl
+          << " -p 0.0                 set the background plasma potential offset" << endl
           << " -R 1E-13 1E-12         use RectConfinementForce; set confineConstX,Y" << endl
           << " -s 2E4                 set coulomb shelding constant" << endl
           << " -S 1E-15 0.005 0.007   use RotationalForce; set strength, rmin, rmax" << endl
@@ -279,6 +280,9 @@ void parseCommandLineOptions(int argc, char * const argv[])
 			case 'O': // name "O"utput file:
 				checkOption(argc, argv, i, 'O', 1, "output file", F, &outputFileIndex, "data.fits");
 				break;	
+			case 'p': // set "p"otential offset:
+				checkOption(argc, argv, i, 'p', 1, "plasma potential", D, &plasmaPotential);
+				break;
 			case 'R': // use "R"ectangular confinement:
 				checkForce(1, 'R', RectConfinementForceFlag);
 				checkOption(argc, argv, i, 'R', 2, "confine constantX", D, &confinementConstX, "confine constantY", D, &confinementConstY);
