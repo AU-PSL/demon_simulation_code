@@ -364,7 +364,7 @@ void Runge_Kutta::setChargeConsts(const __m128d charge)
 	double valExpL, valExpH;
 	_mm_storel_pd(&valExpL, electronEta);
 	_mm_storeh_pd(&valExpH, electronEta);
-	const __m128d expTerm = _mm_set_pd(exp(-valExpL), exp(-valExpH));
+	const __m128d expTerm = _mm_set_pd(exp(-valExpH), exp(-valExpL));
 
 	qConst1 = radTerm*(electronFreqTerm*expTerm + ionFreqTerm);
 	qConst2 = radTerm*(electronFreqTerm*expTerm + ionFreqTerm*(_mm_set1_pd(1.0) + ionEta));
