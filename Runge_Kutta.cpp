@@ -80,7 +80,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 #else
 			_mm_store_pd(cloud->q1 + i, _mm_setzero_pd()); // charge tidbit
 #endif
-			
+
 			// reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
 			_mm_store_pd(pFy, _mm_setzero_pd());

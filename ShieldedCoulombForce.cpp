@@ -126,7 +126,7 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
 		const double coeffient = coulomb/(displacement*exp(valExp));
 		cloud->phi[currentParticle] += coeffient*iCharge;
 		cloud->phi[iParticle] += coeffient*currentCharge;
-		
+
 		// calculate force
 		const double forceC = currentCharge*iCharge*coeffient*(1.0 + valExp)/(displacement*displacement);
 		cloud->forceX[currentParticle] += forceC*displacementX;
