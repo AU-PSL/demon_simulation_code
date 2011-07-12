@@ -10,6 +10,7 @@
 #include "ConfinementForce.h"
 #include "DragForce.h"
 #include "DrivingForce.h"
+#include "MagneticForce.h"
 #include "RectConfinementForce.h"
 #include "RotationalForce.h"
 #include "Runge_Kutta.h"
@@ -41,6 +42,7 @@ enum clFlagType
 };
 
 bool Mach = false;                  // true -> perform Mach Cone experiment
+double magneticFieldStrength = 1.0; // magnitude of B-field in z-direction [T]
 double startTime = 0.0;
 double dataTimeStep = 0.01;
 double simTimeStep = dataTimeStep/100.0;
@@ -82,6 +84,7 @@ void help()
           << "                                      DEMON" << endl
           << "        Dynamic Exploration of Microparticle clouds Optimized Numerically" << endl << endl
           << "Options:" << endl << endl
+          << " -B 1.0                 set magnitude of B-field in z-direction [T]" << endl
           << " -c noDefault.fits      continue run from file" << endl
           << " -C 1E-13               set confinementConst" << endl
           << " -D -1.0 10.0           use TimeVaryingDragForce; set scale, offset" << endl
@@ -117,7 +120,7 @@ void help()
           << " -w creates acoustic waves along the x-axis (best with -R)." << endl << endl;
 }
 
-// check if force is used or conflicts with a perviously set force.
+// check if force is used or conflicts with a previously set force.
 void checkForce(const force_index numChecks, ...)
 {
 	va_list arglist;
@@ -193,7 +196,8 @@ void checkOption(const int argc, char * const argv[], int &optionIndex, const ch
 		const clFlagType type = (clFlagType)va_arg(arglist, int);
 		void *val = va_arg(arglist, void *);
 		
-		switch (type) {
+		switch (type)
+		{
 			case CI: 
 			{
 				cloud_index *ci = (cloud_index *)val;
@@ -238,6 +242,10 @@ void parseCommandLineOptions(int argc, char * const argv[])
 	{
 		switch (argv[i][1])
 		{
+			case 'B': // set "B"-field":
+				checkForce(1, 'B', MagneticForceFlag);
+				checkOption(argc, argv, i, 'B', 1, "magnetic field", D, &magneticFieldStrength);
+				break;
 			case 'c': // "c"ontinue from file:
 				checkOption(argc, argv, i, 'c', 1, "contine file", F, &continueFileIndex, "");
 				break;
@@ -325,17 +333,19 @@ const force_index getNumForces()
 		++i;
 	if (usedForces & DragForceFlag)
 		++i;
-	if (usedForces & ShieldedCoulombForceFlag)
+	if (usedForces & DrivingForceFlag)
+		++i;
+	if (usedForces & MagneticForceFlag)
 		++i;
 	if (usedForces & RectConfinementForceFlag)
+		++i;
+	if (usedForces & RotationalForceFlag)
+		++i;
+	if (usedForces & ShieldedCoulombForceFlag)
 		++i;
 	if (usedForces & ThermalForceFlag)
 		++i;
 	if (usedForces & ThermalForceLocalizedFlag)
-		++i;
-	if (usedForces & DrivingForceFlag)
-		++i;
-	if (usedForces & RotationalForceFlag)
 		++i;
 	if (usedForces & TimeVaryingDragForceFlag)
 		++i;
@@ -486,18 +496,20 @@ int main (int argc, char * const argv[])
 		forceArray[index++] = new ConfinementForce(cloud, confinementConst, plasmaPotential);
 	if (usedForces & DragForceFlag) 
 		forceArray[index++] = new DragForce(cloud, gamma);
-	if (usedForces & ShieldedCoulombForceFlag) 
-		forceArray[index++] = new ShieldedCoulombForce(cloud, shieldingConstant);
+	if (usedForces & DrivingForceFlag)
+		forceArray[index++] = new DrivingForce(cloud, driveConst, waveAmplitude, waveShift);
+	if (usedForces & MagneticForceFlag)
+		forceArray[index++] = new MagneticForce(cloud, magneticFieldStrength);
 	if (usedForces & RectConfinementForceFlag)
 		forceArray[index++] = new RectConfinementForce(cloud, confinementConstX, confinementConstY);
+	if (usedForces & RotationalForceFlag)
+		forceArray[index++] = new RotationalForce(cloud, rmin, rmax, rotConst);
+	if (usedForces & ShieldedCoulombForceFlag) 
+		forceArray[index++] = new ShieldedCoulombForce(cloud, shieldingConstant);
 	if (usedForces & ThermalForceFlag)
 		forceArray[index++] = new ThermalForce(cloud, thermRed);
 	if (usedForces & ThermalForceLocalizedFlag)
 		forceArray[index++] = new ThermalForceLocalized(cloud, thermRed, thermRed1, heatRadius);
-	if (usedForces & DrivingForceFlag)
-		forceArray[index++] = new DrivingForce(cloud, driveConst, waveAmplitude, waveShift);
-	if (usedForces & RotationalForceFlag)
-		forceArray[index++] = new RotationalForce(cloud, rmin, rmax, rotConst);
 	if (usedForces & TimeVaryingDragForceFlag)
 		forceArray[index++] = new TimeVaryingDragForce(cloud, dragScale, gamma);
 	if (usedForces & TimeVaryingThermalForceFlag)
