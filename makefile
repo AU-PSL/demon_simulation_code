@@ -15,7 +15,6 @@ CXXFLAGS += -funroll-loops -m64 -Wall -mdynamic-no-pic -march=core2 -fomit-frame
 # Linking Flags
 LDFLAGS = $(CXXFLAGS) -L$(CFITSIO)
 
-# The below should never need to be changed.
 all: $(CMD)
 
 lib: $(LIBS)
