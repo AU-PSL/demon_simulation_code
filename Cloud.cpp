@@ -113,7 +113,7 @@ Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error
 	// create cloud:
 	Cloud * const cloud = new Cloud((cloud_index)numParticles); // cloudSize not used in this case, so set to zero
 
-	// read mass and charge information:
+	// read mass information:
 	if (!*error)
 		// file, column #, starting row, first element, num elements, mass array, pointless pointer, error
 		fits_read_col_dbl(file, 1, 1, 1, numParticles, 0.0, cloud->mass, anyNull, error);
@@ -165,7 +165,7 @@ void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const
 		const_cast<char *> ("m/s"), const_cast<char *> ("m/s"),
 		const_cast<char *> ("C")};
 
-	// write mass and charge:
+	// write mass:
 	if (!*error)
 		// file, storage type, num rows, num columns, ...
 		fits_create_tbl(file, BINARY_TBL, n, 1, ttypeCloud, tformCloud, tunitCloud, "CLOUD", error);	

@@ -78,7 +78,7 @@ void ConfinementForce::writeForce(fitsfile * const file, int * const error) cons
 		fits_write_key_dbl(file, const_cast<char *> ("confineConst"), confine, 6, const_cast<char *> ("[V/m^2] (ConfinementForce)"), error);
 
 	// write background plasma potential offset:
-	if(!*error)
+	if (!*error)
 		fits_write_key_dbl(file, const_cast<char *> ("plasmaPotential"), potentialOffset, 6, const_cast<char *> ("[V] (background plasma potential offset)"), error);
 }
 
