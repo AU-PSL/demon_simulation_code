@@ -123,12 +123,12 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
 	if (valExp < 10.0) // restrict to 10*(ion debye length)
 	{
 		// calculate phi
-		const double coeffient = coulomb/(displacement*exp(valExp));
-		cloud->phi[currentParticle] += coeffient*iCharge;
-		cloud->phi[iParticle] += coeffient*currentCharge;
+		const double coefficient = coulomb/(displacement*exp(valExp));
+		cloud->phi[currentParticle] += coefficient*iCharge;
+		cloud->phi[iParticle] += coefficient*currentCharge;
 
 		// calculate force
-		const double forceC = currentCharge*iCharge*coeffient*(1.0 + valExp)/(displacement*displacement);
+		const double forceC = currentCharge*iCharge*coefficient*(1.0 + valExp)/(displacement*displacement);
 		cloud->forceX[currentParticle] += forceC*displacementX;
 		cloud->forceY[currentParticle] += forceC*displacementY;
 
@@ -159,14 +159,14 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
 							  boolL ? exp(-valExpL) : 0.0);
 
 	// calculate phi
-	const __m128d coeffient = _mm_set1_pd(coulomb)/displacement*expv;
+	const __m128d coefficient = _mm_set1_pd(coulomb)/displacement*expv;
 	double *pPhi = cloud->phi + currentParticle;
-	_mm_store_pd(pPhi, _mm_load_pd(pPhi) + coeffient*iCharge);
+	_mm_store_pd(pPhi, _mm_load_pd(pPhi) + coefficient*iCharge);
 	pPhi = cloud->phi + iParticle;
-	_mm_store_pd(pPhi, _mm_load_pd(pPhi) + coeffient*currentCharge);
+	_mm_store_pd(pPhi, _mm_load_pd(pPhi) + coefficient*currentCharge);
 	
 	// calculate force
-	const __m128d forceC = currentCharge*iCharge*coeffient*(_mm_set1_pd(1.0) + valExp)/(displacement*displacement);
+	const __m128d forceC = currentCharge*iCharge*coefficient*(_mm_set1_pd(1.0) + valExp)/(displacement*displacement);
 	
 	const __m128d forcevX = forceC*displacementX;
 	const __m128d forcevY = forceC*displacementY;
@@ -204,14 +204,14 @@ inline void ShieldedCoulombForce::forcer(const cloud_index currentParticle, cons
 							  boolL ? exp(-valExpL) : 0.0);
 	
 	// calculate phi
-	const __m128d coeffient = _mm_set1_pd(coulomb)/displacement*expv;
+	const __m128d coefficient = _mm_set1_pd(coulomb)/displacement*expv;
 	double *pPhi = cloud->phi + currentParticle;
-	_mm_store_pd(pPhi, _mm_load_pd(pPhi) + coeffient*iCharge);
+	_mm_store_pd(pPhi, _mm_load_pd(pPhi) + coefficient*iCharge);
 	pPhi = cloud->phi + iParticle;
-	_mm_storer_pd(pPhi, _mm_loadr_pd(pPhi) + coeffient*currentCharge);
+	_mm_storer_pd(pPhi, _mm_loadr_pd(pPhi) + coefficient*currentCharge);
     
 	// calculate force
-	const __m128d forceC = currentCharge*iCharge*coeffient*(_mm_set1_pd(1.0) + valExp)/(displacement*displacement);
+	const __m128d forceC = currentCharge*iCharge*coefficient*(_mm_set1_pd(1.0) + valExp)/(displacement*displacement);
 	
 	const __m128d forcevX = forceC*displacementX;
 	const __m128d forcevY = forceC*displacementY;
@@ -235,7 +235,7 @@ void ShieldedCoulombForce::writeForce(fitsfile * const file, int * const error) 
 		// file, # indicating primary HDU, HDU type, error
  		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
 	
-	// add flag indicating that the drag force is used:
+	// add flag indicating that the shielded Coulomb force is used:
 	if (!*error) 
 	{
 		long forceFlags = 0;
