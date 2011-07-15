@@ -1,8 +1,6 @@
-# For each file add the object file that it needs
-# to be made.
-OBJS = Runge_Kutta.o Cloud.o ShieldedCoulombForce.o DragForce.o ConfinementForce.o RectConfinementForce.o ThermalForce.o DrivingForce.o ThermalForceLocalized.o RotationalForce.o mtrand.o TimeVaryingDragForce.o TimeVaryingThermalForce.o PositionVelocityCacheOperator.o
-SRCS = $(OBJS,.o=.cpp)
-HDRS = $(OBJS,.o=.h) Force.h Operator.h
+HDRS = $(wildcard *.h)
+SRCS = $(filter-out driver.cpp, $(wildcard *.cpp))
+OBJS = $(filter-out driver.o, $(patsubst %.cpp, %.o, $(SRCS)))
 
 # Command name
 CMD = DEMON
@@ -18,7 +16,6 @@ CXXFLAGS += -m64 -msse4.1 -I $(CFITSIO)
 # Linking Flags
 LDFLAGS = $(CXXFLAGS) -L$(CFITSIO)
 
-# The below should never need to be changed.
 all: $(CMD) $(LIBS) $(HDRS)
 
 lib: $(LIBS) $(HDRS)

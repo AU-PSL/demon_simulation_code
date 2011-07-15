@@ -1,4 +1,4 @@
-/*===- PositionVelocityCacheOperator.h - libSimulation -========================
+/*===- CacheOperator.h - libSimulation -========================================
 *
 *                                  DEMON
 *
@@ -7,16 +7,16 @@
 *
 *===-----------------------------------------------------------------------===*/
 
-#ifndef POSITIONVELOCITYCACHEOPERATOR_H
-#define POSITIONVELOCITYCACHEOPERATOR_H
+#ifndef CACHEOPERATOR_H
+#define CACHEOPERATOR_H
 
 #include "Operator.h"
 
-class PositionVelocityCacheOperator : public Operator 
+class CacheOperator : public Operator 
 {
 public:
-	PositionVelocityCacheOperator(Cloud * const mycloud) : Operator(mycloud) {}
-	~PositionVelocityCacheOperator() {}
+	CacheOperator(Cloud * const mycloud) : Operator(mycloud) {}
+	~CacheOperator() {}
     
 	void operation1(const double currentTime);
 	void operation2(const double currentTime);
@@ -24,4 +24,4 @@ public:
 	void operation4(const double currentTime);
 };
 
-#endif // POSITIONVELOCITYCACHEOPERATOR
+#endif // CACHEOPERATOR

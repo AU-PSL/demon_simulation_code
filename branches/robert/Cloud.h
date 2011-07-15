@@ -29,14 +29,16 @@ public:
 	double * const n1, * const n2, * const n3, * const n4; //positionsY (Runge-Kutta) tidbits
 	double * const o1, * const o2, * const o3, * const o4; //velocityZ (Runge-Kutta) tidbits
 	double * const p1, * const p2, * const p3, * const p4; //positionsZ (Runge-Kutta) tidbits
+	double * const q1, * const q2, * const q3, * const q4; //charge (Runge-Kutta) tidbits
 	double * const x, * const y, * const z;                //current positions
 	double * const Vx, * const Vy, * const Vz;             //current velocities
-	double * const charge, * const mass;
+	double * const charge, * const mass, * const phi;
 	double * const forceX, * const forceY, * const forceZ;
 	__m128d * const xCache, * const yCache, * const zCache;
 	__m128d * const VxCache, * const VyCache, * const VzCache;
+	__m128d * const qCache;
 	
-	static const double interParticleSpacing;
+	static const double interParticleSpacing, electronCharge, epsilon0, particleRadius;
 
 //public functions:
 	//Input: int index, initialPosX, intialPosY, initialPosZ
@@ -75,30 +77,30 @@ public:
 	const __m128d getx3_pd(const cloud_index i) const;
 	const __m128d getx4_pd(const cloud_index i) const;
 
-	const __m128d getx1r_pd(const unsigned int i) const;
-	const __m128d getx2r_pd(const unsigned int i) const;
-	const __m128d getx3r_pd(const unsigned int i) const;
-	const __m128d getx4r_pd(const unsigned int i) const;
+	const __m128d getx1r_pd(const cloud_index i) const;
+	const __m128d getx2r_pd(const cloud_index i) const;
+	const __m128d getx3r_pd(const cloud_index i) const;
+	const __m128d getx4r_pd(const cloud_index i) const;
 	
 	const __m128d gety1_pd(const cloud_index i) const;
 	const __m128d gety2_pd(const cloud_index i) const;
 	const __m128d gety3_pd(const cloud_index i) const;
 	const __m128d gety4_pd(const cloud_index i) const;
 
-	const __m128d gety1r_pd(const unsigned int i) const;
-	const __m128d gety2r_pd(const unsigned int i) const;
-	const __m128d gety3r_pd(const unsigned int i) const;
-	const __m128d gety4r_pd(const unsigned int i) const;
+	const __m128d gety1r_pd(const cloud_index i) const;
+	const __m128d gety2r_pd(const cloud_index i) const;
+	const __m128d gety3r_pd(const cloud_index i) const;
+	const __m128d gety4r_pd(const cloud_index i) const;
 
 	const __m128d getz1_pd(const cloud_index i) const;
 	const __m128d getz2_pd(const cloud_index i) const;
 	const __m128d getz3_pd(const cloud_index i) const;
 	const __m128d getz4_pd(const cloud_index i) const;
 
-	const __m128d getz1r_pd(const unsigned int i) const;
-	const __m128d getz2r_pd(const unsigned int i) const;
-	const __m128d getz3r_pd(const unsigned int i) const;
-	const __m128d getz4r_pd(const unsigned int i) const;
+	const __m128d getz1r_pd(const cloud_index i) const;
+	const __m128d getz2r_pd(const cloud_index i) const;
+	const __m128d getz3r_pd(const cloud_index i) const;
+	const __m128d getz4r_pd(const cloud_index i) const;
     
 	const __m128d getVx1_pd(const cloud_index i) const;
 	const __m128d getVx2_pd(const cloud_index i) const;
@@ -115,6 +117,16 @@ public:
 	const __m128d getVz3_pd(const cloud_index i) const;
 	const __m128d getVz4_pd(const cloud_index i) const;
 
+	const __m128d getq1_pd(const cloud_index i) const;
+	const __m128d getq2_pd(const cloud_index i) const;
+	const __m128d getq3_pd(const cloud_index i) const;
+	const __m128d getq4_pd(const cloud_index i) const;
+
+	const __m128d getq1r_pd(const cloud_index i) const;
+	const __m128d getq2r_pd(const cloud_index i) const;
+	const __m128d getq3r_pd(const cloud_index i) const;
+	const __m128d getq4r_pd(const cloud_index i) const;
+    
 //static functions:
 	static Cloud * const initializeCloud(const cloud_index numParticles, const long numDimensions);
 

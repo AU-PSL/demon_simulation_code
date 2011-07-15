@@ -13,8 +13,10 @@
 
 using namespace std;
 
-//typical spacing of physical clouds:
 const double Cloud::interParticleSpacing = 0.0003;
+const double Cloud::electronCharge = -1.602E-19;
+const double Cloud::epsilon0 = 8.8541878E-12;
+const double Cloud::particleRadius = 1.45E-6;
 
 Cloud::Cloud(const cloud_index numPar) : n(numPar),
 k1(new double[n]), k2(new double[n]), k3(new double[n]), k4(new double[n]),
@@ -23,12 +25,14 @@ m1(new double[n]), m2(new double[n]), m3(new double[n]), m4(new double[n]),
 n1(new double[n]), n2(new double[n]), n3(new double[n]), n4(new double[n]),
 o1(new double[n]), o2(new double[n]), o3(new double[n]), o4(new double[n]),
 p1(new double[n]), p2(new double[n]), p3(new double[n]), p4(new double[n]),
+q1(new double[n]), q2(new double[n]), q3(new double[n]), q4(new double[n]),
 x(new double[n]), y(new double[n]), z(new double[n]),
 Vx(new double[n]), Vy(new double[n]), Vz(new double[n]),
 charge(new double[n]), mass(new double[n]),
 forceX(new double[n]), forceY(new double[n]), forceZ(new double[n]),
 xCache(new __m128d[n/2]), yCache(new __m128d[n/2]), zCache(new __m128d[n/2]),
-VxCache(new __m128d[n/2]), VyCache(new __m128d[n/2]), VzCache(new __m128d[n/2]) {}
+VxCache(new __m128d[n/2]), VyCache(new __m128d[n/2]), VzCache(new __m128d[n/2]),
+phi(new double[n]), qCache(new __m128d[n/2]) {}
 
 Cloud::~Cloud() 
 {
@@ -38,12 +42,14 @@ Cloud::~Cloud()
 	delete[] n1; delete[] n2; delete[] n3; delete[] n4;
 	delete[] o1; delete[] o2; delete[] o3; delete[] o4;
 	delete[] p1; delete[] p2; delete[] p3; delete[] p4;
+	delete[] q1; delete[] q2; delete[] q3; delete[] q4;
 	delete[] x; delete[] y; delete[] z;
 	delete[] Vx; delete[] Vy; delete[] Vz;
 	delete[] charge; delete[] mass; 
 	delete[] forceX; delete[] forceY; delete[] forceZ;
 	delete[] xCache; delete[] yCache; delete[] zCache;
 	delete[] VxCache; delete[] VyCache; delete[] VzCache;
+	delete[] phi; delete[] qCache;
 }
 
 inline void Cloud::setPosition(const cloud_index index, const double xVal, const double yVal, const double zVal) const
@@ -178,12 +184,11 @@ Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error
 	//create cloud:
 	Cloud* cloud = new Cloud((cloud_index)numParticles); 
 
-	//read mass and charge information:
+	//read mass information:
 	if (!*error)
 	{
 		//file, column #, starting row, first element, num elements, mass array, pointless pointer, error
-		fits_read_col_dbl(file, 1, 1, 1, numParticles, 0.0, cloud->charge, anyNull, error);
-		fits_read_col_dbl(file, 2, 1, 1, numParticles, 0.0, cloud->mass, anyNull, error);
+		fits_read_col_dbl(file, 1, 1, 1, numParticles, 0.0, cloud->mass, anyNull, error);
 	}
 
 	//move to TIME_STEP HDU:
@@ -205,6 +210,7 @@ Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error
 		fits_read_col_dbl(file, 5, numTimeSteps, 1, numParticles, 0.0, cloud->Vx, anyNull, error);
 		fits_read_col_dbl(file, 6, numTimeSteps, 1, numParticles, 0.0, cloud->Vy, anyNull, error);
 		fits_read_col_dbl(file, 7, numTimeSteps, 1, numParticles, 0.0, cloud->Vz, anyNull, error);
+		fits_read_col_dbl(file, 8, numTimeSteps, 1, numParticles, 0.0, cloud->charge, anyNull, error);
 	}
 
 	return cloud;
@@ -217,34 +223,34 @@ void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const
 	numStream << n << "D";
 	const string numString = numStream.str();
 
-	char *ttypeCloud[] = {const_cast<char *> ("CHARGE"), const_cast<char *> ("MASS")};
-	char *tformCloud[] = {const_cast<char *> ("D"), const_cast<char *> ("D")};
-	char *tunitCloud[] = {const_cast<char *> ("C"), const_cast<char *> ("kg")};
+	char *ttypeCloud[] = {const_cast<char *> ("MASS")};
+	char *tformCloud[] = {const_cast<char *> ("D")};
+	char *tunitCloud[] = {const_cast<char *> ("kg")};
 
-	//write mass and charge:
+	//write mass:
 	if (!*error)
 		//file, storage type, num rows, num columns, ...
-		fits_create_tbl(file, BINARY_TBL, n, 2, ttypeCloud, tformCloud, tunitCloud, "CLOUD", error);
+		fits_create_tbl(file, BINARY_TBL, n, 1, ttypeCloud, tformCloud, tunitCloud, "CLOUD", error);
 	if (!*error)
-	{
 		//file, column #, starting row, first element, num elements, mass array, error
-		fits_write_col_dbl(file, 1, 1, 1, n, charge, error);
-		fits_write_col_dbl(file, 2, 1, 1, n, mass, error);
-	}
+		fits_write_col_dbl(file, 1, 1, 1, n, mass, error);
 
 	//write position and velocity:
 	char *ttypeRun[] = {const_cast<char *> ("TIME"),
 		const_cast<char *> ("X_POSITION"), const_cast<char *> ("Y_POSITION"), const_cast<char *> ("Z_POSITION"), 
-		const_cast<char *> ("X_VELOCITY"), const_cast<char *> ("Y_VELOCITY"), const_cast<char *> ("Z_VELOCITY")};
+		const_cast<char *> ("X_VELOCITY"), const_cast<char *> ("Y_VELOCITY"), const_cast<char *> ("Z_VELOCITY"),
+		const_cast<char *> ("CHARGE")};
 	char *tformRun[] = {const_cast<char *> ("D"), 
 		const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str()), 
-		const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str())};
+		const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str()),
+		const_cast<char *> (numString.c_str())};
 	char *tunitRun[] = {const_cast<char *> ("s"),
 		const_cast<char *> ("m"), const_cast<char *> ("m"), const_cast<char *> ("m"), 
-		const_cast<char *> ("m/s"), const_cast<char *> ("m/s"), const_cast<char *> ("m/s")};
+		const_cast<char *> ("m/s"), const_cast<char *> ("m/s"), const_cast<char *> ("m/s"),
+		const_cast<char *> ("C")};
 
 	if (!*error)
-		fits_create_tbl(file, BINARY_TBL, 0, 7, ttypeRun, tformRun, tunitRun, "TIME_STEP", error);
+		fits_create_tbl(file, BINARY_TBL, 0, 8, ttypeRun, tformRun, tunitRun, "TIME_STEP", error);
 		//n.b. num rows automatically incremented. Increment from 0 as opposed to preallocating 
 		//to ensure proper output in the event of program interruption.
 
@@ -258,6 +264,7 @@ void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const
 		fits_write_col_dbl(file, 5, 1, 1, n, Vx, error);
 		fits_write_col_dbl(file, 6, 1, 1, n, Vy, error);
 		fits_write_col_dbl(file, 7, 1, 1, n, Vz, error);
+		fits_write_col_dbl(file, 8, 1, 1, n, charge, error);
 	}
 
 	//write buffer, close file, reopen at same point:
@@ -277,6 +284,7 @@ void Cloud::writeTimeStep(fitsfile * const file, int * const error, double curre
 		fits_write_col_dbl(file, 5, numRows, 1, n, Vx, error);
 		fits_write_col_dbl(file, 6, numRows, 1, n, Vy, error);
 		fits_write_col_dbl(file, 7, numRows, 1, n, Vz, error);
+		fits_write_col_dbl(file, 8, numRows, 1, n, charge, error);
 	}
 
 	//write buffer, close file, reopen at same point:
@@ -478,4 +486,52 @@ const __m128d Cloud::getVz3_pd(const cloud_index i) const
 const __m128d Cloud::getVz4_pd(const cloud_index i) const
 {
     return VzCache[i/2]; // Vz + k3
+}
+
+// Charge helper functions -------------------------------------------------
+const __m128d Cloud::getq1_pd(const cloud_index i) const 
+{
+	// q
+	return _mm_load_pd(charge + i);
+}
+
+const __m128d Cloud::getq2_pd(const cloud_index i) const 
+{
+	// q + q1/2
+	return qCache[i/2];
+}
+
+const __m128d Cloud::getq3_pd(const cloud_index i) const 
+{
+	// q + q2/2
+	return qCache[i/2];
+}
+
+const __m128d Cloud::getq4_pd(const cloud_index i) const 
+{
+	// q + q3
+	return qCache[i/2];
+}
+
+const __m128d Cloud::getq1r_pd(const cloud_index i) const 
+{
+	return _mm_loadr_pd(charge + i);
+}
+
+const __m128d Cloud::getq2r_pd(const cloud_index i) const 
+{
+	const cloud_index j = i/2;
+	return _mm_shuffle_pd(qCache[j], qCache[j], _MM_SHUFFLE2(0, 1));
+}
+
+const __m128d Cloud::getq3r_pd(const cloud_index i) const 
+{
+	const cloud_index j = i/2;
+	return _mm_shuffle_pd(qCache[j], qCache[j], _MM_SHUFFLE2(0, 1));
+}
+
+const __m128d Cloud::getq4r_pd(const cloud_index i) const 
+{
+	const cloud_index j = i/2;
+	return _mm_shuffle_pd(qCache[j], qCache[j], _MM_SHUFFLE2(0, 1));
 }
