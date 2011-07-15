@@ -1,4 +1,4 @@
-/*===- driver_2D.cpp - Driver -=================================================
+/*===- driver.cpp - Driver -====================================================
 *
 *                                  DEMON
 *
@@ -51,7 +51,8 @@ double startTime = 0.0;
 double dataTimeStep = 0.01;
 double simTimeStep = dataTimeStep/100.0;
 double endTime = 5.0;
-double confinementConst = 1E-13;    // confinementForce
+double plasmaPotential = 1.74895;   // background potential offset
+double confinementConst = 1E2;      // confinementForce
 double confinementConstX = 1E-13;   // RectConfinementForce
 double confinementConstY = 1E-13;   // RectConfinementForce
 double confinementConstZ = 1E-13;   // RectConfinementForce (3D)
@@ -99,6 +100,7 @@ void help()
           << " -n 10                  set number of particles" << endl
           << " -o 0.01                set the data Output time step" << endl
           << " -O data.fits           set the name of the output file" << endl
+          << " -p 1.74895             set the background plasma potential offset" << endl
           << " -R 1E-13 1E-13 1E-13   use RectConfinementForce; set confineConstX,Y,Z" << endl
           << " -s 2E4                 set coulomb shelding constant" << endl
           << " -S 1E-15 0.005 0.007   use RotationalForce; set strength, rmin, rmax" << endl
@@ -293,6 +295,9 @@ void parseCommandLineOptions(int argc, char * const argv[])
 			case 'O': // name "O"utput file:
 				checkOption(argc, argv, i, 'O', 1, "output file", F, &outputFileIndex, "data.fits");
 				break;
+			case 'p': //set "p"otential offset:
+				checkOption(argc, argv, i, 'p', 1, "plasma potential", D, &plasmaPotential);
+				break;
 			case 'R': // use "R"ectangular confinement:
 				checkForce(1, 'R', RectConfinementForceFlag);
 				checkOption(argc, argv, i, 'R', 3, "confine constantX", D, &confinementConstX, "confine constantY", D, &confinementConstY, "confine constantZ", D, &confinementConstZ);
@@ -335,17 +340,17 @@ const force_index getNumForces()
 		++i;
 	if (usedForces & DragForceFlag)
 		++i;
-	if (usedForces & ShieldedCoulombForceFlag)
+	if (usedForces & DrivingForceFlag)
 		++i;
 	if (usedForces & RectConfinementForceFlag)
+		++i;
+	if (usedForces & RotationalForceFlag)
+		++i;
+	if (usedForces & ShieldedCoulombForceFlag)
 		++i;
 	if (usedForces & ThermalForceFlag)
 		++i;
 	if (usedForces & ThermalForceLocalizedFlag)
-		++i;
-	if (usedForces & DrivingForceFlag)
-		++i;
-	if (usedForces & RotationalForceFlag)
 		++i;
 	if (usedForces & TimeVaryingDragForceFlag)
 		++i;
@@ -364,7 +369,7 @@ void checkFitsError(const int error, const int lineNumber)
 	fits_read_errmsg(message);
 	cout << "Error: Fits file error " << error 
 		<< " at line number " << lineNumber 
-		<< " (driver_2D.cpp)" << endl 
+		<< " (driver.cpp)" << endl 
 		<< message << endl;
 	exit(1);
 }
@@ -497,21 +502,21 @@ int main (int argc, char * const argv[])
 	if (dimension == 1)
 	{
 		if (usedForces & ConfinementForceFlag)
-			forceArray[index++] = new ConfinementForce1D(cloud, confinementConst);
+			forceArray[index++] = new ConfinementForce1D(cloud, confinementConst, plasmaPotential);
 		if (usedForces & DragForceFlag) 
 			forceArray[index++] = new DragForce1D(cloud, gamma);
-		if (usedForces & ShieldedCoulombForceFlag) 
-			forceArray[index++] = new ShieldedCoulombForce1D(cloud, shieldingConstant);
+		if (usedForces & DrivingForceFlag)
+			forceArray[index++] = new DrivingForce1D(cloud, driveConst, waveAmplitude, waveShift);
 		if (usedForces & RectConfinementForceFlag)
 			forceArray[index++] = new RectConfinementForce1D(cloud, confinementConstX);
+		if (usedForces & RotationalForceFlag)
+			cout << "Warning: Ignoring Rotational force for 1-D clouds." << endl;
+		if (usedForces & ShieldedCoulombForceFlag) 
+			forceArray[index++] = new ShieldedCoulombForce1D(cloud, shieldingConstant);
 		if (usedForces & ThermalForceFlag)
 			forceArray[index++] = new ThermalForce1D(cloud, thermRed);
 		if (usedForces & ThermalForceLocalizedFlag)
 			forceArray[index++] = new ThermalForceLocalized1D(cloud, thermRed, thermRed1, heatRadius);
-		if (usedForces & DrivingForceFlag)
-			forceArray[index++] = new DrivingForce1D(cloud, driveConst, waveAmplitude, waveShift);
-		if (usedForces & RotationalForceFlag)
-			cout << "Warning: Ignoring Rotational force for 1-D clouds." << endl;
 		if (usedForces & TimeVaryingDragForceFlag)
 			forceArray[index++] = new TimeVaryingDragForce1D(cloud, dragScale, gamma);
 		if (usedForces & TimeVaryingThermalForceFlag)
@@ -520,21 +525,21 @@ int main (int argc, char * const argv[])
 	else if (dimension == 2)
 	{
 		if (usedForces & ConfinementForceFlag)
-			forceArray[index++] = new ConfinementForce2D(cloud, confinementConst);
+			forceArray[index++] = new ConfinementForce2D(cloud, confinementConst, plasmaPotential);
 		if (usedForces & DragForceFlag) 
 			forceArray[index++] = new DragForce2D(cloud, gamma);
-		if (usedForces & ShieldedCoulombForceFlag) 
-			forceArray[index++] = new ShieldedCoulombForce2D(cloud, shieldingConstant);
+		if (usedForces & DrivingForceFlag)
+			forceArray[index++] = new DrivingForce2D(cloud, driveConst, waveAmplitude, waveShift);
 		if (usedForces & RectConfinementForceFlag)
 			forceArray[index++] = new RectConfinementForce2D(cloud, confinementConstX, confinementConstY);
+		if (usedForces & RotationalForceFlag)
+			forceArray[index++] = new RotationalForce2D(cloud, rmin, rmax, rotConst);
+		if (usedForces & ShieldedCoulombForceFlag) 
+			forceArray[index++] = new ShieldedCoulombForce2D(cloud, shieldingConstant);
 		if (usedForces & ThermalForceFlag)
 			forceArray[index++] = new ThermalForce2D(cloud, thermRed);
 		if (usedForces & ThermalForceLocalizedFlag)
 			forceArray[index++] = new ThermalForceLocalized2D(cloud, thermRed, thermRed1, heatRadius);
-		if (usedForces & DrivingForceFlag)
-			forceArray[index++] = new DrivingForce2D(cloud, driveConst, waveAmplitude, waveShift);
-		if (usedForces & RotationalForceFlag)
-			forceArray[index++] = new RotationalForce2D(cloud, rmin, rmax, rotConst);
 		if (usedForces & TimeVaryingDragForceFlag)
 			forceArray[index++] = new TimeVaryingDragForce2D(cloud, dragScale, gamma);
 		if (usedForces & TimeVaryingThermalForceFlag)
@@ -543,21 +548,21 @@ int main (int argc, char * const argv[])
 	if (dimension == 3)
 	{
 		if (usedForces & ConfinementForceFlag)
-			forceArray[index++] = new ConfinementForce3D(cloud, confinementConst);
+			forceArray[index++] = new ConfinementForce3D(cloud, confinementConst, plasmaPotential);
 		if (usedForces & DragForceFlag) 
 			forceArray[index++] = new DragForce3D(cloud, gamma);
-		if (usedForces & ShieldedCoulombForceFlag) 
-			forceArray[index++] = new ShieldedCoulombForce3D(cloud, shieldingConstant);
+		if (usedForces & DrivingForceFlag)
+			forceArray[index++] = new DrivingForce3D(cloud, driveConst, waveAmplitude, waveShift);
 		if (usedForces & RectConfinementForceFlag)
 			forceArray[index++] = new RectConfinementForce3D(cloud, confinementConstX, confinementConstY, confinementConstZ);
+		if (usedForces & RotationalForceFlag)
+			forceArray[index++] = new RotationalForce3D(cloud, rmin, rmax, rotConst);
+		if (usedForces & ShieldedCoulombForceFlag) 
+			forceArray[index++] = new ShieldedCoulombForce3D(cloud, shieldingConstant);
 		if (usedForces & ThermalForceFlag)
 			forceArray[index++] = new ThermalForce3D(cloud, thermRed);
 		if (usedForces & ThermalForceLocalizedFlag)
 			forceArray[index++] = new ThermalForceLocalized3D(cloud, thermRed, thermRed1, heatRadius);
-		if (usedForces & DrivingForceFlag)
-			forceArray[index++] = new DrivingForce3D(cloud, driveConst, waveAmplitude, waveShift);
-		if (usedForces & RotationalForceFlag)
-			forceArray[index++] = new RotationalForce3D(cloud, rmin, rmax, rotConst);
 		if (usedForces & TimeVaryingDragForceFlag)
 			forceArray[index++] = new TimeVaryingDragForce3D(cloud, dragScale, gamma);
 		if (usedForces & TimeVaryingThermalForceFlag)

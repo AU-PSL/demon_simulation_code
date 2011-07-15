@@ -16,7 +16,7 @@
 class ConfinementForce1D : public Force
 {
 public:
-	ConfinementForce1D(Cloud * const myCloud, double confineConst);
+	ConfinementForce1D(Cloud * const myCloud, double confineConst, double plasmaPotential);
 	//IMPORTANT: In the above constructor, confineConst must be positive!
 	virtual ~ConfinementForce1D() {}
 
@@ -32,17 +32,17 @@ public:
 
 protected:
 //protected variables:
-	double confine;
+	double confine, potentialOffset;
 
 private:
 //private functions:
-	void force(const cloud_index currentParticle, const __m128d currentPositionX); //common force calculator
+	void force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d charge); //common force calculator
 };
 
 class ConfinementForce2D : public ConfinementForce1D
 {
 public:
-	ConfinementForce2D(Cloud * const myCloud, double confineConst); //overloaded constructor
+	ConfinementForce2D(Cloud * const myCloud, double confineConst, double plasmaPotential); //overloaded constructor
 	virtual ~ConfinementForce2D() {}
 
 //public functions:
@@ -53,13 +53,13 @@ public:
 
 private:
 //private functions:
-	void force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY);
+	void force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY, const __m128d charge);
 };
 
 class ConfinementForce3D : public ConfinementForce2D
 {
 public:
-	ConfinementForce3D(Cloud * const myCloud, double confineConst); //overloaded constructor
+	ConfinementForce3D(Cloud * const myCloud, double confineConst, double plasmaPotential); //overloaded constructor
 	~ConfinementForce3D() {}
 
 //public functions:
@@ -70,7 +70,7 @@ public:
 
 private:
 //private functions:
-	void force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY, const __m128d currentPositionZ);
+	void force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY, const __m128d currentPositionZ, const __m128d charge);
 };
 
 #endif /* CONFINEMENTFORCE_H */
