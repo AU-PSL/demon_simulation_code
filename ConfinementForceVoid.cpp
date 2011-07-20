@@ -73,9 +73,6 @@ inline void ConfinementForceVoid::force(const cloud_index currentParticle, const
 	const __m128d cosV = _mm_set_pd(cos(thetaH), cos(thetaL));
 	const __m128d sinV = _mm_set_pd(sin(thetaH), sin(thetaL));
 
-//	_mm_store_pd(pFx, _mm_load_pd(pFx) + charge*confineV*currentPositionX);
-//	_mm_store_pd(pFy, _mm_load_pd(pFy) + charge*confineV*currentPositionY);
-
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + charge*(confineV*r - decayV*expR)*cosV);
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + charge*(confineV*r - decayV*expR)*sinV);
 
