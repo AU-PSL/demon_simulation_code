@@ -8,6 +8,7 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "ConfinementForce.h"
+#include "ConfinementForceVoid.h"
 #include "DragForce.h"
 #include "DrivingForce.h"
 #include "MagneticForce.h"
@@ -42,6 +43,7 @@ enum clFlagType
 };
 
 bool Mach = false;                  // true -> perform Mach Cone experiment
+double voidDecay = 0.4;             // decay constant in in ConfinementForceVoid
 double magneticFieldStrength = 1.0; // magnitude of B-field in z-direction [T]
 double startTime = 0.0;
 double dataTimeStep = 0.01;
@@ -104,6 +106,7 @@ void help()
           << " -t 0.0001              set the simulation time step" << endl
           << " -T 1E-14               use ThermalForce; set thermal reduction factor" << endl
           << " -v 1E-14 0.0           use TimeVaryingThermalForce; set scale and offset" << endl
+          << " -V 10                  use ConfinementForceVoid; set void decay constant" << endl
           << " -w 1E-13 0.007 0.00001 use DrivingForce; set amplitude, shift, driveConst" << endl << endl
           << "Notes: " << endl << endl
           << " Parameters specified above represent the default values and accepted type," << endl
@@ -313,6 +316,10 @@ void parseCommandLineOptions(int argc, char * const argv[])
 				checkForce(3, 'v', TimeVaryingThermalForceFlag, 'L', ThermalForceLocalizedFlag, 'T', ThermalForceFlag);
 				checkOption(argc, argv, i, 'v', 2, "heat value scale", D, &thermScale, "heat value offset", D, &thermOffset);
 				break;
+			case 'V': // use ConfinementForceVoid:
+				checkForce(1, 'V', ConfinementForceVoidFlag);
+				checkOption(argc, argv, i, 'V', 1, "void decay", D, &voidDecay);
+				break;
 			case 'w': // drive "w"aves:
 				checkForce(1, 'w', DrivingForceFlag);
 				checkOption(argc, argv, i, 'w', 3, "amplitude", D, &waveAmplitude, "wave shift", D, &waveShift, "driving constant", D, &driveConst);
@@ -330,6 +337,8 @@ const force_index getNumForces()
 {
 	force_index i = 0;
 	if (usedForces & ConfinementForceFlag)
+		++i;
+	if (usedForces & ConfinementForceVoidFlag)
 		++i;
 	if (usedForces & DragForceFlag)
 		++i;
@@ -406,7 +415,7 @@ int main (int argc, char * const argv[])
 
 	if (!(usedForces & TimeVaryingDragForceFlag))
 		usedForces |= DragForceFlag;
-	if (!(usedForces & RectConfinementForceFlag))
+	if (!(usedForces & RectConfinementForceFlag) && !(usedForces & ConfinementForceVoidFlag))
 		usedForces |= ConfinementForceFlag;
 	usedForces |= ShieldedCoulombForceFlag;
 
@@ -494,6 +503,8 @@ int main (int argc, char * const argv[])
 	force_index index = 0;
 	if (usedForces & ConfinementForceFlag)
 		forceArray[index++] = new ConfinementForce(cloud, confinementConst, plasmaPotential);
+	if (usedForces & ConfinementForceVoidFlag)
+		forceArray[index++] = new ConfinementForceVoid(cloud, confinementConst, voidDecay, plasmaPotential);
 	if (usedForces & DragForceFlag) 
 		forceArray[index++] = new DragForce(cloud, gamma);
 	if (usedForces & DrivingForceFlag)
