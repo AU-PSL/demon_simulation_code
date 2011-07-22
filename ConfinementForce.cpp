@@ -109,8 +109,8 @@ inline void ConfinementForce2D::force(const cloud_index currentParticle, const _
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;
 
-	_mm_store_pd(pFx, _mm_load_pd(pFx) + cV*currentPositionX);
-	_mm_store_pd(pFy, _mm_load_pd(pFy) + cV*currentPositionY);
+	_mm_store_pd(pFx, _mm_load_pd(pFx) + cV*charge*currentPositionX);
+	_mm_store_pd(pFy, _mm_load_pd(pFy) + cV*charge*currentPositionY);
 
 	const __m128d rr = currentPositionX*currentPositionX + currentPositionY*currentPositionY;
 	double * pPhi = cloud->phi + currentParticle;
@@ -124,9 +124,9 @@ inline void ConfinementForce3D::force(const cloud_index currentParticle, const _
 	double * const pFy = cloud->forceY + currentParticle;
 	double * const pFz = cloud->forceZ + currentParticle;
 
-	_mm_store_pd(pFx, _mm_load_pd(pFx) + cV*currentPositionX);
-	_mm_store_pd(pFy, _mm_load_pd(pFy) + cV*currentPositionY);
-	_mm_store_pd(pFz, _mm_load_pd(pFz) + cV*currentPositionZ);
+	_mm_store_pd(pFx, _mm_load_pd(pFx) + cV*charge*currentPositionX);
+	_mm_store_pd(pFy, _mm_load_pd(pFy) + cV*charge*currentPositionY);
+	_mm_store_pd(pFz, _mm_load_pd(pFz) + cV*charge*currentPositionZ);
 
 	const __m128d rr = currentPositionX*currentPositionX + currentPositionY*currentPositionY + currentPositionZ*currentPositionZ;
 	double * pPhi = cloud->phi + currentParticle;
