@@ -545,7 +545,7 @@ int main (int argc, char * const argv[])
 		if (usedForces & TimeVaryingThermalForceFlag)
 			forceArray[index++] = new TimeVaryingThermalForce2D(cloud, thermScale, thermOffset);
 	}
-	if (dimension == 3)
+	else if (dimension == 3)
 	{
 		if (usedForces & ConfinementForceFlag)
 			forceArray[index++] = new ConfinementForce3D(cloud, confinementConst, plasmaPotential);
