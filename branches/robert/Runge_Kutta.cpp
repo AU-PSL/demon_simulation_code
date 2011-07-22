@@ -11,7 +11,6 @@
 #include "CacheOperator.h"
 #include <cmath>
 #include <limits>
-
 using namespace std;
 
 const double Runge_Kutta::plasmaDensity = 1.0E15;
