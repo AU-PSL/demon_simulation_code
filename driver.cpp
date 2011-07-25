@@ -148,7 +148,7 @@ void checkForce(const force_index numChecks, ...)
 		exit(1);
 	}
 	
-	for (force_index i = 0; i < numChecks; i++)
+	for (force_index i = 1; i < numChecks; i++)
 	{
 		const char nextOption = (char)va_arg(arglist, int);
 		const ForceFlag nextFlag = (ForceFlag)va_arg(arglist, int);
@@ -257,6 +257,7 @@ void parseCommandLineOptions(int argc, char * const argv[])
 			case 'B': // set "B"-field:
 				checkForce(1, 'B', MagneticForceFlag);
 				checkOption(argc, argv, i, 'B', 3, "Bz", D, &Bz, "By", D, &By, "Bx", D, &Bx); 
+				break;
 			case 'c': // "c"ontinue from file:
 				checkOption(argc, argv, i, 'c', 1, "contine file", F, &continueFileIndex, "");
 				break;
