@@ -140,7 +140,7 @@ void checkForce(const force_index numChecks, ...)
 		exit(1);
 	}
 	
-	for (force_index i = 0; i < numChecks; i++)
+	for (force_index i = 1; i < numChecks; i++)
 	{
 		const char nextOption = (char)va_arg(arglist, int);
 		const ForceFlag nextFlag = (ForceFlag)va_arg(arglist, int);
@@ -245,7 +245,7 @@ void parseCommandLineOptions(int argc, char * const argv[])
 	{
 		switch (argv[i][1])
 		{
-			case 'B': // set "B"-field":
+			case 'B': // set "B"-field:
 				checkForce(1, 'B', MagneticForceFlag);
 				checkOption(argc, argv, i, 'B', 1, "magnetic field", D, &magneticFieldStrength);
 				break;
