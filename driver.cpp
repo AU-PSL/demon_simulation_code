@@ -11,6 +11,7 @@
 #include "ConfinementForce.h"
 #include "DragForce.h"
 #include "DrivingForce.h"
+#include "MagneticForce.h"
 #include "RectConfinementForce.h"
 #include "RotationalForce.h"
 #include "ShieldedCoulombForce.h"
@@ -47,6 +48,9 @@ enum clFlagType
 
 long dimension = 2;                 // spatial dimension
 bool Mach = false;                  // true -> perform Mach Cone experiment
+double Bx = 0.0;                    // magnitude of magnetic field in 
+double By = 0.0;                    //    this direction, if magnetic
+double Bz = 1.0;                    //    force is used
 double startTime = 0.0;
 double dataTimeStep = 0.01;
 double simTimeStep = dataTimeStep/100.0;
@@ -87,6 +91,7 @@ void help()
           << "                                      DEMON" << endl
           << "        Dynamic Exploration of Microparticle clouds Optimized Numerically" << endl << endl
           << "Options:" << endl << endl
+          << " -B 1.0 0.0 0.0         use MagneticForce; set Bz, By, Bx [T]" << endl
           << " -c noDefault.fits      continue run from file" << endl
           << " -C 1E-13               set confinementConst" << endl
           << " -d -1.0 10.0           use TimeVaryingDragForce; set scale, offset" << endl
@@ -111,6 +116,7 @@ void help()
           << "Notes: " << endl << endl
           << " Parameters specified above represent the default values and accepted type," << endl
           << "    with the exception of -c and -f, for which there are no default values." << endl
+          << " -B has no effect in 1D; By, Bx ignored in 2D." << endl
           << " -c appends to file; ignores all force flags (use -f to run with different" << endl
           << "    forces). -c overrides -f if both are specified." << endl
           << " -d uses strengthening drag if scale > 0, weakening drag if scale < 0." << endl
@@ -248,6 +254,9 @@ void parseCommandLineOptions(int argc, char * const argv[])
 	{
 		switch (argv[i][1])
 		{
+			case 'B': // set "B"-field:
+				checkForce(1, 'B', MagneticForceFlag);
+				checkOption(argc, argv, i, 'B', 3, "Bz", D, &Bz, "By", D, &By, "Bx", D, &Bx); 
 			case 'c': // "c"ontinue from file:
 				checkOption(argc, argv, i, 'c', 1, "contine file", F, &continueFileIndex, "");
 				break;
@@ -341,6 +350,8 @@ const force_index getNumForces()
 	if (usedForces & DragForceFlag)
 		++i;
 	if (usedForces & DrivingForceFlag)
+		++i;
+	if (usedForces & MagneticForceFlag)
 		++i;
 	if (usedForces & RectConfinementForceFlag)
 		++i;
@@ -507,6 +518,8 @@ int main (int argc, char * const argv[])
 			forceArray[index++] = new DragForce1D(cloud, gamma);
 		if (usedForces & DrivingForceFlag)
 			forceArray[index++] = new DrivingForce1D(cloud, driveConst, waveAmplitude, waveShift);
+		if (usedForces & MagneticForceFlag)
+			forceArray[index++] = new MagneticForce1D(cloud);
 		if (usedForces & RectConfinementForceFlag)
 			forceArray[index++] = new RectConfinementForce1D(cloud, confinementConstX);
 		if (usedForces & RotationalForceFlag)
@@ -530,6 +543,8 @@ int main (int argc, char * const argv[])
 			forceArray[index++] = new DragForce2D(cloud, gamma);
 		if (usedForces & DrivingForceFlag)
 			forceArray[index++] = new DrivingForce2D(cloud, driveConst, waveAmplitude, waveShift);
+		if (usedForces & MagneticForceFlag)
+			forceArray[index++] = new MagneticForce2D(cloud, Bz);
 		if (usedForces & RectConfinementForceFlag)
 			forceArray[index++] = new RectConfinementForce2D(cloud, confinementConstX, confinementConstY);
 		if (usedForces & RotationalForceFlag)
@@ -553,6 +568,8 @@ int main (int argc, char * const argv[])
 			forceArray[index++] = new DragForce3D(cloud, gamma);
 		if (usedForces & DrivingForceFlag)
 			forceArray[index++] = new DrivingForce3D(cloud, driveConst, waveAmplitude, waveShift);
+		if (usedForces & MagneticForceFlag)
+			forceArray[index++] = new MagneticForce3D(cloud, Bz, By, Bx);
 		if (usedForces & RectConfinementForceFlag)
 			forceArray[index++] = new RectConfinementForce3D(cloud, confinementConstX, confinementConstY, confinementConstZ);
 		if (usedForces & RotationalForceFlag)
