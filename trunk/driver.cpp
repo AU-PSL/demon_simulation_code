@@ -106,7 +106,7 @@ void help()
           << " -t 0.0001              set the simulation time step" << endl
           << " -T 1E-14               use ThermalForce; set thermal reduction factor" << endl
           << " -v 1E-14 0.0           use TimeVaryingThermalForce; set scale and offset" << endl
-          << " -V 10                  use ConfinementForceVoid; set void decay constant" << endl
+          << " -V 0.4                 use ConfinementForceVoid; set void decay constant" << endl
           << " -w 1E-13 0.007 0.00001 use DrivingForce; set amplitude, shift, driveConst" << endl << endl
           << "Notes: " << endl << endl
           << " Parameters specified above represent the default values and accepted type," << endl
