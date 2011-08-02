@@ -59,16 +59,10 @@ inline void ConfinementForceVoid::force(const cloud_index currentParticle, const
 	_mm_storeh_pd(&xH, currentPositionX);
 	_mm_storel_pd(&yL, currentPositionY);
 	_mm_storeh_pd(&yH, currentPositionY);
-
-	double thetaL, thetaH;
-	if(yL > 0.0)         //quadrants I and II
-		thetaL = atan2(yL,xL);
-	else                 //quadrants III and IV
-		thetaL = 2*M_PI - atan2(-yL,xL);
-	if(yH > 0.0)         //quadrants I and II
-		thetaH = atan2(yH,xH);
-	else                 //quadrants III and IV
-		thetaH = 2*M_PI - atan2(-yH,xH);
+    
+    //quadrants I and II : quadrants III and IV
+	const double thetaL = (yL > 0.0) ? atan2(yL, xL) : 2.0*M_PI - atan2(-yL, xL);
+    const double thetaH = (yH > 0.0) ? atan2(yH, xH) : 2.0*M_PI - atan2(-yH, xH);
 
 	const __m128d cosV = _mm_set_pd(cos(thetaH), cos(thetaL));
 	const __m128d sinV = _mm_set_pd(sin(thetaH), sin(thetaL));
