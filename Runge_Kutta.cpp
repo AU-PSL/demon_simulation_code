@@ -75,7 +75,8 @@ void Runge_Kutta::moveParticles(const double endTime)
 			_mm_store_pd(cloud->n1 + i, vdt*cloud->getVy1_pd(i)); // positionY tidbit
 #ifdef CHARGE
 			const __m128d pQ = cloud->getq1_pd(i);
-			setChargeConsts(pQ);
+            __m128d qConst1, qConst2;
+			setChargeConsts(pQ, qConst1, qConst2);
 			_mm_store_pd(cloud->q1 + i, -vdt*(qConst1*pQ + qConst2*qConst3*_mm_load_pd(pPhi)));
 #else
 			_mm_store_pd(cloud->q1 + i, _mm_setzero_pd()); // charge tidbit
@@ -105,7 +106,8 @@ void Runge_Kutta::moveParticles(const double endTime)
 			_mm_store_pd(cloud->n2 + i, vdt*cloud->getVy2_pd(i)); // positionY tidbit
 #ifdef CHARGE
 			const __m128d pQ = cloud->getq2_pd(i);
-			setChargeConsts(pQ);
+			__m128d qConst1, qConst2;
+			setChargeConsts(pQ, qConst1, qConst2);
 			_mm_store_pd(cloud->q2 + i, -vdt*(qConst1*pQ + qConst2*qConst3*_mm_load_pd(pPhi)));
 #else			
 			_mm_store_pd(cloud->q2 + i, _mm_setzero_pd()); // charge tidbit
@@ -135,7 +137,8 @@ void Runge_Kutta::moveParticles(const double endTime)
 			_mm_store_pd(cloud->n3 + i, vdt*cloud->getVy3_pd(i)); // positionY tidbit
 #ifdef CHARGE
 			const __m128d pQ = cloud->getq3_pd(i);
-			setChargeConsts(pQ);
+			__m128d qConst1, qConst2;
+			setChargeConsts(pQ, qConst1, qConst2);
 			_mm_store_pd(cloud->q3 + i, -vdt*(qConst1*pQ + qConst2*qConst3*_mm_load_pd(pPhi)));
 #else			
 			_mm_store_pd(cloud->q3 + i, _mm_setzero_pd()); // charge tidbit
@@ -164,7 +167,8 @@ void Runge_Kutta::moveParticles(const double endTime)
 			_mm_store_pd(cloud->n4 + i, vdt*cloud->getVy4_pd(i)); // positionY tidbit
 #ifdef CHARGE
 			const __m128d pQ = cloud->getq4_pd(i);
-			setChargeConsts(pQ);
+			__m128d qConst1, qConst2;
+			setChargeConsts(pQ, qConst1, qConst2);
 			_mm_store_pd(cloud->q4 + i, -vdt*(qConst1*pQ + qConst2*qConst3*_mm_load_pd(pPhi)));
 #else			
 			_mm_store_pd(cloud->q4 + i, _mm_setzero_pd()); // charge tidbit
@@ -356,7 +360,7 @@ void Runge_Kutta::setDynamicChargeParameters(const double plasmaDensity, const d
 
 }
 
-void Runge_Kutta::setChargeConsts(const __m128d charge)
+void Runge_Kutta::setChargeConsts(const __m128d charge, __m128d &qConst1, __m128d &qConst2)
 {
 	const __m128d electronEta = charge/(_mm_set1_pd(electronDebye*electronDebye)*etaDenominator);
 	const __m128d ionEta = charge/(_mm_set1_pd(ionDebye*ionDebye)*etaDenominator);
