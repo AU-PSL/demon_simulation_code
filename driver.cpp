@@ -9,6 +9,7 @@
 
 //Force classes:
 #include "ConfinementForce.h"
+#include "ConfinementForceVoid.h"
 #include "DragForce.h"
 #include "DrivingForce.h"
 #include "MagneticForce.h"
@@ -46,42 +47,41 @@ enum clFlagType
 	F   // File index
 };
 
-long dimension = 2;                 // spatial dimension
-bool Mach = false;                  // true -> perform Mach Cone experiment
-double Bx = 0.0;                    // magnitude of magnetic field in 
-double By = 0.0;                    //    this direction, if magnetic
-double Bz = 1.0;                    //    force is used
-double startTime = 0.0;
+bool Mach = false;                              // true -> perform Mach Cone experiment
+long dimension = 2;                             // spatial dimension
+double Bx = 0.0;                                // magnitude of magnetic field in 
+double By = 0.0;                                //    this direction, if magnetic
+double Bz = 1.0;                                //    force is used
+double confinementConst = 1E2;                  // confinementForce
+double confinementConstX = 1E-13;               // RectConfinementForce
+double confinementConstY = 1E-13;               // RectConfinementForce
+double confinementConstZ = 1E-13;               // RectConfinementForce (3D)
 double dataTimeStep = 0.01;
-double simTimeStep = dataTimeStep/100.0;
+double dragScale = -1.0;                        // used in TimeVaryingDragForce
+double driveConst = 0.00001;                    // used in DrivingForce.cpp for waves
 double endTime = 5.0;
-double plasmaPotential = 1.74895;   // background potential offset
-double confinementConst = 1E2;      // confinementForce
-double confinementConstX = 1E-13;   // RectConfinementForce
-double confinementConstY = 1E-13;   // RectConfinementForce
-double confinementConstZ = 1E-13;   // RectConfinementForce (3D)
-double shieldingConstant = 2E4;     // corresponds to 10*(ion debye length)
 double gamma = 10.0;
-double thermRed = 1E-14;            // default thermal reduction factor
-double thermRed1 = thermRed;        // default outer reduction factor (-L)
-double thermScale = 1E-14;          // default for TimeVaryingThermalForce
-double thermOffset = 0.0;           // default for TimeVaryingThermalForce
-double heatRadius = 0.001;          // apply thermal force only within this radius
-double driveConst = 0.00001;        // used in DrivingForce.cpp for waves
-double waveAmplitude = 1E-13;       // driving wave amplitude (default comparable to other forces throughout cloud)
-double waveShift = 0.007;           // driving wave shift
-double machSpeed = 0.2;             // firing speed for Mach Cone experiment
-double massFactor = 100;            // mass multiplier for fired Mach Cone particle
-double rmin = 
-	Cloud::interParticleSpacing*5.0;  // inner radius of shear layer
-double rmax = 
-	Cloud::interParticleSpacing*10.0; // outer ratius of shear layer
-double rotConst = 1E-15;            // rotational force in shear layer
-double dragScale = -1.0;            // used in TimeVaryingDragForce
-file_index continueFileIndex = 0;   // Index of argv array that holds the file name of the fitsfile to continue. 
-file_index finalsFileIndex = 0;     // Index of argv array that holds the file name of the fitsfile to use finals of.
-file_index outputFileIndex = 0;     // Index of argv array that holds the file name of the fitsfile to output.
-force_flags usedForces = 0;         // bitpacked forces
+double heatRadius = 0.001;                      // apply thermal force only within this radius
+double machSpeed = 0.2;                         // firing speed for Mach Cone experiment
+double massFactor = 100;                        // mass multiplier for fired Mach Cone particle
+double plasmaPotential = 1.74895;               // background potential offset
+double rmin = Cloud::interParticleSpacing*5.0;  // inner radius of shear layer
+double rmax = Cloud::interParticleSpacing*10.0; // outer ratius of shear layer
+double rotConst = 1E-15;                        // rotational force in shear layer
+double shieldingConstant = 2E4;                 // corresponds to 10*(ion debye length)
+double simTimeStep = dataTimeStep/100.0;
+double startTime = 0.0;
+double thermRed = 1E-14;                        // default thermal reduction factor
+double thermRed1 = thermRed;                    // default outer reduction factor (-L)
+double thermScale = 1E-14;                      // default for TimeVaryingThermalForce
+double thermOffset = 0.0;                       // default for TimeVaryingThermalForce
+double voidDecay = 0.4;                         // decay constant in ConfinementForceVoid
+double waveAmplitude = 1E-13;                   // driving wave amplitude (default comparable to other forces throughout cloud)
+double waveShift = 0.007;                       // driving wave shift
+file_index continueFileIndex = 0;               // Index of argv array that holds the file name of the fitsfile to continue. 
+file_index finalsFileIndex = 0;                 // Index of argv array that holds the file name of the fitsfile to use finals of.
+file_index outputFileIndex = 0;                 // Index of argv array that holds the file name of the fitsfile to output.
+force_flags usedForces = 0;                     // bitpacked forces
 cloud_index numParticles = 10;
 
 void help()
@@ -112,6 +112,7 @@ void help()
           << " -t 0.0001              set the simulation time step" << endl
           << " -T 1E-14               use ThermalForce; set thermal reduction factor" << endl
           << " -v 1E-14 0.0           use TimeVaryingThermalForce; set scale and offset" << endl
+          << " -V 0.4                 use ConfinementForceVoid; set void decay constant" << endl
           << " -w 1E-13 0.007 0.00001 use DrivingForce; set amplitude, shift, driveConst" << endl << endl
           << "Notes: " << endl << endl
           << " Parameters specified above represent the default values and accepted type," << endl
@@ -330,6 +331,10 @@ void parseCommandLineOptions(int argc, char * const argv[])
 				checkForce(3, 'v', TimeVaryingThermalForceFlag, 'L', ThermalForceLocalizedFlag, 'T', ThermalForceFlag);
 				checkOption(argc, argv, i, 'v', 2, "heat value scale", D, &thermScale, "heat value offset", D, &thermOffset);
 				break;
+			case 'V': // use ConfinementForceVoid:
+				checkForce(1, 'V', ConfinementForceVoidFlag);
+				checkOption(argc, argv, i, 'V', 1, "void decay", D, &voidDecay);
+				break;
 			case 'w': // drive "w"aves:
 				checkForce(1, 'w', DrivingForceFlag);
 				checkOption(argc, argv, i, 'w', 3, "amplitude", D, &waveAmplitude, "wave shift", D, &waveShift, "driving constant", D, &driveConst);
@@ -347,6 +352,8 @@ const force_index getNumForces()
 {
 	force_index i = 0;
 	if (usedForces & ConfinementForceFlag)
+		++i;
+	if (usedForces & ConfinementForceVoidFlag)
 		++i;
 	if (usedForces & DragForceFlag)
 		++i;
@@ -424,7 +431,7 @@ int main (int argc, char * const argv[])
 	
 	if (!(usedForces & TimeVaryingDragForceFlag))
 		usedForces |= DragForceFlag;
-	if (!(usedForces & RectConfinementForceFlag))
+	if (!(usedForces & RectConfinementForceFlag) && !(usedForces & ConfinementForceVoidFlag))
 		usedForces |= ConfinementForceFlag;
 	usedForces |= ShieldedCoulombForceFlag;
 
@@ -515,6 +522,8 @@ int main (int argc, char * const argv[])
 	{
 		if (usedForces & ConfinementForceFlag)
 			forceArray[index++] = new ConfinementForce1D(cloud, confinementConst, plasmaPotential);
+		if (usedForces & ConfinementForceVoidFlag)
+			forceArray[index++] = new ConfinementForceVoid1D(cloud, confinementConst, voidDecay, plasmaPotential);
 		if (usedForces & DragForceFlag) 
 			forceArray[index++] = new DragForce1D(cloud, gamma);
 		if (usedForces & DrivingForceFlag)
@@ -540,6 +549,8 @@ int main (int argc, char * const argv[])
 	{
 		if (usedForces & ConfinementForceFlag)
 			forceArray[index++] = new ConfinementForce2D(cloud, confinementConst, plasmaPotential);
+		if (usedForces & ConfinementForceVoidFlag)
+			forceArray[index++] = new ConfinementForceVoid2D(cloud, confinementConst, voidDecay, plasmaPotential);
 		if (usedForces & DragForceFlag) 
 			forceArray[index++] = new DragForce2D(cloud, gamma);
 		if (usedForces & DrivingForceFlag)
@@ -565,6 +576,8 @@ int main (int argc, char * const argv[])
 	{
 		if (usedForces & ConfinementForceFlag)
 			forceArray[index++] = new ConfinementForce3D(cloud, confinementConst, plasmaPotential);
+		if (usedForces & ConfinementForceVoidFlag)
+			forceArray[index++] = new ConfinementForceVoid3D(cloud, confinementConst, voidDecay, plasmaPotential);
 		if (usedForces & DragForceFlag) 
 			forceArray[index++] = new DragForce3D(cloud, gamma);
 		if (usedForces & DrivingForceFlag)
