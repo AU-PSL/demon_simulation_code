@@ -122,6 +122,8 @@ public:
 	// Postconditions: cloud initialized with last time step of fitsfile,
 	// forces and other simulation information extracted as well
 	static Cloud * const initializeFromFile(fitsfile * const file, int * const error, double * const currentTime);
+    
+    static void setChargeConsts(const __m128d charge, __m128d &qConst1, __m128d &qConst2);
 };
 
 #endif // CLOUD_H

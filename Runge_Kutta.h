@@ -52,8 +52,6 @@ private:
 
 	const double modifyTimeStep(cloud_index outerIndex, cloud_index innerIndex, const double currentDist, const double currentTimeStep) const;
 	static bool isLessThanOrEqualTo(const __m128d a, const __m128d b);
-    
-    static void setChargeConsts(const __m128d charge, __m128d &qConst1, __m128d &qConst2);
 };
 
 #endif // RUNGE_KUTTA_H

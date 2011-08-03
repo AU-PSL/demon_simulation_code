@@ -412,3 +412,25 @@ const __m128d Cloud::getq4r_pd(const cloud_index i) const
 	const cloud_index j = i/2;
 	return _mm_shuffle_pd(qCache[j], qCache[j], _MM_SHUFFLE2(0, 1));
 }
+
+void Cloud::setChargeConsts(const __m128d charge, __m128d &qConst1, __m128d &qConst2)
+{
+    const double e = electronCharge;
+	const double ee = e*e;
+    
+	const __m128d electronFreqTerm = _mm_set1_pd(sqrt(4.0*M_PI*plasmaDensity*ee/electronMass)/electronDebye);
+	const __m128d ionFreqTerm = _mm_set1_pd(sqrt(4.0*M_PI*plasmaDensity*ee/ionMass)/ionDebye);
+	const __m128d radTerm = _mm_set1_pd(particleRadius/sqrt(2.0*M_PI));
+	const __m128d etaDenominator = _mm_set1_pd(4.0*M_PI*particleRadius*plasmaDensity*e);
+    
+	const __m128d electronEta = charge/(_mm_set1_pd(electronDebye*electronDebye)*etaDenominator);
+	const __m128d ionEta = charge/(_mm_set1_pd(ionDebye*ionDebye)*etaDenominator);
+    
+	double valExpL, valExpH;
+	_mm_storel_pd(&valExpL, electronEta);
+	_mm_storeh_pd(&valExpH, electronEta);
+	const __m128d expTerm = _mm_set_pd(exp(-valExpH), exp(-valExpL));
+    
+	qConst1 = radTerm*(electronFreqTerm*expTerm + ionFreqTerm);
+	qConst2 = radTerm*(electronFreqTerm*expTerm + ionFreqTerm*(_mm_set1_pd(1.0) + ionEta));
+}
