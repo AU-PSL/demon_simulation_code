@@ -68,7 +68,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 #ifdef CHARGE
 			const __m128d pQ = cloud->getq1_pd(i);
             __m128d qConst1, qConst2;
-			setChargeConsts(pQ, qConst1, qConst2);
+            Cloud::setChargeConsts(pQ, qConst1, qConst2);
 			_mm_store_pd(cloud->q1 + i, -vdt*(qConst1*pQ + qConst2*qConst3*_mm_load_pd(pPhi)));
 #else
 			_mm_store_pd(cloud->q1 + i, _mm_setzero_pd()); // charge tidbit
@@ -99,7 +99,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 #ifdef CHARGE
 			const __m128d pQ = cloud->getq2_pd(i);
 			__m128d qConst1, qConst2;
-			setChargeConsts(pQ, qConst1, qConst2);
+			Cloud::setChargeConsts(pQ, qConst1, qConst2);
 			_mm_store_pd(cloud->q2 + i, -vdt*(qConst1*pQ + qConst2*qConst3*_mm_load_pd(pPhi)));
 #else			
 			_mm_store_pd(cloud->q2 + i, _mm_setzero_pd()); // charge tidbit
@@ -130,7 +130,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 #ifdef CHARGE
 			const __m128d pQ = cloud->getq3_pd(i);
 			__m128d qConst1, qConst2;
-			setChargeConsts(pQ, qConst1, qConst2);
+			Cloud::setChargeConsts(pQ, qConst1, qConst2);
 			_mm_store_pd(cloud->q3 + i, -vdt*(qConst1*pQ + qConst2*qConst3*_mm_load_pd(pPhi)));
 #else			
 			_mm_store_pd(cloud->q3 + i, _mm_setzero_pd()); // charge tidbit
@@ -160,7 +160,7 @@ void Runge_Kutta::moveParticles(const double endTime)
 #ifdef CHARGE
 			const __m128d pQ = cloud->getq4_pd(i);
 			__m128d qConst1, qConst2;
-			setChargeConsts(pQ, qConst1, qConst2);
+			Cloud::setChargeConsts(pQ, qConst1, qConst2);
 			_mm_store_pd(cloud->q4 + i, -vdt*(qConst1*pQ + qConst2*qConst3*_mm_load_pd(pPhi)));
 #else			
 			_mm_store_pd(cloud->q4 + i, _mm_setzero_pd()); // charge tidbit
@@ -339,26 +339,3 @@ inline bool Runge_Kutta::isLessThanOrEqualTo(const __m128d a, const __m128d b) {
 	
 	return isnan(low) || isnan(high);
 }
-
-void Runge_Kutta::setChargeConsts(const __m128d charge, __m128d &qConst1, __m128d &qConst2)
-{
-    const double e = Cloud::electronCharge;
-	const double ee = e*e;
-    
-	const __m128d electronFreqTerm = _mm_set1_pd(sqrt(4.0*M_PI*Cloud::plasmaDensity*ee/Cloud::electronMass)/Cloud::electronDebye);
-	const __m128d ionFreqTerm = _mm_set1_pd(sqrt(4.0*M_PI*Cloud::plasmaDensity*ee/Cloud::ionMass)/Cloud::ionDebye);
-	const __m128d radTerm = _mm_set1_pd(Cloud::particleRadius/sqrt(2.0*M_PI));
-	const __m128d etaDenominator = _mm_set1_pd(4.0*M_PI*Cloud::particleRadius*Cloud::plasmaDensity*e);
-    
-	const __m128d electronEta = charge/(_mm_set1_pd(Cloud::electronDebye*Cloud::electronDebye)*etaDenominator);
-	const __m128d ionEta = charge/(_mm_set1_pd(Cloud::ionDebye*Cloud::ionDebye)*etaDenominator);
-
-	double valExpL, valExpH;
-	_mm_storel_pd(&valExpL, electronEta);
-	_mm_storeh_pd(&valExpH, electronEta);
-	const __m128d expTerm = _mm_set_pd(exp(-valExpH), exp(-valExpL));
-
-	qConst1 = radTerm*(electronFreqTerm*expTerm + ionFreqTerm);
-	qConst2 = radTerm*(electronFreqTerm*expTerm + ionFreqTerm*(_mm_set1_pd(1.0) + ionEta));
-}
-
