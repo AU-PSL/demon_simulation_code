@@ -17,6 +17,11 @@ const double Cloud::interParticleSpacing = 0.0003;
 const double Cloud::electronCharge = -1.602E-19;
 const double Cloud::epsilon0 = 8.8541878E-12;
 const double Cloud::particleRadius = 1.45E-6;
+const double Cloud::plasmaDensity = 1.0E15;
+const double Cloud::electronMass = 9.109382E-31;
+const double Cloud::ionMass = 6.63352E-26;
+const double Cloud::electronDebye = 37.0E-6;
+const double Cloud::ionDebye = 370.0E-6;
 
 Cloud::Cloud(const cloud_index numPar) : n(numPar),
 x(new double[n]), y(new double[n]), Vx(new double[n]), Vy(new double[n]), 

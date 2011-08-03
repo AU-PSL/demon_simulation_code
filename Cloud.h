@@ -38,6 +38,11 @@ public:
 	static const double electronCharge;
 	static const double epsilon0;
 	static const double particleRadius;
+    static const double plasmaDensity;
+	static const double electronMass;
+	static const double ionMass;
+	static const double electronDebye;
+	static const double ionDebye;
 
 // public functions:
 	// Input: int index, initialPosX, intialPosY
