@@ -28,15 +28,11 @@ public:
 	const double init_dt; // store initial time step
 	double currentTime;
 
-	__m128d electronFreqTerm, ionFreqTerm, radTerm, etaDenominator;
-
 // public functions:
 	// Input: double endTime
 	// Preconditions: endTime > 0
 	// Postconditions: Runge-Kutta algorithm complete; position, velocity, time updated.
 	void moveParticles(const double endTime);
-
-	//void setChargeConsts(const __m128d charge);
 
 private:
 // private variables:
@@ -56,10 +52,8 @@ private:
 
 	const double modifyTimeStep(cloud_index outerIndex, cloud_index innerIndex, const double currentDist, const double currentTimeStep) const;
 	static bool isLessThanOrEqualTo(const __m128d a, const __m128d b);
-
-	void setDynamicChargeParameters();
     
-    void setChargeConsts(const __m128d charge, __m128d &qConst1, __m128d &qConst2);
+    static void setChargeConsts(const __m128d charge, __m128d &qConst1, __m128d &qConst2);
 };
 
 #endif // RUNGE_KUTTA_H

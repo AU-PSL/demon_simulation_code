@@ -21,8 +21,6 @@ numOperators(1), operations(new Operator*[numOperators])
 {
 	// Operators are order dependent.
 	operations[0] = new CacheOperator(cloud);
-
-	setDynamicChargeParameters();
 }
 
 Runge_Kutta::~Runge_Kutta()
@@ -342,20 +340,16 @@ inline bool Runge_Kutta::isLessThanOrEqualTo(const __m128d a, const __m128d b) {
 	return isnan(low) || isnan(high);
 }
 
-void Runge_Kutta::setDynamicChargeParameters()
-{
-	const double e = Cloud::electronCharge;
-	const double ee = e*e;
-
-	electronFreqTerm = _mm_set1_pd(sqrt(4.0*M_PI*Cloud::plasmaDensity*ee/Cloud::electronMass)/Cloud::electronDebye);
-	ionFreqTerm = _mm_set1_pd(sqrt(4.0*M_PI*Cloud::plasmaDensity*ee/Cloud::ionMass)/Cloud::ionDebye);
-	radTerm = _mm_set1_pd(Cloud::particleRadius/sqrt(2.0*M_PI));
-	etaDenominator = _mm_set1_pd(4.0*M_PI*Cloud::particleRadius*Cloud::plasmaDensity*e);
-
-}
-
 void Runge_Kutta::setChargeConsts(const __m128d charge, __m128d &qConst1, __m128d &qConst2)
 {
+    const double e = Cloud::electronCharge;
+	const double ee = e*e;
+    
+	const __m128d electronFreqTerm = _mm_set1_pd(sqrt(4.0*M_PI*Cloud::plasmaDensity*ee/Cloud::electronMass)/Cloud::electronDebye);
+	const __m128d ionFreqTerm = _mm_set1_pd(sqrt(4.0*M_PI*Cloud::plasmaDensity*ee/Cloud::ionMass)/Cloud::ionDebye);
+	const __m128d radTerm = _mm_set1_pd(Cloud::particleRadius/sqrt(2.0*M_PI));
+	const __m128d etaDenominator = _mm_set1_pd(4.0*M_PI*Cloud::particleRadius*Cloud::plasmaDensity*e);
+    
 	const __m128d electronEta = charge/(_mm_set1_pd(Cloud::electronDebye*Cloud::electronDebye)*etaDenominator);
 	const __m128d ionEta = charge/(_mm_set1_pd(Cloud::ionDebye*Cloud::ionDebye)*etaDenominator);
 
