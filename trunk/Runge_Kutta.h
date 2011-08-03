@@ -30,12 +30,6 @@ public:
 
 	__m128d electronFreqTerm, ionFreqTerm, radTerm, etaDenominator;
 
-	static const double plasmaDensity;
-	static const double electronMass;
-	static const double ionMass;
-	static const double electronDebye;
-	static const double ionDebye;
-
 // public functions:
 	// Input: double endTime
 	// Preconditions: endTime > 0
@@ -63,7 +57,7 @@ private:
 	const double modifyTimeStep(cloud_index outerIndex, cloud_index innerIndex, const double currentDist, const double currentTimeStep) const;
 	static bool isLessThanOrEqualTo(const __m128d a, const __m128d b);
 
-	void setDynamicChargeParameters(const double plasmaDensity, const double electronMass, const double ionMass, const double electronDebye, const double ionDebye);
+	void setDynamicChargeParameters();
     
     void setChargeConsts(const __m128d charge, __m128d &qConst1, __m128d &qConst2);
 };
