@@ -10,13 +10,13 @@
 #ifndef CONFINEMENTFORCEVOID_H
 #define CONFINEMENTFORCEVOID_H
 
-#include "Force.h"
+#include "ConfinementForce.h"
 #include "VectorCompatibility.h"
 
-class ConfinementForceVoid : public Force
+class ConfinementForceVoid : public ConfinementForce
 {	
 public:
-	ConfinementForceVoid(Cloud * const myCloud, double confineConst, double voidDecay, double plasmaPotential);
+	ConfinementForceVoid(Cloud * const myCloud, double confineConst, double plasmaPotential, double voidDecay);
 	// IMPORTANT: In the above constructor, confineConst must be positive!
 	~ConfinementForceVoid() {} // destructor
 

@@ -13,35 +13,38 @@
 
 using namespace std;
 	
-ConfinementForceVoid::ConfinementForceVoid(Cloud * const myCloud, double confineConst, double voidDecay, double plasmaPotential) : Force(myCloud), confine(confineConst), decay(voidDecay), potentialOffset(plasmaPotential) {}
+ConfinementForceVoid::ConfinementForceVoid(Cloud * const myCloud, double confineConst, double plasmaPotential, double voidDecay) : ConfinementForce(myCloud, confineConst, plasmaPotential), decay(voidDecay) {}
 
 void ConfinementForceVoid::force1(const double currentTime)
 {
+	ConfinementForce::force1(currentTime);
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle), cloud->getq1_pd(currentParticle));
 }
 
 void ConfinementForceVoid::force2(const double currentTime)
 {
+	ConfinementForce::force2(currentTime);
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle), cloud->getq2_pd(currentParticle));
 }
 
 void ConfinementForceVoid::force3(const double currentTime)
 {
+	ConfinementForce::force3(currentTime);
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle), cloud->getq3_pd(currentParticle));
 }
 
 void ConfinementForceVoid::force4(const double currentTime)
 {
+	ConfinementForce::force4(currentTime);
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle), cloud->getq4_pd(currentParticle));
 }
 
 inline void ConfinementForceVoid::force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY, const __m128d charge)
 {
-	const __m128d confineV = _mm_set1_pd(confine);
 	const __m128d decayV = _mm_set1_pd(decay);
 	const __m128d rr = currentPositionX*currentPositionX + currentPositionY*currentPositionY;
 	const __m128d r = _mm_sqrt_pd(rr);
@@ -59,19 +62,19 @@ inline void ConfinementForceVoid::force(const cloud_index currentParticle, const
 	_mm_storeh_pd(&xH, currentPositionX);
 	_mm_storel_pd(&yL, currentPositionY);
 	_mm_storeh_pd(&yH, currentPositionY);
-    
-    //quadrants I and II : quadrants III and IV
+
+	//quadrants I and II : quadrants III and IV
 	const double thetaL = (yL > 0.0) ? atan2(yL, xL) : 2.0*M_PI - atan2(-yL, xL);
-    const double thetaH = (yH > 0.0) ? atan2(yH, xH) : 2.0*M_PI - atan2(-yH, xH);
+	const double thetaH = (yH > 0.0) ? atan2(yH, xH) : 2.0*M_PI - atan2(-yH, xH);
 
 	const __m128d cosV = _mm_set_pd(cos(thetaH), cos(thetaL));
 	const __m128d sinV = _mm_set_pd(sin(thetaH), sin(thetaL));
 
-	_mm_store_pd(pFx, _mm_load_pd(pFx) + charge*(confineV*r - decayV*expR)*cosV);
-	_mm_store_pd(pFy, _mm_load_pd(pFy) + charge*(confineV*r - decayV*expR)*sinV);
+	_mm_store_pd(pFx, _mm_load_pd(pFx) - charge*decayV*expR*cosV);
+	_mm_store_pd(pFy, _mm_load_pd(pFy) - charge*decayV*expR*sinV);
 
 	double * pPhi = cloud->phi + currentParticle;
-	_mm_store_pd(pPhi, _mm_set1_pd(-0.5)*confineV*rr + _mm_set1_pd(potentialOffset) + expR);
+	_mm_store_pd(pPhi, _mm_load_pd(pPhi) + expR);
 }
 
 void ConfinementForceVoid::writeForce(fitsfile * const file, int * const error) const
@@ -81,7 +84,7 @@ void ConfinementForceVoid::writeForce(fitsfile * const file, int * const error) 
 		// file, # indicating primary HDU, HDU type, error
  		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
 	
-	// add flag indicating that the confinement force is used:
+	// add flag indicating that the confinement force void is used:
 	if (!*error) 
 	{
 		long forceFlags = 0;
