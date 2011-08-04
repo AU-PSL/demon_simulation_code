@@ -43,7 +43,7 @@ enum clFlagType
 };
 
 bool Mach = false;                  // true -> perform Mach Cone experiment
-double voidDecay = 0.4;             // decay constant in in ConfinementForceVoid
+double voidDecay = 0.4;             // decay constant in ConfinementForceVoid
 double magneticFieldStrength = 1.0; // magnitude of B-field in z-direction [T]
 double startTime = 0.0;
 double dataTimeStep = 0.01;
@@ -504,7 +504,7 @@ int main (int argc, char * const argv[])
 	if (usedForces & ConfinementForceFlag)
 		forceArray[index++] = new ConfinementForce(cloud, confinementConst, plasmaPotential);
 	if (usedForces & ConfinementForceVoidFlag)
-		forceArray[index++] = new ConfinementForceVoid(cloud, confinementConst, voidDecay, plasmaPotential);
+		forceArray[index++] = new ConfinementForceVoid(cloud, confinementConst, plasmaPotential, voidDecay);
 	if (usedForces & DragForceFlag) 
 		forceArray[index++] = new DragForce(cloud, gamma);
 	if (usedForces & DrivingForceFlag)
