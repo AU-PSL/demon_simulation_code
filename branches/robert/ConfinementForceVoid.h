@@ -10,13 +10,16 @@
 #ifndef CONFINEMENTFORCEVOID_H
 #define CONFINEMENTFORCEVOID_H
 
-#include "Force.h"
+#include "ConfinementForce.h"
 #include "VectorCompatibility.h"
 
-class ConfinementForceVoid1D : public Force
+//ConfinementForceVoid1D inherits from ConfinementForce3D (as opposed to 
+// ConfinementForce1D) to circumvent the need for multiple inheritence
+// in ConfinementForce2D/3D.
+class ConfinementForceVoid1D : public ConfinementForce3D
 {	
 public:
-	ConfinementForceVoid1D(Cloud * const myCloud, double confineConst, double voidDecay, double plasmaPotential);
+	ConfinementForceVoid1D(Cloud * const myCloud, double confineConst, double plasmaPotential, double voidDecay);
 	// IMPORTANT: In the above constructor, confineConst must be positive!
 	virtual ~ConfinementForceVoid1D() {} // destructor
 
@@ -42,7 +45,7 @@ private:
 class ConfinementForceVoid2D : public ConfinementForceVoid1D
 {	
 public:
-	ConfinementForceVoid2D(Cloud * const myCloud, double confineConst, double voidDecay, double plasmaPotential);
+	ConfinementForceVoid2D(Cloud * const myCloud, double confineConst, double plasmaPotential, double voidDecay);
 	// IMPORTANT: In the above constructor, confineConst must be positive!
 	virtual ~ConfinementForceVoid2D() {} // destructor
 
@@ -61,7 +64,7 @@ private:
 class ConfinementForceVoid3D : public ConfinementForceVoid2D
 {	
 public:
-	ConfinementForceVoid3D(Cloud * const myCloud, double confineConst, double voidDecay, double plasmaPotential);
+	ConfinementForceVoid3D(Cloud * const myCloud, double confineConst, double plasmaPotential, double voidDecay);
 	// IMPORTANT: In the above constructor, confineConst must be positive!
 	virtual ~ConfinementForceVoid3D() {} // destructor
 };

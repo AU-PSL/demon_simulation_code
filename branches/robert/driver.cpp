@@ -523,7 +523,7 @@ int main (int argc, char * const argv[])
 		if (usedForces & ConfinementForceFlag)
 			forceArray[index++] = new ConfinementForce1D(cloud, confinementConst, plasmaPotential);
 		if (usedForces & ConfinementForceVoidFlag)
-			forceArray[index++] = new ConfinementForceVoid1D(cloud, confinementConst, voidDecay, plasmaPotential);
+			forceArray[index++] = new ConfinementForceVoid1D(cloud, confinementConst, plasmaPotential, voidDecay);
 		if (usedForces & DragForceFlag) 
 			forceArray[index++] = new DragForce1D(cloud, gamma);
 		if (usedForces & DrivingForceFlag)
@@ -550,7 +550,7 @@ int main (int argc, char * const argv[])
 		if (usedForces & ConfinementForceFlag)
 			forceArray[index++] = new ConfinementForce2D(cloud, confinementConst, plasmaPotential);
 		if (usedForces & ConfinementForceVoidFlag)
-			forceArray[index++] = new ConfinementForceVoid2D(cloud, confinementConst, voidDecay, plasmaPotential);
+			forceArray[index++] = new ConfinementForceVoid2D(cloud, confinementConst, plasmaPotential, voidDecay);
 		if (usedForces & DragForceFlag) 
 			forceArray[index++] = new DragForce2D(cloud, gamma);
 		if (usedForces & DrivingForceFlag)
@@ -577,7 +577,7 @@ int main (int argc, char * const argv[])
 		if (usedForces & ConfinementForceFlag)
 			forceArray[index++] = new ConfinementForce3D(cloud, confinementConst, plasmaPotential);
 		if (usedForces & ConfinementForceVoidFlag)
-			forceArray[index++] = new ConfinementForceVoid3D(cloud, confinementConst, voidDecay, plasmaPotential);
+			forceArray[index++] = new ConfinementForceVoid3D(cloud, confinementConst, plasmaPotential, voidDecay);
 		if (usedForces & DragForceFlag) 
 			forceArray[index++] = new DragForce3D(cloud, gamma);
 		if (usedForces & DrivingForceFlag)
