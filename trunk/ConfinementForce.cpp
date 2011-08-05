@@ -46,7 +46,7 @@ inline void ConfinementForce::force(const cloud_index currentParticle, const __m
 
 	const __m128d rr = currentPositionX*currentPositionX + currentPositionY*currentPositionY;
 	double * pPhi = cloud->phi + currentParticle;
-	_mm_store_pd(pPhi, _mm_set1_pd(-0.5)*cV*rr + _mm_set1_pd(potentialOffset));
+	_mm_store_pd(pPhi, _mm_load_pd(pPhi) + _mm_set1_pd(-0.5)*cV*rr + _mm_set1_pd(potentialOffset));
 }
 
 void ConfinementForce::writeForce(fitsfile * const file, int * const error) const
