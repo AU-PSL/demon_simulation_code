@@ -99,7 +99,7 @@ inline void ConfinementForce1D::force(const cloud_index currentParticle, const _
 
 	//calculate contribution to electric potential:
 	double * pPhi = cloud->phi + currentParticle;
-	_mm_store_pd(pPhi, _mm_set1_pd(-0.5)*cV*currentPositionX*currentPositionX + _mm_set1_pd(potentialOffset));
+	_mm_store_pd(pPhi, _mm_load_pd(pPhi) + _mm_set1_pd(-0.5)*cV*currentPositionX*currentPositionX + _mm_set1_pd(potentialOffset));
 	
 }
 
@@ -114,7 +114,7 @@ inline void ConfinementForce2D::force(const cloud_index currentParticle, const _
 
 	const __m128d rr = currentPositionX*currentPositionX + currentPositionY*currentPositionY;
 	double * pPhi = cloud->phi + currentParticle;
-	_mm_store_pd(pPhi, _mm_set1_pd(-0.5)*cV*rr + _mm_set1_pd(potentialOffset));
+	_mm_store_pd(pPhi, _mm_load_pd(pPhi) + _mm_set1_pd(-0.5)*cV*rr + _mm_set1_pd(potentialOffset));
 }
 
 inline void ConfinementForce3D::force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY, const __m128d currentPositionZ, const __m128d charge)
@@ -130,7 +130,7 @@ inline void ConfinementForce3D::force(const cloud_index currentParticle, const _
 
 	const __m128d rr = currentPositionX*currentPositionX + currentPositionY*currentPositionY + currentPositionZ*currentPositionZ;
 	double * pPhi = cloud->phi + currentParticle;
-	_mm_store_pd(pPhi, _mm_set1_pd(-0.5)*cV*rr + _mm_set1_pd(potentialOffset));
+	_mm_store_pd(pPhi, _mm_load_pd(pPhi) + _mm_set1_pd(-0.5)*cV*rr + _mm_set1_pd(potentialOffset));
 }
 
 //write force:
