@@ -65,7 +65,7 @@ inline void Cloud::setVelocity(const cloud_index index) const
 
 inline void Cloud::setCharge() const
 {
-	srand((int)time(NULL));
+	srand((unsigned int)time(NULL));
 	for (cloud_index i = 0; i < n; i++)
 		charge[i] = (rand()%201 + 5900)*electronCharge;
 }

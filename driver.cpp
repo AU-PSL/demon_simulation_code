@@ -31,6 +31,18 @@
 // Cannot include cmath because it causes a conflict with gamma.
 extern "C" double sqrt(double);
 
+void help();
+void checkForce(const force_index numChecks, ...);
+bool isUnsigned(const char *val);
+bool isDouble(const char *val);
+bool isOption(const char *val);
+void checkOption(const int argc, char * const argv[], int &optionIndex, const char option, unsigned numOptions, ...);
+void parseCommandLineOptions(int argc, char * const argv[]);
+const force_index getNumForces();
+void checkFitsError(const int error, const int lineNumber);
+void deleteFitsFile(char * const filename, int * const error);
+void fitsFileExists(char * const filename, int * const error);
+
 using namespace std;
 
 #define clear_line "\33[2K" // VT100 signal to clear line.
@@ -208,7 +220,7 @@ void checkOption(const int argc, char * const argv[], int &optionIndex, const ch
 			{
 				cloud_index *ci = (cloud_index *)val;
 				if (optionIndex < argc && isUnsigned(argv[optionIndex]))
-					*ci = atoi(argv[optionIndex++]);
+					*ci = (cloud_index)atoi(argv[optionIndex++]);
 				else
 					optionWarning<cloud_index> (option, name, *ci);
 				break;
@@ -401,7 +413,8 @@ void deleteFitsFile(char * const filename, int * const error)
 }
 
 // Check if fits file exists
-void fitsFileExists(char * const filename, int * const error) {
+void fitsFileExists(char * const filename, int * const error) 
+{
     int exists = 0;
     fits_file_exists(filename, &exists, error);
     if (!exists)

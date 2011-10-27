@@ -13,28 +13,32 @@
 #include "VectorCompatibility.h"
 
 ThermalForce::ThermalForce(Cloud * const myCloud, const double redFactor) 
-: Force(myCloud), mt(time(NULL)), heatVal(redFactor) {}
+: Force(myCloud), mt((unsigned int)time(NULL)), heatVal(redFactor) {}
 
 void ThermalForce::force1(const double currentTime)
 {
+    (void)currentTime;
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
 
 void ThermalForce::force2(const double currentTime)
 {
+    (void)currentTime;
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
 
 void ThermalForce::force3(const double currentTime)
 {
+    (void)currentTime;
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }
 
 void ThermalForce::force4(const double currentTime)
 {
+    (void)currentTime;
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle);
 }

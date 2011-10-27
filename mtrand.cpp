@@ -21,7 +21,7 @@ void MTRand_int32::gen_state() { // generate new state vector
 void MTRand_int32::seed(unsigned long s) {  // init by 32 bit seed
   state[0] = s & 0xFFFFFFFFUL; // for > 32 bit machines
   for (int i = 1; i < n; ++i) {
-    state[i] = 1812433253UL * (state[i - 1] ^ (state[i - 1] >> 30)) + i;
+    state[i] = 1812433253UL * (state[i - 1] ^ (state[i - 1] >> 30)) + (unsigned long)i;
 // see Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier
 // in the previous versions, MSBs of the seed affect only MSBs of the array state
 // 2002/01/09 modified by Makoto Matsumoto
@@ -35,13 +35,13 @@ void MTRand_int32::seed(const unsigned long* array, int size) { // init by array
   int i = 1, j = 0;
   for (int k = ((n > size) ? n : size); k; --k) {
     state[i] = (state[i] ^ ((state[i - 1] ^ (state[i - 1] >> 30)) * 1664525UL))
-      + array[j] + j; // non linear
+      + array[j] + (unsigned long)j; // non linear
     state[i] &= 0xFFFFFFFFUL; // for > 32 bit machines
     ++j; j %= size;
     if ((++i) == n) { state[0] = state[n - 1]; i = 1; }
   }
   for (int k = n - 1; k; --k) {
-    state[i] = (state[i] ^ ((state[i - 1] ^ (state[i - 1] >> 30)) * 1566083941UL)) - i;
+    state[i] = (state[i] ^ ((state[i - 1] ^ (state[i - 1] >> 30)) * 1566083941UL)) - (unsigned long)i;
     state[i] &= 0xFFFFFFFFUL; // for > 32 bit machines
     if ((++i) == n) { state[0] = state[n - 1]; i = 1; }
   }

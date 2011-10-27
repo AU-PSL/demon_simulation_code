@@ -12,11 +12,13 @@
 
 void CacheOperator::operation1(const double currentTime) 
 {
+    (void)currentTime;
 	// For the first RK4 timeStep the position and velocity remain unaltered.
 }
 
 void CacheOperator::operation2(const double currentTime) 
 {
+    (void)currentTime;
 	const __m128d twov = _mm_set1_pd(2.0);
 	for (cloud_index i = 0, e = cloud->n/2; i < e; i++) 
 	{
@@ -32,6 +34,7 @@ void CacheOperator::operation2(const double currentTime)
 
 void CacheOperator::operation3(const double currentTime) 
 {
+    (void)currentTime;
 	const __m128d twov = _mm_set1_pd(2.0);
 	for (cloud_index i = 0, e = cloud->n/2; i < e; i++) 
 	{
@@ -47,6 +50,7 @@ void CacheOperator::operation3(const double currentTime)
 
 void CacheOperator::operation4(const double currentTime) 
 {
+    (void)currentTime;
 	for (cloud_index i = 0, e = cloud->n/2; i < e; i++) 
 	{
 		const cloud_index offset = 2*i;
