@@ -14,24 +14,28 @@ MagneticForce::MagneticForce(Cloud * const myCloud, const double magneticField)
 
 void MagneticForce::force1(const double currentTime)
 {
+    (void)currentTime;
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, cloud->getVx1_pd(currentParticle), cloud->getVy1_pd(currentParticle), cloud->getq1_pd(currentParticle));
 }
 
 void MagneticForce::force2(const double currentTime)
 {	
+    (void)currentTime;
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, cloud->getVx2_pd(currentParticle), cloud->getVy2_pd(currentParticle), cloud->getq2_pd(currentParticle));
 }
 
 void MagneticForce::force3(const double currentTime)
 {	
+    (void)currentTime;
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, cloud->getVx3_pd(currentParticle), cloud->getVy3_pd(currentParticle), cloud->getq3_pd(currentParticle));
 }
 
 void MagneticForce::force4(const double currentTime)
 {
+    (void)currentTime;
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, cloud->getVx4_pd(currentParticle), cloud->getVy4_pd(currentParticle), cloud->getq4_pd(currentParticle));
 }

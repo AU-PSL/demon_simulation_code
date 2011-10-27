@@ -17,6 +17,7 @@ ShieldedCoulombForce::ShieldedCoulombForce(Cloud * const myCloud, const double s
 
 void ShieldedCoulombForce::force1(const double currentTime)
 {
+    (void)currentTime;
 	for (cloud_index currentParticle = 0, numParticles = cloud->n, e = cloud->n - 1; currentParticle < e; currentParticle += 2) 
 	{
 		const __m128d vx1 = cloud->getx1_pd(currentParticle);
@@ -42,6 +43,7 @@ void ShieldedCoulombForce::force1(const double currentTime)
 
 void ShieldedCoulombForce::force2(const double currentTime)
 {
+    (void)currentTime;
 	for (cloud_index currentParticle = 0, numParticles = cloud->n, e = cloud->n - 1; currentParticle < e; currentParticle += 2) 
 	{
 		const __m128d vx1 = cloud->getx2_pd(currentParticle);
@@ -66,6 +68,7 @@ void ShieldedCoulombForce::force2(const double currentTime)
 
 void ShieldedCoulombForce::force3(const double currentTime)
 {
+    (void)currentTime;
     for (cloud_index currentParticle = 0, numParticles = cloud->n, e = cloud->n - 1; currentParticle < e; currentParticle += 2) 
 	{
 		const __m128d vx1 = cloud->getx3_pd(currentParticle);
@@ -90,6 +93,7 @@ void ShieldedCoulombForce::force3(const double currentTime)
 
 void ShieldedCoulombForce::force4(const double currentTime)
 {
+    (void)currentTime;
 	for (cloud_index currentParticle = 0, numParticles = cloud->n, e = cloud->n - 1; currentParticle < e; currentParticle += 2) 
 	{
 		const __m128d vx1 = cloud->getx4_pd(currentParticle);

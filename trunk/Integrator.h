@@ -18,7 +18,7 @@ class Integrator {
 public:
     Integrator(Cloud * const myCloud, Force ** const forces, const force_index forcesSize,
                const double timeStep, double startTime);
-    ~Integrator();
+    virtual ~Integrator();
     
     // public variables:
 	Cloud * const cloud; // pointer to cloud object
