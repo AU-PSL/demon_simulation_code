@@ -7,8 +7,8 @@
 *
 *===-----------------------------------------------------------------------===*/
 
-#ifndef RUNGA_KUTTA_H
-#define RUNGA_KUTTA_H
+#ifndef RUNGA_KUTTA4_H
+#define RUNGA_KUTTA4_H
 
 #include "Integrator.h"
 #include "Force.h"
@@ -40,4 +40,4 @@ private:
 	void force4(const double currentTime) const; // rk substep 4
 };
 
-#endif // RUNGE_KUTTA_H
+#endif // RUNGE_KUTTA4_H
