@@ -11,7 +11,7 @@
 
 Runge_Kutta4::Runge_Kutta4(Cloud * const myCloud, Force **forces, const force_index forcesSize, 
                            const double timeStep, const double startTime)
-: Integrator(myCloud, forces, forcesSize, timeStep, startTime) {}
+: Runge_Kutta2(myCloud, forces, forcesSize, timeStep, startTime) {}
 
 // 4th order Runge-Kutta algorithm:
 void Runge_Kutta4::moveParticles(const double endTime)
@@ -208,18 +208,6 @@ void Runge_Kutta4::moveParticles(const double endTime)
 	}
 }
 
-inline void Runge_Kutta4::operate1(const double time) const
-{
- 	for (operator_index i = 0; i < numOperators; i++)
-		operations[i]->operation1(time);
-}
-
-inline void Runge_Kutta4::operate2(const double time) const
-{
- 	for (operator_index i = 0; i < numOperators; i++)
-		operations[i]->operation2(time);
-}
-
 inline void Runge_Kutta4::operate3(const double time) const
 {
  	for (operator_index i = 0; i < numOperators; i++)
@@ -230,18 +218,6 @@ inline void Runge_Kutta4::operate4(const double time) const
 {
  	for (operator_index i = 0; i < numOperators; i++)
 		operations[i]->operation4(time);
-}
-
-inline void Runge_Kutta4::force1(const double time) const
-{
- 	for (force_index i = 0; i < numForces; i++)
-		theForce[i]->force1(time);
-}
-
-inline void Runge_Kutta4::force2(const double time) const
-{
- 	for (force_index i = 0; i < numForces; i++)
-		theForce[i]->force2(time);
 }
 
 inline void Runge_Kutta4::force3(const double time) const

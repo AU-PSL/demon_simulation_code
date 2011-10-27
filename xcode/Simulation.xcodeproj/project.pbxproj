@@ -15,6 +15,8 @@
 		4D51B13B13E8A68600F37502 /* MagneticForce.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D51B13913E8A68600F37502 /* MagneticForce.h */; };
 		4DDA63D21459F63A00E795F8 /* Integrator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4DDA63D11459F63A00E795F8 /* Integrator.cpp */; };
 		4DDA63D61459F6A300E795F8 /* Integrator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DDA63D51459F6A300E795F8 /* Integrator.h */; };
+		4DDA63D9145A010000E795F8 /* Runge_Kutta2.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DDA63D8145A010000E795F8 /* Runge_Kutta2.h */; };
+		4DDA63DB145A012E00E795F8 /* Runge_Kutta2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4DDA63DA145A012E00E795F8 /* Runge_Kutta2.cpp */; };
 		4DDDB4F912BA7E62003AC69F /* Operator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DDDB4F812BA7E62003AC69F /* Operator.h */; };
 		E1B3A959129D710500599DFF /* VectorCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B3A958129D710500599DFF /* VectorCompatibility.h */; };
 		E1FD94351299994F00EBC94D /* Cloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FD942F1299994C00EBC94D /* Cloud.cpp */; };
@@ -67,6 +69,8 @@
 		4D51B13913E8A68600F37502 /* MagneticForce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MagneticForce.h; path = ../MagneticForce.h; sourceTree = "<group>"; };
 		4DDA63D11459F63A00E795F8 /* Integrator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Integrator.cpp; path = ../Integrator.cpp; sourceTree = "<group>"; };
 		4DDA63D51459F6A300E795F8 /* Integrator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Integrator.h; path = ../Integrator.h; sourceTree = "<group>"; };
+		4DDA63D8145A010000E795F8 /* Runge_Kutta2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Runge_Kutta2.h; path = ../Runge_Kutta2.h; sourceTree = "<group>"; };
+		4DDA63DA145A012E00E795F8 /* Runge_Kutta2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Runge_Kutta2.cpp; path = ../Runge_Kutta2.cpp; sourceTree = "<group>"; };
 		4DDDB4F812BA7E62003AC69F /* Operator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Operator.h; path = ../Operator.h; sourceTree = SOURCE_ROOT; };
 		D2AAC046055464E500DB518D /* libSimulation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSimulation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E16C487E12A587AE004F3B02 /* LICENSE.TXT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.TXT; path = ../LICENSE.TXT; sourceTree = SOURCE_ROOT; };
@@ -155,6 +159,8 @@
 		4DDA63D7145A003600E795F8 /* Integrators */ = {
 			isa = PBXGroup;
 			children = (
+				4DDA63D8145A010000E795F8 /* Runge_Kutta2.h */,
+				4DDA63DA145A012E00E795F8 /* Runge_Kutta2.cpp */,
 				E1FD94481299996F00EBC94D /* Runge_Kutta4.h */,
 				E1FD94471299996F00EBC94D /* Runge_Kutta4.cpp */,
 			);
@@ -280,6 +286,7 @@
 				4D51B13513E8A60200F37502 /* ConfinementForceVoid.h in Headers */,
 				4D51B13B13E8A68600F37502 /* MagneticForce.h in Headers */,
 				4DDA63D61459F6A300E795F8 /* Integrator.h in Headers */,
+				4DDA63D9145A010000E795F8 /* Runge_Kutta2.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -372,6 +379,7 @@
 				4D51B13713E8A60A00F37502 /* ConfinementForceVoid.cpp in Sources */,
 				4D51B13A13E8A68600F37502 /* MagneticForce.cpp in Sources */,
 				4DDA63D21459F63A00E795F8 /* Integrator.cpp in Sources */,
+				4DDA63DB145A012E00E795F8 /* Runge_Kutta2.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

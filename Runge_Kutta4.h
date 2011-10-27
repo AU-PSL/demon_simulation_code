@@ -10,11 +10,11 @@
 #ifndef RUNGA_KUTTA4_H
 #define RUNGA_KUTTA4_H
 
-#include "Integrator.h"
+#include "Runge_Kutta2.h"
 #include "Force.h"
 #include "Operator.h"
 
-class Runge_Kutta4 : public Integrator
+class Runge_Kutta4 : public Runge_Kutta2
 {
 public:
 	Runge_Kutta4(Cloud * const myCloud, Force ** const forces, const force_index forcesSize, 
@@ -29,13 +29,9 @@ public:
 
 private:
 // private functions:
-	void operate1(const double currentTime) const; // rk substep 1
-	void operate2(const double currentTime) const; // rk substep 2
 	void operate3(const double currentTime) const; // rk substep 3
 	void operate4(const double currentTime) const; // rk substep 4
   
-	void force1(const double currentTime) const; // rk substep 1
-	void force2(const double currentTime) const; // rk substep 2
 	void force3(const double currentTime) const; // rk substep 3
 	void force4(const double currentTime) const; // rk substep 4
 };
