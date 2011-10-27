@@ -13,8 +13,9 @@
 		4D51B13713E8A60A00F37502 /* ConfinementForceVoid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D51B13613E8A60900F37502 /* ConfinementForceVoid.cpp */; };
 		4D51B13A13E8A68600F37502 /* MagneticForce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D51B13813E8A68600F37502 /* MagneticForce.cpp */; };
 		4D51B13B13E8A68600F37502 /* MagneticForce.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D51B13913E8A68600F37502 /* MagneticForce.h */; };
+		4DDA63D21459F63A00E795F8 /* Integrator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4DDA63D11459F63A00E795F8 /* Integrator.cpp */; };
+		4DDA63D61459F6A300E795F8 /* Integrator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DDA63D51459F6A300E795F8 /* Integrator.h */; };
 		4DDDB4F912BA7E62003AC69F /* Operator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DDDB4F812BA7E62003AC69F /* Operator.h */; };
-		4DF78C9812F1D6FC00DBE4FC /* libcfitsio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DF78C9712F1D6FC00DBE4FC /* libcfitsio.a */; };
 		E1B3A959129D710500599DFF /* VectorCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B3A958129D710500599DFF /* VectorCompatibility.h */; };
 		E1FD94351299994F00EBC94D /* Cloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FD942F1299994C00EBC94D /* Cloud.cpp */; };
 		E1FD94361299994F00EBC94D /* Cloud.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FD94301299994F00EBC94D /* Cloud.h */; };
@@ -31,8 +32,8 @@
 		E1FD94561299996F00EBC94D /* RectConfinementForce.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FD94441299996F00EBC94D /* RectConfinementForce.h */; };
 		E1FD94571299996F00EBC94D /* RotationalForce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FD94451299996F00EBC94D /* RotationalForce.cpp */; };
 		E1FD94581299996F00EBC94D /* RotationalForce.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FD94461299996F00EBC94D /* RotationalForce.h */; };
-		E1FD94591299996F00EBC94D /* Runge_Kutta.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FD94471299996F00EBC94D /* Runge_Kutta.cpp */; };
-		E1FD945A1299996F00EBC94D /* Runge_Kutta.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FD94481299996F00EBC94D /* Runge_Kutta.h */; };
+		E1FD94591299996F00EBC94D /* Runge_Kutta4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FD94471299996F00EBC94D /* Runge_Kutta4.cpp */; };
+		E1FD945A1299996F00EBC94D /* Runge_Kutta4.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FD94481299996F00EBC94D /* Runge_Kutta4.h */; };
 		E1FD945B1299996F00EBC94D /* ShieldedCoulombForce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FD94491299996F00EBC94D /* ShieldedCoulombForce.cpp */; };
 		E1FD945C1299996F00EBC94D /* ShieldedCoulombForce.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FD944A1299996F00EBC94D /* ShieldedCoulombForce.h */; };
 		E1FD945D1299996F00EBC94D /* ThermalForce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FD944B1299996F00EBC94D /* ThermalForce.cpp */; };
@@ -64,8 +65,9 @@
 		4D51B13613E8A60900F37502 /* ConfinementForceVoid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ConfinementForceVoid.cpp; path = ../ConfinementForceVoid.cpp; sourceTree = "<group>"; };
 		4D51B13813E8A68600F37502 /* MagneticForce.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MagneticForce.cpp; path = ../MagneticForce.cpp; sourceTree = "<group>"; };
 		4D51B13913E8A68600F37502 /* MagneticForce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MagneticForce.h; path = ../MagneticForce.h; sourceTree = "<group>"; };
+		4DDA63D11459F63A00E795F8 /* Integrator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Integrator.cpp; path = ../Integrator.cpp; sourceTree = "<group>"; };
+		4DDA63D51459F6A300E795F8 /* Integrator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Integrator.h; path = ../Integrator.h; sourceTree = "<group>"; };
 		4DDDB4F812BA7E62003AC69F /* Operator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Operator.h; path = ../Operator.h; sourceTree = SOURCE_ROOT; };
-		4DF78C9712F1D6FC00DBE4FC /* libcfitsio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcfitsio.a; path = /Users/mark/cfitsio/libcfitsio.a; sourceTree = "<absolute>"; };
 		D2AAC046055464E500DB518D /* libSimulation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSimulation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E16C487E12A587AE004F3B02 /* LICENSE.TXT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.TXT; path = ../LICENSE.TXT; sourceTree = SOURCE_ROOT; };
 		E16C488412A58E39004F3B02 /* README.TXT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.TXT; path = ../README.TXT; sourceTree = "<group>"; };
@@ -86,8 +88,8 @@
 		E1FD94441299996F00EBC94D /* RectConfinementForce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RectConfinementForce.h; path = ../RectConfinementForce.h; sourceTree = SOURCE_ROOT; };
 		E1FD94451299996F00EBC94D /* RotationalForce.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RotationalForce.cpp; path = ../RotationalForce.cpp; sourceTree = SOURCE_ROOT; };
 		E1FD94461299996F00EBC94D /* RotationalForce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RotationalForce.h; path = ../RotationalForce.h; sourceTree = SOURCE_ROOT; };
-		E1FD94471299996F00EBC94D /* Runge_Kutta.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Runge_Kutta.cpp; path = ../Runge_Kutta.cpp; sourceTree = SOURCE_ROOT; };
-		E1FD94481299996F00EBC94D /* Runge_Kutta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Runge_Kutta.h; path = ../Runge_Kutta.h; sourceTree = SOURCE_ROOT; };
+		E1FD94471299996F00EBC94D /* Runge_Kutta4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Runge_Kutta4.cpp; path = ../Runge_Kutta4.cpp; sourceTree = SOURCE_ROOT; };
+		E1FD94481299996F00EBC94D /* Runge_Kutta4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Runge_Kutta4.h; path = ../Runge_Kutta4.h; sourceTree = SOURCE_ROOT; };
 		E1FD94491299996F00EBC94D /* ShieldedCoulombForce.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShieldedCoulombForce.cpp; path = ../ShieldedCoulombForce.cpp; sourceTree = SOURCE_ROOT; };
 		E1FD944A1299996F00EBC94D /* ShieldedCoulombForce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShieldedCoulombForce.h; path = ../ShieldedCoulombForce.h; sourceTree = SOURCE_ROOT; };
 		E1FD944B1299996F00EBC94D /* ThermalForce.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ThermalForce.cpp; path = ../ThermalForce.cpp; sourceTree = SOURCE_ROOT; };
@@ -115,7 +117,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E1FD947112999A5700EBC94D /* libSimulation.a in Frameworks */,
-				4DF78C9812F1D6FC00DBE4FC /* libcfitsio.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -128,7 +129,6 @@
 				08FB7795FE84155DC02AAC07 /* Source */,
 				C6A0FF2B0290797F04C91782 /* Documentation */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
-				4DF78C9712F1D6FC00DBE4FC /* libcfitsio.a */,
 			);
 			name = Simulation;
 			sourceTree = "<group>";
@@ -150,6 +150,15 @@
 				E1FD946A12999A2800EBC94D /* DEMON */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		4DDA63D7145A003600E795F8 /* Integrators */ = {
+			isa = PBXGroup;
+			children = (
+				E1FD94481299996F00EBC94D /* Runge_Kutta4.h */,
+				E1FD94471299996F00EBC94D /* Runge_Kutta4.cpp */,
+			);
+			name = Integrators;
 			sourceTree = "<group>";
 		};
 		4DDDB4F512BA7E11003AC69F /* Operators */ = {
@@ -175,8 +184,9 @@
 			children = (
 				E1FD94301299994F00EBC94D /* Cloud.h */,
 				E1FD942F1299994C00EBC94D /* Cloud.cpp */,
-				E1FD94481299996F00EBC94D /* Runge_Kutta.h */,
-				E1FD94471299996F00EBC94D /* Runge_Kutta.cpp */,
+				4DDA63D51459F6A300E795F8 /* Integrator.h */,
+				4DDA63D11459F63A00E795F8 /* Integrator.cpp */,
+				4DDA63D7145A003600E795F8 /* Integrators */,
 				E1FD943D1299996300EBC94D /* Force.h */,
 				E1FD9466129999C200EBC94D /* Forces */,
 				4DDDB4F812BA7E62003AC69F /* Operator.h */,
@@ -258,7 +268,7 @@
 				E1FD94541299996F00EBC94D /* mtrand.h in Headers */,
 				E1FD94561299996F00EBC94D /* RectConfinementForce.h in Headers */,
 				E1FD94581299996F00EBC94D /* RotationalForce.h in Headers */,
-				E1FD945A1299996F00EBC94D /* Runge_Kutta.h in Headers */,
+				E1FD945A1299996F00EBC94D /* Runge_Kutta4.h in Headers */,
 				E1FD945C1299996F00EBC94D /* ShieldedCoulombForce.h in Headers */,
 				E1FD945E1299996F00EBC94D /* ThermalForce.h in Headers */,
 				E1FD94601299996F00EBC94D /* ThermalForceLocalized.h in Headers */,
@@ -269,6 +279,7 @@
 				4D3A684913AF3EBD00A74926 /* CacheOperator.h in Headers */,
 				4D51B13513E8A60200F37502 /* ConfinementForceVoid.h in Headers */,
 				4D51B13B13E8A68600F37502 /* MagneticForce.h in Headers */,
+				4DDA63D61459F6A300E795F8 /* Integrator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -316,7 +327,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 0410;
+				LastUpgradeCheck = 0420;
 				ORGANIZATIONNAME = "Plasma Sciences Laboratory";
 			};
 			buildConfigurationList = 1DEB91EF08733DB70010E9CD /* Build configuration list for PBXProject "Simulation" */;
@@ -351,7 +362,7 @@
 				E1FD94531299996F00EBC94D /* mtrand.cpp in Sources */,
 				E1FD94551299996F00EBC94D /* RectConfinementForce.cpp in Sources */,
 				E1FD94571299996F00EBC94D /* RotationalForce.cpp in Sources */,
-				E1FD94591299996F00EBC94D /* Runge_Kutta.cpp in Sources */,
+				E1FD94591299996F00EBC94D /* Runge_Kutta4.cpp in Sources */,
 				E1FD945B1299996F00EBC94D /* ShieldedCoulombForce.cpp in Sources */,
 				E1FD945D1299996F00EBC94D /* ThermalForce.cpp in Sources */,
 				E1FD945F1299996F00EBC94D /* ThermalForceLocalized.cpp in Sources */,
@@ -360,6 +371,7 @@
 				4D3A684813AF3EBD00A74926 /* CacheOperator.cpp in Sources */,
 				4D51B13713E8A60A00F37502 /* ConfinementForceVoid.cpp in Sources */,
 				4D51B13A13E8A68600F37502 /* MagneticForce.cpp in Sources */,
+				4DDA63D21459F63A00E795F8 /* Integrator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -390,8 +402,10 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = /Users/mark/cfitsio;
 				INSTALL_PATH = /usr/local/lib;
-				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = /Users/mark/cfitsio;
+				OTHER_LDFLAGS = "-lcfitsio";
 				PRODUCT_NAME = Simulation;
 			};
 			name = Debug;
@@ -402,8 +416,10 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
+				HEADER_SEARCH_PATHS = /Users/mark/cfitsio;
 				INSTALL_PATH = /usr/local/lib;
-				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = /Users/mark/cfitsio;
+				OTHER_LDFLAGS = "-lcfitsio";
 				PRODUCT_NAME = Simulation;
 			};
 			name = Release;
