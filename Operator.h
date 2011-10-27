@@ -11,6 +11,7 @@
 #define OPERATOR_H
 
 #include "Cloud.h"
+typedef unsigned char operator_index;
 
 class Operator 
 {

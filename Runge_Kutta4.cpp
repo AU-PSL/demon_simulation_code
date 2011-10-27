@@ -15,7 +15,8 @@
 
 using namespace std;
 
-Runge_Kutta4::Runge_Kutta4(Cloud * const myCloud, Force **forces, const double timeStep, const force_index forcesSize, const double startTime)
+Runge_Kutta4::Runge_Kutta4(Cloud * const myCloud, Force **forces, const force_index forcesSize, 
+                           const double timeStep, const double startTime)
 : cloud(myCloud), theForce(forces), numForces(forcesSize), init_dt(timeStep), currentTime(startTime), 
 numOperators(1), operations(new Operator*[numOperators])
 {

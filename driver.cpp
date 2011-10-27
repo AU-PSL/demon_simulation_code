@@ -566,7 +566,7 @@ int main (int argc, char * const argv[])
 		cloud->mass[0] *= massFactor;
 	}
 	
-	Runge_Kutta rk4(cloud, forceArray, simTimeStep, numForces, startTime);
+	Runge_Kutta rk4(cloud, forceArray, numForces, simTimeStep, startTime);
 
 	// execute simulation for desired length of time:
 	while (startTime < endTime)

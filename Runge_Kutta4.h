@@ -11,14 +11,13 @@
 #define RUNGA_KUTTA_H
 
 #include "Force.h"
-
-class Operator;
-typedef unsigned char operator_index;
+#include "Operator.h"
 
 class Runge_Kutta4
 {
 public:
-	Runge_Kutta4(Cloud * const myCloud, Force ** const forces, const double timeStep, const force_index forcesSize, double startTime);
+	Runge_Kutta4(Cloud * const myCloud, Force ** const forces, const force_index forcesSize, 
+                 const double timeStep, const double startTime);
 	~Runge_Kutta4();
 
 // public variables:
