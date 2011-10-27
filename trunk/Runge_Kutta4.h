@@ -10,22 +10,16 @@
 #ifndef RUNGA_KUTTA_H
 #define RUNGA_KUTTA_H
 
+#include "Integrator.h"
 #include "Force.h"
 #include "Operator.h"
 
-class Runge_Kutta4
+class Runge_Kutta4 : public Integrator
 {
 public:
 	Runge_Kutta4(Cloud * const myCloud, Force ** const forces, const force_index forcesSize, 
                  const double timeStep, const double startTime);
-	~Runge_Kutta4();
-
-// public variables:
-	Cloud * const cloud; // pointer to cloud object
-	Force ** const theForce; // pointer to Force object
-	const force_index numForces;
-	const double init_dt; // store initial time step
-	double currentTime;
+	~Runge_Kutta4() {}
 
 // public functions:
 	// Input: double endTime
@@ -34,10 +28,6 @@ public:
 	void moveParticles(const double endTime);
 
 private:
-// private variables:
-	const operator_index numOperators;
-	Operator ** const operations;
-    
 // private functions:
 	void operate1(const double currentTime) const; // rk substep 1
 	void operate2(const double currentTime) const; // rk substep 2
@@ -48,9 +38,6 @@ private:
 	void force2(const double currentTime) const; // rk substep 2
 	void force3(const double currentTime) const; // rk substep 3
 	void force4(const double currentTime) const; // rk substep 4
-
-	const double modifyTimeStep(cloud_index outerIndex, cloud_index innerIndex, const double currentDist, const double currentTimeStep) const;
-	static bool isLessThanOrEqualTo(const __m128d a, const __m128d b);
 };
 
 #endif // RUNGE_KUTTA_H
