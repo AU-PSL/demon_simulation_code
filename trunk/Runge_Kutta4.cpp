@@ -1,4 +1,4 @@
-/*===- Runge_Kutta4.cpp - libSimulation -========================================
+/*===- Runge_Kutta4.cpp - libSimulation -=======================================
 *
 *                                  DEMON
 *
