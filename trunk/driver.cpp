@@ -14,7 +14,7 @@
 #include "MagneticForce.h"
 #include "RectConfinementForce.h"
 #include "RotationalForce.h"
-#include "Runge_Kutta.h"
+#include "Runge_Kutta4.h"
 #include "ShieldedCoulombForce.h"
 #include "ThermalForce.h"
 #include "ThermalForceLocalized.h"
