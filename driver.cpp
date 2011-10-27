@@ -14,6 +14,7 @@
 #include "MagneticForce.h"
 #include "RectConfinementForce.h"
 #include "RotationalForce.h"
+#include "Runge_Kutta2.h"
 #include "Runge_Kutta4.h"
 #include "ShieldedCoulombForce.h"
 #include "ThermalForce.h"
@@ -43,6 +44,7 @@ enum clFlagType
 };
 
 bool Mach = false;                  // true -> perform Mach Cone experiment
+bool rk4 = true;
 double voidDecay = 0.4;             // decay constant in ConfinementForceVoid
 double magneticFieldStrength = 1.0; // magnitude of B-field in z-direction [T]
 double startTime = 0.0;
@@ -94,6 +96,7 @@ void help()
           << " -f noDefaut.fits       use final positions and velocities from file" << endl
           << " -g 10.0                set gamma (magnitute of drag constant)" << endl
           << " -h                     display Help (instead of running)" << endl
+          << " -I                     use 2nd order Runge-Kutta integrator" << endl
           << " -L 0.001 1E-14 1E-14   use ThermalForceLocalized; set rad, in/out therm vals" << endl
           << " -M 0.2 100             create Mach Cone; set bullet velocity, mass factor" << endl
           << " -n 10                  set number of particles" << endl
@@ -271,6 +274,10 @@ void parseCommandLineOptions(int argc, char * const argv[])
 			case 'h': // display "h"elp:
 				help();
 				exit(0);
+            case 'i': // use 2nd order "i"ntegrator
+                rk4 = false;
+                i++;
+                break;
 			case 'L': // perform "L"ocalized heating experiment:
 				checkForce(3, 'L', ThermalForceLocalizedFlag, 'T', ThermalForceFlag, 'v', TimeVaryingThermalForceFlag);
 				checkOption(argc, argv, i, 'L', 3, "radius", D, &heatRadius, "heat factor1", D, &thermRed, "heat factor2", D, &thermRed1);
@@ -566,18 +573,19 @@ int main (int argc, char * const argv[])
 		cloud->mass[0] *= massFactor;
 	}
 	
-	Runge_Kutta rk4(cloud, forceArray, numForces, simTimeStep, startTime);
+    Integrator *integrate = rk4 ? new Runge_Kutta4(cloud, forceArray, numForces, simTimeStep, startTime)
+                                : new Runge_Kutta2(cloud, forceArray, numForces, simTimeStep, startTime);
 
 	// execute simulation for desired length of time:
 	while (startTime < endTime)
 	{
-		cout << clear_line << "\rCurrent Time: " << rk4.currentTime << "s (" 
-		<< rk4.currentTime/endTime*100.0 << "% Complete)" << flush;
+		cout << clear_line << "\rCurrent Time: " << integrate->currentTime << "s (" 
+		<< integrate->currentTime/endTime*100.0 << "% Complete)" << flush;
 		
 		// call Runge-Kutta algorithm:
-		rk4.moveParticles(startTime += dataTimeStep);
+		integrate->moveParticles(startTime += dataTimeStep);
 		// write positions and velocities:
-		cloud->writeTimeStep(file, &error, rk4.currentTime);
+		cloud->writeTimeStep(file, &error, integrate->currentTime);
 	}
 
 /*------------------------------------------------------------------------------

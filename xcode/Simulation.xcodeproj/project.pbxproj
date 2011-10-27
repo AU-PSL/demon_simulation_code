@@ -410,10 +410,10 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				HEADER_SEARCH_PATHS = /Users/mark/cfitsio;
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
-				LIBRARY_SEARCH_PATHS = /Users/mark/cfitsio;
-				OTHER_LDFLAGS = "-lcfitsio";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Simulation;
 			};
 			name = Debug;
@@ -424,10 +424,10 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
-				HEADER_SEARCH_PATHS = /Users/mark/cfitsio;
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
-				LIBRARY_SEARCH_PATHS = /Users/mark/cfitsio;
-				OTHER_LDFLAGS = "-lcfitsio";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Simulation;
 			};
 			name = Release;
@@ -446,9 +446,10 @@
 				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = /Users/mark/programs/cfitsio;
-				LIBRARY_SEARCH_PATHS = /Users/mark/programs/cfitsio;
+				HEADER_SEARCH_PATHS = /Users/mark/cfitsio;
+				LIBRARY_SEARCH_PATHS = /Users/mark/cfitsio;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-lcfitsio";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "";
@@ -497,9 +498,10 @@
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = /Users/mark/programs/cfitsio;
-				LIBRARY_SEARCH_PATHS = /Users/mark/programs/cfitsio;
+				HEADER_SEARCH_PATHS = /Users/mark/cfitsio;
+				LIBRARY_SEARCH_PATHS = /Users/mark/cfitsio;
 				LLVM_LTO = NO;
+				OTHER_LDFLAGS = "-lcfitsio";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "";
@@ -515,11 +517,10 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../../../../cfitsio\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = DEMON;
 			};
 			name = Debug;
@@ -533,11 +534,10 @@
 				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_MODEL_TUNING = G5;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../../../../cfitsio\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = DEMON;
 				ZERO_LINK = NO;
 			};
