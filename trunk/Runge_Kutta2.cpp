@@ -121,25 +121,25 @@ void Runge_Kutta2::moveParticles(const double endTime)
 	}
 }
 
-inline void Runge_Kutta2::operate1(const double time) const
+void Runge_Kutta2::operate1(const double time) const
 {
  	for (operator_index i = 0; i < numOperators; i++)
 		operations[i]->operation1(time);
 }
 
-inline void Runge_Kutta2::operate2(const double time) const
+void Runge_Kutta2::operate2(const double time) const
 {
  	for (operator_index i = 0; i < numOperators; i++)
 		operations[i]->operation2(time);
 }
 
-inline void Runge_Kutta2::force1(const double time) const
+void Runge_Kutta2::force1(const double time) const
 {
  	for (force_index i = 0; i < numForces; i++)
 		theForce[i]->force1(time);
 }
 
-inline void Runge_Kutta2::force2(const double time) const
+void Runge_Kutta2::force2(const double time) const
 {
  	for (force_index i = 0; i < numForces; i++)
 		theForce[i]->force2(time);
