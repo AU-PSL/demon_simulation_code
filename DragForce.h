@@ -11,7 +11,6 @@
 #define DRAGFORCE_H
 
 #include "Force.h"
-#include "VectorCompatibility.h"
 
 class DragForce : public Force
 {	

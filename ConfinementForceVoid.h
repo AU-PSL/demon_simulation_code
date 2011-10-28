@@ -11,7 +11,6 @@
 #define CONFINEMENTFORCEVOID_H
 
 #include "ConfinementForce.h"
-#include "VectorCompatibility.h"
 
 class ConfinementForceVoid : public ConfinementForce
 {	

@@ -8,41 +8,49 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "ThermalForceLocalized.h"
+#include "Parallel.h"
 #include <ctime>
 #include <cmath>
 
-ThermalForceLocalized::ThermalForceLocalized(Cloud * const myCloud, const double thermRed1, const double thermRed2, const double specifiedRadius) 
-: Force(myCloud), mt((unsigned long)time(NULL)), heatingRadius(specifiedRadius), heatVal1(thermRed1), heatVal2(thermRed2) {}
+ThermalForceLocalized::ThermalForceLocalized(Cloud * const myCloud, const double thermRed1, 
+                                             const double thermRed2, const double specifiedRadius) 
+: Force(myCloud), mt((unsigned long)time(NULL)), heatingRadius(specifiedRadius), 
+heatVal1(thermRed1), heatVal2(thermRed2) {}
 
 void ThermalForceLocalized::force1(const double currentTime)
 {
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
+    end_parallel_for
 }
 
 void ThermalForceLocalized::force2(const double currentTime)
 {
 	(void)currentTime;
-    for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+    begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
+    end_parallel_for
 }
 
 void ThermalForceLocalized::force3(const double currentTime)
 {
 	(void)currentTime;
-    for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+    begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
+    end_parallel_for
 }
 
 void ThermalForceLocalized::force4(const double currentTime)
 {
 	(void)currentTime;
-    for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+    begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
+    end_parallel_for
 }
 
-inline void ThermalForceLocalized::force(const cloud_index currentParticle, const __m128d displacementX, const __m128d displacementY)
+inline void ThermalForceLocalized::force(const cloud_index currentParticle, const __m128d displacementX, 
+                                         const __m128d displacementY)
 {
 	const __m128d radiusV = _mm_sqrt_pd(displacementX*displacementX + displacementY*displacementY);
 	const double thetaL = mt()*2.0*M_PI;
@@ -83,15 +91,19 @@ void ThermalForceLocalized::writeForce(fitsfile * const file, int * const error)
 
 		// add or update keyword:
 		if (!*error) 
-			fits_update_key(file, TLONG, const_cast<char *> ("FORCES"), &forceFlags, const_cast<char *> ("Force configuration."), error);
+			fits_update_key(file, TLONG, const_cast<char *> ("FORCES"), &forceFlags, 
+                            const_cast<char *> ("Force configuration."), error);
 	}
 
 	if (!*error)
 	{
 		// file, key name, value, precision (scientific format), comment
-		fits_write_key_dbl(file, const_cast<char *> ("heatingValue1"), heatVal1, 6, const_cast<char *> ("[N] (ThermalForceLocalized)"), error);
-		fits_write_key_dbl(file, const_cast<char *> ("heatingValue2"), heatVal2, 6, const_cast<char *> ("[N] (ThermalForceLocalized)"), error);
-		fits_write_key_dbl(file, const_cast<char *> ("heatingRadius"), heatingRadius, 6, const_cast<char *> ("[m] (ThermalForceLocalized)"), error);
+		fits_write_key_dbl(file, const_cast<char *> ("heatingValue1"), heatVal1, 
+                           6, const_cast<char *> ("[N] (ThermalForceLocalized)"), error);
+		fits_write_key_dbl(file, const_cast<char *> ("heatingValue2"), heatVal2, 
+                           6, const_cast<char *> ("[N] (ThermalForceLocalized)"), error);
+		fits_write_key_dbl(file, const_cast<char *> ("heatingRadius"), heatingRadius, 
+                           6, const_cast<char *> ("[m] (ThermalForceLocalized)"), error);
 	}
 }
 

@@ -11,7 +11,6 @@
 #define MAGNETICFORCE_H
 
 #include "Force.h"
-#include "VectorCompatibility.h"
 
 class MagneticForce : public Force
 {	

@@ -11,7 +11,6 @@
 #define ROTATIONALFORCE_H
 
 #include "Force.h"
-#include "VectorCompatibility.h"
 
 class RotationalForce : public Force
 {	

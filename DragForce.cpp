@@ -8,6 +8,7 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "DragForce.h"
+#include "Parallel.h"
 
 DragForce::DragForce(Cloud * const myCloud, const double gamma) 
 : Force(myCloud), dragConst(-gamma) {}
@@ -15,29 +16,33 @@ DragForce::DragForce(Cloud * const myCloud, const double gamma)
 void DragForce::force1(const double currentTime)
 {
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle, cloud->getVx1_pd(currentParticle), cloud->getVy1_pd(currentParticle));
+    end_parallel_for
 }
 
 void DragForce::force2(const double currentTime)
 {	
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getVx2_pd(currentParticle), cloud->getVy2_pd(currentParticle));
+    end_parallel_for
 }
 
 void DragForce::force3(const double currentTime)
 {	
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle, cloud->getVx3_pd(currentParticle), cloud->getVy3_pd(currentParticle));
+    end_parallel_for
 }
 
 void DragForce::force4(const double currentTime)
 {
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle, cloud->getVx4_pd(currentParticle), cloud->getVy4_pd(currentParticle));
+    end_parallel_for
 }
 
 inline void DragForce::force(const cloud_index currentParticle, const __m128d currentVelocityX, const __m128d currentVelocityY)
@@ -71,12 +76,14 @@ void DragForce::writeForce(fitsfile * const file, int * const error) const
 
 		// add or update keyword:
 		if (!*error) 
-			fits_update_key(file, TLONG, const_cast<char *> ("FORCES"), &forceFlags, const_cast<char *> ("Force configuration."), error);
+			fits_update_key(file, TLONG, const_cast<char *> ("FORCES"), &forceFlags, 
+                            const_cast<char *> ("Force configuration."), error);
 	}
 	
 	if (!*error)
 		// file, key name, value, precision (scientific format), comment
-		fits_write_key_dbl(file, const_cast<char *> ("dragConst"), dragConst, 6, const_cast<char *> ("[s^-1] (DragForce)"), error);
+		fits_write_key_dbl(file, const_cast<char *> ("dragConst"), dragConst, 
+                           6, const_cast<char *> ("[s^-1] (DragForce)"), error);
 }
 
 void DragForce::readForce(fitsfile * const file, int * const error)

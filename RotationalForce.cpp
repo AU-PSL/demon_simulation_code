@@ -8,9 +8,8 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "RotationalForce.h"
+#include "Parallel.h"
 #include <cmath>
-
-using namespace std;
 
 RotationalForce::RotationalForce(Cloud * const myCloud, const double rmin, const double rmax, const double rotConst)
 : Force(myCloud), innerRad(rmin), outerRad(rmax), rotationalConst(rotConst) {}
@@ -18,37 +17,43 @@ RotationalForce::RotationalForce(Cloud * const myCloud, const double rmin, const
 void RotationalForce::force1(const double currentTime)
 {
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
+	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
+    end_parallel_for
 }
 
 void RotationalForce::force2(const double currentTime)
 {
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
+	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
+    end_parallel_for
 }
 
 void RotationalForce::force3(const double currentTime)
 {
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
+	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
+    end_parallel_for
 }
 
 void RotationalForce::force4(const double currentTime)
 {
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
+	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
+    end_parallel_for
 }
 
-inline void RotationalForce::force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY)
+inline void RotationalForce::force(const cloud_index currentParticle, const __m128d currentPositionX, 
+                                   const __m128d currentPositionY)
 {
 	const __m128d dustRadV = _mm_sqrt_pd(currentPositionX*currentPositionX + currentPositionY*currentPositionY);
 
 	// dustRad > innerRad && dustRadV < outerRad
-	const __m128d compV = _mm_and_pd(_mm_cmpgt_pd(dustRadV, _mm_set1_pd(innerRad)), _mm_cmplt_pd(dustRadV, _mm_set1_pd(outerRad)));
+	const __m128d compV = _mm_and_pd(_mm_cmpgt_pd(dustRadV, _mm_set1_pd(innerRad)), 
+                                     _mm_cmplt_pd(dustRadV, _mm_set1_pd(outerRad)));
 	double compL, compH;
 	_mm_storel_pd(&compL, compV);
 	_mm_storeh_pd(&compH, compV);
@@ -92,15 +97,19 @@ void RotationalForce::writeForce(fitsfile * const file, int * const error) const
 
 		// add or update keyword:
 		if (!*error) 
-			fits_update_key(file, TLONG, const_cast<char *> ("FORCES"), &forceFlags, const_cast<char *> ("Force configuration."), error);
+			fits_update_key(file, TLONG, const_cast<char *> ("FORCES"), &forceFlags, 
+                            const_cast<char *> ("Force configuration."), error);
 	}
 
 	if (!*error)
 	{
 		// file, key name, value, precision (scientific format), comment
-		fits_write_key_dbl(file, const_cast<char *> ("rotationalConst"), rotationalConst, 6, const_cast<char *> ("[N] (RotationalForce)"), error);
-		fits_write_key_dbl(file, const_cast<char *> ("innerRadius"), innerRad, 6, const_cast<char *> ("[m] (RotationalForce)"), error);
-		fits_write_key_dbl(file, const_cast<char *> ("outerRadius"), outerRad, 6, const_cast<char *> ("[m] (RotationalForce)"), error);
+		fits_write_key_dbl(file, const_cast<char *> ("rotationalConst"), rotationalConst, 
+                           6, const_cast<char *> ("[N] (RotationalForce)"), error);
+		fits_write_key_dbl(file, const_cast<char *> ("innerRadius"), innerRad, 
+                           6, const_cast<char *> ("[m] (RotationalForce)"), error);
+		fits_write_key_dbl(file, const_cast<char *> ("outerRadius"), outerRad, 
+                           6, const_cast<char *> ("[m] (RotationalForce)"), error);
 	}
 }
 

@@ -11,7 +11,6 @@
 #define CONFINEMENTFORCE_H
 
 #include "Force.h"
-#include "VectorCompatibility.h"
 
 class ConfinementForce : public Force
 {	

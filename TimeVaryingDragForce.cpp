@@ -62,14 +62,17 @@ void TimeVaryingDragForce::writeForce(fitsfile * const file, int * const error) 
 
 		// add or update keyword:
 		if (!*error) 
-			fits_update_key(file, TLONG, const_cast<char *> ("FORCES"), &forceFlags, const_cast<char *> ("Force configureation."), error);
+			fits_update_key(file, TLONG, const_cast<char *> ("FORCES"), &forceFlags, 
+                            const_cast<char *> ("Force configureation."), error);
 	}
 		
 	if (!*error)
 	{
 		// file, key name, value, precision (scientific format), comment
-		fits_write_key_dbl(file, const_cast<char *> ("TVDragScaleConst"), scaleConst, 6, const_cast<char *> ("[s^-2] (TimeVaryingDragForce)"), error);
-		fits_write_key_dbl(file, const_cast<char *> ("TVDragOffsetConst"), offsetConst, 6, const_cast<char *> ("[s^-1] (TimeVaryingDragForce)"), error);
+		fits_write_key_dbl(file, const_cast<char *> ("TVDragScaleConst"), scaleConst, 
+                           6, const_cast<char *> ("[s^-2] (TimeVaryingDragForce)"), error);
+		fits_write_key_dbl(file, const_cast<char *> ("TVDragOffsetConst"), offsetConst, 
+                           6, const_cast<char *> ("[s^-1] (TimeVaryingDragForce)"), error);
 	}
 }
 

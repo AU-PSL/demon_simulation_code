@@ -9,58 +9,55 @@
 
 #include "Integrator.h"
 #include "CacheOperator.h"
-#include "VectorCompatibility.h"
+#include "Parallel.h"
 #include <cmath>
 #include <limits>
 
 Integrator::Integrator(Cloud * const myCloud, Force ** const forces, const force_index forcesSize,
                        const double timeStep, double startTime)
 : cloud(myCloud), theForce(forces), numForces(forcesSize), init_dt(timeStep), currentTime(startTime), 
-numOperators(1), operations(new Operator*[numOperators])
-{
+numOperators(1), operations(new Operator*[numOperators]) {
 	// Operators are order dependent.
 	operations[0] = new CacheOperator(cloud);
 }
 
-Integrator::~Integrator()
-{
-	for (operator_index i = 0; i < numOperators; i++)
+Integrator::~Integrator() {
+	begin_parallel_for(i, e, numOperators, 1)
 		delete operations[i];
+    end_parallel_for
 	delete[] operations;
 }
 
 /*------------------------------------------------------------------------------
- * If a particle spacing is less than the specified distance reduce timestep by a
- * factor of 10 and recheck with disance reduced by a factor of 10. Once all
- * particle spacings are outside the specified distance use the current timestep.
- * This allows fine grain control of reduced timesteps.
- ------------------------------------------------------------------------------*/
-const double Integrator::modifyTimeStep(cloud_index outerIndex, cloud_index innerIndex, const double currentDist, 
-                                        const double currentTimeStep) const
-{
+* If a particle spacing is less than the specified distance reduce timestep by a
+* factor of 10 and recheck with disance reduced by a factor of 10. Once all
+* particle spacings are outside the specified distance use the current timestep.
+* This allows fine grain control of reduced timesteps.
+------------------------------------------------------------------------------*/
+const double Integrator::modifyTimeStep(double currentDist, double currentTimeStep) const {
 	// set constants:	
 	const cloud_index numPar = cloud->n;
-	const __m128d distv = _mm_set1_pd(currentDist);
 	const double redFactor = 10.0;
     
 	// loop through entire cloud, or until reduction occures. Reset innerIndex after each loop iteration.
-	for (cloud_index e = numPar - 1; outerIndex < e; outerIndex += 2, innerIndex = outerIndex + 2)
-	{
+	begin_parallel_for(outerIndex, e, cloud->n - 1, 2)
 		// caculate separation distance b/t adjacent elements:
 		const double sepx = cloud->x[outerIndex] - cloud->x[outerIndex + 1];
 		const double sepy = cloud->y[outerIndex] - cloud->y[outerIndex + 1];
         
 		// if particles too close, reduce time step:
-		if (sqrt(sepx*sepx + sepy*sepy) <= currentDist)
-			return modifyTimeStep(outerIndex, innerIndex, currentDist/redFactor, currentTimeStep/redFactor);
-        
+		while (sqrt(sepx*sepx + sepy*sepy) <= currentDist)
+            if (sqrt(sepx*sepx + sepy*sepy) <= currentDist) {
+                currentDist /= redFactor;
+                currentTimeStep /= redFactor;
+            }
+		
 		// load positions into vectors:
 		const __m128d vx1 = cloud->getx1_pd(outerIndex);	// x vector
 		const __m128d vy1 = cloud->gety1_pd(outerIndex);	// y vector
         
 		// calculate separation distance b/t nonadjacent elements:
-		for (; innerIndex < numPar; innerIndex += 2)
-		{
+		for (cloud_index innerIndex = outerIndex + 2; innerIndex < numPar; innerIndex += 2) {
 			// assign position pointers:
 			const double * const px2 = cloud->x + innerIndex;
 			const double * const py2 = cloud->y + innerIndex;
@@ -69,19 +66,27 @@ const double Integrator::modifyTimeStep(cloud_index outerIndex, cloud_index inne
 			__m128d vx2 = vx1 - _mm_load_pd(px2);
 			__m128d vy2 = vy1 - _mm_load_pd(py2);
             
-			// check separation distances against dist:
-			if (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), distv))	// if either are too close, reduce time step
-				return modifyTimeStep(outerIndex, innerIndex, currentDist/redFactor, currentTimeStep/redFactor);
+			// check separation distances against dist. If either are too close, reduce time step.
+			while (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(currentDist)))
+                // Retest condition to make sure a different thread hasn't already reduced.
+                if (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(currentDist))) {
+                    currentDist /= redFactor;
+                    currentTimeStep /= redFactor;
+                }
             
 			// calculate j,i+1 and j+1,i separation distances:
 			vx2 = vx1 - _mm_loadr_pd(px2);
 			vy2 = vy1 - _mm_loadr_pd(py2);
             
-			// check separation distances against dist:
-			if (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), distv))	// if either are too close, reduce time step
-				return modifyTimeStep(outerIndex, innerIndex, currentDist/redFactor, currentTimeStep/redFactor);
+			// check separation distances against dist. If either are too close, reduce time step.
+			while (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(currentDist)))
+                // Retest condition to make sure a different thread hasn't already reduced.
+                if (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(currentDist))) {
+                    currentDist /= redFactor;
+                    currentTimeStep /= redFactor;
+                }
 		}
-	}
+	end_parallel_for
     
 	// reset time step:
 	return currentTimeStep;
