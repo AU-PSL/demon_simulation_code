@@ -16,40 +16,35 @@ const double DrivingForce::angFreq = 2.0*M_PI*10.0; // 10Hz
 DrivingForce::DrivingForce(Cloud * const myCloud, const double drivingConst, const double amp, const double drivingShift)
 : Force(myCloud), amplitude(amp), driveConst(-drivingConst), shift(drivingShift) {}
 
-void DrivingForce::force1(const double currentTime)
-{
+void DrivingForce::force1(const double currentTime) {
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; 
          currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, vtime, cloud->getx1_pd(currentParticle));
 }
 
-void DrivingForce::force2(const double currentTime)
-{
+void DrivingForce::force2(const double currentTime) {
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; 
          currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, vtime, cloud->getx2_pd(currentParticle));
 }
 
-void DrivingForce::force3(const double currentTime)
-{
+void DrivingForce::force3(const double currentTime) {
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; 
          currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, vtime, cloud->getx3_pd(currentParticle));
 }
 
-void DrivingForce::force4(const double currentTime)
-{
+void DrivingForce::force4(const double currentTime) {
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	for (cloud_index currentParticle = 0, numParticles = cloud->n; 
          currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, vtime, cloud->getx4_pd(currentParticle));
 }
 
-inline void DrivingForce::force(const cloud_index currentParticle, const __m128d currentTime, const __m128d currentPositionX)
-{	
+inline void DrivingForce::force(const cloud_index currentParticle, const __m128d currentTime, const __m128d currentPositionX) {
 	// F = A*sin(k*x - w*t)*exp(-(x + x0)^2/B) is in the paper
 	// NOTE: This is different than the equation listed in the paper. The paper 
 	// is incorrect.
@@ -68,16 +63,14 @@ inline void DrivingForce::force(const cloud_index currentParticle, const __m128d
 	_mm_store_pd(pFx, _mm_load_pd(pFx) + _mm_set1_pd(amplitude)*_mm_set_pd(sin(sinArgH), sin(sinArgL))*_mm_set_pd(exp(expArgH), exp(expArgL))); // _mm_set_pd() is backwards
 }
 
-void DrivingForce::writeForce(fitsfile * const file, int * const error) const
-{
+void DrivingForce::writeForce(fitsfile * const file, int * const error) const {
 	// move to primary HDU:
 	if (!*error)
 		// file, # indicating primary HDU, HDU type, error
  		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
 	
 	// add flag indicating that the driving force is used:
-	if (!*error) 
-	{
+	if (!*error) {
 		long forceFlags = 0;
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &forceFlags, NULL, error);
 
@@ -93,8 +86,7 @@ void DrivingForce::writeForce(fitsfile * const file, int * const error) const
                             const_cast<char *> ("Force configuration."), error);
 	}
 
-	if (!*error)
-	{
+	if (!*error) {
 		// file, key name, value, precision (scientific format), comment
 		fits_write_key_dbl(file, const_cast<char *> ("drivingAmplitude"), amplitude, 
                            6, const_cast<char *> ("[N] (DrivingForce)"), error);
@@ -105,15 +97,13 @@ void DrivingForce::writeForce(fitsfile * const file, int * const error) const
 	}
 }
 
-void DrivingForce::readForce(fitsfile * const file, int * const error)
-{
+void DrivingForce::readForce(fitsfile * const file, int * const error) {
 	// move to primary HDU:
 	if (!*error)
 		// file, # indicating primary HDU, HDU type, error
  		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
 	
-	if (!*error)
-	{
+	if (!*error) {
 		// file, key name, value, don't read comment, error
 		fits_read_key_dbl(file, const_cast<char *> ("drivingAmplitude"), &amplitude, NULL, error);
 		fits_read_key_dbl(file, const_cast<char *> ("drivingConst"), &driveConst, NULL, error);

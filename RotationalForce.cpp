@@ -14,32 +14,28 @@
 RotationalForce::RotationalForce(Cloud * const myCloud, const double rmin, const double rmax, const double rotConst)
 : Force(myCloud), innerRad(rmin), outerRad(rmax), rotationalConst(rotConst) {}
 
-void RotationalForce::force1(const double currentTime)
-{
+void RotationalForce::force1(const double currentTime) {
     (void)currentTime;
 	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
     end_parallel_for
 }
 
-void RotationalForce::force2(const double currentTime)
-{
+void RotationalForce::force2(const double currentTime) {
     (void)currentTime;
 	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
     end_parallel_for
 }
 
-void RotationalForce::force3(const double currentTime)
-{
+void RotationalForce::force3(const double currentTime) {
     (void)currentTime;
 	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
     end_parallel_for
 }
 
-void RotationalForce::force4(const double currentTime)
-{
+void RotationalForce::force4(const double currentTime) {
     (void)currentTime;
 	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
@@ -47,8 +43,7 @@ void RotationalForce::force4(const double currentTime)
 }
 
 inline void RotationalForce::force(const cloud_index currentParticle, const __m128d currentPositionX, 
-                                   const __m128d currentPositionY)
-{
+                                   const __m128d currentPositionY) {
 	const __m128d dustRadV = _mm_sqrt_pd(currentPositionX*currentPositionX + currentPositionY*currentPositionY);
 
 	// dustRad > innerRad && dustRadV < outerRad
@@ -76,16 +71,14 @@ inline void RotationalForce::force(const cloud_index currentParticle, const __m1
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + cRotConst*currentPositionX/dustRadV);
 }
 
-void RotationalForce::writeForce(fitsfile * const file, int * const error) const
-{
+void RotationalForce::writeForce(fitsfile * const file, int * const error) const {
 	// move to primary HDU:
 	if (!*error)
 		// file, # indicating primary HDU, HDU type, error
  		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
 	
 	// add flag indicating that the drag force is used:
-	if (!*error) 
-	{
+	if (!*error) {
 		long forceFlags = 0;
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &forceFlags, NULL, error);
 
@@ -101,8 +94,7 @@ void RotationalForce::writeForce(fitsfile * const file, int * const error) const
                             const_cast<char *> ("Force configuration."), error);
 	}
 
-	if (!*error)
-	{
+	if (!*error) {
 		// file, key name, value, precision (scientific format), comment
 		fits_write_key_dbl(file, const_cast<char *> ("rotationalConst"), rotationalConst, 
                            6, const_cast<char *> ("[N] (RotationalForce)"), error);
@@ -113,15 +105,13 @@ void RotationalForce::writeForce(fitsfile * const file, int * const error) const
 	}
 }
 
-void RotationalForce::readForce(fitsfile * const file, int * const error)
-{
+void RotationalForce::readForce(fitsfile * const file, int * const error) {
 	// move to primary HDU:
 	if (!*error)
 		// file, # indicating primary HDU, HDU type, error
  		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
 	
-	if (!*error)
-	{
+	if (!*error) {
 		// file, key name, value, don't read comment, error
 		fits_read_key_dbl(file, const_cast<char *> ("rotationalConst"), &rotationalConst, NULL, error);
 		fits_read_key_dbl(file, const_cast<char *> ("innerRadius"), &innerRad, NULL, error);

@@ -13,8 +13,7 @@
 #include "Force.h"
 #include "mtrand.h"	// MT header
 
-class ThermalForce : public Force
-{	
+class ThermalForce : public Force {
 public:
 	ThermalForce(Cloud * const myCloud, const double redFactor);
 	~ThermalForce() {} // destructor

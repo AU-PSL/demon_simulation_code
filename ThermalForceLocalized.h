@@ -13,8 +13,7 @@
 #include "Force.h"
 #include "mtrand.h" // MT header
 
-class ThermalForceLocalized : public Force
-{	
+class ThermalForceLocalized : public Force {
 public:
 	ThermalForceLocalized(Cloud * const myCloud, const double thermRed1, const double thermRed2, const double specifiedRadius);	//overloaded constructor
 	~ThermalForceLocalized() {} // destructor

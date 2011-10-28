@@ -15,32 +15,28 @@
 RectConfinementForce::RectConfinementForce(Cloud * const myCloud, double confineConstX, double confineConstY)
 : Force(myCloud), confineX(-confineConstX), confineY(-confineConstY) {}
 
-void RectConfinementForce::force1(const double currentTime)
-{
+void RectConfinementForce::force1(const double currentTime) {
     (void)currentTime;
 	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
     end_parallel_for
 }
 
-void RectConfinementForce::force2(const double currentTime)
-{
+void RectConfinementForce::force2(const double currentTime) {
     (void)currentTime;
 	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
     end_parallel_for
 }
 
-void RectConfinementForce::force3(const double currentTime)
-{
+void RectConfinementForce::force3(const double currentTime) {
     (void)currentTime;
 	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
     end_parallel_for
 }
 
-void RectConfinementForce::force4(const double currentTime)
-{
+void RectConfinementForce::force4(const double currentTime) {
     (void)currentTime;
 	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
@@ -48,8 +44,7 @@ void RectConfinementForce::force4(const double currentTime)
 }
 
 inline void RectConfinementForce::force(const cloud_index currentParticle, const __m128d currentPositionX, 
-                                        const __m128d currentPositionY)
-{
+                                        const __m128d currentPositionY) {
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;
 
@@ -57,16 +52,14 @@ inline void RectConfinementForce::force(const cloud_index currentParticle, const
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + _mm_set1_pd(confineY)*currentPositionY);
 }
 
-void RectConfinementForce::writeForce(fitsfile * const file, int * const error) const
-{
+void RectConfinementForce::writeForce(fitsfile * const file, int * const error) const {
 	// move to primary HDU:
 	if (!*error)
 		// file, # indicating primary HDU, HDU type, error
  		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
 	
 	// add flag indicating that the rectangular confinement force is used:
-	if (!*error) 
-	{
+	if (!*error) {
 		long forceFlags = 0;
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &forceFlags, NULL, error);
 
@@ -82,8 +75,7 @@ void RectConfinementForce::writeForce(fitsfile * const file, int * const error) 
                             const_cast<char *> ("Force configuration."), error);
 	}
 
-	if (!*error)
-	{
+	if (!*error) {
 		// file, key name, value, precision (scientific format), comment
 		fits_write_key_dbl(file, const_cast<char *> ("confineConstX"), confineX, 
                            6, const_cast<char *> ("[N/m] (RectConfinementForce)"), error);
@@ -92,15 +84,13 @@ void RectConfinementForce::writeForce(fitsfile * const file, int * const error) 
 	}
 }
 
-void RectConfinementForce::readForce(fitsfile * const file, int * const error)
-{
+void RectConfinementForce::readForce(fitsfile * const file, int * const error) {
 	// move to primary HDU:
 	if (!*error)
 		// file, # indicating primary HDU, HDU type, error
  		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
 
-	if (!*error)
-	{
+	if (!*error) {
 		// file, key name, value, don't read comment, error
 		fits_read_key_dbl(file, const_cast<char *> ("confineConstX"), &confineX, NULL, error);
 		fits_read_key_dbl(file, const_cast<char *> ("confineConstY"), &confineY, NULL, error);

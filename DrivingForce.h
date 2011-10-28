@@ -13,8 +13,7 @@
 #include "Force.h"
 #include "VectorCompatibility.h"
 
-class DrivingForce : public Force
-{	
+class DrivingForce : public Force {
 public:
 	DrivingForce(Cloud * const myCloud, const double dampConst, const double amp, const double drivingShift);
 	~DrivingForce() {} // destructor

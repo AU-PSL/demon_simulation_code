@@ -13,8 +13,7 @@
 #include "Force.h"
 #include "VectorCompatibility.h"
 
-class ShieldedCoulombForce : public Force
-{	
+class ShieldedCoulombForce : public Force {
 public:
 	ShieldedCoulombForce(Cloud * const myCloud, const double shieldingConstant);
 	~ShieldedCoulombForce() {} //destructor

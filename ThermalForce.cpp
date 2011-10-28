@@ -15,40 +15,35 @@
 ThermalForce::ThermalForce(Cloud * const myCloud, const double redFactor) 
 : Force(myCloud), mt((unsigned int)time(NULL)), heatVal(redFactor) {}
 
-void ThermalForce::force1(const double currentTime)
-{
+void ThermalForce::force1(const double currentTime) {
     (void)currentTime;
 	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle);
     end_parallel_for
 }
 
-void ThermalForce::force2(const double currentTime)
-{
+void ThermalForce::force2(const double currentTime) {
     (void)currentTime;
 	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
         force(currentParticle);
     end_parallel_for
 }
 
-void ThermalForce::force3(const double currentTime)
-{
+void ThermalForce::force3(const double currentTime) {
     (void)currentTime;
 	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle);
     end_parallel_for
 }
 
-void ThermalForce::force4(const double currentTime)
-{
+void ThermalForce::force4(const double currentTime) {
     (void)currentTime;
 	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle);
     end_parallel_for
 }
 
-inline void ThermalForce::force(const cloud_index currentParticle)
-{	
+inline void ThermalForce::force(const cloud_index currentParticle) {
 	// MT random number in (0,1)
 	const __m128d thermV = _mm_set1_pd(heatVal)*_mm_set_pd(mt(), mt());
 	const double thetaL = mt()*2.0*M_PI;
@@ -61,16 +56,14 @@ inline void ThermalForce::force(const cloud_index currentParticle)
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + thermV*_mm_set_pd(cos(thetaH), cos(thetaL)));
 }
 
-void ThermalForce::writeForce(fitsfile * const file, int * const error) const
-{
+void ThermalForce::writeForce(fitsfile * const file, int * const error) const {
 	// move to primary HDU:
 	if (!*error)
 		// file, # indicating primary HDU, HDU type, error
  		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
 	
 	// add flag indicating that the thermal force is used:
-	if (!*error) 
-	{
+	if (!*error) {
 		long forceFlags = 0;
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &forceFlags, NULL, error);
 
@@ -92,8 +85,7 @@ void ThermalForce::writeForce(fitsfile * const file, int * const error) const
                            6, const_cast<char *> ("[N] (ThermalForce)"), error);
 }
 
-void ThermalForce::readForce(fitsfile * const file, int * const error)
-{
+void ThermalForce::readForce(fitsfile * const file, int * const error) {
 	// move to primary HDU:
 	if (!*error)
 		// file, # indicating primary HDU, HDU type, error
