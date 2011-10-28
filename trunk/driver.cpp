@@ -48,8 +48,7 @@ using namespace std;
 #define clear_line "\33[2K" // VT100 signal to clear line.
 typedef int file_index;
 
-enum clFlagType
-{
+enum clFlagType {
 	CI, // Cloud Index
 	D,  // Double
 	F   // File index
@@ -91,8 +90,7 @@ file_index outputFileIndex = 0;     // Index of argv array that holds the file n
 force_flags usedForces = 0;         // bitpacked forces
 cloud_index numParticles = 10;
 
-void help()
-{
+void help() {
 // This section is white space sensitive to render correctly in an 80 column 
 // terminal environment. There should be no tabs.
 // 80 cols is ********************************************************************************
@@ -139,29 +137,25 @@ void help()
 }
 
 // check if force is used or conflicts with a previously set force.
-void checkForce(const force_index numChecks, ...)
-{
+void checkForce(const force_index numChecks, ...) {
 	va_list arglist;
 	va_start(arglist, numChecks);
 	
 	const char firstOption = (char)va_arg(arglist, int);
 	const ForceFlag firstFlag = (ForceFlag)va_arg(arglist, long);
 	
-	if (usedForces & firstFlag) 
-	{
+	if (usedForces & firstFlag) {
 		cout << "Error: option -" << firstOption << " already set." << endl;
 		help();
 		va_end(arglist);
 		exit(1);
 	}
 	
-	for (force_index i = 1; i < numChecks; i++)
-	{
+	for (force_index i = 1; i < numChecks; i++) {
 		const char nextOption = (char)va_arg(arglist, int);
 		const ForceFlag nextFlag = (ForceFlag)va_arg(arglist, int);
 		
-		if (usedForces & nextFlag)
-		{
+		if (usedForces & nextFlag) {
 			cout << "Error: option -" << firstOption << " conflicts with option -" << nextOption << endl;
 			help();
 			va_end(arglist);
@@ -173,51 +167,43 @@ void checkForce(const force_index numChecks, ...)
 	usedForces |= firstFlag;
 }
 
-bool isUnsigned(const char *val)
-{
+bool isUnsigned(const char *val) {
 	for (const char *c = val; *c != '\0'; c++)
 		if (!isdigit(*c))
 			return false;
 	return true;
 }
 
-bool isDouble(const char *val)
-{
+bool isDouble(const char *val) {
 	for (const char *c = val; *c != '\0'; c++)
 		if (!isdigit(*c) && *c != 'e' && *c != 'E' && *c != '.' && *c != '-')
 			return false;
 	return true;
 }
 
-bool isOption(const char *val)
-{
+bool isOption(const char *val) {
 	return val[0] == '-' && isalpha(val[1]) && val[2] == '\0';
 }
 
 template <typename T>
-void optionWarning(const char option, const char *name, const T val)
-{
+void optionWarning(const char option, const char *name, const T val) {
 	cout << "Warning: -" << option << " option incomplete. Using default " 
 	<< name << " (" << val << ")." << endl;
 }
 
 // Check commandline options. Use defaults if values are missing.
-void checkOption(const int argc, char * const argv[], int &optionIndex, const char option, unsigned numOptions, ...)
-{
+void checkOption(const int argc, char * const argv[], int &optionIndex, const char option, unsigned numOptions, ...) {
 	++optionIndex;
 	va_list arglist;
 	va_start(arglist, numOptions);
 	
-	for (unsigned int i = 0; i < numOptions; i++)
-	{
+	for (unsigned int i = 0; i < numOptions; i++) {
 		const char *name = va_arg(arglist, char *);
 		const clFlagType type = (clFlagType)va_arg(arglist, int);
 		void *val = va_arg(arglist, void *);
 		
-		switch (type)
-		{
-			case CI: 
-			{
+		switch (type) {
+			case CI: {
 				cloud_index *ci = (cloud_index *)val;
 				if (optionIndex < argc && isUnsigned(argv[optionIndex]))
 					*ci = (cloud_index)atoi(argv[optionIndex++]);
@@ -225,8 +211,7 @@ void checkOption(const int argc, char * const argv[], int &optionIndex, const ch
 					optionWarning<cloud_index> (option, name, *ci);
 				break;
 			}
-			case D:
-			{
+			case D: {
 				double *d = (double *)val;
 				if (optionIndex < argc && !isOption(argv[optionIndex]) && isDouble(argv[optionIndex]))
 					*d = atof(argv[optionIndex++]);
@@ -234,8 +219,7 @@ void checkOption(const int argc, char * const argv[], int &optionIndex, const ch
 					optionWarning<double> (option, name, *d);
 				break;
 			}
-			case F:
-			{
+			case F: {
 				const char *defaultFileName = va_arg(arglist, char *);
 				file_index *fi = (file_index *)val;
 				if (optionIndex < argc && !isOption(argv[optionIndex]) && !isDouble(argv[optionIndex]) && !isUnsigned(argv[optionIndex]))
@@ -252,14 +236,11 @@ void checkOption(const int argc, char * const argv[], int &optionIndex, const ch
 	va_end(arglist);
 }
 
-void parseCommandLineOptions(int argc, char * const argv[])
-{
+void parseCommandLineOptions(int argc, char * const argv[]) {
 	// argv[0] is the name of the exicutable. Increment is not needed since the
 	// checkOption increments i internally.
-	for (int i = 1; i < argc;)
-	{
-		switch (argv[i][1])
-		{
+	for (int i = 1; i < argc;) {
+		switch (argv[i][1]) {
 			case 'B': // set "B"-field:
 				checkForce(1, 'B', MagneticForceFlag);
 				checkOption(argc, argv, i, 'B', 1, "magnetic field", D, &magneticFieldStrength);
@@ -352,39 +333,25 @@ void parseCommandLineOptions(int argc, char * const argv[])
 }
 
 // count number of forces in use:
-const force_index getNumForces()
-{
+const force_index getNumForces() {
 	force_index i = 0;
-	if (usedForces & ConfinementForceFlag)
-		++i;
-	if (usedForces & ConfinementForceVoidFlag)
-		++i;
-	if (usedForces & DragForceFlag)
-		++i;
-	if (usedForces & DrivingForceFlag)
-		++i;
-	if (usedForces & MagneticForceFlag)
-		++i;
-	if (usedForces & RectConfinementForceFlag)
-		++i;
-	if (usedForces & RotationalForceFlag)
-		++i;
-	if (usedForces & ShieldedCoulombForceFlag)
-		++i;
-	if (usedForces & ThermalForceFlag)
-		++i;
-	if (usedForces & ThermalForceLocalizedFlag)
-		++i;
-	if (usedForces & TimeVaryingDragForceFlag)
-		++i;
-	if (usedForces & TimeVaryingThermalForceFlag)
-		++i;
+	if (usedForces & ConfinementForceFlag)        ++i;
+	if (usedForces & ConfinementForceVoidFlag)    ++i;
+	if (usedForces & DragForceFlag)               ++i;
+	if (usedForces & DrivingForceFlag)            ++i;
+	if (usedForces & MagneticForceFlag)           ++i;
+	if (usedForces & RectConfinementForceFlag)    ++i;
+	if (usedForces & RotationalForceFlag)         ++i;
+	if (usedForces & ShieldedCoulombForceFlag)    ++i;
+	if (usedForces & ThermalForceFlag)            ++i;
+	if (usedForces & ThermalForceLocalizedFlag)   ++i;
+	if (usedForces & TimeVaryingDragForceFlag)    ++i;
+	if (usedForces & TimeVaryingThermalForceFlag) ++i;
 	return i;
 }
 
 // check fitsfile for errors:
-void checkFitsError(const int error, const int lineNumber)
-{
+void checkFitsError(const int error, const int lineNumber) {
 	if (!error)
 		return;
 
@@ -398,14 +365,12 @@ void checkFitsError(const int error, const int lineNumber)
 }
 
 // delete fitsfile:
-void deleteFitsFile(char * const filename, int * const error)
-{
+void deleteFitsFile(char * const filename, int * const error) {
 	// check for pre-existing data file:
 	int exists = 0;
 	fits_file_exists(filename, &exists, error);
 
-	if (exists)
-	{
+	if (exists) {
 		cout << "Warning: Removing pre-existing \"" << filename << "\" file." << endl;
 		remove(filename); // required by fits, else can't create
 	}
@@ -413,12 +378,10 @@ void deleteFitsFile(char * const filename, int * const error)
 }
 
 // Check if fits file exists
-void fitsFileExists(char * const filename, int * const error) 
-{
+void fitsFileExists(char * const filename, int * const error) {
     int exists = 0;
     fits_file_exists(filename, &exists, error);
-    if (!exists)
-    {
+    if (!exists) {
         cout << "Error: Fits file \"" << filename << "\" does not exist." << endl;
         help();
         exit(1);
@@ -428,8 +391,7 @@ void fitsFileExists(char * const filename, int * const error)
     cout << "Initializing with fits file \"" << filename << "\"." << endl;
 }
 
-int main (int argc, char * const argv[]) 
-{
+int main (int argc, char * const argv[]) {
 	time_t timer = time(NULL); // start timer
 	parseCommandLineOptions(argc, argv);
 
@@ -449,8 +411,7 @@ int main (int argc, char * const argv[])
 	int error = 0;
 	Cloud *cloud;
 
-	if (continueFileIndex)
-	{
+	if (continueFileIndex) {
 		fitsFileExists(argv[continueFileIndex], &error);
 		
 		// open file:
@@ -464,9 +425,7 @@ int main (int argc, char * const argv[])
 		// initialize with last time step from file:
 		cloud = Cloud::initializeFromFile(file, &error, &startTime);
 		checkFitsError(error, __LINE__);
-	}
-	else if (finalsFileIndex)
-	{
+	} else if (finalsFileIndex) {
 		fitsFileExists(argv[finalsFileIndex], &error);
 
 		// open file:
@@ -480,15 +439,12 @@ int main (int argc, char * const argv[])
 		// close file:
  		fits_close_file(file, &error);
 		checkFitsError(error, __LINE__);
-	}
-	else // initialize new cloud on grid:
+	} else // initialize new cloud on grid:
 		cloud = Cloud::initializeGrid(numParticles);
 
 	// Create a new file if we aren't continueing one.
-	if (!continueFileIndex)
-	{
-		if (outputFileIndex) // use specified file name
-		{	
+	if (!continueFileIndex) {
+		if (outputFileIndex) {// use specified file name
 			deleteFitsFile(argv[outputFileIndex], &error);
 			fits_create_file(&file, argv[outputFileIndex], &error);
 			checkFitsError(error, __LINE__);
@@ -497,9 +453,7 @@ int main (int argc, char * const argv[])
 			// (prevents fits from generating errors when creating binary tables)
 			fits_create_img(file, 16, 0, NULL, &error);
 			checkFitsError(error, __LINE__);
-		}
-		else // use default file name
-		{
+		} else {// use default file name
 			deleteFitsFile(const_cast<char *> ("data.fits"), &error);
 			fits_create_file(&file, const_cast<char *> ("data.fits"), &error);
 			checkFitsError(error, __LINE__);
@@ -546,14 +500,11 @@ int main (int argc, char * const argv[])
 	if (usedForces & TimeVaryingThermalForceFlag)
 		forceArray[index++] = new TimeVaryingThermalForce(cloud, thermScale, thermOffset);
 	
-	if (continueFileIndex) // initialize forces from old file
-	{
+	if (continueFileIndex) { // initialize forces from old file
 		for (force_index i = 0; i < numForces; i++)
 			forceArray[i]->readForce(file, &error);
 		checkFitsError(error, __LINE__);
-	}
-	else // write forces to new file
-	{
+	} else { // write forces to new file
 		for (force_index i = 0; i < numForces; i++)
 			forceArray[i]->writeForce(file, &error);
 		checkFitsError(error, __LINE__);
@@ -565,19 +516,15 @@ int main (int argc, char * const argv[])
 	cout << "Status: Commencing Runge-Kutta." << endl << endl;
     
 	// write initial data:
-	if (!continueFileIndex) 
-	{
+	if (!continueFileIndex) {
 		cloud->writeCloudSetup(file, &error);
 		checkFitsError(error, __LINE__);
-	}
-	else
-	{
+	} else {
 		fits_movnam_hdu(file, BINARY_TBL, const_cast<char *> ("TIME_STEP"), 0, &error);
 		checkFitsError(error, __LINE__);
 	}
 	
-	if (Mach) 
-	{
+	if (Mach) {
 		// reserve particle 1 for mach experiment
 		cloud->x[0] = -2.0*sqrt((double)numParticles)*Cloud::interParticleSpacing;
 		cloud->y[0] = 0.0;
@@ -590,8 +537,7 @@ int main (int argc, char * const argv[])
                                 : new Runge_Kutta2(cloud, forceArray, numForces, simTimeStep, startTime);
 
 	// execute simulation for desired length of time:
-	while (startTime < endTime)
-	{
+	while (startTime < endTime) {
 		cout << clear_line << "\rCurrent Time: " << integrate->currentTime << "s (" 
 		<< integrate->currentTime/endTime*100.0 << "% Complete)" << flush;
 		
