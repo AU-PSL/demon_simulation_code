@@ -12,8 +12,7 @@
 
 #include "Operator.h"
 
-class CacheOperator : public Operator 
-{
+class CacheOperator : public Operator {
 public:
 	CacheOperator(Cloud * const mycloud) : Operator(mycloud) {}
 	~CacheOperator() {}

@@ -13,8 +13,7 @@
 #include "Cloud.h"
 typedef unsigned char operator_index;
 
-class Operator 
-{
+class Operator {
 public:
 	Cloud * const cloud;
 	Operator(Cloud * const myCloud) : cloud(myCloud) {}
