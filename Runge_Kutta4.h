@@ -14,8 +14,7 @@
 #include "Force.h"
 #include "Operator.h"
 
-class Runge_Kutta4 : public Runge_Kutta2
-{
+class Runge_Kutta4 : public Runge_Kutta2 {
 public:
 	Runge_Kutta4(Cloud * const myCloud, Force ** const forces, const force_index forcesSize, 
                  const double timeStep, const double startTime);

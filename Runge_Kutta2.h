@@ -14,8 +14,7 @@
 #include "Force.h"
 #include "Operator.h"
 
-class Runge_Kutta2 : public Integrator
-{
+class Runge_Kutta2 : public Integrator {
 public:
 	Runge_Kutta2(Cloud * const myCloud, Force ** const forces, const force_index forcesSize, 
                  const double timeStep, const double startTime);

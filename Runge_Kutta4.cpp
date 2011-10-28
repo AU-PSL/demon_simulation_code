@@ -15,8 +15,7 @@ Runge_Kutta4::Runge_Kutta4(Cloud * const myCloud, Force **forces, const force_in
 : Runge_Kutta2(myCloud, forces, forcesSize, timeStep, startTime) {}
 
 // 4th order Runge-Kutta algorithm:
-void Runge_Kutta4::moveParticles(const double endTime)
-{
+void Runge_Kutta4::moveParticles(const double endTime) {
 	// create vector constants:
 	const __m128d v2 = _mm_set1_pd(2.0);
 	const __m128d v6 = _mm_set1_pd(6.0);
@@ -25,8 +24,7 @@ void Runge_Kutta4::moveParticles(const double endTime)
 	const __m128d qConst3 = _mm_set1_pd(4.0*M_PI*Cloud::particleRadius*Cloud::epsilon0);
 #endif
     
-	while (currentTime < endTime)
-	{
+	while (currentTime < endTime) {
 		// Second argument must be 2 more than the first.
 		const double dt = modifyTimeStep(1.0e-4, init_dt); // implement dynamic timstep (if necessary):
 		const __m128d vdt = _mm_set1_pd(dt); // store timestep as vector const
@@ -204,26 +202,22 @@ void Runge_Kutta4::moveParticles(const double endTime)
 	}
 }
 
-inline void Runge_Kutta4::operate3(const double time) const
-{
+inline void Runge_Kutta4::operate3(const double time) const {
  	for (operator_index i = 0; i < numOperators; i++)
 		operations[i]->operation3(time);
 }
 
-inline void Runge_Kutta4::operate4(const double time) const
-{
+inline void Runge_Kutta4::operate4(const double time) const {
  	for (operator_index i = 0; i < numOperators; i++)
 		operations[i]->operation4(time);
 }
 
-inline void Runge_Kutta4::force3(const double time) const
-{
+inline void Runge_Kutta4::force3(const double time) const {
  	for (force_index i = 0; i < numForces; i++)
 		theForce[i]->force3(time);
 }
 
-inline void Runge_Kutta4::force4(const double time) const
-{
+inline void Runge_Kutta4::force4(const double time) const {
  	for (force_index i = 0; i < numForces; i++)
 		theForce[i]->force4(time);
 }
