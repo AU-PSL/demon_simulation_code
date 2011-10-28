@@ -15,8 +15,7 @@
 
 typedef unsigned int cloud_index;
 
-class Cloud
-{	
+class Cloud {	
 public:
 	Cloud(const cloud_index numPar);
 	~Cloud();

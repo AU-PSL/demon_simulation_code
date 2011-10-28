@@ -37,8 +37,7 @@ xCache(new __m128d[n/2]), yCache(new __m128d[n/2]),
 VxCache(new __m128d[n/2]), VyCache(new __m128d[n/2]),
 qCache(new __m128d[n/2]) {}
 
-Cloud::~Cloud() 
-{
+Cloud::~Cloud() {
 	delete[] x; delete[] y; delete[] Vx; delete[] Vy;
 	delete[] charge; delete[] mass; 
 	delete[] k1; delete[] k2; delete[] k3; delete[] k4;
@@ -52,27 +51,22 @@ Cloud::~Cloud()
 	delete[] qCache;
 }
 
-inline void Cloud::setPosition(const cloud_index index, const double xVal, const double yVal) const
-{
+inline void Cloud::setPosition(const cloud_index index, const double xVal, const double yVal) const {
 	x[index] = xVal;
 	y[index] = yVal;
 }
 
-inline void Cloud::setVelocity(const cloud_index index) const
-{
-	Vx[index] = 0.0;
-	Vy[index] = 0.0;
+inline void Cloud::setVelocity(const cloud_index index) const {
+	Vx[index] = Vy[index] = 0.0;
 }
 
-inline void Cloud::setCharge() const
-{
+inline void Cloud::setCharge() const {
 	srand((unsigned int)time(NULL));
 	for (cloud_index i = 0; i < n; i++)
 		charge[i] = (rand()%201 + 5900)*electronCharge;
 }
 
-inline void Cloud::setMass() const
-{
+inline void Cloud::setMass() const {
 	const double particleDensity = 2200.0;
 	const double particleMass = (4.0/3.0)*M_PI*particleRadius*particleRadius*particleRadius*particleDensity;
 	begin_parallel_for(i, e, n, 1)
@@ -80,8 +74,7 @@ inline void Cloud::setMass() const
     end_parallel_for
 }
 
-Cloud * const Cloud::initializeGrid(const cloud_index numParticles)
-{
+Cloud * const Cloud::initializeGrid(const cloud_index numParticles) {
 	Cloud * const cloud = new Cloud(numParticles);
 
 	const cloud_index sqrtNumPar = (cloud_index)floor(sqrt(numParticles));
@@ -101,8 +94,7 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles)
 	return cloud;
 }
 
-Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error, double * const currentTime)
-{
+Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error, double * const currentTime) {
 	int *anyNull = NULL;
 	long numParticles = 0;
 	long numTimeSteps = 0;
@@ -131,8 +123,7 @@ Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error
 	if (!*error)
 		fits_get_num_rows(file, &numTimeSteps, error);
 
-	if (!*error)
-	{
+	if (!*error) {
 		if (currentTime)
 			fits_read_col_dbl(file, 1, numTimeSteps, 1, 1, 0.0, currentTime, anyNull, error);
 
@@ -146,8 +137,7 @@ Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error
 	return cloud;
 }
 
-void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const
-{
+void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const {
 	// format number of elements of type double as string, e.g. 1024D
 	stringstream numStream;
 	numStream << n << "D";
@@ -184,8 +174,7 @@ void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const
 		// n.b. num rows automatically incremented.
 		// Increment from 0 as opposed to preallocating to ensure
 		// proper output in the event of program interruption.
-	if (!*error)
-	{
+	if (!*error) {
 		double time = 0.0;
 		fits_write_col_dbl(file, 1, 1, 1, 1, &time, error);
 		fits_write_col_dbl(file, 2, 1, 1, n, x, error);
@@ -201,8 +190,7 @@ void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const
 
 void Cloud::writeTimeStep(fitsfile * const file, int * const error, double currentTime) const
 {
-	if (!*error)
-	{
+	if (!*error) {
 		long numRows = 0;
 		fits_get_num_rows(file, &numRows, error);
 		fits_write_col_dbl(file, 1, ++numRows, 1, 1, &currentTime, error);
@@ -220,76 +208,56 @@ void Cloud::writeTimeStep(fitsfile * const file, int * const error, double curre
 // 4th order Runge-Kutta subsetp helper methods. 
 
 // X position helper functions -------------------------------------------------
-const __m128d Cloud::getx1_pd(const cloud_index i) const 
-{
-	// x
-	return _mm_load_pd(x + i);
+const __m128d Cloud::getx1_pd(const cloud_index i) const {
+	return _mm_load_pd(x + i); // x
 }
 
-const __m128d Cloud::getx2_pd(const cloud_index i) const 
-{
-	// x + l1/2
-	return xCache[i/2];
+const __m128d Cloud::getx2_pd(const cloud_index i) const {
+	return xCache[i/2]; // x + l1/2
 }
 
-const __m128d Cloud::getx3_pd(const cloud_index i) const 
-{
-	// x + l2/2
-	return xCache[i/2];
+const __m128d Cloud::getx3_pd(const cloud_index i) const {
+	return xCache[i/2]; // x + l2/2
 }
 
-const __m128d Cloud::getx4_pd(const cloud_index i) const 
-{
-	// x + l3
-	return xCache[i/2];
+const __m128d Cloud::getx4_pd(const cloud_index i) const {
+	return xCache[i/2]; // x + l3
 }
 
-const __m128d Cloud::getx1r_pd(const cloud_index i) const 
-{
+const __m128d Cloud::getx1r_pd(const cloud_index i) const {
 	return _mm_loadr_pd(x + i);
 }
 
-const __m128d Cloud::getx2r_pd(const cloud_index i) const 
-{
+const __m128d Cloud::getx2r_pd(const cloud_index i) const {
 	const cloud_index j = i/2;
 	return _mm_shuffle_pd(xCache[j], xCache[j], _MM_SHUFFLE2(0, 1));
 }
 
-const __m128d Cloud::getx3r_pd(const cloud_index i) const 
-{
+const __m128d Cloud::getx3r_pd(const cloud_index i) const {
 	const cloud_index j = i/2;
 	return _mm_shuffle_pd(xCache[j], xCache[j], _MM_SHUFFLE2(0, 1));
 }
 
-const __m128d Cloud::getx4r_pd(const cloud_index i) const 
-{
+const __m128d Cloud::getx4r_pd(const cloud_index i) const {
 	const cloud_index j = i/2;
 	return _mm_shuffle_pd(xCache[j], xCache[j], _MM_SHUFFLE2(0, 1));
 }
 
 // Y position helper functions -------------------------------------------------
-const __m128d Cloud::gety1_pd(const cloud_index i) const 
-{
-	// y
-	return _mm_load_pd(y + i);
+const __m128d Cloud::gety1_pd(const cloud_index i) const {
+	return _mm_load_pd(y + i); // y
 }
 
-const __m128d Cloud::gety2_pd(const cloud_index i) const 
-{
-	// y + n1/2
-	return yCache[i/2];
+const __m128d Cloud::gety2_pd(const cloud_index i) const {
+	return yCache[i/2]; // y + n1/2
 }
 
-const __m128d Cloud::gety3_pd(const cloud_index i) const 
-{
-	// y + n2/2
-	return yCache[i/2];
+const __m128d Cloud::gety3_pd(const cloud_index i) const {
+	return yCache[i/2]; // y + n2/2
 }
 
-const __m128d Cloud::gety4_pd(const cloud_index i) const 
-{
-	// y + n3
-	return yCache[i/2];
+const __m128d Cloud::gety4_pd(const cloud_index i) const {
+	return yCache[i/2]; // y + n3
 }
 
 const __m128d Cloud::gety1r_pd(const cloud_index i) const 
@@ -297,124 +265,92 @@ const __m128d Cloud::gety1r_pd(const cloud_index i) const
 	return _mm_loadr_pd(y + i);
 }
 
-const __m128d Cloud::gety2r_pd(const cloud_index i) const 
-{
+const __m128d Cloud::gety2r_pd(const cloud_index i) const {
 	const cloud_index j = i/2;
 	return _mm_shuffle_pd(yCache[j], yCache[j], _MM_SHUFFLE2(0, 1));
 }
 
-const __m128d Cloud::gety3r_pd(const cloud_index i) const 
-{
+const __m128d Cloud::gety3r_pd(const cloud_index i) const {
 	const cloud_index j = i/2;
 	return _mm_shuffle_pd(yCache[j], yCache[j], _MM_SHUFFLE2(0, 1));
 }
 
-const __m128d Cloud::gety4r_pd(const cloud_index i) const 
-{
+const __m128d Cloud::gety4r_pd(const cloud_index i) const {
 	const cloud_index j = i/2;
 	return _mm_shuffle_pd(yCache[j], yCache[j], _MM_SHUFFLE2(0, 1));
 }
 
 // Vx position helper functions ------------------------------------------------
-const __m128d Cloud::getVx1_pd(const cloud_index i) const 
-{
-	// Vx
-	return _mm_load_pd(Vx + i);
+const __m128d Cloud::getVx1_pd(const cloud_index i) const {
+	return _mm_load_pd(Vx + i); // Vx
 }
 
-const __m128d Cloud::getVx2_pd(const cloud_index i) const 
-{
-	// Vx + k1/2
-	return VxCache[i/2];
+const __m128d Cloud::getVx2_pd(const cloud_index i) const {
+	return VxCache[i/2]; // Vx + k1/2
 }
 
-const __m128d Cloud::getVx3_pd(const cloud_index i) const 
-{
-	// Vx + k2/2
-	return VxCache[i/2];
+const __m128d Cloud::getVx3_pd(const cloud_index i) const {
+	return VxCache[i/2]; // Vx + k2/2
 }
 
-const __m128d Cloud::getVx4_pd(const cloud_index i) const 
-{
-	// Vx + k3
-	return VxCache[i/2];
+const __m128d Cloud::getVx4_pd(const cloud_index i) const {
+	return VxCache[i/2]; // Vx + k3
 }
 
 // Vy position helper functions ------------------------------------------------
-const __m128d Cloud::getVy1_pd(const cloud_index i) const 
-{
-	// Vy
-	return _mm_load_pd(Vy + i);
+const __m128d Cloud::getVy1_pd(const cloud_index i) const {
+	return _mm_load_pd(Vy + i); // Vy
 }
 
-const __m128d Cloud::getVy2_pd(const cloud_index i) const 
-{
-	// Vy + m1/2
-	return VyCache[i/2];
+const __m128d Cloud::getVy2_pd(const cloud_index i) const {
+	return VyCache[i/2]; // Vy + m1/2
 }
 
-const __m128d Cloud::getVy3_pd(const cloud_index i) const 
-{
-	// Vy + m2/2
-	return VyCache[i/2];
+const __m128d Cloud::getVy3_pd(const cloud_index i) const {
+	return VyCache[i/2]; // Vy + m2/2
 }
 
-const __m128d Cloud::getVy4_pd(const cloud_index i) const 
-{
-	// Vy + m3
-	return VyCache[i/2];
+const __m128d Cloud::getVy4_pd(const cloud_index i) const {
+	return VyCache[i/2]; // Vy + m3
 }
 
 // Charge helper functions -------------------------------------------------
-const __m128d Cloud::getq1_pd(const cloud_index i) const 
-{
-	// q
-	return _mm_load_pd(charge + i);
+const __m128d Cloud::getq1_pd(const cloud_index i) const {
+	return _mm_load_pd(charge + i); // q
 }
 
-const __m128d Cloud::getq2_pd(const cloud_index i) const 
-{
-	// q + q1/2
-	return qCache[i/2];
+const __m128d Cloud::getq2_pd(const cloud_index i) const {
+	return qCache[i/2]; // q + q1/2
 }
 
-const __m128d Cloud::getq3_pd(const cloud_index i) const 
-{
-	// q + q2/2
-	return qCache[i/2];
+const __m128d Cloud::getq3_pd(const cloud_index i) const {
+	return qCache[i/2]; // q + q2/2
 }
 
-const __m128d Cloud::getq4_pd(const cloud_index i) const 
-{
-	// q + q3
-	return qCache[i/2];
+const __m128d Cloud::getq4_pd(const cloud_index i) const {
+	return qCache[i/2]; // q + q3
 }
 
-const __m128d Cloud::getq1r_pd(const cloud_index i) const 
-{
+const __m128d Cloud::getq1r_pd(const cloud_index i) const {
 	return _mm_loadr_pd(charge + i);
 }
 
-const __m128d Cloud::getq2r_pd(const cloud_index i) const 
-{
+const __m128d Cloud::getq2r_pd(const cloud_index i) const {
 	const cloud_index j = i/2;
 	return _mm_shuffle_pd(qCache[j], qCache[j], _MM_SHUFFLE2(0, 1));
 }
 
-const __m128d Cloud::getq3r_pd(const cloud_index i) const 
-{
+const __m128d Cloud::getq3r_pd(const cloud_index i) const {
 	const cloud_index j = i/2;
 	return _mm_shuffle_pd(qCache[j], qCache[j], _MM_SHUFFLE2(0, 1));
 }
 
-const __m128d Cloud::getq4r_pd(const cloud_index i) const 
-{
+const __m128d Cloud::getq4r_pd(const cloud_index i) const {
 	const cloud_index j = i/2;
 	return _mm_shuffle_pd(qCache[j], qCache[j], _MM_SHUFFLE2(0, 1));
 }
 
-void Cloud::setChargeConsts(const __m128d charge, __m128d &qConst1, __m128d &qConst2)
-{
+void Cloud::setChargeConsts(const __m128d charge, __m128d &qConst1, __m128d &qConst2) {
     const double e = electronCharge;
 	const double ee = e*e;
     
