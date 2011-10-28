@@ -8,7 +8,7 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "Runge_Kutta2.h"
-
+#include "Parallel.h"
 
 Runge_Kutta2::Runge_Kutta2(Cloud * const myCloud, Force **forces, const force_index forcesSize, 
                            const double timeStep, const double startTime)
@@ -31,8 +31,7 @@ void Runge_Kutta2::moveParticles(const double endTime)
         
 		operate1(currentTime);
 		force1(currentTime); // compute net force1
-		for (cloud_index i = 0; i < numParticles; i += 2) // calculate k1 and l1 for entire cloud
-		{
+		begin_parallel_for(i, e, numParticles, 2) // calculate k1 and l1 for entire cloud
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass into vector
             
 			// assign force pointers for stylistic purposes:
@@ -58,12 +57,11 @@ void Runge_Kutta2::moveParticles(const double endTime)
 			_mm_store_pd(pFx, _mm_setzero_pd());
 			_mm_store_pd(pFy, _mm_setzero_pd());
 			_mm_store_pd(pPhi, _mm_setzero_pd());
-		}
+		end_parallel_for
         
 		operate2(currentTime + dt/2.0);
 		force2(currentTime + dt/2.0); // compute net force2
-		for (cloud_index i = 0; i < numParticles; i += 2) // calculate k2 and l2 for entire cloud
-		{
+		begin_parallel_for(i, e, numParticles, 2) // calculate k2 and l for entire cloud
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
             
 			// assign force pointers:
@@ -89,10 +87,9 @@ void Runge_Kutta2::moveParticles(const double endTime)
 			_mm_store_pd(pFx, _mm_setzero_pd());
 			_mm_store_pd(pFy, _mm_setzero_pd());
 			_mm_store_pd(pPhi, _mm_setzero_pd());
-		}
+		end_parallel_for
         
-		for (cloud_index i = 0; i < numParticles; i += 2) // calculate next position and next velocity for entire cloud
-		{
+		begin_parallel_for(i, e, numParticles, 2) // calculate next position and next velocity for entire cloud
 			// load ith and (i+1)th k's into vectors:
 			const __m128d vk2 = _mm_load_pd(cloud->k2 + i);
 			const __m128d vl2 = _mm_load_pd(cloud->l2 + i);
@@ -115,7 +112,7 @@ void Runge_Kutta2::moveParticles(const double endTime)
 			_mm_store_pd(py, _mm_load_pd(py) + vn2);
 			
 			_mm_store_pd(pC, _mm_load_pd(pC) + vq2);
-		}
+		end_parallel_for
         
 		currentTime += dt;
 	}
