@@ -17,32 +17,28 @@ ThermalForceLocalized::ThermalForceLocalized(Cloud * const myCloud, const double
 : Force(myCloud), mt((unsigned long)time(NULL)), heatingRadius(specifiedRadius), 
 heatVal1(thermRed1), heatVal2(thermRed2) {}
 
-void ThermalForceLocalized::force1(const double currentTime)
-{
+void ThermalForceLocalized::force1(const double currentTime) {
     (void)currentTime;
 	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
     end_parallel_for
 }
 
-void ThermalForceLocalized::force2(const double currentTime)
-{
+void ThermalForceLocalized::force2(const double currentTime) {
 	(void)currentTime;
     begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
     end_parallel_for
 }
 
-void ThermalForceLocalized::force3(const double currentTime)
-{
+void ThermalForceLocalized::force3(const double currentTime) {
 	(void)currentTime;
     begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
     end_parallel_for
 }
 
-void ThermalForceLocalized::force4(const double currentTime)
-{
+void ThermalForceLocalized::force4(const double currentTime) {
 	(void)currentTime;
     begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
@@ -50,8 +46,7 @@ void ThermalForceLocalized::force4(const double currentTime)
 }
 
 inline void ThermalForceLocalized::force(const cloud_index currentParticle, const __m128d displacementX, 
-                                         const __m128d displacementY)
-{
+                                         const __m128d displacementY) {
 	const __m128d radiusV = _mm_sqrt_pd(displacementX*displacementX + displacementY*displacementY);
 	const double thetaL = mt()*2.0*M_PI;
 	const double thetaH = mt()*2.0*M_PI;
@@ -70,16 +65,14 @@ inline void ThermalForceLocalized::force(const cloud_index currentParticle, cons
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + thermV*_mm_set_pd(cos(thetaH), cos(thetaL)));
 }
 
-void ThermalForceLocalized::writeForce(fitsfile * const file, int * const error) const
-{
+void ThermalForceLocalized::writeForce(fitsfile * const file, int * const error) const {
 	// move to primary HDU:
 	if (!*error)
 		// file, # indicating primary HDU, HDU type, error
  		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
 	
 	// add flag indicating that the localized thermal force is used:
-	if (!*error) 
-	{
+	if (!*error) {
 		long forceFlags = 0;
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &forceFlags, NULL, error);
 
@@ -95,8 +88,7 @@ void ThermalForceLocalized::writeForce(fitsfile * const file, int * const error)
                             const_cast<char *> ("Force configuration."), error);
 	}
 
-	if (!*error)
-	{
+	if (!*error) {
 		// file, key name, value, precision (scientific format), comment
 		fits_write_key_dbl(file, const_cast<char *> ("heatingValue1"), heatVal1, 
                            6, const_cast<char *> ("[N] (ThermalForceLocalized)"), error);
@@ -107,15 +99,13 @@ void ThermalForceLocalized::writeForce(fitsfile * const file, int * const error)
 	}
 }
 
-void ThermalForceLocalized::readForce(fitsfile * const file, int * const error)
-{
+void ThermalForceLocalized::readForce(fitsfile * const file, int * const error) {
 	// move to primary HDU:
 	if (!*error)
 		// file, # indicating primary HDU, HDU type, error
  		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
 	
-	if (!*error)
-	{
+	if (!*error) {
 		// file, key name, value, don't read comment, error
 		fits_read_key_dbl(file, const_cast<char *> ("heatingValue1"), &heatVal1, NULL, error);
 		fits_read_key_dbl(file, const_cast<char *> ("heatingValue2"), &heatVal2, NULL, error);

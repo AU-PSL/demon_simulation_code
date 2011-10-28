@@ -12,8 +12,7 @@
 
 #include "Force.h"
 
-class RectConfinementForce : public Force
-{	
+class RectConfinementForce : public Force {
 public:
 	RectConfinementForce(Cloud * const myCloud, double confineConstX, double confineConstY);
 	// IMPORTANT: In the above constructor, confineConst_'s must be positive!

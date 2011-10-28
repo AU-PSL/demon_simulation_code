@@ -12,8 +12,7 @@
 
 #include "Force.h"
 
-class ConfinementForce : public Force
-{	
+class ConfinementForce : public Force {
 public:
 	ConfinementForce(Cloud * const myCloud, double confineConst, double plasmaPotential);
 	// IMPORTANT: In the above constructor, confineConst must be positive!

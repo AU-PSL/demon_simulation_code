@@ -12,8 +12,7 @@
 
 #include "Force.h"
 
-class MagneticForce : public Force
-{	
+class MagneticForce : public Force {
 public:
 	MagneticForce(Cloud * const myCloud, const double magneticField);
 	~MagneticForce() {} // destructor

@@ -16,8 +16,7 @@ typedef unsigned char force_index;
 typedef long force_flags;
 
 // Binary assignments for the bit-packed FORCES keyword in Fits file:
-enum ForceFlag 
-{
+enum ForceFlag {
 	ConfinementForceFlag = 1,          // 000000000001
 	DragForceFlag = 2,                 // 000000000010
 	ShieldedCoulombForceFlag = 4,      // 000000000100
@@ -32,8 +31,7 @@ enum ForceFlag
 	ConfinementForceVoidFlag = 2048    // 100000000000
 };
 
-class Force
-{
+class Force {
 public:
 	Cloud * const cloud;
 	

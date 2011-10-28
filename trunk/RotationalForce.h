@@ -12,8 +12,7 @@
 
 #include "Force.h"
 
-class RotationalForce : public Force
-{	
+class RotationalForce : public Force {
 public:
 	RotationalForce(Cloud * const myCloud, const double rmin, const double rmax, const double rotConst);
 	~RotationalForce() {} // destructor

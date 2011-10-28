@@ -13,8 +13,7 @@
 ConfinementForce::ConfinementForce(Cloud * const myCloud, double confineConst, double plasmaPotential) 
 : Force(myCloud), confine(confineConst), potentialOffset(plasmaPotential) {}
 
-void ConfinementForce::force1(const double currentTime)
-{
+void ConfinementForce::force1(const double currentTime) {
     (void)currentTime;
     begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
         force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle), 
@@ -22,8 +21,7 @@ void ConfinementForce::force1(const double currentTime)
     end_parallel_for
 }
 
-void ConfinementForce::force2(const double currentTime)
-{
+void ConfinementForce::force2(const double currentTime) {
     (void)currentTime;
     begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
         force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle), 
@@ -31,8 +29,7 @@ void ConfinementForce::force2(const double currentTime)
     end_parallel_for
 }
 
-void ConfinementForce::force3(const double currentTime)
-{
+void ConfinementForce::force3(const double currentTime) {
     (void)currentTime;
 	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle), 
@@ -40,8 +37,7 @@ void ConfinementForce::force3(const double currentTime)
     end_parallel_for
 }
 
-void ConfinementForce::force4(const double currentTime)
-{
+void ConfinementForce::force4(const double currentTime) {
     (void)currentTime;
 	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle), 
@@ -50,8 +46,7 @@ void ConfinementForce::force4(const double currentTime)
 }
 
 inline void ConfinementForce::force(const cloud_index currentParticle, const __m128d currentPositionX, 
-                                    const __m128d currentPositionY, const __m128d charge)
-{
+                                    const __m128d currentPositionY, const __m128d charge) {
 	const __m128d cV = _mm_set1_pd(confine);
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;
@@ -64,16 +59,14 @@ inline void ConfinementForce::force(const cloud_index currentParticle, const __m
 	_mm_store_pd(pPhi, _mm_load_pd(pPhi) + _mm_set1_pd(-0.5)*cV*rr + _mm_set1_pd(potentialOffset));
 }
 
-void ConfinementForce::writeForce(fitsfile * const file, int * const error) const
-{
+void ConfinementForce::writeForce(fitsfile * const file, int * const error) const {
 	// move to primary HDU:
 	if (!*error)
 		// file, # indicating primary HDU, HDU type, error
  		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
 	
 	// add flag indicating that the confinement force is used:
-	if (!*error) 
-	{
+	if (!*error) {
 		long forceFlags = 0;
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &forceFlags, NULL, error);
 
@@ -100,8 +93,7 @@ void ConfinementForce::writeForce(fitsfile * const file, int * const error) cons
                            6, const_cast<char *> ("[V] (background plasma potential offset)"), error);
 }
 
-void ConfinementForce::readForce(fitsfile * const file, int * const error)
-{
+void ConfinementForce::readForce(fitsfile * const file, int * const error) {
 	// move to primary HDU:
 	if (!*error)
 		// file, # indicating primary HDU, HDU type, error

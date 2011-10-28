@@ -12,8 +12,7 @@
 
 #include "ConfinementForce.h"
 
-class ConfinementForceVoid : public ConfinementForce
-{	
+class ConfinementForceVoid : public ConfinementForce {
 public:
 	ConfinementForceVoid(Cloud * const myCloud, double confineConst, double plasmaPotential, double voidDecay);
 	// IMPORTANT: In the above constructor, confineConst must be positive!

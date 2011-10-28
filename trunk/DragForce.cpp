@@ -13,40 +13,35 @@
 DragForce::DragForce(Cloud * const myCloud, const double gamma) 
 : Force(myCloud), dragConst(-gamma) {}
 
-void DragForce::force1(const double currentTime)
-{
+void DragForce::force1(const double currentTime) {
     (void)currentTime;
 	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle, cloud->getVx1_pd(currentParticle), cloud->getVy1_pd(currentParticle));
     end_parallel_for
 }
 
-void DragForce::force2(const double currentTime)
-{	
+void DragForce::force2(const double currentTime) {
     (void)currentTime;
 	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getVx2_pd(currentParticle), cloud->getVy2_pd(currentParticle));
     end_parallel_for
 }
 
-void DragForce::force3(const double currentTime)
-{	
+void DragForce::force3(const double currentTime) {
     (void)currentTime;
 	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle, cloud->getVx3_pd(currentParticle), cloud->getVy3_pd(currentParticle));
     end_parallel_for
 }
 
-void DragForce::force4(const double currentTime)
-{
+void DragForce::force4(const double currentTime) {
     (void)currentTime;
 	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle, cloud->getVx4_pd(currentParticle), cloud->getVy4_pd(currentParticle));
     end_parallel_for
 }
 
-inline void DragForce::force(const cloud_index currentParticle, const __m128d currentVelocityX, const __m128d currentVelocityY)
-{
+inline void DragForce::force(const cloud_index currentParticle, const __m128d currentVelocityX, const __m128d currentVelocityY) {
 	const __m128d drag = _mm_set1_pd(dragConst)*_mm_load_pd(cloud->mass + currentParticle);
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;
@@ -55,16 +50,14 @@ inline void DragForce::force(const cloud_index currentParticle, const __m128d cu
 	_mm_store_pd(pFy, _mm_load_pd(pFy) + drag*currentVelocityY);
 }
 
-void DragForce::writeForce(fitsfile * const file, int * const error) const
-{
+void DragForce::writeForce(fitsfile * const file, int * const error) const {
 	// move to primary HDU:
 	if (!*error)
 		// file, # indicating primary HDU, HDU type, error
  		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
 	
 	// add flag indicating that the drag force is used:
-	if (!*error) 
-	{
+	if (!*error) {
 		long forceFlags = 0;
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &forceFlags, NULL, error);
 
@@ -86,8 +79,7 @@ void DragForce::writeForce(fitsfile * const file, int * const error) const
                            6, const_cast<char *> ("[s^-1] (DragForce)"), error);
 }
 
-void DragForce::readForce(fitsfile * const file, int * const error)
-{
+void DragForce::readForce(fitsfile * const file, int * const error) {
 	// move to primary HDU:
 	if (!*error)
 		// file, # indicating primary HDU, HDU type, error

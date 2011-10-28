@@ -12,8 +12,7 @@
 
 #include "Force.h"
 
-class DragForce : public Force
-{	
+class DragForce : public Force {
 public:
 	DragForce(Cloud * const myCloud, const double gamma);
 	~DragForce() {} // destructor

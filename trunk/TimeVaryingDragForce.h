@@ -12,8 +12,7 @@
 
 #include "DragForce.h"
 
-class TimeVaryingDragForce : public DragForce
-{	
+class TimeVaryingDragForce : public DragForce {
 public:
 	TimeVaryingDragForce(Cloud * const myCloud, const double scale, const double offset);
 	~TimeVaryingDragForce() {} //destructor
