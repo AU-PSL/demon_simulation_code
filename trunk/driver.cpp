@@ -267,7 +267,7 @@ void parseCommandLineOptions(int argc, char * const argv[]) {
 			case 'h': // display "h"elp:
 				help();
 				exit(0);
-            case 'i': // use 2nd order "i"ntegrator
+            case 'I': // use 2nd order "i"ntegrator
                 rk4 = false;
                 i++;
                 break;
