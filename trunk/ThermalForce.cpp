@@ -8,9 +8,9 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "ThermalForce.h"
+#include "Parallel.h"
 #include <cmath>
 #include <ctime>
-#include "VectorCompatibility.h"
 
 ThermalForce::ThermalForce(Cloud * const myCloud, const double redFactor) 
 : Force(myCloud), mt((unsigned int)time(NULL)), heatVal(redFactor) {}
@@ -18,29 +18,33 @@ ThermalForce::ThermalForce(Cloud * const myCloud, const double redFactor)
 void ThermalForce::force1(const double currentTime)
 {
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle);
+    end_parallel_for
 }
 
 void ThermalForce::force2(const double currentTime)
 {
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle);
+	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
+        force(currentParticle);
+    end_parallel_for
 }
 
 void ThermalForce::force3(const double currentTime)
 {
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle);
+    end_parallel_for
 }
 
 void ThermalForce::force4(const double currentTime)
 {
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle);
+    end_parallel_for
 }
 
 inline void ThermalForce::force(const cloud_index currentParticle)
@@ -78,12 +82,14 @@ void ThermalForce::writeForce(fitsfile * const file, int * const error) const
 
 		// add or update keyword:
 		if (!*error) 
-			fits_update_key(file, TLONG, const_cast<char *> ("FORCES"), &forceFlags, const_cast<char *> ("Force configuration."), error);
+			fits_update_key(file, TLONG, const_cast<char *> ("FORCES"), &forceFlags, 
+                            const_cast<char *> ("Force configuration."), error);
 	}
 
 	if (!*error)
 		// file, key name, value, precision (scientific format), comment
-		fits_write_key_dbl(file, const_cast<char *> ("heatingValue"), heatVal, 6, const_cast<char *> ("[N] (ThermalForce)"), error);
+		fits_write_key_dbl(file, const_cast<char *> ("heatingValue"), heatVal, 
+                           6, const_cast<char *> ("[N] (ThermalForce)"), error);
 }
 
 void ThermalForce::readForce(fitsfile * const file, int * const error)

@@ -11,7 +11,6 @@
 #define RECTCONFINEMENTFORCE_H
 
 #include "Force.h"
-#include "VectorCompatibility.h"
 
 class RectConfinementForce : public Force
 {	

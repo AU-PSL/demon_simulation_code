@@ -10,6 +10,7 @@
 //TODO: Charge-dependence
 
 #include "RectConfinementForce.h"
+#include "Parallel.h"
 	
 RectConfinementForce::RectConfinementForce(Cloud * const myCloud, double confineConstX, double confineConstY)
 : Force(myCloud), confineX(-confineConstX), confineY(-confineConstY) {}
@@ -17,32 +18,37 @@ RectConfinementForce::RectConfinementForce(Cloud * const myCloud, double confine
 void RectConfinementForce::force1(const double currentTime)
 {
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
+    end_parallel_for
 }
 
 void RectConfinementForce::force2(const double currentTime)
 {
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
+    end_parallel_for
 }
 
 void RectConfinementForce::force3(const double currentTime)
 {
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
+	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
+    end_parallel_for
 }
 
 void RectConfinementForce::force4(const double currentTime)
 {
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
+    end_parallel_for
 }
 
-inline void RectConfinementForce::force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY)
+inline void RectConfinementForce::force(const cloud_index currentParticle, const __m128d currentPositionX, 
+                                        const __m128d currentPositionY)
 {
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;
@@ -72,14 +78,17 @@ void RectConfinementForce::writeForce(fitsfile * const file, int * const error) 
 
 		// add or update keyword:
 		if (!*error) 
-			fits_update_key(file, TLONG, const_cast<char *> ("FORCES"), &forceFlags, const_cast<char *> ("Force configuration."), error);
+			fits_update_key(file, TLONG, const_cast<char *> ("FORCES"), &forceFlags, 
+                            const_cast<char *> ("Force configuration."), error);
 	}
 
 	if (!*error)
 	{
 		// file, key name, value, precision (scientific format), comment
-		fits_write_key_dbl(file, const_cast<char *> ("confineConstX"), confineX, 6, const_cast<char *> ("[N/m] (RectConfinementForce)"), error);
-		fits_write_key_dbl(file, const_cast<char *> ("confineConstY"), confineY, 6, const_cast<char *> ("[N/m] (RectConfinementForce)"), error);
+		fits_write_key_dbl(file, const_cast<char *> ("confineConstX"), confineX, 
+                           6, const_cast<char *> ("[N/m] (RectConfinementForce)"), error);
+		fits_write_key_dbl(file, const_cast<char *> ("confineConstY"), confineY, 
+                           6, const_cast<char *> ("[N/m] (RectConfinementForce)"), error);
 	}
 }
 

@@ -63,14 +63,17 @@ void TimeVaryingThermalForce::writeForce(fitsfile * const file, int * const erro
 
 		// add or update keyword:
 		if (!*error) 
-			fits_update_key(file, TLONG, const_cast<char *> ("FORCES"), &forceFlags, const_cast<char *> ("Force configuration."), error);
+			fits_update_key(file, TLONG, const_cast<char *> ("FORCES"), &forceFlags, 
+                            const_cast<char *> ("Force configuration."), error);
 	}
 
 	if (!*error)
 	{
 		// file, key name, value, precision (scientific format), comment
-		fits_write_key_dbl(file, const_cast<char *> ("heatingValueScale"), heatValScale, 6, const_cast<char *> ("[N/s] (TimeVaryingThermalForce)"), error);
-		fits_write_key_dbl(file, const_cast<char *> ("heatingValueOffset"), heatValOffset, 6, const_cast<char *> ("[N] (TimeVaryingThermalForce)"), error);
+		fits_write_key_dbl(file, const_cast<char *> ("heatingValueScale"), heatValScale, 
+                           6, const_cast<char *> ("[N/s] (TimeVaryingThermalForce)"), error);
+		fits_write_key_dbl(file, const_cast<char *> ("heatingValueOffset"), heatValOffset, 
+                           6, const_cast<char *> ("[N] (TimeVaryingThermalForce)"), error);
 	}
 }
 

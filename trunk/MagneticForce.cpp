@@ -8,6 +8,7 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "MagneticForce.h"
+#include "Parallel.h"
 
 MagneticForce::MagneticForce(Cloud * const myCloud, const double magneticField) 
 : Force(myCloud), BField(magneticField) {}
@@ -15,32 +16,41 @@ MagneticForce::MagneticForce(Cloud * const myCloud, const double magneticField)
 void MagneticForce::force1(const double currentTime)
 {
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle, cloud->getVx1_pd(currentParticle), cloud->getVy1_pd(currentParticle), cloud->getq1_pd(currentParticle));
+	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
+		force(currentParticle, cloud->getVx1_pd(currentParticle), cloud->getVy1_pd(currentParticle), 
+              cloud->getq1_pd(currentParticle));
+    end_parallel_for
 }
 
 void MagneticForce::force2(const double currentTime)
 {	
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle, cloud->getVx2_pd(currentParticle), cloud->getVy2_pd(currentParticle), cloud->getq2_pd(currentParticle));
+	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
+		force(currentParticle, cloud->getVx2_pd(currentParticle), cloud->getVy2_pd(currentParticle), 
+              cloud->getq2_pd(currentParticle));
+    end_parallel_for
 }
 
 void MagneticForce::force3(const double currentTime)
 {	
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle, cloud->getVx3_pd(currentParticle), cloud->getVy3_pd(currentParticle), cloud->getq3_pd(currentParticle));
+	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
+		force(currentParticle, cloud->getVx3_pd(currentParticle), cloud->getVy3_pd(currentParticle), 
+              cloud->getq3_pd(currentParticle));
+    end_parallel_for
 }
 
 void MagneticForce::force4(const double currentTime)
 {
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
-		force(currentParticle, cloud->getVx4_pd(currentParticle), cloud->getVy4_pd(currentParticle), cloud->getq4_pd(currentParticle));
+	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
+		force(currentParticle, cloud->getVx4_pd(currentParticle), cloud->getVy4_pd(currentParticle), 
+              cloud->getq4_pd(currentParticle));
+    end_parallel_for
 }
 
-inline void MagneticForce::force(const cloud_index currentParticle, const __m128d currentVelocityX, const __m128d currentVelocityY, const __m128d currentCharge)
+inline void MagneticForce::force(const cloud_index currentParticle, const __m128d currentVelocityX, 
+                                 const __m128d currentVelocityY, const __m128d currentCharge)
 {
 	const __m128d qB = currentCharge*_mm_set1_pd(BField);
 	double * const pFx = cloud->forceX + currentParticle;

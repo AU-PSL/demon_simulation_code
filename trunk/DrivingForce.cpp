@@ -19,28 +19,32 @@ DrivingForce::DrivingForce(Cloud * const myCloud, const double drivingConst, con
 void DrivingForce::force1(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; 
+         currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, vtime, cloud->getx1_pd(currentParticle));
 }
 
 void DrivingForce::force2(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; 
+         currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, vtime, cloud->getx2_pd(currentParticle));
 }
 
 void DrivingForce::force3(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2) 
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; 
+         currentParticle < numParticles; currentParticle += 2) 
 		force(currentParticle, vtime, cloud->getx3_pd(currentParticle));
 }
 
 void DrivingForce::force4(const double currentTime)
 {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
+	for (cloud_index currentParticle = 0, numParticles = cloud->n; 
+         currentParticle < numParticles; currentParticle += 2)
 		force(currentParticle, vtime, cloud->getx4_pd(currentParticle));
 }
 
@@ -85,15 +89,19 @@ void DrivingForce::writeForce(fitsfile * const file, int * const error) const
 
 		// add or update keyword:
 		if (!*error) 
-			fits_update_key(file, TLONG, const_cast<char *> ("FORCES"), &forceFlags, const_cast<char *> ("Force configuration."), error);
+			fits_update_key(file, TLONG, const_cast<char *> ("FORCES"), &forceFlags, 
+                            const_cast<char *> ("Force configuration."), error);
 	}
 
 	if (!*error)
 	{
 		// file, key name, value, precision (scientific format), comment
-		fits_write_key_dbl(file, const_cast<char *> ("drivingAmplitude"), amplitude, 6, const_cast<char *> ("[N] (DrivingForce)"), error);
-		fits_write_key_dbl(file, const_cast<char *> ("drivingConst"), driveConst, 6, const_cast<char *> ("[m^2] (DrivingForce)"), error);
-		fits_write_key_dbl(file, const_cast<char *> ("drivingShift"), shift, 6, const_cast<char *> ("[m] (DrivingForce)"), error);
+		fits_write_key_dbl(file, const_cast<char *> ("drivingAmplitude"), amplitude, 
+                           6, const_cast<char *> ("[N] (DrivingForce)"), error);
+		fits_write_key_dbl(file, const_cast<char *> ("drivingConst"), driveConst, 
+                           6, const_cast<char *> ("[m^2] (DrivingForce)"), error);
+		fits_write_key_dbl(file, const_cast<char *> ("drivingShift"), shift, 
+                           6, const_cast<char *> ("[m] (DrivingForce)"), error);
 	}
 }
 

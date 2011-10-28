@@ -8,6 +8,7 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "Cloud.h"
+#include "Parallel.h"
 #include <cmath>
 #include <sstream>
 
@@ -74,8 +75,9 @@ inline void Cloud::setMass() const
 {
 	const double particleDensity = 2200.0;
 	const double particleMass = (4.0/3.0)*M_PI*particleRadius*particleRadius*particleRadius*particleDensity;
-	for (cloud_index i = 0; i < n; i++)
-		mass[i] = particleMass;
+	begin_parallel_for(i, e, n, 1)
+        mass[i] = particleMass;
+    end_parallel_for
 }
 
 Cloud * const Cloud::initializeGrid(const cloud_index numParticles)
@@ -90,14 +92,12 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles)
 
 	cloud->setCharge();
 	cloud->setMass();
-	for (cloud_index i = 0; i < numParticles; i++)
-	{
+    begin_parallel_for(i, e, numParticles, 1)
 		cloud->setPosition(i, 
 			cloudHalfSize - (double)(i%sqrtNumPar)*interParticleSpacing, 
 			cloudHalfSize - (double)(i/sqrtNumPar)*interParticleSpacing);
 		cloud->setVelocity(i);
-	}
-
+    end_parallel_for
 	return cloud;
 }
 

@@ -8,35 +8,41 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "ConfinementForce.h"
-	
-ConfinementForce::ConfinementForce(Cloud * const myCloud, double confineConst, double plasmaPotential) : Force(myCloud), confine(confineConst), potentialOffset(plasmaPotential) {}
+#include "Parallel.h"
+
+ConfinementForce::ConfinementForce(Cloud * const myCloud, double confineConst, double plasmaPotential) 
+: Force(myCloud), confine(confineConst), potentialOffset(plasmaPotential) {}
 
 void ConfinementForce::force1(const double currentTime)
 {
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle), cloud->getq1_pd(currentParticle));
+    begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
+        force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle), cloud->getq1_pd(currentParticle));
+    end_parallel_for
 }
 
 void ConfinementForce::force2(const double currentTime)
 {
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
-		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle), cloud->getq2_pd(currentParticle));
+    begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
+        force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle), cloud->getq2_pd(currentParticle));
+    end_parallel_for
 }
 
 void ConfinementForce::force3(const double currentTime)
 {
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
+	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle), cloud->getq3_pd(currentParticle));
+    end_parallel_for
 }
 
 void ConfinementForce::force4(const double currentTime)
 {
     (void)currentTime;
-	for (cloud_index currentParticle = 0, numParticles = cloud->n; currentParticle < numParticles; currentParticle += 2)
+	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle), cloud->getq4_pd(currentParticle));
+    end_parallel_for
 }
 
 inline void ConfinementForce::force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY, const __m128d charge)
@@ -74,16 +80,19 @@ void ConfinementForce::writeForce(fitsfile * const file, int * const error) cons
 
 		// add or update keyword:
 		if (!*error) 
-			fits_update_key(file, TLONG, const_cast<char *> ("FORCES"), &forceFlags, const_cast<char *> ("Force configuration."), error);
+			fits_update_key(file, TLONG, const_cast<char *> ("FORCES"), &forceFlags, 
+                            const_cast<char *> ("Force configuration."), error);
 	}
 
 	if (!*error)
 		// file, key name, value, precision (scientific format), comment
-		fits_write_key_dbl(file, const_cast<char *> ("confineConst"), confine, 6, const_cast<char *> ("[V/m^2] (ConfinementForce)"), error);
+		fits_write_key_dbl(file, const_cast<char *> ("confineConst"), confine, 
+                           6, const_cast<char *> ("[V/m^2] (ConfinementForce)"), error);
 
 	// write background plasma potential offset:
 	if (!*error)
-		fits_write_key_dbl(file, const_cast<char *> ("plasmaPotential"), potentialOffset, 6, const_cast<char *> ("[V] (background plasma potential offset)"), error);
+		fits_write_key_dbl(file, const_cast<char *> ("plasmaPotential"), potentialOffset, 
+                           6, const_cast<char *> ("[V] (background plasma potential offset)"), error);
 }
 
 void ConfinementForce::readForce(fitsfile * const file, int * const error)
