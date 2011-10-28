@@ -17,7 +17,8 @@ void ConfinementForce::force1(const double currentTime)
 {
     (void)currentTime;
     begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
-        force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle), cloud->getq1_pd(currentParticle));
+        force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle), 
+              cloud->getq1_pd(currentParticle));
     end_parallel_for
 }
 
@@ -25,7 +26,8 @@ void ConfinementForce::force2(const double currentTime)
 {
     (void)currentTime;
     begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
-        force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle), cloud->getq2_pd(currentParticle));
+        force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle), 
+              cloud->getq2_pd(currentParticle));
     end_parallel_for
 }
 
@@ -33,7 +35,8 @@ void ConfinementForce::force3(const double currentTime)
 {
     (void)currentTime;
 	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
-		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle), cloud->getq3_pd(currentParticle));
+		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle), 
+              cloud->getq3_pd(currentParticle));
     end_parallel_for
 }
 
@@ -41,11 +44,13 @@ void ConfinementForce::force4(const double currentTime)
 {
     (void)currentTime;
 	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
-		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle), cloud->getq4_pd(currentParticle));
+		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle), 
+              cloud->getq4_pd(currentParticle));
     end_parallel_for
 }
 
-inline void ConfinementForce::force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY, const __m128d charge)
+inline void ConfinementForce::force(const cloud_index currentParticle, const __m128d currentPositionX, 
+                                    const __m128d currentPositionY, const __m128d charge)
 {
 	const __m128d cV = _mm_set1_pd(confine);
 	double * const pFx = cloud->forceX + currentParticle;
