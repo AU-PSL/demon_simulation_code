@@ -60,7 +60,7 @@ const double Integrator::modifyTimeStep(double currentDist, double currentTimeSt
                 BLOCK_VALUE_DIST /= redFactor;
                 BLOCK_VALUE_TIME /= redFactor;
             }
-            SEMAPHORES_FREE(0)
+            SEMAPHORE_SIGNAL(0)
         }
 		
 		// load positions into vectors:
@@ -86,7 +86,7 @@ const double Integrator::modifyTimeStep(double currentDist, double currentTimeSt
                     BLOCK_VALUE_DIST /= redFactor;
                     BLOCK_VALUE_TIME /= redFactor;
                 }
-                SEMAPHORES_FREE(0)
+                SEMAPHORE_SIGNAL(0)
             }
             
 			// calculate j,i+1 and j+1,i separation distances:
@@ -102,7 +102,7 @@ const double Integrator::modifyTimeStep(double currentDist, double currentTimeSt
                     BLOCK_VALUE_DIST /= redFactor;
                     BLOCK_VALUE_TIME /= redFactor;
                 }
-                SEMAPHORES_FREE(0)
+                SEMAPHORE_SIGNAL(0)
             }
 		}
 	END_PARALLEL_FOR
