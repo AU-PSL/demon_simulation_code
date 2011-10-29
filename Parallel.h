@@ -20,7 +20,7 @@
 
 typedef size_t cloud_index;
 #define BEGIN_PARALLEL_FOR(i,e,num,step) \
-dispatch_apply(num/step, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(cloud_index i) { \
+dispatch_apply((num)/step, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(cloud_index i) { \
     i *= step;
 #define END_PARALLEL_FOR });
 
