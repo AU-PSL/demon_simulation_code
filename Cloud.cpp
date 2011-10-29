@@ -34,7 +34,11 @@ q1(new double[n]), q2(new double[n]), q3(new double[n]), q4(new double[n]),
 forceX(new double[n]), forceY(new double[n]), phi(new double[n]),
 xCache(new __m128d[n/2]), yCache(new __m128d[n/2]), 
 VxCache(new __m128d[n/2]), VyCache(new __m128d[n/2]),
-qCache(new __m128d[n/2]) {}
+qCache(new __m128d[n/2]) {
+#ifdef _OPENMP
+	omp_set_num_threads(omp_get_num_procs());
+#endif
+}
 
 Cloud::~Cloud() {
 	delete[] x; delete[] y; delete[] Vx; delete[] Vy;
@@ -68,7 +72,7 @@ inline void Cloud::setCharge() const {
 inline void Cloud::setMass() const {
 	const double particleDensity = 2200.0;
 	const double particleMass = (4.0/3.0)*M_PI*particleRadius*particleRadius*particleRadius*particleDensity;
-	BEGIN_PARALLEL_FOR(i, e, n, 1)
+	BEGIN_PARALLEL_FOR(i, e, n, 1, static)
         mass[i] = particleMass;
     END_PARALLEL_FOR
 }
@@ -84,7 +88,7 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles) {
 
 	cloud->setCharge();
 	cloud->setMass();
-    BEGIN_PARALLEL_FOR(i, e, numParticles, 1)
+    BEGIN_PARALLEL_FOR(i, e, numParticles, 1, static)
 		cloud->setPosition(i, 
 			cloudHalfSize - (double)(i%sqrtNumPar)*interParticleSpacing, 
 			cloudHalfSize - (double)(i/sqrtNumPar)*interParticleSpacing);

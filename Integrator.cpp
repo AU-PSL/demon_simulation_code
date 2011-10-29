@@ -15,14 +15,14 @@
 Integrator::Integrator(Cloud * const myCloud, Force ** const forces, const force_index forcesSize,
                        const double timeStep, double startTime)
 : cloud(myCloud), theForce(forces), numForces(forcesSize), init_dt(timeStep), currentTime(startTime), 
-numOperators(1), operations(new Operator*[numOperators]), SEMAPHORES_MALLOC(1) {
+numOperators(1), operations(new Operator*[numOperators]) SEMAPHORES_MALLOC(1) {
 	// Operators are order dependent.
 	operations[0] = new CacheOperator(cloud);
     SEMAPHORES_INIT(1);
 }
 
 Integrator::~Integrator() {
-	BEGIN_PARALLEL_FOR(i, e, numOperators, 1)
+	BEGIN_PARALLEL_FOR(i, e, numOperators, 1, static)
 		delete operations[i];
     END_PARALLEL_FOR
 	delete[] operations;
@@ -47,7 +47,7 @@ const double Integrator::modifyTimeStep(double currentDist, double currentTimeSt
 #endif
     
 	// loop through entire cloud, or until reduction occures. Reset innerIndex after each loop iteration.
-	BEGIN_PARALLEL_FOR(outerIndex, e, cloud->n - 1, 2)
+	BEGIN_PARALLEL_FOR(outerIndex, e, cloud->n - 1, 2, dynamic)
 		// caculate separation distance b/t adjacent elements:
 		const double sepx = cloud->x[outerIndex] - cloud->x[outerIndex + 1];
 		const double sepy = cloud->y[outerIndex] - cloud->y[outerIndex + 1];
