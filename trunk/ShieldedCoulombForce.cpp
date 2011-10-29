@@ -13,7 +13,7 @@
 const double ShieldedCoulombForce::coulomb = 1.0/(4.0*M_PI*Cloud::epsilon0);
 
 ShieldedCoulombForce::ShieldedCoulombForce(Cloud * const myCloud, const double shieldingConstant)
-: Force(myCloud), shielding(shieldingConstant), SEMAPHORES_MALLOC(myCloud->n/2) {
+: Force(myCloud), shielding(shieldingConstant) SEMAPHORES_MALLOC(myCloud->n/2) {
     SEMAPHORES_INIT(myCloud->n/2)
 }
 ShieldedCoulombForce::~ShieldedCoulombForce() {
@@ -23,7 +23,7 @@ ShieldedCoulombForce::~ShieldedCoulombForce() {
 void ShieldedCoulombForce::force1(const double currentTime) {
     (void)currentTime;
     cloud_index numParticles = cloud->n;
-    BEGIN_PARALLEL_FOR(currentParticle, e, numParticles - 1, 2)
+    BEGIN_PARALLEL_FOR(currentParticle, e, numParticles - 1, 2, dynamic)
         const __m128d vx1 = cloud->getx1_pd(currentParticle);
         const __m128d vy1 = cloud->gety1_pd(currentParticle);
         const __m128d vq1 = cloud->getq1_pd(currentParticle);
@@ -47,7 +47,7 @@ void ShieldedCoulombForce::force1(const double currentTime) {
 void ShieldedCoulombForce::force2(const double currentTime) {
     (void)currentTime;
 	cloud_index numParticles = cloud->n;
-    BEGIN_PARALLEL_FOR(currentParticle, e, numParticles - 1, 2)
+    BEGIN_PARALLEL_FOR(currentParticle, e, numParticles - 1, 2, dynamic)
 		const __m128d vx1 = cloud->getx2_pd(currentParticle);
 		const __m128d vy1 = cloud->gety2_pd(currentParticle);
 		const __m128d vq1 = cloud->getq2_pd(currentParticle);
@@ -70,7 +70,7 @@ void ShieldedCoulombForce::force2(const double currentTime) {
 void ShieldedCoulombForce::force3(const double currentTime) {
     (void)currentTime;
     cloud_index numParticles = cloud->n;
-    BEGIN_PARALLEL_FOR(currentParticle, e, numParticles - 1, 2)
+    BEGIN_PARALLEL_FOR(currentParticle, e, numParticles - 1, 2, dynamic)
 		const __m128d vx1 = cloud->getx3_pd(currentParticle);
 		const __m128d vy1 = cloud->gety3_pd(currentParticle);
 		const __m128d vq1 = cloud->getq3_pd(currentParticle);
@@ -93,7 +93,7 @@ void ShieldedCoulombForce::force3(const double currentTime) {
 void ShieldedCoulombForce::force4(const double currentTime) {
     (void)currentTime;
 	cloud_index numParticles = cloud->n;
-    BEGIN_PARALLEL_FOR(currentParticle, e, numParticles - 1, 2)
+    BEGIN_PARALLEL_FOR(currentParticle, e, numParticles - 1, 2, dynamic)
 		const __m128d vx1 = cloud->getx4_pd(currentParticle);
 		const __m128d vy1 = cloud->gety4_pd(currentParticle);
 		const __m128d vq1 = cloud->getq4_pd(currentParticle);

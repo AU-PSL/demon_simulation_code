@@ -48,7 +48,7 @@ void ThermalForceLocalized::force1(const double currentTime) {
 	dispatch_group_wait(oddRandGroup, DISPATCH_TIME_FOREVER);
 #endif   
 
-	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static)
 		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle), 
               oddRandCache[currentParticle/2]);
     END_PARALLEL_FOR
@@ -66,7 +66,7 @@ void ThermalForceLocalized::force2(const double currentTime) {
 	dispatch_group_wait(evenRandGroup, DISPATCH_TIME_FOREVER);
 #endif
     
-    BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2) 
+    BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static) 
 		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle), 
               evenRandCache[currentParticle/2]);
     END_PARALLEL_FOR
@@ -84,7 +84,7 @@ void ThermalForceLocalized::force3(const double currentTime) {
 	dispatch_group_wait(oddRandGroup, DISPATCH_TIME_FOREVER);
 #endif
     
-    BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2) 
+    BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static) 
     force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle), 
           oddRandCache[currentParticle/2]);
     END_PARALLEL_FOR
@@ -102,7 +102,7 @@ void ThermalForceLocalized::force4(const double currentTime) {
 	dispatch_group_wait(evenRandGroup, DISPATCH_TIME_FOREVER);
 #endif
     
-    BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2) 
+    BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static) 
     force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle), 
           evenRandCache[currentParticle/2]);
     END_PARALLEL_FOR

@@ -15,28 +15,28 @@ RotationalForce::RotationalForce(Cloud * const myCloud, const double rmin, const
 
 void RotationalForce::force1(const double currentTime) {
     (void)currentTime;
-	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static)
 		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
     END_PARALLEL_FOR
 }
 
 void RotationalForce::force2(const double currentTime) {
     (void)currentTime;
-	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static)
 		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
     END_PARALLEL_FOR
 }
 
 void RotationalForce::force3(const double currentTime) {
     (void)currentTime;
-	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static)
 		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
     END_PARALLEL_FOR
 }
 
 void RotationalForce::force4(const double currentTime) {
     (void)currentTime;
-	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static)
 		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
     END_PARALLEL_FOR
 }
@@ -52,8 +52,8 @@ inline void RotationalForce::force(const cloud_index currentParticle, const __m1
 	_mm_storel_pd(&compL, compV);
 	_mm_storeh_pd(&compH, compV);
 	
-	const bool nanL = isnan(compL);
-	const bool nanH = isnan(compH);
+	const bool nanL = std::isnan(compL);
+	const bool nanH = std::isnan(compH);
 	if (!nanL && !nanH) // niether in, early return
 		return;
 	

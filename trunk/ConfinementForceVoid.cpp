@@ -14,7 +14,7 @@ ConfinementForceVoid::ConfinementForceVoid(Cloud * const myCloud, double confine
 
 void ConfinementForceVoid::force1(const double currentTime) {
 	ConfinementForce::force1(currentTime);
-	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static)
 		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle), 
               cloud->getq1_pd(currentParticle));
     END_PARALLEL_FOR
@@ -22,7 +22,7 @@ void ConfinementForceVoid::force1(const double currentTime) {
 
 void ConfinementForceVoid::force2(const double currentTime) {
 	ConfinementForce::force2(currentTime);
-	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static)
 		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle), 
               cloud->getq2_pd(currentParticle));
     END_PARALLEL_FOR
@@ -30,7 +30,7 @@ void ConfinementForceVoid::force2(const double currentTime) {
 
 void ConfinementForceVoid::force3(const double currentTime) {
 	ConfinementForce::force3(currentTime);
-	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static)
 		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle), 
               cloud->getq3_pd(currentParticle));
     END_PARALLEL_FOR
@@ -38,7 +38,7 @@ void ConfinementForceVoid::force3(const double currentTime) {
 
 void ConfinementForceVoid::force4(const double currentTime) {
 	ConfinementForce::force4(currentTime);
-	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static)
 		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle), 
               cloud->getq4_pd(currentParticle));
     END_PARALLEL_FOR

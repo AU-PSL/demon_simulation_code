@@ -14,7 +14,7 @@ MagneticForce::MagneticForce(Cloud * const myCloud, const double magneticField)
 
 void MagneticForce::force1(const double currentTime) {
     (void)currentTime;
-	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2) 
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static) 
 		force(currentParticle, cloud->getVx1_pd(currentParticle), cloud->getVy1_pd(currentParticle), 
               cloud->getq1_pd(currentParticle));
     END_PARALLEL_FOR
@@ -22,7 +22,7 @@ void MagneticForce::force1(const double currentTime) {
 
 void MagneticForce::force2(const double currentTime) {
     (void)currentTime;
-	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2) 
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static) 
 		force(currentParticle, cloud->getVx2_pd(currentParticle), cloud->getVy2_pd(currentParticle), 
               cloud->getq2_pd(currentParticle));
     END_PARALLEL_FOR
@@ -30,7 +30,7 @@ void MagneticForce::force2(const double currentTime) {
 
 void MagneticForce::force3(const double currentTime) {
     (void)currentTime;
-	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static)
 		force(currentParticle, cloud->getVx3_pd(currentParticle), cloud->getVy3_pd(currentParticle), 
               cloud->getq3_pd(currentParticle));
     END_PARALLEL_FOR
@@ -38,7 +38,7 @@ void MagneticForce::force3(const double currentTime) {
 
 void MagneticForce::force4(const double currentTime) {
     (void)currentTime;
-	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2) 
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static) 
 		force(currentParticle, cloud->getVx4_pd(currentParticle), cloud->getVy4_pd(currentParticle), 
               cloud->getq4_pd(currentParticle));
     END_PARALLEL_FOR
