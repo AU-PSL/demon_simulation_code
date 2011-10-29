@@ -18,7 +18,6 @@
 		4DDA63D9145A010000E795F8 /* Runge_Kutta2.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DDA63D8145A010000E795F8 /* Runge_Kutta2.h */; };
 		4DDA63DB145A012E00E795F8 /* Runge_Kutta2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4DDA63DA145A012E00E795F8 /* Runge_Kutta2.cpp */; };
 		4DDDB4F912BA7E62003AC69F /* Operator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DDDB4F812BA7E62003AC69F /* Operator.h */; };
-		4DFB6DB6145B071000F82DA1 /* Parallel.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DFB6DB5145B071000F82DA1 /* Parallel.h */; };
 		4DFB6DBE145B8E5700F82DA1 /* Parallel.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DFB6DBD145B8E5600F82DA1 /* Parallel.h */; };
 		E1B3A959129D710500599DFF /* VectorCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B3A958129D710500599DFF /* VectorCompatibility.h */; };
 		E1FD94351299994F00EBC94D /* Cloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FD942F1299994C00EBC94D /* Cloud.cpp */; };
@@ -74,7 +73,6 @@
 		4DDA63D8145A010000E795F8 /* Runge_Kutta2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Runge_Kutta2.h; path = ../Runge_Kutta2.h; sourceTree = "<group>"; };
 		4DDA63DA145A012E00E795F8 /* Runge_Kutta2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Runge_Kutta2.cpp; path = ../Runge_Kutta2.cpp; sourceTree = "<group>"; };
 		4DDDB4F812BA7E62003AC69F /* Operator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Operator.h; path = ../Operator.h; sourceTree = SOURCE_ROOT; };
-		4DFB6DB5145B071000F82DA1 /* Parallel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parallel.h; sourceTree = "<group>"; };
 		4DFB6DBD145B8E5600F82DA1 /* Parallel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parallel.h; path = ../Parallel.h; sourceTree = "<group>"; };
 		D2AAC046055464E500DB518D /* libSimulation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSimulation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E16C487E12A587AE004F3B02 /* LICENSE.TXT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.TXT; path = ../LICENSE.TXT; sourceTree = SOURCE_ROOT; };
@@ -204,7 +202,6 @@
 				E1FD94421299996F00EBC94D /* mtrand.h */,
 				E1FD94411299996F00EBC94D /* mtrand.cpp */,
 				E1B3A958129D710500599DFF /* VectorCompatibility.h */,
-				4DFB6DB5145B071000F82DA1 /* Parallel.h */,
 				4DFB6DBD145B8E5600F82DA1 /* Parallel.h */,
 			);
 			name = Simulation;
@@ -293,7 +290,6 @@
 				4D51B13B13E8A68600F37502 /* MagneticForce.h in Headers */,
 				4DDA63D61459F6A300E795F8 /* Integrator.h in Headers */,
 				4DDA63D9145A010000E795F8 /* Runge_Kutta2.h in Headers */,
-				4DFB6DB6145B071000F82DA1 /* Parallel.h in Headers */,
 				4DFB6DBE145B8E5700F82DA1 /* Parallel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -416,7 +412,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
@@ -431,7 +426,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_MODEL_TUNING = G5;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
@@ -556,7 +550,6 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/bin;
@@ -573,14 +566,12 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = "compiler-default";
-				GCC_MODEL_TUNING = G5;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = DEMON;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
