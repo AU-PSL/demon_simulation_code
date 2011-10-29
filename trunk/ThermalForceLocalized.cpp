@@ -8,55 +8,118 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "ThermalForceLocalized.h"
-#include "Parallel.h"
 #include <ctime>
 #include <cmath>
 
 ThermalForceLocalized::ThermalForceLocalized(Cloud * const myCloud, const double thermRed1, 
                                              const double thermRed2, const double specifiedRadius) 
-: Force(myCloud), mt((unsigned long)time(NULL)), heatingRadius(specifiedRadius), 
-heatVal1(thermRed1), heatVal2(thermRed2) {}
+: Force(myCloud), mt((unsigned long)time(NULL)), heatingRadius(specifiedRadius),
+heatVal1(thermRed1), heatVal2(thermRed2), 
+evenRandCache(new RandCache[myCloud->n/2]), oddRandCache(new RandCache[myCloud->n/2])
+#ifdef DISPATCH_QUEUES
+, evenRandGroup(dispatch_group_create()), oddRandGroup(dispatch_group_create()),
+randQueue(dispatch_queue_create("com.DEMON.ThermalForceLocalized", NULL))
+#endif
+{
+    for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
+        oddRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+}
+
+ThermalForceLocalized::~ThermalForceLocalized() {
+    delete[] evenRandCache;
+	delete[] oddRandCache;
+    
+#ifdef DISPATCH_QUEUES
+	dispatch_release(evenRandGroup);
+	dispatch_release(oddRandGroup);
+	dispatch_release(randQueue);
+#endif
+}
 
 void ThermalForceLocalized::force1(const double currentTime) {
     (void)currentTime;
-	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
-		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
-    end_parallel_for
+#ifdef DISPATCH_QUEUES
+    dispatch_group_async(evenRandGroup, randQueue, ^{
+#endif
+    for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
+        evenRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+#ifdef DISPATCH_QUEUES
+    });
+	dispatch_group_wait(oddRandGroup, DISPATCH_TIME_FOREVER);
+#endif   
+
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2)
+		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle), 
+              oddRandCache[currentParticle/2]);
+    END_PARALLEL_FOR
 }
 
 void ThermalForceLocalized::force2(const double currentTime) {
 	(void)currentTime;
-    begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
-		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
-    end_parallel_for
+#ifdef DISPATCH_QUEUES
+    dispatch_group_async(oddRandGroup, randQueue, ^{
+#endif
+    for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
+        oddRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+#ifdef DISPATCH_QUEUES
+	});
+	dispatch_group_wait(evenRandGroup, DISPATCH_TIME_FOREVER);
+#endif
+    
+    BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2) 
+		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle), 
+              evenRandCache[currentParticle/2]);
+    END_PARALLEL_FOR
 }
 
 void ThermalForceLocalized::force3(const double currentTime) {
 	(void)currentTime;
-    begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
-		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
-    end_parallel_for
+#ifdef DISPATCH_QUEUES
+    dispatch_group_async(evenRandGroup, randQueue, ^{
+#endif
+        for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
+            evenRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+#ifdef DISPATCH_QUEUES
+    });
+	dispatch_group_wait(oddRandGroup, DISPATCH_TIME_FOREVER);
+#endif
+    
+    BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2) 
+    force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle), 
+          oddRandCache[currentParticle/2]);
+    END_PARALLEL_FOR
 }
 
 void ThermalForceLocalized::force4(const double currentTime) {
 	(void)currentTime;
-    begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
-		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
-    end_parallel_for
+#ifdef DISPATCH_QUEUES
+    dispatch_group_async(oddRandGroup, randQueue, ^{
+#endif
+        for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
+            oddRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+#ifdef DISPATCH_QUEUES
+	});
+	dispatch_group_wait(evenRandGroup, DISPATCH_TIME_FOREVER);
+#endif
+    
+    BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2) 
+    force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle), 
+          evenRandCache[currentParticle/2]);
+    END_PARALLEL_FOR
 }
 
 inline void ThermalForceLocalized::force(const cloud_index currentParticle, const __m128d displacementX, 
-                                         const __m128d displacementY) {
+                                         const __m128d displacementY, const RandCache &rc) {
 	const __m128d radiusV = _mm_sqrt_pd(displacementX*displacementX + displacementY*displacementY);
-	const double thetaL = mt()*2.0*M_PI;
-	const double thetaH = mt()*2.0*M_PI;
+	const double thetaL = rc.l*2.0*M_PI;
+	const double thetaH = rc.h*2.0*M_PI;
 	
 	double rL, rH;
 	_mm_storel_pd(&rL, radiusV);
 	_mm_storeh_pd(&rH, radiusV);
 	
 	const __m128d thermV = _mm_set_pd((rH < heatingRadius) ? heatVal1 : heatVal2, // _mm_set_pd() is backwards
-									  (rL < heatingRadius) ? heatVal1 : heatVal2)*_mm_set_pd(mt(), mt());
+									  (rL < heatingRadius) ? heatVal1 : heatVal2)*rc.r;
 	
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;

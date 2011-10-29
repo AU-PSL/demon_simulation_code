@@ -8,37 +8,36 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "DragForce.h"
-#include "Parallel.h"
 
 DragForce::DragForce(Cloud * const myCloud, const double gamma) 
 : Force(myCloud), dragConst(-gamma) {}
 
 void DragForce::force1(const double currentTime) {
     (void)currentTime;
-	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle, cloud->getVx1_pd(currentParticle), cloud->getVy1_pd(currentParticle));
-    end_parallel_for
+    END_PARALLEL_FOR
 }
 
 void DragForce::force2(const double currentTime) {
     (void)currentTime;
-	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getVx2_pd(currentParticle), cloud->getVy2_pd(currentParticle));
-    end_parallel_for
+    END_PARALLEL_FOR
 }
 
 void DragForce::force3(const double currentTime) {
     (void)currentTime;
-	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle, cloud->getVx3_pd(currentParticle), cloud->getVy3_pd(currentParticle));
-    end_parallel_for
+    END_PARALLEL_FOR
 }
 
 void DragForce::force4(const double currentTime) {
     (void)currentTime;
-	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle, cloud->getVx4_pd(currentParticle), cloud->getVy4_pd(currentParticle));
-    end_parallel_for
+    END_PARALLEL_FOR
 }
 
 inline void DragForce::force(const cloud_index currentParticle, const __m128d currentVelocityX, const __m128d currentVelocityY) {

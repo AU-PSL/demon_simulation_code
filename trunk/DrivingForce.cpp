@@ -8,7 +8,6 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "DrivingForce.h"
-#include "Parallel.h"
 #include <cmath>
 
 const double DrivingForce::waveNum = 2.0*M_PI/0.002; // wavelength = 2mm
@@ -19,30 +18,30 @@ DrivingForce::DrivingForce(Cloud * const myCloud, const double drivingConst, con
 
 void DrivingForce::force1(const double currentTime) {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, vtime, cloud->getx1_pd(currentParticle));
-    end_parallel_for
+    END_PARALLEL_FOR
 }
 
 void DrivingForce::force2(const double currentTime) {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle, vtime, cloud->getx2_pd(currentParticle));
-    end_parallel_for
+    END_PARALLEL_FOR
 }
 
 void DrivingForce::force3(const double currentTime) {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle, vtime, cloud->getx3_pd(currentParticle));
-    end_parallel_for
+    END_PARALLEL_FOR
 }
 
 void DrivingForce::force4(const double currentTime) {
 	const __m128d vtime = _mm_set1_pd(currentTime);
-	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, vtime, cloud->getx4_pd(currentParticle));
-    end_parallel_for
+    END_PARALLEL_FOR
 }
 
 inline void DrivingForce::force(const cloud_index currentParticle, const __m128d currentTime, const __m128d currentPositionX) {

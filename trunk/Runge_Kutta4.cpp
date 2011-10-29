@@ -8,7 +8,6 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "Runge_Kutta4.h"
-#include "Parallel.h"
 
 Runge_Kutta4::Runge_Kutta4(Cloud * const myCloud, Force **forces, const force_index forcesSize, 
                            const double timeStep, const double startTime)
@@ -33,7 +32,7 @@ void Runge_Kutta4::moveParticles(const double endTime) {
         
 		operate1(currentTime);
 		force1(currentTime); // compute net force1
-		begin_parallel_for(i, e, numParticles, 2) // calculate k1 and l1 for entire cloud
+		BEGIN_PARALLEL_FOR(i, e, numParticles, 2) // calculate k1 and l1 for entire cloud
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass into vector
 
 			// assign force pointers for stylistic purposes:
@@ -59,11 +58,11 @@ void Runge_Kutta4::moveParticles(const double endTime) {
 			_mm_store_pd(pFx, _mm_setzero_pd());
 			_mm_store_pd(pFy, _mm_setzero_pd());
 			_mm_store_pd(pPhi, _mm_setzero_pd());
-		end_parallel_for
+		END_PARALLEL_FOR
         
 		operate2(currentTime + dt/2.0);
 		force2(currentTime + dt/2.0); // compute net force2
-		begin_parallel_for(i, e, numParticles, 2) // calculate k2 and l2 for entire cloud
+		BEGIN_PARALLEL_FOR(i, e, numParticles, 2) // calculate k2 and l2 for entire cloud
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
 
 			// assign force pointers:
@@ -89,11 +88,11 @@ void Runge_Kutta4::moveParticles(const double endTime) {
 			_mm_store_pd(pFx, _mm_setzero_pd());
 			_mm_store_pd(pFy, _mm_setzero_pd());
 			_mm_store_pd(pPhi, _mm_setzero_pd());
-		end_parallel_for
+		END_PARALLEL_FOR
 
 		operate3(currentTime + dt/2.0);
 		force3(currentTime + dt/2.0); // compute net force3
-		begin_parallel_for(i, e, numParticles, 2) // calculate k3 and l3 for entire cloud
+		BEGIN_PARALLEL_FOR(i, e, numParticles, 2) // calculate k3 and l3 for entire cloud
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
 
 			// assign force pointers:
@@ -119,11 +118,11 @@ void Runge_Kutta4::moveParticles(const double endTime) {
 			_mm_store_pd(pFx, _mm_setzero_pd());
 			_mm_store_pd(pFy, _mm_setzero_pd());
 			_mm_store_pd(pPhi, _mm_setzero_pd());
-		end_parallel_for
+		END_PARALLEL_FOR
         
 		operate4(currentTime + dt);
 		force4(currentTime + dt); // compute net force4
-		begin_parallel_for(i, e, numParticles, 2) // calculate k4 and l4 for entire cloud
+		BEGIN_PARALLEL_FOR(i, e, numParticles, 2) // calculate k4 and l4 for entire cloud
 			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
 
 			// assign force pointers:
@@ -148,9 +147,9 @@ void Runge_Kutta4::moveParticles(const double endTime) {
 			_mm_store_pd(pFx, _mm_setzero_pd());
 			_mm_store_pd(pFy, _mm_setzero_pd());
 			_mm_store_pd(pPhi, _mm_setzero_pd());
-		end_parallel_for
+		END_PARALLEL_FOR
 
-        begin_parallel_for(i, e, numParticles, 2) // calculate next position and next velocity for entire cloud
+        BEGIN_PARALLEL_FOR(i, e, numParticles, 2) // calculate next position and next velocity for entire cloud
 			// load ith and (i+1)th k's into vectors:
 			const __m128d vk1 = _mm_load_pd(cloud->k1 + i);
 			const __m128d vk2 = _mm_load_pd(cloud->k2 + i);
@@ -196,7 +195,7 @@ void Runge_Kutta4::moveParticles(const double endTime) {
 			_mm_store_pd(py, _mm_load_pd(py) + (vn1 + v2*(vn2 + vn3) + vn4)/v6);
 			
 			_mm_store_pd(pC, _mm_load_pd(pC) + (vq1 + v2*(vq2 + vq3) + vq4)/v6);
-		end_parallel_for
+		END_PARALLEL_FOR
 
 		currentTime += dt;
 	}

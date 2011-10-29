@@ -15,8 +15,9 @@
 
 class ThermalForceLocalized : public Force {
 public:
-	ThermalForceLocalized(Cloud * const myCloud, const double thermRed1, const double thermRed2, const double specifiedRadius);	//overloaded constructor
-	~ThermalForceLocalized() {} // destructor
+	ThermalForceLocalized(Cloud * const myCloud, const double thermRed1, const double thermRed2, 
+                          const double specifiedRadius);
+	~ThermalForceLocalized();
 
 // public functions:
 	// Note: currentTime parameter is necessary (due to parent class) but unused
@@ -29,14 +30,32 @@ public:
 	void readForce(fitsfile * const file, int * const error);
 
 private:
+    // private class
+	class RandCache {
+	public:
+		__m128d r;
+		double l, h;
+		
+		RandCache(const __m128d r_ = _mm_set1_pd(0.0), 
+		          const double l_ = 0.0, const double h_ = 0.0) 
+		: r(r_), l(l_), h(h_) {}
+	};
+    
 // private variables:
 	MTRand mt;
 	double heatingRadius;
 	double heatVal1;
 	double heatVal2;
 
+    RandCache *evenRandCache, *oddRandCache;
+#ifdef DISPATCH_QUEUES
+	dispatch_group_t evenRandGroup, oddRandGroup;
+	dispatch_queue_t randQueue;
+#endif
+    
 // private functions:
-	void force(const cloud_index currentParticle, const __m128d displacementX, const __m128d displacementY);
+	void force(const cloud_index currentParticle, const __m128d displacementX, const __m128d displacementY, 
+               const RandCache &rc);
 };
 
 #endif // THERMALFORCELOCALIZED_H

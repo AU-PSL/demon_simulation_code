@@ -8,7 +8,6 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "Cloud.h"
-#include "Parallel.h"
 #include <cmath>
 #include <sstream>
 
@@ -69,9 +68,9 @@ inline void Cloud::setCharge() const {
 inline void Cloud::setMass() const {
 	const double particleDensity = 2200.0;
 	const double particleMass = (4.0/3.0)*M_PI*particleRadius*particleRadius*particleRadius*particleDensity;
-	begin_parallel_for(i, e, n, 1)
+	BEGIN_PARALLEL_FOR(i, e, n, 1)
         mass[i] = particleMass;
-    end_parallel_for
+    END_PARALLEL_FOR
 }
 
 Cloud * const Cloud::initializeGrid(const cloud_index numParticles) {
@@ -85,12 +84,12 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles) {
 
 	cloud->setCharge();
 	cloud->setMass();
-    begin_parallel_for(i, e, numParticles, 1)
+    BEGIN_PARALLEL_FOR(i, e, numParticles, 1)
 		cloud->setPosition(i, 
 			cloudHalfSize - (double)(i%sqrtNumPar)*interParticleSpacing, 
 			cloudHalfSize - (double)(i/sqrtNumPar)*interParticleSpacing);
 		cloud->setVelocity(i);
-    end_parallel_for
+    END_PARALLEL_FOR
 	return cloud;
 }
 
@@ -163,10 +162,10 @@ void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const {
 	// write mass:
 	if (!*error)
 		// file, storage type, num rows, num columns, ...
-		fits_create_tbl(file, BINARY_TBL, n, 1, ttypeCloud, tformCloud, tunitCloud, "CLOUD", error);	
+		fits_create_tbl(file, BINARY_TBL, (LONGLONG)n, 1, ttypeCloud, tformCloud, tunitCloud, "CLOUD", error);	
 	if (!*error)
 		// file, column #, starting row, first element, num elements, mass array, error
-		fits_write_col_dbl(file, 1, 1, 1, n, mass, error);
+		fits_write_col_dbl(file, 1, 1, 1, (LONGLONG)n, mass, error);
 
 	// write position and velocity:
 	if (!*error)
@@ -177,11 +176,11 @@ void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const {
 	if (!*error) {
 		double time = 0.0;
 		fits_write_col_dbl(file, 1, 1, 1, 1, &time, error);
-		fits_write_col_dbl(file, 2, 1, 1, n, x, error);
-		fits_write_col_dbl(file, 3, 1, 1, n, y, error);
-		fits_write_col_dbl(file, 4, 1, 1, n, Vx, error);
-		fits_write_col_dbl(file, 5, 1, 1, n, Vy, error);
-		fits_write_col_dbl(file, 6, 1, 1, n, charge, error);
+		fits_write_col_dbl(file, 2, 1, 1, (LONGLONG)n, x, error);
+		fits_write_col_dbl(file, 3, 1, 1, (LONGLONG)n, y, error);
+		fits_write_col_dbl(file, 4, 1, 1, (LONGLONG)n, Vx, error);
+		fits_write_col_dbl(file, 5, 1, 1, (LONGLONG)n, Vy, error);
+		fits_write_col_dbl(file, 6, 1, 1, (LONGLONG)n, charge, error);
 	}
 
 	// write buffer, close file, reopen at same point:
@@ -194,11 +193,11 @@ void Cloud::writeTimeStep(fitsfile * const file, int * const error, double curre
 		long numRows = 0;
 		fits_get_num_rows(file, &numRows, error);
 		fits_write_col_dbl(file, 1, ++numRows, 1, 1, &currentTime, error);
-		fits_write_col_dbl(file, 2, numRows, 1, n, x, error);
-		fits_write_col_dbl(file, 3, numRows, 1, n, y, error);
-		fits_write_col_dbl(file, 4, numRows, 1, n, Vx, error);
-		fits_write_col_dbl(file, 5, numRows, 1, n, Vy, error);
-		fits_write_col_dbl(file, 6, numRows, 1, n, charge, error);
+		fits_write_col_dbl(file, 2, numRows, 1, (LONGLONG)n, x, error);
+		fits_write_col_dbl(file, 3, numRows, 1, (LONGLONG)n, y, error);
+		fits_write_col_dbl(file, 4, numRows, 1, (LONGLONG)n, Vx, error);
+		fits_write_col_dbl(file, 5, numRows, 1, (LONGLONG)n, Vy, error);
+		fits_write_col_dbl(file, 6, numRows, 1, (LONGLONG)n, charge, error);
 	}
 
 	// write buffer, close file, reopen at same point:
