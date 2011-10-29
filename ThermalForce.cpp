@@ -8,46 +8,111 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "ThermalForce.h"
-#include "Parallel.h"
 #include <cmath>
 #include <ctime>
 
 ThermalForce::ThermalForce(Cloud * const myCloud, const double redFactor) 
-: Force(myCloud), mt((unsigned int)time(NULL)), heatVal(redFactor) {}
+: Force(myCloud), mt((unsigned int)time(NULL)),
+evenRandCache(new RandCache[myCloud->n/2]), oddRandCache(new RandCache[myCloud->n/2]),
+#ifdef DISPATCH_QUEUES
+evenRandGroup(dispatch_group_create()), oddRandGroup(dispatch_group_create()),
+randQueue(dispatch_queue_create("com.DEMON.ThermalForce", NULL)),
+#endif
+heatVal(redFactor) {
+#ifdef DISPATCH_QUEUES
+    dispatch_group_async(oddRandGroup, randQueue, ^{
+#endif
+    for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
+        oddRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+#ifdef DISPATCH_QUEUES
+    });
+#endif
+}
+
+ThermalForce::~ThermalForce() {
+    delete[] evenRandCache;
+    delete[] oddRandCache;
+
+#ifdef DISPATCH_QUEUES
+    dispatch_release(evenRandGroup);
+	dispatch_release(oddRandGroup);
+	dispatch_release(randQueue);
+#endif
+}
 
 void ThermalForce::force1(const double currentTime) {
     (void)currentTime;
-	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
-		force(currentParticle);
-    end_parallel_for
+#ifdef DISPATCH_QUEUES
+    dispatch_group_async(evenRandGroup, randQueue, ^{
+#endif
+    for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
+        evenRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+#ifdef DISPATCH_QUEUES
+    });
+	dispatch_group_wait(oddRandGroup, DISPATCH_TIME_FOREVER);
+#endif
+    
+    BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2) 
+		force(currentParticle, oddRandCache[currentParticle/2]);
+    END_PARALLEL_FOR
 }
 
 void ThermalForce::force2(const double currentTime) {
     (void)currentTime;
-	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
-        force(currentParticle);
-    end_parallel_for
+#ifdef DISPATCH_QUEUES
+    dispatch_group_async(oddRandGroup, randQueue, ^{
+#endif
+	for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
+        oddRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+#ifdef DISPATCH_QUEUES
+    });
+	dispatch_group_wait(evenRandGroup, DISPATCH_TIME_FOREVER);
+#endif
+
+    BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2) 
+        force(currentParticle, evenRandCache[currentParticle/2]);
+    END_PARALLEL_FOR
 }
 
 void ThermalForce::force3(const double currentTime) {
     (void)currentTime;
-	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
-		force(currentParticle);
-    end_parallel_for
+#ifdef DISPATCH_QUEUES
+    dispatch_group_async(evenRandGroup, randQueue, ^{
+#endif
+    for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
+        evenRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+#ifdef DISPATCH_QUEUES
+    });
+	dispatch_group_wait(oddRandGroup, DISPATCH_TIME_FOREVER);
+#endif
+    
+    BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2) 
+		force(currentParticle, oddRandCache[currentParticle/2]);
+    END_PARALLEL_FOR
 }
 
 void ThermalForce::force4(const double currentTime) {
     (void)currentTime;
-	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
-		force(currentParticle);
-    end_parallel_for
+#ifdef DISPATCH_QUEUES
+    dispatch_group_async(oddRandGroup, randQueue, ^{
+#endif
+    for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
+        oddRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+#ifdef DISPATCH_QUEUES
+    });
+	dispatch_group_wait(evenRandGroup, DISPATCH_TIME_FOREVER);
+#endif
+    
+    BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2) 
+		force(currentParticle, evenRandCache[currentParticle/2]);
+    END_PARALLEL_FOR
 }
 
-inline void ThermalForce::force(const cloud_index currentParticle) {
+inline void ThermalForce::force(const cloud_index currentParticle, const RandCache &rc) {
 	// MT random number in (0,1)
-	const __m128d thermV = _mm_set1_pd(heatVal)*_mm_set_pd(mt(), mt());
-	const double thetaL = mt()*2.0*M_PI;
-	const double thetaH = mt()*2.0*M_PI;
+	const __m128d thermV = _mm_set1_pd(heatVal)*rc.r;
+	const double thetaL = rc.l*2.0*M_PI;
+	const double thetaH = rc.h*2.0*M_PI;
 	
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;

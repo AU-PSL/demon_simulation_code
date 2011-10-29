@@ -9,23 +9,25 @@
 
 #include "Integrator.h"
 #include "CacheOperator.h"
-#include "Parallel.h"
 #include <cmath>
 #include <limits>
 
 Integrator::Integrator(Cloud * const myCloud, Force ** const forces, const force_index forcesSize,
                        const double timeStep, double startTime)
 : cloud(myCloud), theForce(forces), numForces(forcesSize), init_dt(timeStep), currentTime(startTime), 
-numOperators(1), operations(new Operator*[numOperators]) {
+numOperators(1), operations(new Operator*[numOperators]), SEMAPHORES_MALLOC(1) {
 	// Operators are order dependent.
 	operations[0] = new CacheOperator(cloud);
+    SEMAPHORES_INIT(1);
 }
 
 Integrator::~Integrator() {
-	begin_parallel_for(i, e, numOperators, 1)
+	BEGIN_PARALLEL_FOR(i, e, numOperators, 1)
 		delete operations[i];
-    end_parallel_for
+    END_PARALLEL_FOR
 	delete[] operations;
+    
+    SEMAPHORES_FREE(1);
 }
 
 /*------------------------------------------------------------------------------
@@ -39,18 +41,27 @@ const double Integrator::modifyTimeStep(double currentDist, double currentTimeSt
 	const cloud_index numPar = cloud->n;
 	const double redFactor = 10.0;
     
+#ifdef DISPATCH_QUEUES
+    __block double currDist = currentDist;
+    __block double currTimeStep = currentTimeStep;
+#endif
+    
 	// loop through entire cloud, or until reduction occures. Reset innerIndex after each loop iteration.
-	begin_parallel_for(outerIndex, e, cloud->n - 1, 2)
+	BEGIN_PARALLEL_FOR(outerIndex, e, cloud->n - 1, 2)
 		// caculate separation distance b/t adjacent elements:
 		const double sepx = cloud->x[outerIndex] - cloud->x[outerIndex + 1];
 		const double sepy = cloud->y[outerIndex] - cloud->y[outerIndex + 1];
         
 		// if particles too close, reduce time step:
-		while (sqrt(sepx*sepx + sepy*sepy) <= currentDist)
-            if (sqrt(sepx*sepx + sepy*sepy) <= currentDist) {
-                currentDist /= redFactor;
-                currentTimeStep /= redFactor;
+        while (sqrt(sepx*sepx + sepy*sepy) <= BLOCK_VALUE_DIST) {
+            // Only one thread should modify the distance and timesStep at a time.
+            SEMAPHORE_WAIT(0)
+            if (sqrt(sepx*sepx + sepy*sepy) <= BLOCK_VALUE_DIST) {
+                BLOCK_VALUE_DIST /= redFactor;
+                BLOCK_VALUE_TIME /= redFactor;
             }
+            SEMAPHORES_FREE(0)
+        }
 		
 		// load positions into vectors:
 		const __m128d vx1 = cloud->getx1_pd(outerIndex);	// x vector
@@ -67,29 +78,37 @@ const double Integrator::modifyTimeStep(double currentDist, double currentTimeSt
 			__m128d vy2 = vy1 - _mm_load_pd(py2);
             
 			// check separation distances against dist. If either are too close, reduce time step.
-			while (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(currentDist)))
+            while (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(BLOCK_VALUE_DIST))) {
+                // Only one thread should modify the distance and timesStep at a time.
+                SEMAPHORE_WAIT(0)
                 // Retest condition to make sure a different thread hasn't already reduced.
-                if (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(currentDist))) {
-                    currentDist /= redFactor;
-                    currentTimeStep /= redFactor;
+                if (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(BLOCK_VALUE_DIST))) {
+                    BLOCK_VALUE_DIST /= redFactor;
+                    BLOCK_VALUE_TIME /= redFactor;
                 }
+                SEMAPHORES_FREE(0)
+            }
             
 			// calculate j,i+1 and j+1,i separation distances:
 			vx2 = vx1 - _mm_loadr_pd(px2);
 			vy2 = vy1 - _mm_loadr_pd(py2);
             
 			// check separation distances against dist. If either are too close, reduce time step.
-			while (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(currentDist)))
+            while (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(BLOCK_VALUE_DIST))) {
+                // Only one thread should modify the distance and timesStep at a time.
+                SEMAPHORE_WAIT(0)
                 // Retest condition to make sure a different thread hasn't already reduced.
-                if (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(currentDist))) {
-                    currentDist /= redFactor;
-                    currentTimeStep /= redFactor;
+                if (isLessThanOrEqualTo(_mm_sqrt_pd(vx2*vx2 + vy2*vy2), _mm_set1_pd(BLOCK_VALUE_DIST))) {
+                    BLOCK_VALUE_DIST /= redFactor;
+                    BLOCK_VALUE_TIME /= redFactor;
                 }
+                SEMAPHORES_FREE(0)
+            }
 		}
-	end_parallel_for
+	END_PARALLEL_FOR
     
 	// reset time step:
-	return currentTimeStep;
+    return BLOCK_VALUE_TIME;
 }
 
 inline bool Integrator::isLessThanOrEqualTo(const __m128d a, const __m128d b) {

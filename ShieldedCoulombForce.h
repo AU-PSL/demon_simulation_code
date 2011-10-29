@@ -16,7 +16,7 @@
 class ShieldedCoulombForce : public Force {
 public:
 	ShieldedCoulombForce(Cloud * const myCloud, const double shieldingConstant);
-	~ShieldedCoulombForce() {} //destructor
+	~ShieldedCoulombForce();
 
 // public functions:
 	// Note: currentTime parameter is necessary (due to parent class) but unused
@@ -31,6 +31,7 @@ public:
 private:
 // public variables:
 	double shielding;
+    SEMAPHORES
 	
 	static const double coulomb;
 

@@ -8,41 +8,40 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "ConfinementForce.h"
-#include "Parallel.h"
 
 ConfinementForce::ConfinementForce(Cloud * const myCloud, double confineConst, double plasmaPotential) 
 : Force(myCloud), confine(confineConst), potentialOffset(plasmaPotential) {}
 
 void ConfinementForce::force1(const double currentTime) {
     (void)currentTime;
-    begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
+    BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2)
         force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle), 
               cloud->getq1_pd(currentParticle));
-    end_parallel_for
+    END_PARALLEL_FOR
 }
 
 void ConfinementForce::force2(const double currentTime) {
     (void)currentTime;
-    begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
+    BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2)
         force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle), 
               cloud->getq2_pd(currentParticle));
-    end_parallel_for
+    END_PARALLEL_FOR
 }
 
 void ConfinementForce::force3(const double currentTime) {
     (void)currentTime;
-	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle), 
               cloud->getq3_pd(currentParticle));
-    end_parallel_for
+    END_PARALLEL_FOR
 }
 
 void ConfinementForce::force4(const double currentTime) {
     (void)currentTime;
-	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle), 
               cloud->getq4_pd(currentParticle));
-    end_parallel_for
+    END_PARALLEL_FOR
 }
 
 inline void ConfinementForce::force(const cloud_index currentParticle, const __m128d currentPositionX, 

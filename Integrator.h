@@ -32,6 +32,7 @@ public:
 protected:
     const operator_index numOperators;
 	Operator ** const operations;
+    SEMAPHORES
     
     const double modifyTimeStep(double currentDist, double currentTimeStep) const;
 	static bool isLessThanOrEqualTo(const __m128d a, const __m128d b);

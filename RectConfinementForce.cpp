@@ -10,37 +10,36 @@
 //TODO: Charge-dependence
 
 #include "RectConfinementForce.h"
-#include "Parallel.h"
 	
 RectConfinementForce::RectConfinementForce(Cloud * const myCloud, double confineConstX, double confineConstY)
 : Force(myCloud), confineX(-confineConstX), confineY(-confineConstY) {}
 
 void RectConfinementForce::force1(const double currentTime) {
     (void)currentTime;
-	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
-    end_parallel_for
+    END_PARALLEL_FOR
 }
 
 void RectConfinementForce::force2(const double currentTime) {
     (void)currentTime;
-	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
-    end_parallel_for
+    END_PARALLEL_FOR
 }
 
 void RectConfinementForce::force3(const double currentTime) {
     (void)currentTime;
-	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
-    end_parallel_for
+    END_PARALLEL_FOR
 }
 
 void RectConfinementForce::force4(const double currentTime) {
     (void)currentTime;
-	begin_parallel_for(currentParticle, numParticles, cloud->n, 2) 
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2) 
 		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
-    end_parallel_for
+    END_PARALLEL_FOR
 }
 
 inline void RectConfinementForce::force(const cloud_index currentParticle, const __m128d currentPositionX, 

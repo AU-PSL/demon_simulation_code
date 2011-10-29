@@ -12,8 +12,7 @@
 
 #include "fitsio.h"
 #include "VectorCompatibility.h"
-
-typedef unsigned int cloud_index;
+#include "Parallel.h"
 
 class Cloud {	
 public:

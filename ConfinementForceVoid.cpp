@@ -8,41 +8,40 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "ConfinementForceVoid.h"
-#include "Parallel.h"
 #include <cmath>
 	
 ConfinementForceVoid::ConfinementForceVoid(Cloud * const myCloud, double confineConst, double plasmaPotential, double voidDecay) : ConfinementForce(myCloud, confineConst, plasmaPotential), decay(voidDecay) {}
 
 void ConfinementForceVoid::force1(const double currentTime) {
 	ConfinementForce::force1(currentTime);
-	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle), 
               cloud->getq1_pd(currentParticle));
-    end_parallel_for
+    END_PARALLEL_FOR
 }
 
 void ConfinementForceVoid::force2(const double currentTime) {
 	ConfinementForce::force2(currentTime);
-	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle), 
               cloud->getq2_pd(currentParticle));
-    end_parallel_for
+    END_PARALLEL_FOR
 }
 
 void ConfinementForceVoid::force3(const double currentTime) {
 	ConfinementForce::force3(currentTime);
-	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle), 
               cloud->getq3_pd(currentParticle));
-    end_parallel_for
+    END_PARALLEL_FOR
 }
 
 void ConfinementForceVoid::force4(const double currentTime) {
 	ConfinementForce::force4(currentTime);
-	begin_parallel_for(currentParticle, numParticles, cloud->n, 2)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2)
 		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle), 
               cloud->getq4_pd(currentParticle));
-    end_parallel_for
+    END_PARALLEL_FOR
 }
 
 inline void ConfinementForceVoid::force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY, const __m128d charge) {
