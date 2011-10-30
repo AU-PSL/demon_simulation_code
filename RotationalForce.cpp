@@ -46,19 +46,13 @@ inline void RotationalForce::force(const cloud_index currentParticle, const __m1
 	const __m128d dustRadV = _mm_sqrt_pd(currentPositionX*currentPositionX + currentPositionY*currentPositionY);
 
 	// dustRad > innerRad && dustRadV < outerRad
-	const __m128d compV = _mm_and_pd(_mm_cmpgt_pd(dustRadV, _mm_set1_pd(innerRad)), 
-                                     _mm_cmplt_pd(dustRadV, _mm_set1_pd(outerRad)));
-	double compL, compH;
-	_mm_storel_pd(&compL, compV);
-	_mm_storeh_pd(&compH, compV);
+	const int mask = _mm_movemask_pd(_mm_and_pd(_mm_cmpgt_pd(dustRadV, _mm_set1_pd(innerRad)), 
+												_mm_cmplt_pd(dustRadV, _mm_set1_pd(outerRad))));
+	if (!mask)
+		return; // niether in, early return
 	
-	const bool nanL = std::isnan(compL);
-	const bool nanH = std::isnan(compH);
-	if (!nanL && !nanH) // niether in, early return
-		return;
-	
-	__m128d cRotConst = _mm_set_pd(nanH ? rotationalConst : 0.0, // _mm_set_pd() is backwards.
-								   nanL ? rotationalConst : 0.0);
+	__m128d cRotConst = _mm_set_pd((mask & 2) ? rotationalConst : 0.0, // _mm_set_pd() is backwards.
+								   (mask & 1) ? rotationalConst : 0.0);
 	
 	// force in theta direction:
 	double * const pFx = cloud->forceX + currentParticle;
