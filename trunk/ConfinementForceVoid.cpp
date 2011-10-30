@@ -10,44 +10,40 @@
 #include "ConfinementForceVoid.h"
 #include <cmath>
 	
-ConfinementForceVoid::ConfinementForceVoid(Cloud * const myCloud, double confineConst, double plasmaPotential, double voidDecay) : ConfinementForce(myCloud, confineConst, plasmaPotential), decay(voidDecay) {}
+ConfinementForceVoid::ConfinementForceVoid(Cloud * const myCloud, double confineConst, double voidDecay) : 
+ConfinementForce(myCloud, confineConst), decay(voidDecay) {}
 
 void ConfinementForceVoid::force1(const double currentTime) {
 	ConfinementForce::force1(currentTime);
 	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static)
-		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle), 
-              cloud->getq1_pd(currentParticle));
+		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
     END_PARALLEL_FOR
 }
 
 void ConfinementForceVoid::force2(const double currentTime) {
 	ConfinementForce::force2(currentTime);
 	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static)
-		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle), 
-              cloud->getq2_pd(currentParticle));
+		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
     END_PARALLEL_FOR
 }
 
 void ConfinementForceVoid::force3(const double currentTime) {
 	ConfinementForce::force3(currentTime);
 	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static)
-		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle), 
-              cloud->getq3_pd(currentParticle));
+		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
     END_PARALLEL_FOR
 }
 
 void ConfinementForceVoid::force4(const double currentTime) {
 	ConfinementForce::force4(currentTime);
 	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static)
-		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle), 
-              cloud->getq4_pd(currentParticle));
+		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
     END_PARALLEL_FOR
 }
 
-inline void ConfinementForceVoid::force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY, const __m128d charge) {
-	const __m128d decayV = _mm_set1_pd(decay);
-	const __m128d rr = currentPositionX*currentPositionX + currentPositionY*currentPositionY;
-	const __m128d r = _mm_sqrt_pd(rr);
+inline void ConfinementForceVoid::force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY) {
+	const __m128d decayV = _mm_set1_pd(decay)*_mm_load_pd(cloud->charge + currentParticle);
+	const __m128d r = _mm_sqrt_pd(currentPositionX*currentPositionX + currentPositionY*currentPositionY);
 
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;
@@ -70,11 +66,8 @@ inline void ConfinementForceVoid::force(const cloud_index currentParticle, const
 	const __m128d cosV = _mm_set_pd(cos(thetaH), cos(thetaL));
 	const __m128d sinV = _mm_set_pd(sin(thetaH), sin(thetaL));
 
-	_mm_store_pd(pFx, _mm_load_pd(pFx) - charge*decayV*expR*cosV);
-	_mm_store_pd(pFy, _mm_load_pd(pFy) - charge*decayV*expR*sinV);
-
-	double * pPhi = cloud->phi + currentParticle;
-	_mm_store_pd(pPhi, _mm_load_pd(pPhi) + expR);
+	_mm_store_pd(pFx, _mm_load_pd(pFx) - decayV*expR*cosV);
+	_mm_store_pd(pFy, _mm_load_pd(pFy) - decayV*expR*sinV);
 }
 
 void ConfinementForceVoid::writeForce(fitsfile * const file, int * const error) const {
@@ -107,11 +100,6 @@ void ConfinementForceVoid::writeForce(fitsfile * const file, int * const error) 
 	if (!*error)
 		fits_write_key_dbl(file, const_cast<char *> ("decay"), decay, 
                            6, const_cast<char *> ("[1/m] (ConfinementForceVoid)"), error);
-
-	// write background plasma potential offset:
-	if (!*error)
-		fits_write_key_dbl(file, const_cast<char *> ("plasmaPotential"), potentialOffset, 
-                           6, const_cast<char *> ("[V] (background plasma potential offset)"), error);
 }
 
 void ConfinementForceVoid::readForce(fitsfile * const file, int * const error) {

@@ -15,10 +15,9 @@
 class DragForce : public Force {
 public:
 	DragForce(Cloud * const myCloud, const double gamma);
-	~DragForce() {} // destructor
+	~DragForce() {}
 	
 // public functions:
-	// Note: currentTime parameter is necessary (due to parent class) but unused
 	virtual void force1(const double currentTime); // rk substep 1
 	virtual void force2(const double currentTime); // rk substep 2
 	virtual void force3(const double currentTime); // rk substep 3
