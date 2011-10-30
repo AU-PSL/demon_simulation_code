@@ -114,12 +114,9 @@ inline void ThermalForceLocalized::force(const cloud_index currentParticle, cons
 	const double thetaL = rc.l*2.0*M_PI;
 	const double thetaH = rc.h*2.0*M_PI;
 	
-	double rL, rH;
-	_mm_storel_pd(&rL, radiusV);
-	_mm_storeh_pd(&rH, radiusV);
-	
-	const __m128d thermV = _mm_set_pd((rH < heatingRadius) ? heatVal1 : heatVal2, // _mm_set_pd() is backwards
-									  (rL < heatingRadius) ? heatVal1 : heatVal2)*rc.r;
+	const int mask = _mm_movemask_pd(_mm_cmplt_pd(radiusV, _mm_set1_pd(heatingRadius)));
+	const __m128d thermV = _mm_set_pd((mask & 2) ? heatVal1 : heatVal2, // _mm_set_pd() is backwards
+									  (mask & 1) ? heatVal1 : heatVal2)*rc.r;
 	
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;
