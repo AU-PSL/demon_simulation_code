@@ -21,7 +21,7 @@ void Runge_Kutta2::moveParticles(const double endTime) {
     
 	while (currentTime < endTime) {
 		// Second argument must be 2 more than the first.
-		const double dt = modifyTimeStep(1.0e-4, init_dt); // implement dynamic timstep (if necessary):
+		const double dt = modifyTimeStep(1.0e-4f, init_dt); // implement dynamic timstep (if necessary):
 		const __m128d vdt = _mm_set1_pd(dt); // store timestep as vector const
 		
 		const cloud_index numParticles = cloud->n;
