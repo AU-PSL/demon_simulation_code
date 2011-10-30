@@ -163,13 +163,6 @@ const double Integrator::modifyTimeStep(float currentDist, double currentTimeSte
 
 inline bool Integrator::isLessThanOrEqualTo(const __m128 a, const __m128 b) {
 	return (bool)_mm_movemask_ps(_mm_cmple_ps(a, b));
-	//__m128d comp = _mm_cmple_ps(a, b);
-	
-	//float result[4];
-	//_mm_store_ps(result, comp);
-	
-	//return std::isnan(result[0]) || std::isnan(result[1]) 
-	//	|| std::isnan(result[2]) || std::isnan(result[3]);
 }
 
 inline __m128 Integrator::loadFloatVector(double * const x) {
