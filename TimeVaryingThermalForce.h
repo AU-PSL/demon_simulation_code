@@ -15,7 +15,7 @@
 class TimeVaryingThermalForce : public ThermalForce {
 public:
 	TimeVaryingThermalForce(Cloud * const myCloud, const double scale, const double offset);
-	~TimeVaryingThermalForce() {} // destructor
+	~TimeVaryingThermalForce() {}
 
 // public functions:
 	void force1(const double currentTime); // rk substep 1

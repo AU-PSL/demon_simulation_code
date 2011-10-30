@@ -16,7 +16,7 @@
 class DrivingForce : public Force {
 public:
 	DrivingForce(Cloud * const myCloud, const double dampConst, const double amp, const double drivingShift);
-	~DrivingForce() {} // destructor
+	~DrivingForce() {}
 
 // public functions:
 	void force1(const double currentTime); // rk substep 1

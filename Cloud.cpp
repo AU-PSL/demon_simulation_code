@@ -30,11 +30,9 @@ k1(new double[n]), k2(new double[n]), k3(new double[n]), k4(new double[n]),
 l1(new double[n]), l2(new double[n]), l3(new double[n]), l4(new double[n]),
 m1(new double[n]), m2(new double[n]), m3(new double[n]), m4(new double[n]),
 n1(new double[n]), n2(new double[n]), n3(new double[n]), n4(new double[n]),
-q1(new double[n]), q2(new double[n]), q3(new double[n]), q4(new double[n]),
-forceX(new double[n]), forceY(new double[n]), phi(new double[n]),
+forceX(new double[n]), forceY(new double[n]),
 xCache(new __m128d[n/2]), yCache(new __m128d[n/2]), 
-VxCache(new __m128d[n/2]), VyCache(new __m128d[n/2]),
-qCache(new __m128d[n/2]) {
+VxCache(new __m128d[n/2]), VyCache(new __m128d[n/2]) {
 #ifdef _OPENMP
 	omp_set_num_threads(omp_get_num_procs());
 #endif
@@ -47,11 +45,9 @@ Cloud::~Cloud() {
 	delete[] l1; delete[] l2; delete[] l3; delete[] l4;
 	delete[] m1; delete[] m2; delete[] m3; delete[] m4;
 	delete[] n1; delete[] n2; delete[] n3; delete[] n4;
-	delete[] q1; delete[] q2; delete[] q3; delete[] q4;
-	delete[] forceX; delete[] forceY; delete[] phi;
+	delete[] forceX; delete[] forceY;
 	delete[] xCache; delete[] yCache; 
 	delete[] VxCache; delete[] VyCache;
-	delete[] qCache;
 }
 
 inline void Cloud::setPosition(const cloud_index index, const double xVal, const double yVal) const {
@@ -315,61 +311,4 @@ const __m128d Cloud::getVy3_pd(const cloud_index i) const {
 
 const __m128d Cloud::getVy4_pd(const cloud_index i) const {
 	return VyCache[i/2]; // Vy + m3
-}
-
-// Charge helper functions -------------------------------------------------
-const __m128d Cloud::getq1_pd(const cloud_index i) const {
-	return _mm_load_pd(charge + i); // q
-}
-
-const __m128d Cloud::getq2_pd(const cloud_index i) const {
-	return qCache[i/2]; // q + q1/2
-}
-
-const __m128d Cloud::getq3_pd(const cloud_index i) const {
-	return qCache[i/2]; // q + q2/2
-}
-
-const __m128d Cloud::getq4_pd(const cloud_index i) const {
-	return qCache[i/2]; // q + q3
-}
-
-const __m128d Cloud::getq1r_pd(const cloud_index i) const {
-	return _mm_loadr_pd(charge + i);
-}
-
-const __m128d Cloud::getq2r_pd(const cloud_index i) const {
-	const cloud_index j = i/2;
-	return _mm_shuffle_pd(qCache[j], qCache[j], _MM_SHUFFLE2(0, 1));
-}
-
-const __m128d Cloud::getq3r_pd(const cloud_index i) const {
-	const cloud_index j = i/2;
-	return _mm_shuffle_pd(qCache[j], qCache[j], _MM_SHUFFLE2(0, 1));
-}
-
-const __m128d Cloud::getq4r_pd(const cloud_index i) const {
-	const cloud_index j = i/2;
-	return _mm_shuffle_pd(qCache[j], qCache[j], _MM_SHUFFLE2(0, 1));
-}
-
-void Cloud::setChargeConsts(const __m128d charge, __m128d &qConst1, __m128d &qConst2) {
-    const double e = electronCharge;
-	const double ee = e*e;
-    
-	const __m128d electronFreqTerm = _mm_set1_pd(sqrt(4.0*M_PI*plasmaDensity*ee/electronMass)/electronDebye);
-	const __m128d ionFreqTerm = _mm_set1_pd(sqrt(4.0*M_PI*plasmaDensity*ee/ionMass)/ionDebye);
-	const __m128d radTerm = _mm_set1_pd(particleRadius/sqrt(2.0*M_PI));
-	const __m128d etaDenominator = _mm_set1_pd(4.0*M_PI*particleRadius*plasmaDensity*e);
-    
-	const __m128d electronEta = charge/(_mm_set1_pd(electronDebye*electronDebye)*etaDenominator);
-	const __m128d ionEta = charge/(_mm_set1_pd(ionDebye*ionDebye)*etaDenominator);
-    
-	double valExpL, valExpH;
-	_mm_storel_pd(&valExpL, electronEta);
-	_mm_storeh_pd(&valExpH, electronEta);
-	const __m128d expTerm = _mm_set_pd(exp(-valExpH), exp(-valExpL));
-    
-	qConst1 = radTerm*(electronFreqTerm*expTerm + ionFreqTerm);
-	qConst2 = radTerm*(electronFreqTerm*expTerm + ionFreqTerm*(_mm_set1_pd(1.0) + ionEta));
 }

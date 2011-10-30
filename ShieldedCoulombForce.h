@@ -19,7 +19,6 @@ public:
 	~ShieldedCoulombForce();
 
 // public functions:
-	// Note: currentTime parameter is necessary (due to parent class) but unused
 	void force1(const double currentTime); //rk substep 1
 	void force2(const double currentTime); //rk substep 2
 	void force3(const double currentTime); //rk substep 3

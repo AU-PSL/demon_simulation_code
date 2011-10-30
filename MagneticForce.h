@@ -15,7 +15,7 @@
 class MagneticForce : public Force {
 public:
 	MagneticForce(Cloud * const myCloud, const double magneticField);
-	~MagneticForce() {} // destructor
+	~MagneticForce() {}
 	
 // public functions:
 	virtual void force1(const double currentTime); // rk substep 1
@@ -32,7 +32,7 @@ protected:
 
 private:
 //private functions:
-	void force(const cloud_index currentParticle, const __m128d currentVelocityX, const __m128d currentVelocityY, const __m128d currentCharge);
+	void force(const cloud_index currentParticle, const __m128d currentVelocityX, const __m128d currentVelocityY);
 };
 
 #endif // MAGNETICFORCE_H

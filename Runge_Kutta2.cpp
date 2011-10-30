@@ -34,26 +34,16 @@ void Runge_Kutta2::moveParticles(const double endTime) {
 			// assign force pointers for stylistic purposes:
 			double * const pFx = cloud->forceX + i;
 			double * const pFy = cloud->forceY + i;
-			double * const pPhi = cloud->phi + i;
             
 			// calculate ith and (i+1)th tidbits: 
 			_mm_store_pd(cloud->k1 + i, vdt*_mm_load_pd(pFx)/vmass); // velocityX tidbit
 			_mm_store_pd(cloud->l1 + i, vdt*cloud->getVx1_pd(i)); // positionX tidbit
 			_mm_store_pd(cloud->m1 + i, vdt*_mm_load_pd(pFy)/vmass); // velocityY tidbit
 			_mm_store_pd(cloud->n1 + i, vdt*cloud->getVy1_pd(i)); // positionY tidbit
-#ifdef CHARGE
-			const __m128d pQ = cloud->getq1_pd(i);
-            __m128d qConst1, qConst2;
-            Cloud::setChargeConsts(pQ, qConst1, qConst2);
-			_mm_store_pd(cloud->q1 + i, -vdt*(qConst1*pQ + qConst2*qConst3*_mm_load_pd(pPhi)));
-#else
-			_mm_store_pd(cloud->q1 + i, _mm_setzero_pd()); // charge tidbit
-#endif
             
 			// reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
 			_mm_store_pd(pFy, _mm_setzero_pd());
-			_mm_store_pd(pPhi, _mm_setzero_pd());
 		END_PARALLEL_FOR
         
 		operate2(currentTime + dt/2.0);
@@ -64,26 +54,16 @@ void Runge_Kutta2::moveParticles(const double endTime) {
 			// assign force pointers:
 			double * const pFx = cloud->forceX + i;
 			double * const pFy = cloud->forceY + i;
-			double * const pPhi = cloud->phi + i;
             
 			// calculate ith and (i+1)th tidbits: 
 			_mm_store_pd(cloud->k2 + i, vdt*_mm_load_pd(pFx)/vmass); // velocityX tidbit
 			_mm_store_pd(cloud->l2 + i, vdt*cloud->getVx2_pd(i)); // positionX tidbit
 			_mm_store_pd(cloud->m2 + i, vdt*_mm_load_pd(pFy)/vmass); // velocityY tidbit
 			_mm_store_pd(cloud->n2 + i, vdt*cloud->getVy2_pd(i)); // positionY tidbit
-#ifdef CHARGE
-			const __m128d pQ = cloud->getq2_pd(i);
-			__m128d qConst1, qConst2;
-			Cloud::setChargeConsts(pQ, qConst1, qConst2);
-			_mm_store_pd(cloud->q2 + i, -vdt*(qConst1*pQ + qConst2*qConst3*_mm_load_pd(pPhi)));
-#else			
-			_mm_store_pd(cloud->q2 + i, _mm_setzero_pd()); // charge tidbit
-#endif
             
 			// reset forces to zero:
 			_mm_store_pd(pFx, _mm_setzero_pd());
 			_mm_store_pd(pFy, _mm_setzero_pd());
-			_mm_store_pd(pPhi, _mm_setzero_pd());
 		END_PARALLEL_FOR
         
 		BEGIN_PARALLEL_FOR(i, e, numParticles, 2, static) // calculate next position and next velocity for entire cloud
@@ -92,23 +72,18 @@ void Runge_Kutta2::moveParticles(const double endTime) {
 			const __m128d vl2 = _mm_load_pd(cloud->l2 + i);
 			const __m128d vm2 = _mm_load_pd(cloud->m2 + i);
 			const __m128d vn2 = _mm_load_pd(cloud->n2 + i);
-			const __m128d vq2 = _mm_load_pd(cloud->q2 + i);
             
 			// assign position and velocity pointers (stylistic):
 			double * const px = cloud->x + i;
 			double * const py = cloud->y + i;
 			double * const pVx = cloud->Vx + i;
 			double * const pVy = cloud->Vy + i;
-			
-			double * const pC = cloud->charge + i;
             
 			// calculate next positions and velocities:
 			_mm_store_pd(pVx, _mm_load_pd(pVx) + vk2);
 			_mm_store_pd(px, _mm_load_pd(px) + vl2);
 			_mm_store_pd(pVy, _mm_load_pd(pVy) + vm2);
 			_mm_store_pd(py, _mm_load_pd(py) + vn2);
-			
-			_mm_store_pd(pC, _mm_load_pd(pC) + vq2);
 		END_PARALLEL_FOR
         
 		currentTime += dt;

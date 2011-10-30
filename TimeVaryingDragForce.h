@@ -15,7 +15,7 @@
 class TimeVaryingDragForce : public DragForce {
 public:
 	TimeVaryingDragForce(Cloud * const myCloud, const double scale, const double offset);
-	~TimeVaryingDragForce() {} //destructor
+	~TimeVaryingDragForce() {}
 
 // public functions:
 	void force1(const double currentTime); // rk substep 1

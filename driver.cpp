@@ -62,10 +62,9 @@ double startTime = 0.0;
 double dataTimeStep = 0.01;
 double simTimeStep = dataTimeStep/100.0;
 double endTime = 5.0;
-double plasmaPotential = 1.74895;   // background potential offset
-double confinementConst = 1E2;      // confinementForce
-double confinementConstX = 1E-13;   // RectConfinementForce
-double confinementConstY = 1E-12;   // RectConfinementForce
+double confinementConst = 1000.0;   // confinementForce
+double confinementConstX = 1000.0;  // RectConfinementForce
+double confinementConstY = 10000.0; // RectConfinementForce
 double shieldingConstant = 2E4;     // corresponds to 10*(ion debye length)
 double gamma = 10.0;
 double thermRed = 1E-14;            // default thermal reduction factor
@@ -112,7 +111,6 @@ void help() {
           << " -n 10                  set number of particles" << endl
           << " -o 0.01                set the data Output time step" << endl
           << " -O data.fits           set the name of the output file" << endl
-          << " -p 0.0                 set the background plasma potential offset" << endl
           << " -R 1E-13 1E-12         use RectConfinementForce; set confineConstX,Y" << endl
           << " -s 2E4                 set coulomb shelding constant" << endl
           << " -S 1E-15 0.005 0.007   use RotationalForce; set strength, rmin, rmax" << endl
@@ -290,9 +288,6 @@ void parseCommandLineOptions(int argc, char * const argv[]) {
 				break;
 			case 'O': // name "O"utput file:
 				checkOption(argc, argv, i, 'O', 1, "output file", F, &outputFileIndex, "data.fits");
-				break;	
-			case 'p': // set "p"otential offset:
-				checkOption(argc, argv, i, 'p', 1, "plasma potential", D, &plasmaPotential);
 				break;
 			case 'R': // use "R"ectangular confinement:
 				checkForce(1, 'R', RectConfinementForceFlag);
@@ -476,9 +471,9 @@ int main (int argc, char * const argv[]) {
 	
 	force_index index = 0;
 	if (usedForces & ConfinementForceFlag)
-		forceArray[index++] = new ConfinementForce(cloud, confinementConst, plasmaPotential);
+		forceArray[index++] = new ConfinementForce(cloud, confinementConst);
 	if (usedForces & ConfinementForceVoidFlag)
-		forceArray[index++] = new ConfinementForceVoid(cloud, confinementConst, plasmaPotential, voidDecay);
+		forceArray[index++] = new ConfinementForceVoid(cloud, confinementConst, voidDecay);
 	if (usedForces & DragForceFlag) 
 		forceArray[index++] = new DragForce(cloud, gamma);
 	if (usedForces & DrivingForceFlag)
