@@ -161,14 +161,10 @@ const double Integrator::modifyTimeStep(float currentDist, double currentTimeSte
     return BLOCK_VALUE_TIME;
 }
 
-inline bool Integrator::isLessThanOrEqualTo(const __m128 a, const __m128 b) {
-	return (bool)_mm_movemask_ps(_mm_cmple_ps(a, b));
-}
-
 inline __m128 Integrator::loadFloatVector(double * const x) {
 	return _mm_set_ps((float)x[0], (float)x[1], (float)x[2], (float)x[3]);
 }
 
 inline bool Integrator::isWithInDistance(const __m128 a, const __m128 b, const float dist) {
-	return isLessThanOrEqualTo(_mm_sqrt_ps(a*a + b*b), _mm_set1_ps(dist));
+	return (bool)_mm_movemask_ps(_mm_cmple_ps(_mm_sqrt_ps(a*a + b*b), _mm_set1_ps(dist)));
 }

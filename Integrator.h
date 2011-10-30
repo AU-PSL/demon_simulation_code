@@ -35,7 +35,6 @@ protected:
     SEMAPHORES
     
     const double modifyTimeStep(float currentDist, double currentTimeStep) const;
-	static bool isLessThanOrEqualTo(const __m128 a, const __m128 b);
 	static __m128 loadFloatVector(double * const x);
 	static bool isWithInDistance(const __m128 a, const __m128 b, const float dist);
 };
