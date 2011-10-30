@@ -147,21 +147,18 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
 	const __m128d displacement = _mm_sqrt_pd(displacementX*displacementX + displacementY*displacementY);
 	const __m128d valExp = displacement*_mm_set1_pd(shielding);
 	
-	double valExpL, valExpH;
-	_mm_storel_pd(&valExpL, valExp);
-	_mm_storeh_pd(&valExpH, valExp);
-	
-	const bool boolL = valExpL < 10.0;
-	const bool boolH = valExpH < 10.0;
-	if (!boolL && !boolH)
+	const int mask = _mm_movemask_pd(_mm_cmplt_pd(valExp, _mm_set1_pd(10.0)));
+	if (!mask)
 		return;
 	
-	__m128d expv = _mm_set_pd(boolH ? exp(-valExpH) : 0.0, // _mm_set_pd is backwards
-							  boolL ? exp(-valExpL) : 0.0);
+	double valExpL = 0.0, valExpH = 0.0;
+	if (mask & 1) _mm_storel_pd(&valExpL, valExp);
+	if (mask & 2) _mm_storeh_pd(&valExpH, valExp);
+	const __m128d expv = _mm_set_pd((mask & 2) ? exp(-valExpH) : 0.0, // _mm_set_pd is backwards
+									(mask & 1) ? exp(-valExpL) : 0.0);
 
-	// calculate phi
-	const __m128d coefficient = _mm_set1_pd(coulomb)/displacement*expv;
     // calculate force
+	const __m128d coefficient = _mm_set1_pd(coulomb)/displacement*expv;
     const __m128d forceC = currentCharge*iCharge*coefficient*(_mm_set1_pd(1.0) + valExp)/(displacement*displacement);
     const __m128d forcevX = forceC*displacementX;
 	const __m128d forcevY = forceC*displacementY;
@@ -189,21 +186,18 @@ inline void ShieldedCoulombForce::forcer(const cloud_index currentParticle, cons
 	const __m128d displacement = _mm_sqrt_pd(displacementX*displacementX + displacementY*displacementY);
 	const __m128d valExp = displacement*_mm_set1_pd(shielding);
 	
-	double valExpL, valExpH;
-	_mm_storel_pd(&valExpL, valExp);
-	_mm_storeh_pd(&valExpH, valExp);
-	
-	const bool boolL = valExpL < 10.0;
-	const bool boolH = valExpH < 10.0;
-	if (!boolL && !boolH)
+	const int mask = _mm_movemask_pd(_mm_cmplt_pd(valExp, _mm_set1_pd(10.0)));
+	if (!mask)
 		return;
 	
-	__m128d expv = _mm_set_pd(boolH ? exp(-valExpH) : 0.0, // _mm_set_pd is backwards
-							  boolL ? exp(-valExpL) : 0.0);
+	double valExpL = 0.0, valExpH = 0.0;
+	if (mask & 1) _mm_storel_pd(&valExpL, valExp);
+	if (mask & 2) _mm_storeh_pd(&valExpH, valExp);
+	const __m128d expv = _mm_set_pd((mask & 2) ? exp(-valExpH) : 0.0, // _mm_set_pd is backwards
+									(mask & 1) ? exp(-valExpL) : 0.0);
 	
-	// calculate phi
-	const __m128d coefficient = _mm_set1_pd(coulomb)/displacement*expv;
     // calculate force
+	const __m128d coefficient = _mm_set1_pd(coulomb)/displacement*expv;
 	const __m128d forceC = currentCharge*iCharge*coefficient*(_mm_set1_pd(1.0) + valExp)/(displacement*displacement);
 	const __m128d forcevX = forceC*displacementX;
 	const __m128d forcevY = forceC*displacementY;
