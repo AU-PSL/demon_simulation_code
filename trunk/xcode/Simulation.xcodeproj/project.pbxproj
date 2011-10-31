@@ -13,6 +13,8 @@
 		4D51B13713E8A60A00F37502 /* ConfinementForceVoid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D51B13613E8A60900F37502 /* ConfinementForceVoid.cpp */; };
 		4D51B13A13E8A68600F37502 /* MagneticForce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D51B13813E8A68600F37502 /* MagneticForce.cpp */; };
 		4D51B13B13E8A68600F37502 /* MagneticForce.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D51B13913E8A68600F37502 /* MagneticForce.h */; };
+		4DB92EE4145F086600EB946D /* RandomNumbers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4DB92EE3145F086600EB946D /* RandomNumbers.cpp */; };
+		4DB92EE6145F088600EB946D /* RandomNumbers.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DB92EE5145F088600EB946D /* RandomNumbers.h */; };
 		4DDA63D21459F63A00E795F8 /* Integrator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4DDA63D11459F63A00E795F8 /* Integrator.cpp */; };
 		4DDA63D61459F6A300E795F8 /* Integrator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DDA63D51459F6A300E795F8 /* Integrator.h */; };
 		4DDA63D9145A010000E795F8 /* Runge_Kutta2.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DDA63D8145A010000E795F8 /* Runge_Kutta2.h */; };
@@ -29,8 +31,6 @@
 		E1FD943E1299996300EBC94D /* DrivingForce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FD943B1299996300EBC94D /* DrivingForce.cpp */; };
 		E1FD943F1299996300EBC94D /* DrivingForce.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FD943C1299996300EBC94D /* DrivingForce.h */; };
 		E1FD94401299996300EBC94D /* Force.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FD943D1299996300EBC94D /* Force.h */; };
-		E1FD94531299996F00EBC94D /* mtrand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FD94411299996F00EBC94D /* mtrand.cpp */; };
-		E1FD94541299996F00EBC94D /* mtrand.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FD94421299996F00EBC94D /* mtrand.h */; };
 		E1FD94551299996F00EBC94D /* RectConfinementForce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FD94431299996F00EBC94D /* RectConfinementForce.cpp */; };
 		E1FD94561299996F00EBC94D /* RectConfinementForce.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FD94441299996F00EBC94D /* RectConfinementForce.h */; };
 		E1FD94571299996F00EBC94D /* RotationalForce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FD94451299996F00EBC94D /* RotationalForce.cpp */; };
@@ -68,6 +68,8 @@
 		4D51B13613E8A60900F37502 /* ConfinementForceVoid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ConfinementForceVoid.cpp; path = ../ConfinementForceVoid.cpp; sourceTree = "<group>"; };
 		4D51B13813E8A68600F37502 /* MagneticForce.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MagneticForce.cpp; path = ../MagneticForce.cpp; sourceTree = "<group>"; };
 		4D51B13913E8A68600F37502 /* MagneticForce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MagneticForce.h; path = ../MagneticForce.h; sourceTree = "<group>"; };
+		4DB92EE3145F086600EB946D /* RandomNumbers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RandomNumbers.cpp; path = ../RandomNumbers.cpp; sourceTree = "<group>"; };
+		4DB92EE5145F088600EB946D /* RandomNumbers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RandomNumbers.h; path = ../RandomNumbers.h; sourceTree = "<group>"; };
 		4DDA63D11459F63A00E795F8 /* Integrator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Integrator.cpp; path = ../Integrator.cpp; sourceTree = "<group>"; };
 		4DDA63D51459F6A300E795F8 /* Integrator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Integrator.h; path = ../Integrator.h; sourceTree = "<group>"; };
 		4DDA63D8145A010000E795F8 /* Runge_Kutta2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Runge_Kutta2.h; path = ../Runge_Kutta2.h; sourceTree = "<group>"; };
@@ -88,8 +90,6 @@
 		E1FD943B1299996300EBC94D /* DrivingForce.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DrivingForce.cpp; path = ../DrivingForce.cpp; sourceTree = SOURCE_ROOT; };
 		E1FD943C1299996300EBC94D /* DrivingForce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DrivingForce.h; path = ../DrivingForce.h; sourceTree = SOURCE_ROOT; };
 		E1FD943D1299996300EBC94D /* Force.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Force.h; path = ../Force.h; sourceTree = SOURCE_ROOT; };
-		E1FD94411299996F00EBC94D /* mtrand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mtrand.cpp; path = ../mtrand.cpp; sourceTree = SOURCE_ROOT; };
-		E1FD94421299996F00EBC94D /* mtrand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mtrand.h; path = ../mtrand.h; sourceTree = SOURCE_ROOT; };
 		E1FD94431299996F00EBC94D /* RectConfinementForce.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RectConfinementForce.cpp; path = ../RectConfinementForce.cpp; sourceTree = SOURCE_ROOT; };
 		E1FD94441299996F00EBC94D /* RectConfinementForce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RectConfinementForce.h; path = ../RectConfinementForce.h; sourceTree = SOURCE_ROOT; };
 		E1FD94451299996F00EBC94D /* RotationalForce.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RotationalForce.cpp; path = ../RotationalForce.cpp; sourceTree = SOURCE_ROOT; };
@@ -199,8 +199,8 @@
 				E1FD9466129999C200EBC94D /* Forces */,
 				4DDDB4F812BA7E62003AC69F /* Operator.h */,
 				4DDDB4F512BA7E11003AC69F /* Operators */,
-				E1FD94421299996F00EBC94D /* mtrand.h */,
-				E1FD94411299996F00EBC94D /* mtrand.cpp */,
+				4DB92EE5145F088600EB946D /* RandomNumbers.h */,
+				4DB92EE3145F086600EB946D /* RandomNumbers.cpp */,
 				E1B3A958129D710500599DFF /* VectorCompatibility.h */,
 				4DFB6DBD145B8E5600F82DA1 /* Parallel.h */,
 			);
@@ -274,7 +274,6 @@
 				E1FD943A1299994F00EBC94D /* DragForce.h in Headers */,
 				E1FD943F1299996300EBC94D /* DrivingForce.h in Headers */,
 				E1FD94401299996300EBC94D /* Force.h in Headers */,
-				E1FD94541299996F00EBC94D /* mtrand.h in Headers */,
 				E1FD94561299996F00EBC94D /* RectConfinementForce.h in Headers */,
 				E1FD94581299996F00EBC94D /* RotationalForce.h in Headers */,
 				E1FD945A1299996F00EBC94D /* Runge_Kutta4.h in Headers */,
@@ -291,6 +290,7 @@
 				4DDA63D61459F6A300E795F8 /* Integrator.h in Headers */,
 				4DDA63D9145A010000E795F8 /* Runge_Kutta2.h in Headers */,
 				4DFB6DBE145B8E5700F82DA1 /* Parallel.h in Headers */,
+				4DB92EE6145F088600EB946D /* RandomNumbers.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -370,7 +370,6 @@
 				E1FD94371299994F00EBC94D /* ConfinementForce.cpp in Sources */,
 				E1FD94391299994F00EBC94D /* DragForce.cpp in Sources */,
 				E1FD943E1299996300EBC94D /* DrivingForce.cpp in Sources */,
-				E1FD94531299996F00EBC94D /* mtrand.cpp in Sources */,
 				E1FD94551299996F00EBC94D /* RectConfinementForce.cpp in Sources */,
 				E1FD94571299996F00EBC94D /* RotationalForce.cpp in Sources */,
 				E1FD94591299996F00EBC94D /* Runge_Kutta4.cpp in Sources */,
@@ -384,6 +383,7 @@
 				4D51B13A13E8A68600F37502 /* MagneticForce.cpp in Sources */,
 				4DDA63D21459F63A00E795F8 /* Integrator.cpp in Sources */,
 				4DDA63DB145A012E00E795F8 /* Runge_Kutta2.cpp in Sources */,
+				4DB92EE4145F086600EB946D /* RandomNumbers.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -445,7 +445,8 @@
 				CLANG_WARN_OBJCPP_ARC_ABI = YES;
 				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
-				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				ENABLE_OPENMP_SUPPORT = NO;
+				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_ENABLE_SSE3_EXTENSIONS = YES;
 				GCC_ENABLE_SSE41_EXTENSIONS = YES;
 				GCC_ENABLE_SSE42_EXTENSIONS = YES;
@@ -454,7 +455,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
-				GCC_VERSION = "";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
@@ -475,8 +476,14 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = /Users/mark/cfitsio;
-				LIBRARY_SEARCH_PATHS = /Users/mark/cfitsio;
+				HEADER_SEARCH_PATHS = (
+					/Users/mark/Programs/cfitsio,
+					/Users/mark/cfitsio,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					/Users/mark/Programs/cfitsio,
+					/Users/mark/cfitsio,
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-lcfitsio";
 				RUN_CLANG_STATIC_ANALYZER = YES;
@@ -496,7 +503,8 @@
 				CLANG_WARN_OBJCPP_ARC_ABI = YES;
 				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
-				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				ENABLE_OPENMP_SUPPORT = NO;
+				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_DYNAMIC_NO_PIC = YES;
 				GCC_ENABLE_SSE3_EXTENSIONS = YES;
 				GCC_ENABLE_SSE41_EXTENSIONS = YES;
@@ -508,7 +516,7 @@
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
 				GCC_UNROLL_LOOPS = YES;
-				GCC_VERSION = "";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
@@ -533,8 +541,14 @@
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = /Users/mark/cfitsio;
-				LIBRARY_SEARCH_PATHS = /Users/mark/cfitsio;
+				HEADER_SEARCH_PATHS = (
+					/Users/mark/Programs/cfitsio,
+					/Users/mark/cfitsio,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					/Users/mark/Programs/cfitsio,
+					/Users/mark/cfitsio,
+				);
 				LLVM_LTO = NO;
 				OTHER_LDFLAGS = "-lcfitsio";
 				RUN_CLANG_STATIC_ANALYZER = YES;
