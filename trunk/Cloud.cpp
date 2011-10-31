@@ -30,7 +30,7 @@ k1(new double[n]), k2(new double[n]), k3(new double[n]), k4(new double[n]),
 l1(new double[n]), l2(new double[n]), l3(new double[n]), l4(new double[n]),
 m1(new double[n]), m2(new double[n]), m3(new double[n]), m4(new double[n]),
 n1(new double[n]), n2(new double[n]), n3(new double[n]), n4(new double[n]),
-forceX(new double[n]), forceY(new double[n]),
+forceX(new double[n]), forceY(new double[n]), rands(6000.0, 50.0),
 xCache(new __m128d[n/2]), yCache(new __m128d[n/2]), 
 VxCache(new __m128d[n/2]), VyCache(new __m128d[n/2]) {
 #ifdef _OPENMP
@@ -59,10 +59,10 @@ inline void Cloud::setVelocity(const cloud_index index) const {
 	Vx[index] = Vy[index] = 0.0;
 }
 
-inline void Cloud::setCharge() const {
+inline void Cloud::setCharge() {
 	srand((unsigned int)time(NULL));
 	for (cloud_index i = 0; i < n; i++)
-		charge[i] = (rand()%201 + 5900)*electronCharge;
+		charge[i] = rands.guassian();
 }
 
 inline void Cloud::setMass() const {

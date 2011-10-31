@@ -13,6 +13,7 @@
 #include "fitsio.h"
 #include "VectorCompatibility.h"
 #include "Parallel.h"
+#include "RandomNumbers.h"
 
 class Cloud {	
 public:
@@ -30,6 +31,8 @@ public:
 	double * const forceX, * const forceY;
 	__m128d * const xCache, * const yCache, * const VxCache, * const VyCache;
 	
+	RandomNumbers rands;
+	
 	static const double interParticleSpacing;
 	static const double electronCharge;
 	static const double epsilon0;
@@ -42,7 +45,8 @@ public:
 
 	void setPosition(const cloud_index index, const double initialPosX, const double initialPosY) const;
 	void setVelocity(const cloud_index index) const;
-	void setCharge() const;	void setMass() const;
+	void setCharge();	
+	void setMass() const;
 
 	void writeCloudSetup(fitsfile * const file, int * const error) const;
 	void writeTimeStep(fitsfile * const file, int * const error, double currentTime) const;
