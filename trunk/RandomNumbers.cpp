@@ -1,10 +1,11 @@
-//
-//  RandomNumbers.cpp
-//  Simulation
-//
-//  Created by Mark Cianciosa on 10/31/11.
-//  Copyright (c) 2011 Plasma Sciences Laboratory. All rights reserved.
-//
+/*===- RandomNumbers.cpp - libSimulation -======================================
+*
+*                                  DEMON
+*
+* This file is distributed under the BSD Open Source License. See LICENSE.TXT 
+* for details.
+*
+*===-----------------------------------------------------------------------===*/
 
 #include "RandomNumbers.h"
 #include <ctime>
