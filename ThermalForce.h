@@ -11,7 +11,6 @@
 #define THERMALFORCE_H
 
 #include "Force.h"
-#include "mtrand.h"	// MT header
 
 class ThermalForce : public Force {
 public:
@@ -38,9 +37,6 @@ private:
 		          const double l_ = 0.0, const double h_ = 0.0) 
 		: r(r_), l(l_), h(h_) {}
     };
-    
-// private variables:
-	MTRand mt;
 
     RandCache *evenRandCache, *oddRandCache;
 #ifdef DISPATCH_QUEUES

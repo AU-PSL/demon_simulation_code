@@ -11,7 +11,6 @@
 #define THERMALFORCELOCALIZED_H
 
 #include "Force.h"
-#include "mtrand.h" // MT header
 
 class ThermalForceLocalized : public Force {
 public:
@@ -41,7 +40,6 @@ private:
 	};
     
 // private variables:
-	MTRand mt;
 	double heatingRadius;
 	double heatVal1;
 	double heatVal2;

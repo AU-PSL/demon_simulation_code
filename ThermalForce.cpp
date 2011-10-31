@@ -12,8 +12,7 @@
 #include <ctime>
 
 ThermalForce::ThermalForce(Cloud * const myCloud, const double redFactor) 
-: Force(myCloud), mt((unsigned int)time(NULL)),
-evenRandCache(new RandCache[myCloud->n/2]), oddRandCache(new RandCache[myCloud->n/2]),
+: Force(myCloud), evenRandCache(new RandCache[myCloud->n/2]), oddRandCache(new RandCache[myCloud->n/2]),
 #ifdef DISPATCH_QUEUES
 evenRandGroup(dispatch_group_create()), oddRandGroup(dispatch_group_create()),
 randQueue(dispatch_queue_create("com.DEMON.ThermalForce", NULL)),
@@ -23,7 +22,10 @@ heatVal(redFactor) {
     dispatch_group_async(oddRandGroup, randQueue, ^{
 #endif
     for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
-        oddRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+        oddRandCache[i] = RandCache(_mm_set_pd(cloud->rands.uniformZeroToOne(), 
+											   cloud->rands.uniformZeroToOne()), 
+									cloud->rands.uniformZeroToTwoPi(), 
+									cloud->rands.uniformZeroToTwoPi());
 #ifdef DISPATCH_QUEUES
     });
 #endif
@@ -46,7 +48,10 @@ void ThermalForce::force1(const double currentTime) {
     dispatch_group_async(evenRandGroup, randQueue, ^{
 #endif
     for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
-        evenRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+        evenRandCache[i] = RandCache(_mm_set_pd(cloud->rands.uniformZeroToOne(), 
+												cloud->rands.uniformZeroToOne()), 
+									 cloud->rands.uniformZeroToTwoPi(), 
+									 cloud->rands.uniformZeroToTwoPi());
 #ifdef DISPATCH_QUEUES
     });
 	dispatch_group_wait(oddRandGroup, DISPATCH_TIME_FOREVER);
@@ -63,7 +68,10 @@ void ThermalForce::force2(const double currentTime) {
     dispatch_group_async(oddRandGroup, randQueue, ^{
 #endif
 	for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
-        oddRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+        oddRandCache[i] = RandCache(_mm_set_pd(cloud->rands.uniformZeroToOne(), 
+											   cloud->rands.uniformZeroToOne()), 
+									cloud->rands.uniformZeroToTwoPi(), 
+									cloud->rands.uniformZeroToTwoPi());
 #ifdef DISPATCH_QUEUES
     });
 	dispatch_group_wait(evenRandGroup, DISPATCH_TIME_FOREVER);
@@ -80,7 +88,10 @@ void ThermalForce::force3(const double currentTime) {
     dispatch_group_async(evenRandGroup, randQueue, ^{
 #endif
     for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
-        evenRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+        evenRandCache[i] = RandCache(_mm_set_pd(cloud->rands.uniformZeroToOne(), 
+												cloud->rands.uniformZeroToOne()), 
+									 cloud->rands.uniformZeroToTwoPi(), 
+									 cloud->rands.uniformZeroToTwoPi());
 #ifdef DISPATCH_QUEUES
     });
 	dispatch_group_wait(oddRandGroup, DISPATCH_TIME_FOREVER);
@@ -97,7 +108,10 @@ void ThermalForce::force4(const double currentTime) {
     dispatch_group_async(oddRandGroup, randQueue, ^{
 #endif
     for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
-        oddRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+        oddRandCache[i] = RandCache(_mm_set_pd(cloud->rands.uniformZeroToOne(), 
+											   cloud->rands.uniformZeroToOne()), 
+									cloud->rands.uniformZeroToTwoPi(), 
+									cloud->rands.uniformZeroToTwoPi());
 #ifdef DISPATCH_QUEUES
     });
 	dispatch_group_wait(evenRandGroup, DISPATCH_TIME_FOREVER);
@@ -109,16 +123,13 @@ void ThermalForce::force4(const double currentTime) {
 }
 
 inline void ThermalForce::force(const cloud_index currentParticle, const RandCache &rc) {
-	// MT random number in (0,1)
 	const __m128d thermV = _mm_set1_pd(heatVal)*rc.r;
-	const double thetaL = rc.l*2.0*M_PI;
-	const double thetaH = rc.h*2.0*M_PI;
 	
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;
 	
-	_mm_store_pd(pFx, _mm_load_pd(pFx) + thermV*_mm_set_pd(sin(thetaH), sin(thetaL))); // _mm_set_pd() is backwards
-	_mm_store_pd(pFy, _mm_load_pd(pFy) + thermV*_mm_set_pd(cos(thetaH), cos(thetaL)));
+	_mm_store_pd(pFx, _mm_load_pd(pFx) + thermV*_mm_set_pd(sin(rc.h), sin(rc.l))); // _mm_set_pd() is backwards
+	_mm_store_pd(pFy, _mm_load_pd(pFy) + thermV*_mm_set_pd(cos(rc.h), cos(rc.l)));
 }
 
 void ThermalForce::writeForce(fitsfile * const file, int * const error) const {

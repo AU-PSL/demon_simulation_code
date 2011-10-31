@@ -13,8 +13,7 @@
 
 ThermalForceLocalized::ThermalForceLocalized(Cloud * const myCloud, const double thermRed1, 
                                              const double thermRed2, const double specifiedRadius) 
-: Force(myCloud), mt((unsigned long)time(NULL)), heatingRadius(specifiedRadius),
-heatVal1(thermRed1), heatVal2(thermRed2), 
+: Force(myCloud), heatingRadius(specifiedRadius), heatVal1(thermRed1), heatVal2(thermRed2), 
 evenRandCache(new RandCache[myCloud->n/2]), oddRandCache(new RandCache[myCloud->n/2])
 #ifdef DISPATCH_QUEUES
 , evenRandGroup(dispatch_group_create()), oddRandGroup(dispatch_group_create()),
@@ -22,7 +21,10 @@ randQueue(dispatch_queue_create("com.DEMON.ThermalForceLocalized", NULL))
 #endif
 {
     for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
-        oddRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+        oddRandCache[i] = RandCache(_mm_set_pd(cloud->rands.uniformZeroToOne(), 
+											   cloud->rands.uniformZeroToOne()), 
+									cloud->rands.uniformZeroToTwoPi(), 
+									cloud->rands.uniformZeroToTwoPi());
 }
 
 ThermalForceLocalized::~ThermalForceLocalized() {
@@ -42,7 +44,10 @@ void ThermalForceLocalized::force1(const double currentTime) {
     dispatch_group_async(evenRandGroup, randQueue, ^{
 #endif
     for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
-        evenRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+        evenRandCache[i] = RandCache(_mm_set_pd(cloud->rands.uniformZeroToOne(), 
+												cloud->rands.uniformZeroToOne()), 
+									 cloud->rands.uniformZeroToTwoPi(), 
+									 cloud->rands.uniformZeroToTwoPi());
 #ifdef DISPATCH_QUEUES
     });
 	dispatch_group_wait(oddRandGroup, DISPATCH_TIME_FOREVER);
@@ -60,7 +65,10 @@ void ThermalForceLocalized::force2(const double currentTime) {
     dispatch_group_async(oddRandGroup, randQueue, ^{
 #endif
     for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
-        oddRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+        oddRandCache[i] = RandCache(_mm_set_pd(cloud->rands.uniformZeroToOne(), 
+											   cloud->rands.uniformZeroToOne()), 
+									cloud->rands.uniformZeroToTwoPi(), 
+									cloud->rands.uniformZeroToTwoPi());
 #ifdef DISPATCH_QUEUES
 	});
 	dispatch_group_wait(evenRandGroup, DISPATCH_TIME_FOREVER);
@@ -78,7 +86,10 @@ void ThermalForceLocalized::force3(const double currentTime) {
     dispatch_group_async(evenRandGroup, randQueue, ^{
 #endif
         for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
-            evenRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+            evenRandCache[i] = RandCache(_mm_set_pd(cloud->rands.uniformZeroToOne(), 
+													cloud->rands.uniformZeroToOne()), 
+										 cloud->rands.uniformZeroToTwoPi(), 
+										 cloud->rands.uniformZeroToTwoPi());
 #ifdef DISPATCH_QUEUES
     });
 	dispatch_group_wait(oddRandGroup, DISPATCH_TIME_FOREVER);
@@ -96,7 +107,10 @@ void ThermalForceLocalized::force4(const double currentTime) {
     dispatch_group_async(oddRandGroup, randQueue, ^{
 #endif
         for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
-            oddRandCache[i] = RandCache(_mm_set_pd(mt(), mt()), mt(), mt());
+            oddRandCache[i] = RandCache(_mm_set_pd(cloud->rands.uniformZeroToOne(), 
+												   cloud->rands.uniformZeroToOne()), 
+										cloud->rands.uniformZeroToTwoPi(), 
+										cloud->rands.uniformZeroToTwoPi());
 #ifdef DISPATCH_QUEUES
 	});
 	dispatch_group_wait(evenRandGroup, DISPATCH_TIME_FOREVER);
@@ -111,8 +125,6 @@ void ThermalForceLocalized::force4(const double currentTime) {
 inline void ThermalForceLocalized::force(const cloud_index currentParticle, const __m128d displacementX, 
                                          const __m128d displacementY, const RandCache &rc) {
 	const __m128d radiusV = _mm_sqrt_pd(displacementX*displacementX + displacementY*displacementY);
-	const double thetaL = rc.l*2.0*M_PI;
-	const double thetaH = rc.h*2.0*M_PI;
 	
 	const int mask = _mm_movemask_pd(_mm_cmplt_pd(radiusV, _mm_set1_pd(heatingRadius)));
 	const __m128d thermV = _mm_set_pd((mask & 2) ? heatVal1 : heatVal2, // _mm_set_pd() is backwards
@@ -121,8 +133,8 @@ inline void ThermalForceLocalized::force(const cloud_index currentParticle, cons
 	double * const pFx = cloud->forceX + currentParticle;
 	double * const pFy = cloud->forceY + currentParticle;
 	
-	_mm_store_pd(pFx, _mm_load_pd(pFx) + thermV*_mm_set_pd(sin(thetaH), sin(thetaL))); // _mm_set_pd() is backwards
-	_mm_store_pd(pFy, _mm_load_pd(pFy) + thermV*_mm_set_pd(cos(thetaH), cos(thetaL)));
+	_mm_store_pd(pFx, _mm_load_pd(pFx) + thermV*_mm_set_pd(sin(rc.h), sin(rc.l))); // _mm_set_pd() is backwards
+	_mm_store_pd(pFy, _mm_load_pd(pFy) + thermV*_mm_set_pd(cos(rc.h), cos(rc.l)));
 }
 
 void ThermalForceLocalized::writeForce(fitsfile * const file, int * const error) const {
