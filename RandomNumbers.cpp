@@ -10,13 +10,8 @@
 #include <ctime>
 
 RandomNumbers::RandomNumbers(const double mean, const double sigma) 
-: engine((unsigned int)time(NULL)),
-negOneToOne(-1.0, 1.0), zeroToOne(0.0, 1.0), 
+: engine((unsigned int)time(NULL)), zeroToOne(0.0, 1.0), 
 zeroToTwoPi(0.0, 2.0*M_PI), normalDist(mean, sigma) {}
-
-const double RandomNumbers::uniformNegativeOneToOne() {
-	return negOneToOne(engine);
-}
 
 const double RandomNumbers::uniformZeroToOne() {
 	return zeroToOne(engine);
