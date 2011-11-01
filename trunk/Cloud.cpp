@@ -60,7 +60,6 @@ inline void Cloud::setVelocity(const cloud_index index) const {
 }
 
 inline void Cloud::setCharge() {
-	srand((unsigned int)time(NULL));
 	for (cloud_index i = 0; i < n; i++)
 		charge[i] = rands.guassian();
 }
