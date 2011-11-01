@@ -7,22 +7,17 @@
 *
 *===-----------------------------------------------------------------------===*/
 
-#include "ConfinementForce.h"
 #include "ConfinementForceVoid.h"
-#include "DragForce.h"
 #include "DrivingForce.h"
 #include "MagneticForce.h"
 #include "RectConfinementForce.h"
 #include "RotationalForce.h"
-#include "Runge_Kutta2.h"
 #include "Runge_Kutta4.h"
 #include "ShieldedCoulombForce.h"
-#include "ThermalForce.h"
 #include "ThermalForceLocalized.h"
 #include "TimeVaryingDragForce.h"
 #include "TimeVaryingThermalForce.h"
 
-#include <ctime>
 #include <iostream>
 #include <cstdarg>
 #include <cassert>
