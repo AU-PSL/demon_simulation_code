@@ -11,8 +11,6 @@
 #include <cmath>
 #include <sstream>
 
-using namespace std;
-
 const double Cloud::interParticleSpacing = 0.0003;
 const double Cloud::electronCharge = -1.602E-19;
 const double Cloud::epsilon0 = 8.8541878E-12;
@@ -137,9 +135,9 @@ Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error
 
 void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const {
 	// format number of elements of type double as string, e.g. 1024D
-	stringstream numStream;
+	std::stringstream numStream;
 	numStream << n << "D";
-	const string numString = numStream.str();
+	const std::string numString = numStream.str();
 
 	char *ttypeCloud[] = {const_cast<char *> ("MASS")};
 	char *tformCloud[] = {const_cast<char *> ("D")};
