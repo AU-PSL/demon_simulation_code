@@ -62,9 +62,9 @@ double startTime = 0.0;
 double dataTimeStep = 0.01;
 double simTimeStep = dataTimeStep/100.0;
 double endTime = 5.0;
-double confinementConst = 100.0;   // confinementForce
-double confinementConstX = 100.0;  // RectConfinementForce
-double confinementConstY = 1000.0; // RectConfinementForce
+double confinementConst = 1000.0;   // confinementForce
+double confinementConstX = 1000.0;  // RectConfinementForce
+double confinementConstY = 10000.0; // RectConfinementForce
 double shieldingConstant = 2E4;     // corresponds to 10*(ion debye length)
 double gamma = 10.0;
 double thermRed = 1E-14;            // default thermal reduction factor
@@ -99,7 +99,7 @@ void help() {
           << "Options:" << endl << endl
           << " -B 1.0                 set magnitude of B-field in z-direction [T]" << endl
           << " -c noDefault.fits      continue run from file" << endl
-          << " -C 1E-13               set confinementConst" << endl
+          << " -C 1000.0              set confinementConst" << endl
           << " -D -1.0 10.0           use TimeVaryingDragForce; set scale, offset" << endl
           << " -e 5.0                 set simulation end time" << endl
           << " -f noDefaut.fits       use final positions and velocities from file" << endl
@@ -111,7 +111,7 @@ void help() {
           << " -n 10                  set number of particles" << endl
           << " -o 0.01                set the data Output time step" << endl
           << " -O data.fits           set the name of the output file" << endl
-          << " -R 1E-13 1E-12         use RectConfinementForce; set confineConstX,Y" << endl
+          << " -R 1000.0 10000.0      use RectConfinementForce; set confineConstX,Y" << endl
           << " -s 2E4                 set coulomb shelding constant" << endl
           << " -S 1E-15 0.005 0.007   use RotationalForce; set strength, rmin, rmax" << endl
           << " -t 0.0001              set the simulation time step" << endl
