@@ -15,11 +15,6 @@ const double Cloud::interParticleSpacing = 0.0003;
 const double Cloud::electronCharge = -1.602E-19;
 const double Cloud::epsilon0 = 8.8541878E-12;
 const double Cloud::particleRadius = 1.45E-6;
-const double Cloud::plasmaDensity = 1.0E15;
-const double Cloud::electronMass = 9.109382E-31;
-const double Cloud::ionMass = 6.63352E-26;
-const double Cloud::electronDebye = 37.0E-6;
-const double Cloud::ionDebye = 370.0E-6;
 
 Cloud::Cloud(const cloud_index numPar) : n(numPar),
 x(new double[n]), y(new double[n]), Vx(new double[n]), Vy(new double[n]), 
@@ -59,7 +54,7 @@ inline void Cloud::setVelocity(const cloud_index index) const {
 
 inline void Cloud::setCharge() {
 	for (cloud_index i = 0; i < n; i++)
-		charge[i] = rands.guassian();
+		charge[i] = rands.guassian()*electronCharge;
 }
 
 inline void Cloud::setMass() const {
@@ -107,9 +102,11 @@ Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error
 	Cloud * const cloud = new Cloud((cloud_index)numParticles); // cloudSize not used in this case, so set to zero
 
 	// read mass information:
-	if (!*error)
+	if (!*error) {
 		// file, column #, starting row, first element, num elements, mass array, pointless pointer, error
 		fits_read_col_dbl(file, 1, 1, 1, numParticles, 0.0, cloud->mass, anyNull, error);
+		fits_read_col_dbl(file, 2, 1, 1, numParticles, 0.0, cloud->charge, anyNull, error);
+	}
 
 	// move to TIME_STEP HDU:
 	if (!*error)
@@ -127,7 +124,6 @@ Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error
 		fits_read_col_dbl(file, 3, numTimeSteps, 1, numParticles, 0.0, cloud->y, anyNull, error);
 		fits_read_col_dbl(file, 4, numTimeSteps, 1, numParticles, 0.0, cloud->Vx, anyNull, error);
 		fits_read_col_dbl(file, 5, numTimeSteps, 1, numParticles, 0.0, cloud->Vy, anyNull, error);
-		fits_read_col_dbl(file, 6, numTimeSteps, 1, numParticles, 0.0, cloud->charge, anyNull, error);
 	}
 
 	return cloud;
@@ -139,34 +135,33 @@ void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const {
 	numStream << n << "D";
 	const std::string numString = numStream.str();
 
-	char *ttypeCloud[] = {const_cast<char *> ("MASS")};
-	char *tformCloud[] = {const_cast<char *> ("D")};
-	char *tunitCloud[] = {const_cast<char *> ("kg")};	
+	char *ttypeCloud[] = {const_cast<char *> ("MASS"), const_cast<char *> ("CHARGE")};
+	char *tformCloud[] = {const_cast<char *> ("D"), const_cast<char *> ("D")};
+	char *tunitCloud[] = {const_cast<char *> ("kg"), const_cast<char *> ("C")};	
 
 	char *ttypeRun[] = {const_cast<char *> ("TIME"),
 		const_cast<char *> ("X_POSITION"), const_cast<char *> ("Y_POSITION"), 
-		const_cast<char *> ("X_VELOCITY"), const_cast<char *> ("Y_VELOCITY"),
-		const_cast<char *> ("CHARGE")};
+		const_cast<char *> ("X_VELOCITY"), const_cast<char *> ("Y_VELOCITY")};
 	char *tformRun[] = {const_cast<char *> ("D"), 
 		const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str()), 
-		const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str()),
-		const_cast<char *> (numString.c_str())};
+		const_cast<char *> (numString.c_str()), const_cast<char *> (numString.c_str())};
 	char *tunitRun[] = {const_cast<char *> ("s"),
 		const_cast<char *> ("m"), const_cast<char *> ("m"), 
-		const_cast<char *> ("m/s"), const_cast<char *> ("m/s"),
-		const_cast<char *> ("C")};
+		const_cast<char *> ("m/s"), const_cast<char *> ("m/s")};
 
 	// write mass:
 	if (!*error)
 		// file, storage type, num rows, num columns, ...
-		fits_create_tbl(file, BINARY_TBL, (LONGLONG)n, 1, ttypeCloud, tformCloud, tunitCloud, "CLOUD", error);	
-	if (!*error)
+		fits_create_tbl(file, BINARY_TBL, (LONGLONG)n, 2, ttypeCloud, tformCloud, tunitCloud, "CLOUD", error);	
+	if (!*error) {
 		// file, column #, starting row, first element, num elements, mass array, error
 		fits_write_col_dbl(file, 1, 1, 1, (LONGLONG)n, mass, error);
+		fits_write_col_dbl(file, 2, 1, 1, (LONGLONG)n, charge, error);
+	}
 
 	// write position and velocity:
 	if (!*error)
-		fits_create_tbl(file, BINARY_TBL, 0, 6, ttypeRun, tformRun, tunitRun, "TIME_STEP", error);
+		fits_create_tbl(file, BINARY_TBL, 0, 5, ttypeRun, tformRun, tunitRun, "TIME_STEP", error);
 		// n.b. num rows automatically incremented.
 		// Increment from 0 as opposed to preallocating to ensure
 		// proper output in the event of program interruption.
@@ -177,7 +172,6 @@ void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const {
 		fits_write_col_dbl(file, 3, 1, 1, (LONGLONG)n, y, error);
 		fits_write_col_dbl(file, 4, 1, 1, (LONGLONG)n, Vx, error);
 		fits_write_col_dbl(file, 5, 1, 1, (LONGLONG)n, Vy, error);
-		fits_write_col_dbl(file, 6, 1, 1, (LONGLONG)n, charge, error);
 	}
 
 	// write buffer, close file, reopen at same point:
@@ -194,7 +188,6 @@ void Cloud::writeTimeStep(fitsfile * const file, int * const error, double curre
 		fits_write_col_dbl(file, 3, numRows, 1, (LONGLONG)n, y, error);
 		fits_write_col_dbl(file, 4, numRows, 1, (LONGLONG)n, Vx, error);
 		fits_write_col_dbl(file, 5, numRows, 1, (LONGLONG)n, Vy, error);
-		fits_write_col_dbl(file, 6, numRows, 1, (LONGLONG)n, charge, error);
 	}
 
 	// write buffer, close file, reopen at same point:
