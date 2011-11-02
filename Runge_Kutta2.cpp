@@ -9,7 +9,7 @@
 
 #include "Runge_Kutta2.h"
 
-Runge_Kutta2::Runge_Kutta2(Cloud * const C, ForceArray &FA, 
+Runge_Kutta2::Runge_Kutta2(Cloud * const C, const ForceArray &FA, 
                            const double timeStep, const double startTime)
 : Integrator(C, FA, timeStep, startTime) {}
 

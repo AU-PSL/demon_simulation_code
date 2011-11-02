@@ -17,7 +17,7 @@
 
 class Integrator {
 public:
-    Integrator(Cloud * const C, ForceArray &FA,
+    Integrator(Cloud * const C, const ForceArray &FA,
                const double timeStep, double startTime);
     virtual ~Integrator();
     
@@ -28,7 +28,7 @@ public:
     
 protected:
 	Cloud * const cloud; // pointer to cloud object
-	ForceArray &forces;
+	const ForceArray &forces;
 	const double init_dt; // store initial time step
     const std::array<Operator *, 1> operations;
     SEMAPHORES

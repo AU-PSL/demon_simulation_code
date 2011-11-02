@@ -16,7 +16,7 @@
 
 class Runge_Kutta2 : public Integrator {
 public:
-	Runge_Kutta2(Cloud * const C, ForceArray &FA, 
+	Runge_Kutta2(Cloud * const C, const ForceArray &FA, 
                  const double timeStep, const double startTime);
 	~Runge_Kutta2() {}
     
