@@ -91,13 +91,13 @@ void Runge_Kutta2::moveParticles(const double endTime) {
 }
 
 void Runge_Kutta2::operate1(const double time) const {
- 	for (operator_index i = 0; i < numOperators; i++)
-		operations[i]->operation1(time);
+ 	for (Operator *opt : operations)
+		opt->operation1(time);
 }
 
 void Runge_Kutta2::operate2(const double time) const {
- 	for (operator_index i = 0; i < numOperators; i++)
-		operations[i]->operation2(time);
+ 	for (Operator *opt : operations)
+		opt->operation2(time);
 }
 
 void Runge_Kutta2::force1(const double time) const {

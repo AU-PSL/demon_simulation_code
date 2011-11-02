@@ -14,18 +14,16 @@
 
 Integrator::Integrator(Cloud * const myCloud, Force ** const forces, const force_index forcesSize,
                        const double timeStep, double startTime)
-: cloud(myCloud), theForce(forces), numForces(forcesSize), init_dt(timeStep), currentTime(startTime), 
-numOperators(1), operations(new Operator*[numOperators]) SEMAPHORES_MALLOC(1) {
-	// Operators are order dependent.
-	operations[0] = new CacheOperator(cloud);
+: cloud(myCloud), theForce(forces), numForces(forcesSize), init_dt(timeStep), currentTime(startTime),
+operations({{new CacheOperator(myCloud)}})
+SEMAPHORES_MALLOC(1) {
     SEMAPHORES_INIT(1);
 }
 
 Integrator::~Integrator() {
-	BEGIN_PARALLEL_FOR(i, e, numOperators, 1, static)
-		delete operations[i];
-    END_PARALLEL_FOR
-	delete[] operations;
+	for (Operator *opt : operations) {
+		delete opt;
+	}
     
     SEMAPHORES_FREE(1);
 }
