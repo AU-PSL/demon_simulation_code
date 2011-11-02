@@ -15,7 +15,8 @@
 
 class DrivingForce : public Force {
 public:
-	DrivingForce(Cloud * const myCloud, const double dampConst, const double amp, const double drivingShift);
+	DrivingForce(Cloud * const C, const double dampConst, const double amp, const double drivingShift)
+	: Force(C), amplitude(amp), driveConst(-dampConst), shift(drivingShift) {}
 	~DrivingForce() {}
 
 // public functions:

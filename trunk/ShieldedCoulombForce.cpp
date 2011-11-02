@@ -12,9 +12,9 @@
 
 const double ShieldedCoulombForce::coulomb = 1.0/(4.0*M_PI*Cloud::epsilon0);
 
-ShieldedCoulombForce::ShieldedCoulombForce(Cloud * const myCloud, const double shieldingConstant)
-: Force(myCloud), shielding(shieldingConstant) SEMAPHORES_MALLOC(myCloud->n/2) {
-    SEMAPHORES_INIT(myCloud->n/2)
+ShieldedCoulombForce::ShieldedCoulombForce(Cloud * const C, const double shieldingConstant)
+: Force(C), shielding(shieldingConstant) SEMAPHORES_MALLOC(C->n/2) {
+    SEMAPHORES_INIT(cloud->n/2)
 }
 ShieldedCoulombForce::~ShieldedCoulombForce() {
     SEMAPHORES_FREE(cloud->n/2)

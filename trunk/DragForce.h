@@ -14,7 +14,8 @@
 
 class DragForce : public Force {
 public:
-	DragForce(Cloud * const myCloud, const double gamma);
+	DragForce(Cloud * const myCloud, const double gamma)
+	: Force(myCloud), dragConst(-gamma) {}
 	~DragForce() {}
 	
 // public functions:

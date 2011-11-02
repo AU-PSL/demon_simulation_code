@@ -14,7 +14,8 @@
 
 class RectConfinementForce : public Force {
 public:
-	RectConfinementForce(Cloud * const myCloud, double confineConstX, double confineConstY);
+	RectConfinementForce(Cloud * const C, double confineConstX, double confineConstY)
+	: Force(C), confineX(-confineConstX), confineY(-confineConstY) {}
 	// IMPORTANT: In the above constructor, confineConst_'s must be positive!
 	~RectConfinementForce() {}
 

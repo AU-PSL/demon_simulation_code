@@ -14,7 +14,7 @@
 
 class CacheOperator : public Operator {
 public:
-	CacheOperator(Cloud * const mycloud) : Operator(mycloud) {}
+	CacheOperator(Cloud * const C) : Operator(C) {}
 	~CacheOperator() {}
     
 	void operation1(const double currentTime);

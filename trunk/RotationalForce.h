@@ -14,7 +14,8 @@
 
 class RotationalForce : public Force {
 public:
-	RotationalForce(Cloud * const myCloud, const double rmin, const double rmax, const double rotConst);
+	RotationalForce(Cloud * const C, const double rmin, const double rmax, const double rotConst)
+	: Force(C), innerRad(rmin), outerRad(rmax), rotationalConst(rotConst) {}
 	~RotationalForce() {}
 
 // public functions:

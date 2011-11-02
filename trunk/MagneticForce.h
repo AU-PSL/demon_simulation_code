@@ -14,7 +14,8 @@
 
 class MagneticForce : public Force {
 public:
-	MagneticForce(Cloud * const myCloud, const double magneticField);
+	MagneticForce(Cloud * const C, const double magneticField)
+	: Force(C), BField(magneticField) {}
 	~MagneticForce() {}
 	
 // public functions:

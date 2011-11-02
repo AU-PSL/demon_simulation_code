@@ -9,9 +9,6 @@
 
 #include "ConfinementForce.h"
 
-ConfinementForce::ConfinementForce(Cloud * const myCloud, double confineConst) 
-: Force(myCloud), confine(confineConst) {}
-
 void ConfinementForce::force1(const double currentTime) {
     (void)currentTime;
     BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static)

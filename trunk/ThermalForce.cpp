@@ -11,8 +11,8 @@
 #include <cmath>
 #include <ctime>
 
-ThermalForce::ThermalForce(Cloud * const myCloud, const double redFactor) 
-: Force(myCloud), evenRandCache(new RandCache[myCloud->n/2]), oddRandCache(new RandCache[myCloud->n/2]),
+ThermalForce::ThermalForce(Cloud * const C, const double redFactor) 
+: Force(C), evenRandCache(new RandCache[C->n/2]), oddRandCache(new RandCache[C->n/2]),
 #ifdef DISPATCH_QUEUES
 evenRandGroup(dispatch_group_create()), oddRandGroup(dispatch_group_create()),
 randQueue(dispatch_queue_create("com.DEMON.ThermalForce", NULL)),

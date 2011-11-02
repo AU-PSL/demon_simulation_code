@@ -14,7 +14,8 @@
 
 class TimeVaryingDragForce : public DragForce {
 public:
-	TimeVaryingDragForce(Cloud * const myCloud, const double scale, const double offset);
+	TimeVaryingDragForce(Cloud * const C, const double scale, const double offset)
+	: DragForce(C, -offset), scaleConst(scale), offsetConst(offset) {}
 	~TimeVaryingDragForce() {}
 
 // public functions:

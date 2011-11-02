@@ -11,10 +11,10 @@
 #include <ctime>
 #include <cmath>
 
-ThermalForceLocalized::ThermalForceLocalized(Cloud * const myCloud, const double thermRed1, 
+ThermalForceLocalized::ThermalForceLocalized(Cloud * const C, const double thermRed1, 
                                              const double thermRed2, const double specifiedRadius) 
-: Force(myCloud), heatingRadius(specifiedRadius), heatVal1(thermRed1), heatVal2(thermRed2), 
-evenRandCache(new RandCache[myCloud->n/2]), oddRandCache(new RandCache[myCloud->n/2])
+: Force(C), heatingRadius(specifiedRadius), heatVal1(thermRed1), heatVal2(thermRed2), 
+evenRandCache(new RandCache[C->n/2]), oddRandCache(new RandCache[C->n/2])
 #ifdef DISPATCH_QUEUES
 , evenRandGroup(dispatch_group_create()), oddRandGroup(dispatch_group_create()),
 randQueue(dispatch_queue_create("com.DEMON.ThermalForceLocalized", NULL))
