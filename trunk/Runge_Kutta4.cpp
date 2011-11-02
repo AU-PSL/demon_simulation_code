@@ -18,10 +18,6 @@ void Runge_Kutta4::moveParticles(const double endTime) {
 	// create vector constants:
 	const __m128d v2 = _mm_set1_pd(2.0);
 	const __m128d v6 = _mm_set1_pd(6.0);
-
-#ifdef CHARGE
-	const __m128d qConst3 = _mm_set1_pd(4.0*M_PI*Cloud::particleRadius*Cloud::epsilon0);
-#endif
     
 	while (currentTime < endTime) {
 		// Second argument must be 2 more than the first.
