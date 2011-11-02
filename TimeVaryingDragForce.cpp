@@ -9,9 +9,6 @@
 
 #include "TimeVaryingDragForce.h"
 
-TimeVaryingDragForce::TimeVaryingDragForce(Cloud * const myCloud, const double scale, const double offset) 
-: DragForce(myCloud, -offset), scaleConst(scale), offsetConst(offset) {}
-
 void TimeVaryingDragForce::force1(const double currentTime) {
 	dragConst = calculateGamma(currentTime);
 	DragForce::force1(currentTime);

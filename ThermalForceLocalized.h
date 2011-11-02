@@ -14,7 +14,7 @@
 
 class ThermalForceLocalized : public Force {
 public:
-	ThermalForceLocalized(Cloud * const myCloud, const double thermRed1, const double thermRed2, 
+	ThermalForceLocalized(Cloud * const C, const double thermRed1, const double thermRed2, 
                           const double specifiedRadius);
 	~ThermalForceLocalized();
 

@@ -8,11 +8,7 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "ConfinementForceVoid.h"
-#include <cmath>
 	
-ConfinementForceVoid::ConfinementForceVoid(Cloud * const myCloud, double confineConst, double voidDecay) : 
-ConfinementForce(myCloud, confineConst), decay(voidDecay) {}
-
 void ConfinementForceVoid::force1(const double currentTime) {
 	ConfinementForce::force1(currentTime);
 	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static)

@@ -7,12 +7,7 @@
 *
 *===-----------------------------------------------------------------------===*/
 
-//TODO: Charge-dependence
-
 #include "RectConfinementForce.h"
-	
-RectConfinementForce::RectConfinementForce(Cloud * const myCloud, double confineConstX, double confineConstY)
-: Force(myCloud), confineX(-confineConstX), confineY(-confineConstY) {}
 
 void RectConfinementForce::force1(const double currentTime) {
     (void)currentTime;

@@ -15,7 +15,7 @@
 
 class ShieldedCoulombForce : public Force {
 public:
-	ShieldedCoulombForce(Cloud * const myCloud, const double shieldingConstant);
+	ShieldedCoulombForce(Cloud * const C, const double shieldingConstant);
 	~ShieldedCoulombForce();
 
 // public functions:

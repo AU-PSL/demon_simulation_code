@@ -14,7 +14,8 @@
 
 class TimeVaryingThermalForce : public ThermalForce {
 public:
-	TimeVaryingThermalForce(Cloud * const myCloud, const double scale, const double offset);
+	TimeVaryingThermalForce(Cloud * const C, const double scale, const double offset)
+	: ThermalForce(C, offset), heatValScale(scale), heatValOffset(offset) {}
 	~TimeVaryingThermalForce() {}
 
 // public functions:

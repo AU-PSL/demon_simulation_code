@@ -13,9 +13,6 @@
 const double DrivingForce::waveNum = 2.0*M_PI/0.002; // wavelength = 2mm
 const double DrivingForce::angFreq = 2.0*M_PI*10.0; // 10Hz
 
-DrivingForce::DrivingForce(Cloud * const myCloud, const double drivingConst, const double amp, const double drivingShift)
-: Force(myCloud), amplitude(amp), driveConst(-drivingConst), shift(drivingShift) {}
-
 void DrivingForce::force1(const double currentTime) {
 	const __m128d vtime = _mm_set1_pd(currentTime);
 	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static)

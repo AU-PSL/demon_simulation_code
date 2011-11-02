@@ -17,7 +17,7 @@ class Force {
 public:
 	Cloud * const cloud;
 	
-	Force(Cloud * const myCloud) : cloud(myCloud) {} 
+	Force(Cloud * const C) : cloud(C) {} 
 	virtual ~Force() {} // implementation of virtual destructor
 
 	// Note: currentTime parameter necessary for DrivingForce, unused in others

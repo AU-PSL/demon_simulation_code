@@ -9,9 +9,6 @@
 
 #include "TimeVaryingThermalForce.h"
 
-TimeVaryingThermalForce::TimeVaryingThermalForce(Cloud * const myCloud, const double scale, const double offset) 
-: ThermalForce(myCloud, offset), heatValScale(scale), heatValOffset(offset) {}
-
 void TimeVaryingThermalForce::force1(const double currentTime) {
 	heatVal = calculateHeatVal(currentTime);
 	ThermalForce::force1(currentTime);

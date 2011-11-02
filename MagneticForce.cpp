@@ -9,9 +9,6 @@
 
 #include "MagneticForce.h"
 
-MagneticForce::MagneticForce(Cloud * const myCloud, const double magneticField) 
-: Force(myCloud), BField(magneticField) {}
-
 void MagneticForce::force1(const double currentTime) {
     (void)currentTime;
 	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static) 

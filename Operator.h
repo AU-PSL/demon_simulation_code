@@ -16,7 +16,7 @@ typedef unsigned char operator_index;
 class Operator {
 public:
 	Cloud * const cloud;
-	Operator(Cloud * const myCloud) : cloud(myCloud) {}
+	Operator(Cloud * const C) : cloud(C) {}
 	virtual ~Operator() {}
     
 	virtual void operation1(const double currentTime)=0;

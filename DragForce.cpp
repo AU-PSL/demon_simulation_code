@@ -9,9 +9,6 @@
 
 #include "DragForce.h"
 
-DragForce::DragForce(Cloud * const myCloud, const double gamma) 
-: Force(myCloud), dragConst(-gamma) {}
-
 void DragForce::force1(const double currentTime) {
     (void)currentTime;
 	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static) 

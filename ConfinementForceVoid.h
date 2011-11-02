@@ -14,7 +14,9 @@
 
 class ConfinementForceVoid : public ConfinementForce {
 public:
-	ConfinementForceVoid(Cloud * const myCloud, double confineConst, double voidDecay);
+	ConfinementForceVoid(Cloud * const C, double confineConst, double voidDecay)
+	: ConfinementForce(C, confineConst), decay(voidDecay) {}
+	
 	// IMPORTANT: In the above constructor, confineConst must be positive!
 	~ConfinementForceVoid() {}
 

@@ -14,7 +14,7 @@
 
 class ThermalForce : public Force {
 public:
-	ThermalForce(Cloud * const myCloud, const double redFactor);
+	ThermalForce(Cloud * const C, const double redFactor);
 	~ThermalForce();
 
 // public functions:

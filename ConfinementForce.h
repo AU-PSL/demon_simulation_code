@@ -14,7 +14,8 @@
 
 class ConfinementForce : public Force {
 public:
-	ConfinementForce(Cloud * const myCloud, double confineConst);
+	ConfinementForce(Cloud * const C, double confineConst)
+	: Force(C), confine(confineConst) {}
 	// IMPORTANT: In the above constructor, confineConst must be positive!
 	~ConfinementForce() {}
 

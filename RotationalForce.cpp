@@ -8,10 +8,6 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "RotationalForce.h"
-#include <cmath>
-
-RotationalForce::RotationalForce(Cloud * const myCloud, const double rmin, const double rmax, const double rotConst)
-: Force(myCloud), innerRad(rmin), outerRad(rmax), rotationalConst(rotConst) {}
 
 void RotationalForce::force1(const double currentTime) {
     (void)currentTime;
