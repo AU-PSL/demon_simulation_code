@@ -12,10 +12,10 @@
 #include <cmath>
 #include <limits>
 
-Integrator::Integrator(Cloud * const myCloud, Force ** const forces, const force_index forcesSize,
+Integrator::Integrator(Cloud * const C, ForceArray &FA,
                        const double timeStep, double startTime)
-: cloud(myCloud), theForce(forces), numForces(forcesSize), init_dt(timeStep), currentTime(startTime),
-operations({{new CacheOperator(myCloud)}})
+: currentTime(startTime), cloud(C), forces(FA), init_dt(timeStep),
+operations({{new CacheOperator(C)}})
 SEMAPHORES_MALLOC(1) {
     SEMAPHORES_INIT(1);
 }

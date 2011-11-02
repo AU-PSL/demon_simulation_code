@@ -9,9 +9,9 @@
 
 #include "Runge_Kutta4.h"
 
-Runge_Kutta4::Runge_Kutta4(Cloud * const myCloud, Force **forces, const force_index forcesSize, 
+Runge_Kutta4::Runge_Kutta4(Cloud * const C, ForceArray &FA, 
                            const double timeStep, const double startTime)
-: Runge_Kutta2(myCloud, forces, forcesSize, timeStep, startTime) {}
+: Runge_Kutta2(C, FA, timeStep, startTime) {}
 
 // 4th order Runge-Kutta algorithm:
 void Runge_Kutta4::moveParticles(const double endTime) {
@@ -162,11 +162,11 @@ inline void Runge_Kutta4::operate4(const double time) const {
 }
 
 inline void Runge_Kutta4::force3(const double time) const {
- 	for (force_index i = 0; i < numForces; i++)
-		theForce[i]->force3(time);
+	for (Force *F : forces)
+		F->force3(time);
 }
 
 inline void Runge_Kutta4::force4(const double time) const {
- 	for (force_index i = 0; i < numForces; i++)
-		theForce[i]->force4(time);
+	for (Force *F : forces)
+		F->force4(time);
 }

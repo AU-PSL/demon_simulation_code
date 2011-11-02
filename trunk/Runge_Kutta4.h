@@ -16,7 +16,7 @@
 
 class Runge_Kutta4 : public Runge_Kutta2 {
 public:
-	Runge_Kutta4(Cloud * const myCloud, Force ** const forces, const force_index forcesSize, 
+	Runge_Kutta4(Cloud * const C, ForceArray &FA, 
                  const double timeStep, const double startTime);
 	~Runge_Kutta4() {}
 

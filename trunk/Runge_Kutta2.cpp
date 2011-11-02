@@ -9,9 +9,9 @@
 
 #include "Runge_Kutta2.h"
 
-Runge_Kutta2::Runge_Kutta2(Cloud * const myCloud, Force **forces, const force_index forcesSize, 
+Runge_Kutta2::Runge_Kutta2(Cloud * const C, ForceArray &FA, 
                            const double timeStep, const double startTime)
-: Integrator(myCloud, forces, forcesSize, timeStep, startTime) {}
+: Integrator(C, FA, timeStep, startTime) {}
 
 // 4th order Runge-Kutta algorithm:
 void Runge_Kutta2::moveParticles(const double endTime) {
@@ -91,21 +91,21 @@ void Runge_Kutta2::moveParticles(const double endTime) {
 }
 
 void Runge_Kutta2::operate1(const double time) const {
- 	for (Operator *opt : operations)
-		opt->operation1(time);
+ 	for (Operator *O : operations)
+		O->operation1(time);
 }
 
 void Runge_Kutta2::operate2(const double time) const {
- 	for (Operator *opt : operations)
-		opt->operation2(time);
+ 	for (Operator *O : operations)
+		O->operation2(time);
 }
 
 void Runge_Kutta2::force1(const double time) const {
- 	for (force_index i = 0; i < numForces; i++)
-		theForce[i]->force1(time);
+	for (Force *F : forces)
+		F->force1(time);
 }
 
 void Runge_Kutta2::force2(const double time) const {
- 	for (force_index i = 0; i < numForces; i++)
-		theForce[i]->force2(time);
+	for (Force *F : forces)
+		F->force2(time);
 }

@@ -17,20 +17,19 @@
 
 class Integrator {
 public:
-    Integrator(Cloud * const myCloud, Force ** const forces, const force_index forcesSize,
+    Integrator(Cloud * const C, ForceArray &FA,
                const double timeStep, double startTime);
     virtual ~Integrator();
     
     // public variables:
-	Cloud * const cloud; // pointer to cloud object
-	Force ** const theForce; // pointer to Force object
-	const force_index numForces;
-	const double init_dt; // store initial time step
 	double currentTime;
     
     virtual void moveParticles(const double endTime)=0;
     
 protected:
+	Cloud * const cloud; // pointer to cloud object
+	ForceArray &forces;
+	const double init_dt; // store initial time step
     const std::array<Operator *, 1> operations;
     SEMAPHORES
     
