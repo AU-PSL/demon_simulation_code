@@ -9,7 +9,7 @@
 
 #include "Runge_Kutta4.h"
 
-Runge_Kutta4::Runge_Kutta4(Cloud * const C, ForceArray &FA, 
+Runge_Kutta4::Runge_Kutta4(Cloud * const C, const ForceArray &FA, 
                            const double timeStep, const double startTime)
 : Runge_Kutta2(C, FA, timeStep, startTime) {}
 

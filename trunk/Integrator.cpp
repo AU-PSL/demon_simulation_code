@@ -12,7 +12,7 @@
 #include <cmath>
 #include <limits>
 
-Integrator::Integrator(Cloud * const C, ForceArray &FA,
+Integrator::Integrator(Cloud * const C, const ForceArray &FA,
                        const double timeStep, double startTime)
 : currentTime(startTime), cloud(C), forces(FA), init_dt(timeStep),
 operations({{new CacheOperator(C)}})
