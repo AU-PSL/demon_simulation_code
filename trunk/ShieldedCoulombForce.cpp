@@ -22,8 +22,13 @@ ShieldedCoulombForce::~ShieldedCoulombForce() {
 
 void ShieldedCoulombForce::force1(const double currentTime) {
     (void)currentTime;
-    cloud_index numParticles = cloud->n;
-    BEGIN_PARALLEL_FOR(currentParticle, e, numParticles - 1, 2, dynamic)
+    const cloud_index numParticles = cloud->n;
+#ifdef DISPATCH_QUEUES
+	const cloud_index outerLoop = numParticles;
+#else
+	const cloud_index outerLoop = numParticles - 1;
+#endif
+    BEGIN_PARALLEL_FOR(currentParticle, e, outerLoop, 2, dynamic)
         const __m128d vx1 = cloud->getx1_pd(currentParticle);
         const __m128d vy1 = cloud->gety1_pd(currentParticle);
         const __m128d vq1 = _mm_load_pd(cloud->charge + currentParticle);
@@ -47,8 +52,13 @@ void ShieldedCoulombForce::force1(const double currentTime) {
 
 void ShieldedCoulombForce::force2(const double currentTime) {
     (void)currentTime;
-	cloud_index numParticles = cloud->n;
-    BEGIN_PARALLEL_FOR(currentParticle, e, numParticles - 1, 2, dynamic)
+	const cloud_index numParticles = cloud->n;
+#ifdef DISPATCH_QUEUES
+	const cloud_index outerLoop = numParticles;
+#else
+	const cloud_index outerLoop = numParticles - 1;
+#endif
+    BEGIN_PARALLEL_FOR(currentParticle, e, outerLoop, 2, dynamic)
 		const __m128d vx1 = cloud->getx2_pd(currentParticle);
 		const __m128d vy1 = cloud->gety2_pd(currentParticle);
 		const __m128d vq1 = _mm_load_pd(cloud->charge + currentParticle);
@@ -71,8 +81,13 @@ void ShieldedCoulombForce::force2(const double currentTime) {
 
 void ShieldedCoulombForce::force3(const double currentTime) {
     (void)currentTime;
-    cloud_index numParticles = cloud->n;
-    BEGIN_PARALLEL_FOR(currentParticle, e, numParticles - 1, 2, dynamic)
+    const cloud_index numParticles = cloud->n;
+#ifdef DISPATCH_QUEUES
+	const cloud_index outerLoop = numParticles;
+#else
+	const cloud_index outerLoop = numParticles - 1;
+#endif
+    BEGIN_PARALLEL_FOR(currentParticle, e, outerLoop, 2, dynamic)
 		const __m128d vx1 = cloud->getx3_pd(currentParticle);
 		const __m128d vy1 = cloud->gety3_pd(currentParticle);
 		const __m128d vq1 = _mm_load_pd(cloud->charge + currentParticle);
@@ -95,8 +110,13 @@ void ShieldedCoulombForce::force3(const double currentTime) {
 
 void ShieldedCoulombForce::force4(const double currentTime) {
     (void)currentTime;
-	cloud_index numParticles = cloud->n;
-    BEGIN_PARALLEL_FOR(currentParticle, e, numParticles - 1, 2, dynamic)
+	const cloud_index numParticles = cloud->n;
+#ifdef DISPATCH_QUEUES
+	const cloud_index outerLoop = numParticles;
+#else
+	const cloud_index outerLoop = numParticles - 1;
+#endif
+    BEGIN_PARALLEL_FOR(currentParticle, e, outerLoop, 2, dynamic)
 		const __m128d vx1 = cloud->getx4_pd(currentParticle);
 		const __m128d vy1 = cloud->gety4_pd(currentParticle);
 		const __m128d vq1 = _mm_load_pd(cloud->charge + currentParticle);

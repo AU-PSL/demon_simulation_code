@@ -45,7 +45,12 @@ const double Integrator::modifyTimeStep(float currentDist, double currentTimeSte
 #endif
     
 	// loop through entire cloud, or until reduction occures. Reset innerIndex after each loop iteration.
-	BEGIN_PARALLEL_FOR(outerIndex, e, numPar - 1, 4, dynamic)
+#ifdef DISPATCH_QUEUES
+	const cloud_index outerLoop = numPar;
+#else
+	const cloud_index outerLoop = numPar - 1;
+#endif
+    BEGIN_PARALLEL_FOR(outerIndex, e, outerLoop, 4, dynamic)
 		// caculate separation distance b/t adjacent elements:
 		const __m128 outPosX = loadFloatVector(cloud->x + outerIndex);
 		const __m128 outPosY = loadFloatVector(cloud->y + outerIndex);
