@@ -27,13 +27,12 @@
 extern "C" double sqrt(double);
 
 void help();
-void checkForce(const force_index numChecks, ...);
+void checkForce(const size_t numChecks, ...);
 bool isUnsigned(const char *val);
 bool isDouble(const char *val);
 bool isOption(const char *val);
 void checkOption(const int argc, char * const argv[], int &optionIndex, const char option, unsigned numOptions, ...);
 void parseCommandLineOptions(int argc, char * const argv[]);
-const force_index getNumForces();
 void checkFitsError(const int error, const int lineNumber);
 void deleteFitsFile(char * const filename, int * const error);
 void fitsFileExists(char * const filename, int * const error);
@@ -130,7 +129,7 @@ void help() {
 }
 
 // check if force is used or conflicts with a previously set force.
-void checkForce(const force_index numChecks, ...) {
+void checkForce(const size_t numChecks, ...) {
 	va_list arglist;
 	va_start(arglist, numChecks);
 	
@@ -144,7 +143,7 @@ void checkForce(const force_index numChecks, ...) {
 		exit(1);
 	}
 	
-	for (force_index i = 1; i < numChecks; i++) {
+	for (size_t i = 1; i < numChecks; i++) {
 		const char nextOption = (char)va_arg(arglist, int);
 		const ForceFlag nextFlag = (ForceFlag)va_arg(arglist, int);
 		
@@ -322,24 +321,6 @@ void parseCommandLineOptions(int argc, char * const argv[]) {
 	}
 }
 
-// count number of forces in use:
-const force_index getNumForces() {
-	force_index i = 0;
-	if (usedForces & ConfinementForceFlag)        ++i;
-	if (usedForces & ConfinementForceVoidFlag)    ++i;
-	if (usedForces & DragForceFlag)               ++i;
-	if (usedForces & DrivingForceFlag)            ++i;
-	if (usedForces & MagneticForceFlag)           ++i;
-	if (usedForces & RectConfinementForceFlag)    ++i;
-	if (usedForces & RotationalForceFlag)         ++i;
-	if (usedForces & ShieldedCoulombForceFlag)    ++i;
-	if (usedForces & ThermalForceFlag)            ++i;
-	if (usedForces & ThermalForceLocalizedFlag)   ++i;
-	if (usedForces & TimeVaryingDragForceFlag)    ++i;
-	if (usedForces & TimeVaryingThermalForceFlag) ++i;
-	return i;
-}
-
 // check fitsfile for errors:
 void checkFitsError(const int error, const int lineNumber) {
 	if (!error)
@@ -461,42 +442,43 @@ int main (int argc, char * const argv[]) {
  -----------------------------------------------------------------------------*/
 	cout << "Status: Initializing forces." << endl;
     
-	const force_index numForces = getNumForces();
-	Force **forceArray = new Force*[numForces];
 	
-	force_index index = 0;
+	ForceArray forces;
+	//const force_index numForces = getNumForces();
+	//Force **forceArray = new Force*[numForces];
+	
 	if (usedForces & ConfinementForceFlag)
-		forceArray[index++] = new ConfinementForce(cloud, confinementConst);
+		forces.push_back(new ConfinementForce(cloud, confinementConst));
 	if (usedForces & ConfinementForceVoidFlag)
-		forceArray[index++] = new ConfinementForceVoid(cloud, confinementConst, voidDecay);
+		forces.push_back(new ConfinementForceVoid(cloud, confinementConst, voidDecay));
 	if (usedForces & DragForceFlag) 
-		forceArray[index++] = new DragForce(cloud, gamma);
+		forces.push_back(new DragForce(cloud, gamma));
 	if (usedForces & DrivingForceFlag)
-		forceArray[index++] = new DrivingForce(cloud, driveConst, waveAmplitude, waveShift);
+		forces.push_back(new DrivingForce(cloud, driveConst, waveAmplitude, waveShift));
 	if (usedForces & MagneticForceFlag)
-		forceArray[index++] = new MagneticForce(cloud, magneticFieldStrength);
+		forces.push_back(new MagneticForce(cloud, magneticFieldStrength));
 	if (usedForces & RectConfinementForceFlag)
-		forceArray[index++] = new RectConfinementForce(cloud, confinementConstX, confinementConstY);
+		forces.push_back(new RectConfinementForce(cloud, confinementConstX, confinementConstY));
 	if (usedForces & RotationalForceFlag)
-		forceArray[index++] = new RotationalForce(cloud, rmin, rmax, rotConst);
+		forces.push_back(new RotationalForce(cloud, rmin, rmax, rotConst));
 	if (usedForces & ShieldedCoulombForceFlag) 
-		forceArray[index++] = new ShieldedCoulombForce(cloud, shieldingConstant);
+		forces.push_back(new ShieldedCoulombForce(cloud, shieldingConstant));
 	if (usedForces & ThermalForceFlag)
-		forceArray[index++] = new ThermalForce(cloud, thermRed);
+		forces.push_back(new ThermalForce(cloud, thermRed));
 	if (usedForces & ThermalForceLocalizedFlag)
-		forceArray[index++] = new ThermalForceLocalized(cloud, thermRed, thermRed1, heatRadius);
+		forces.push_back(new ThermalForceLocalized(cloud, thermRed, thermRed1, heatRadius));
 	if (usedForces & TimeVaryingDragForceFlag)
-		forceArray[index++] = new TimeVaryingDragForce(cloud, dragScale, gamma);
+		forces.push_back(new TimeVaryingDragForce(cloud, dragScale, gamma));
 	if (usedForces & TimeVaryingThermalForceFlag)
-		forceArray[index++] = new TimeVaryingThermalForce(cloud, thermScale, thermOffset);
+		forces.push_back(new TimeVaryingThermalForce(cloud, thermScale, thermOffset));
 	
 	if (continueFileIndex) { // initialize forces from old file
-		for (force_index i = 0; i < numForces; i++)
-			forceArray[i]->readForce(file, &error);
+		for (Force *F : forces)
+			F->readForce(file, &error);
 		checkFitsError(error, __LINE__);
 	} else { // write forces to new file
-		for (force_index i = 0; i < numForces; i++)
-			forceArray[i]->writeForce(file, &error);
+		for (Force *F : forces)
+			F->writeForce(file, &error);
 		checkFitsError(error, __LINE__);
 	}
 
@@ -523,8 +505,8 @@ int main (int argc, char * const argv[]) {
 		cloud->mass[0] *= massFactor;
 	}
 	
-    Integrator *integrate = rk4 ? new Runge_Kutta4(cloud, forceArray, numForces, simTimeStep, startTime)
-                                : new Runge_Kutta2(cloud, forceArray, numForces, simTimeStep, startTime);
+    Integrator *integrate = rk4 ? new Runge_Kutta4(cloud, forces, simTimeStep, startTime)
+                                : new Runge_Kutta2(cloud, forces, simTimeStep, startTime);
 
 	// execute simulation for desired length of time:
 	while (startTime < endTime) {
@@ -560,9 +542,8 @@ int main (int argc, char * const argv[]) {
 	<< seconds << (seconds == 1 ? " second " : " seconds.") << endl;
 	
 	// clean up objects:
-	for (force_index i = 0; i < numForces; i++)
-		delete forceArray[i];
-	delete[] forceArray;
+	for (Force *F : forces)
+		delete F;
 	delete cloud;
 	
 	return 0;
