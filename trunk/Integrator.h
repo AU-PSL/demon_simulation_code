@@ -13,6 +13,7 @@
 #include "Cloud.h"
 #include "Force.h"
 #include "Operator.h"
+#include <array>
 
 class Integrator {
 public:
@@ -30,8 +31,7 @@ public:
     virtual void moveParticles(const double endTime)=0;
     
 protected:
-    const operator_index numOperators;
-	Operator ** const operations;
+    const std::array<Operator *, 1> operations;
     SEMAPHORES
     
     const double modifyTimeStep(float currentDist, double currentTimeStep) const;
