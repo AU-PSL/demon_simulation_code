@@ -57,7 +57,7 @@ dispatch_apply(num, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), 
     semaphores[i] = dispatch_semaphore_create(1); \
 });
 #define SEMAPHORES_FREE(num) \
-dispatch_apply(cloud->n/2, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(cloud_index i) { \
+dispatch_apply(num, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(cloud_index i) { \
     dispatch_release(semaphores[i]); \
 });
 #define SEMAPHORE_WAIT(i) dispatch_semaphore_wait(semaphores[i], DISPATCH_TIME_FOREVER);
