@@ -273,9 +273,11 @@ void parseCommandLineOptions(int argc, char * const argv[]) {
 				break;
 			case 'n': // set "n"umber of particles:
 				checkOption(argc, argv, i, 'n', 1, "number of particles", CI, &numParticles);
-				if (numParticles%2) // odd
-					cout << "Warning: -n requires even number of particles. Incrementing number of particles to (" 
-					<< ++numParticles << ")." << endl;
+				if (numParticles%4) {
+                    numParticles += numParticles%4;
+                    cout << "Warning: -n requires multiples of 4 numbers of particles. Incrementing number of particles to (" 
+					<< numParticles << ")." << endl;
+                }
 				break;
 			case 'o': // set dataTimeStep, which conrols "o"utput rate:
 				checkOption(argc, argv, i, 'o', 1, "data time step", D, &dataTimeStep);
@@ -504,19 +506,19 @@ int main (int argc, char * const argv[]) {
 		cloud->Vy[0] = 0.0;
 		cloud->mass[0] *= massFactor;
 	}
-	
-    Integrator *integrate = rk4 ? new Runge_Kutta4(cloud, forces, simTimeStep, startTime)
-                                : new Runge_Kutta2(cloud, forces, simTimeStep, startTime);
+    
+    Integrator * const I = rk4 ? new Runge_Kutta4(cloud, forces, simTimeStep, startTime)
+                               : new Runge_Kutta2(cloud, forces, simTimeStep, startTime);
 
 	// execute simulation for desired length of time:
 	while (startTime < endTime) {
-		cout << clear_line << "\rCurrent Time: " << integrate->currentTime << "s (" 
-		<< integrate->currentTime/endTime*100.0 << "% Complete)" << flush;
+		cout << clear_line << "\rCurrent Time: " << I->currentTime << "s (" 
+		<< I->currentTime/endTime*100.0 << "% Complete)" << flush;
 		
 		// call Runge-Kutta algorithm:
-		integrate->moveParticles(startTime += dataTimeStep);
+		I->moveParticles(startTime += dataTimeStep);
 		// write positions and velocities:
-		cloud->writeTimeStep(file, &error, integrate->currentTime);
+		cloud->writeTimeStep(file, &error, I->currentTime);
 	}
 
 /*------------------------------------------------------------------------------
@@ -545,6 +547,7 @@ int main (int argc, char * const argv[]) {
 	for (Force *F : forces)
 		delete F;
 	delete cloud;
+    delete I;
 	
 	return 0;
 }
