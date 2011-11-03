@@ -71,6 +71,9 @@ double waveAmplitude = 1E-13;       // driving wave amplitude (default comparabl
 double waveShift = 0.007;           // driving wave shift
 double machSpeed = 0.2;             // firing speed for Mach Cone experiment
 double massFactor = 100;            // mass multiplier for fired Mach Cone particle
+double qMean = 6000.0;              // Mean number of charges of the guassian charge distriburion
+double qSigma = 100.0;              // Standard deviation of number of charges
+double dustRadius = 1.45E-6;        // Dust particle radius
 double rmin = 
 	Cloud::interParticleSpacing*5.0;  // inner radius of shear layer
 double rmax = 
@@ -105,7 +108,9 @@ void help() {
           << " -n 10                  set number of particles" << endl
           << " -o 0.01                set the data Output time step" << endl
           << " -O data.fits           set the name of the output file" << endl
+          << " -q 6000.0 100.0        set charge mean and sigma" << endl
           << " -R 1000.0 10000.0      use RectConfinementForce; set confineConstX,Y" << endl
+          << " -r 1.45E-6             set particle radius" << endl
           << " -s 2E4                 set coulomb shelding constant" << endl
           << " -S 1E-15 0.005 0.007   use RotationalForce; set strength, rmin, rmax" << endl
           << " -t 0.0001              set the simulation time step" << endl
@@ -235,26 +240,34 @@ void parseCommandLineOptions(int argc, char * const argv[]) {
 		switch (argv[i][1]) {
 			case 'B': // set "B"-field:
 				checkForce(1, 'B', MagneticForceFlag);
-				checkOption(argc, argv, i, 'B', 1, "magnetic field", D, &magneticFieldStrength);
+				checkOption(argc, argv, i, 'B', 1, 
+                            "magnetic field", D, &magneticFieldStrength);
 				break;
 			case 'c': // "c"ontinue from file:
-				checkOption(argc, argv, i, 'c', 1, "contine file", F, &continueFileIndex, "");
+				checkOption(argc, argv, i, 'c', 1, 
+                            "contine file", F, &continueFileIndex, "");
 				break;
 			case 'C': // set "C"onfinementConst:
-				checkOption(argc, argv, i, 'C', 1, "confinementConst", D, &confinementConst);
+				checkOption(argc, argv, i, 'C', 1, 
+                            "confinementConst", D, &confinementConst);
 				break;
 			case 'D': // use TimeVarying"D"ragForce:
 				checkForce(1, 'D', TimeVaryingDragForceFlag);
-				checkOption(argc, argv, i, 'D', 2, "scale factor", D, &dragScale, "offset", D, &gamma);
+				checkOption(argc, argv, i, 'D', 2, 
+                            "scale factor", D, &dragScale, 
+                            "offset",       D, &gamma);
 				break;
 			case 'e': // set "e"nd time:
-				checkOption(argc, argv, i, 'e', 1, "end time", D, &endTime);
+				checkOption(argc, argv, i, 'e', 1, 
+                            "end time", D, &endTime);
 				break;		
 			case 'f': // use "f"inal positions and velocities from previous run:
-				checkOption(argc, argv, i, 'f', 1, "finals file", F, &finalsFileIndex, "");
+				checkOption(argc, argv, i, 'f', 1, 
+                            "finals file", F, &finalsFileIndex, "");
 				break;
 			case 'g': // set "g"amma:
-				checkOption(argc, argv, i, 'g', 1, "gamma", D, &gamma);
+				checkOption(argc, argv, i, 'g', 1, 
+                            "gamma", D, &gamma);
 				break;
 			case 'h': // display "h"elp:
 				help();
@@ -264,15 +277,24 @@ void parseCommandLineOptions(int argc, char * const argv[]) {
                 i++;
                 break;
 			case 'L': // perform "L"ocalized heating experiment:
-				checkForce(3, 'L', ThermalForceLocalizedFlag, 'T', ThermalForceFlag, 'v', TimeVaryingThermalForceFlag);
-				checkOption(argc, argv, i, 'L', 3, "radius", D, &heatRadius, "heat factor1", D, &thermRed, "heat factor2", D, &thermRed1);
+				checkForce(3, 
+                           'L', ThermalForceLocalizedFlag, 
+                           'T', ThermalForceFlag, 
+                           'v', TimeVaryingThermalForceFlag);
+				checkOption(argc, argv, i, 'L', 3, 
+                            "radius",       D, &heatRadius, 
+                            "heat factor1", D, &thermRed, 
+                            "heat factor2", D, &thermRed1);
 				break;
 			case 'M': // perform "M"ach Cone experiment:
 				Mach = true;
-				checkOption(argc, argv, i, 'M', 2, "velocity", D, &machSpeed, "mass", D, &massFactor);
+				checkOption(argc, argv, i, 'M', 2, 
+                            "velocity", D, &machSpeed, 
+                            "mass",     D, &massFactor);
 				break;
 			case 'n': // set "n"umber of particles:
-				checkOption(argc, argv, i, 'n', 1, "number of particles", CI, &numParticles);
+				checkOption(argc, argv, i, 'n', 1, 
+                            "number of particles", CI, &numParticles);
 				if (numParticles%4) {
                     numParticles += numParticles%4;
                     cout << "Warning: -n requires multiples of 4 numbers of particles. Incrementing number of particles to (" 
@@ -280,40 +302,70 @@ void parseCommandLineOptions(int argc, char * const argv[]) {
                 }
 				break;
 			case 'o': // set dataTimeStep, which conrols "o"utput rate:
-				checkOption(argc, argv, i, 'o', 1, "data time step", D, &dataTimeStep);
+				checkOption(argc, argv, i, 'o', 1, 
+                            "data time step", D, &dataTimeStep);
 				break;
 			case 'O': // name "O"utput file:
-				checkOption(argc, argv, i, 'O', 1, "output file", F, &outputFileIndex, "data.fits");
+				checkOption(argc, argv, i, 'O', 1, 
+                            "output file", F, &outputFileIndex, "data.fits");
 				break;
+            case 'q':
+                checkOption(argc, argv, i, 'q', 2, 
+                            "mean number of charges",  D, &qMean,
+                            "number of charges sigma", D, &qSigma);
+                break;
+            case 'r': // set dust "r"adius
+                checkOption(argc, argv, i, 'r', 1, 
+                            "dust radius", D, &dustRadius);
+                break;
 			case 'R': // use "R"ectangular confinement:
 				checkForce(1, 'R', RectConfinementForceFlag);
-				checkOption(argc, argv, i, 'R', 2, "confine constantX", D, &confinementConstX, "confine constantY", D, &confinementConstY);
+				checkOption(argc, argv, i, 'R', 2, 
+                            "confine constantX", D, &confinementConstX, 
+                            "confine constantY", D, &confinementConstY);
 				break;
 			case 's': // set "s"hielding constant:
-				checkOption(argc, argv, i, 's', 1, "shielding constant", D, &shieldingConstant);
+				checkOption(argc, argv, i, 's', 1, 
+                            "shielding constant", D, &shieldingConstant);
 				break;
 			case 'S': // create rotational "S"hear layer:
 				checkForce(1, 'S', RotationalForceFlag);
-				checkOption(argc, argv, i, 'S', 3, "force constant", D, &rotConst, "rmin", D, &rmin, "rmax", D, &rmax);
+				checkOption(argc, argv, i, 'S', 3, 
+                            "force constant", D, &rotConst, 
+                            "rmin",           D, &rmin, 
+                            "rmax",           D, &rmax);
 				break;
 			case 't': // set "t"imestep:
 				checkOption(argc, argv, i, 't', 1, "time step", D, &simTimeStep);
 				break;
 			case 'T': // set "T"emperature reduction factor:
-				checkForce(3, 'T', ThermalForceFlag, 'L', ThermalForceLocalizedFlag, 'v', TimeVaryingThermalForceFlag);
-				checkOption(argc, argv, i, 'T', 1, "heat factor", D, &thermRed);
+				checkForce(3, 
+                           'T', ThermalForceFlag, 
+                           'L', ThermalForceLocalizedFlag, 
+                           'v', TimeVaryingThermalForceFlag);
+				checkOption(argc, argv, i, 'T', 1, 
+                            "heat factor", D, &thermRed);
 				break;
 			case 'v': // use time ""arying thermal force:
-				checkForce(3, 'v', TimeVaryingThermalForceFlag, 'L', ThermalForceLocalizedFlag, 'T', ThermalForceFlag);
-				checkOption(argc, argv, i, 'v', 2, "heat value scale", D, &thermScale, "heat value offset", D, &thermOffset);
+				checkForce(3,
+                           'v', TimeVaryingThermalForceFlag,
+                           'L', ThermalForceLocalizedFlag,
+                           'T', ThermalForceFlag);
+				checkOption(argc, argv, i, 'v', 2,
+                            "heat value scale",  D, &thermScale,
+                            "heat value offset", D, &thermOffset);
 				break;
 			case 'V': // use ConfinementForceVoid:
 				checkForce(1, 'V', ConfinementForceVoidFlag);
-				checkOption(argc, argv, i, 'V', 1, "void decay", D, &voidDecay);
+				checkOption(argc, argv, i, 'V', 1, 
+                            "void decay", D, &voidDecay);
 				break;
 			case 'w': // drive "w"aves:
 				checkForce(1, 'w', DrivingForceFlag);
-				checkOption(argc, argv, i, 'w', 3, "amplitude", D, &waveAmplitude, "wave shift", D, &waveShift, "driving constant", D, &driveConst);
+				checkOption(argc, argv, i, 'w', 3, 
+                            "amplitude",        D, &waveAmplitude, 
+                            "wave shift",       D, &waveShift, 
+                            "driving constant", D, &driveConst);
 				break;
 			default: // Handle unknown options by issuing error.
 				cout << "Error: Unknown option " << argv[i] << endl;
@@ -413,7 +465,7 @@ int main (int argc, char * const argv[]) {
  		fits_close_file(file, &error);
 		checkFitsError(error, __LINE__);
 	} else // initialize new cloud on grid:
-		cloud = Cloud::initializeGrid(numParticles);
+		cloud = Cloud::initializeGrid(numParticles, dustRadius, qMean, qSigma);
 
 	// Create a new file if we aren't continueing one.
 	if (!continueFileIndex) {
