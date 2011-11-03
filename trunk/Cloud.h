@@ -17,7 +17,7 @@
 
 class Cloud {	
 public:
-	Cloud(const cloud_index numPar);
+	Cloud(const cloud_index numPar, const double qMean, const double qSigma);
 	~Cloud();
 
 // public variables:
@@ -37,11 +37,12 @@ public:
 	static const double electronCharge;
 	static const double epsilon0;
 	static const double particleRadius;
+    static const double dustParticleMassDensity;
 
 	void setPosition(const cloud_index index, const double initialPosX, const double initialPosY) const;
 	void setVelocity(const cloud_index index) const;
 	void setCharge();	
-	void setMass() const;
+	void setMass(const double dustRadius) const;
 
 	void writeCloudSetup(fitsfile * const file, int * const error) const;
 	void writeTimeStep(fitsfile * const file, int * const error, double currentTime) const;
@@ -76,7 +77,8 @@ public:
 	const __m128d getVy3_pd(const cloud_index i) const;
 	const __m128d getVy4_pd(const cloud_index i) const;
 	
-	static Cloud * const initializeGrid(const cloud_index numParticles);
+	static Cloud * const initializeGrid(const cloud_index numParticles, const double dustRadius, 
+                                        const double qMean, const double qSigma);
 	static Cloud * const initializeFromFile(fitsfile * const file, int * const error, double * const currentTime);
 };
 

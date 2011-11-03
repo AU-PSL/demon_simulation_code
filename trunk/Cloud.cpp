@@ -14,16 +14,17 @@
 const double Cloud::interParticleSpacing = 0.0003;
 const double Cloud::electronCharge = -1.602E-19;
 const double Cloud::epsilon0 = 8.8541878E-12;
-const double Cloud::particleRadius = 1.45E-6;
+const double Cloud::dustParticleMassDensity = 2200.0;
 
-Cloud::Cloud(const cloud_index numPar) : n(numPar),
+Cloud::Cloud(const cloud_index numPar, const double qMean = 0.0, const double qSigma = 0.0) 
+: n(numPar),
 x(new double[n]), y(new double[n]), Vx(new double[n]), Vy(new double[n]), 
 charge(new double[n]), mass(new double[n]),
 k1(new double[n]), k2(new double[n]), k3(new double[n]), k4(new double[n]),
 l1(new double[n]), l2(new double[n]), l3(new double[n]), l4(new double[n]),
 m1(new double[n]), m2(new double[n]), m3(new double[n]), m4(new double[n]),
 n1(new double[n]), n2(new double[n]), n3(new double[n]), n4(new double[n]),
-forceX(new double[n]), forceY(new double[n]), rands(6000.0, 50.0),
+forceX(new double[n]), forceY(new double[n]), rands(qMean, qSigma), //rands(6000.0, 50.0),
 xCache(new __m128d[n/2]), yCache(new __m128d[n/2]), 
 VxCache(new __m128d[n/2]), VyCache(new __m128d[n/2]) {
 #ifdef _OPENMP
@@ -57,16 +58,17 @@ inline void Cloud::setCharge() {
 		charge[i] = rands.guassian()*electronCharge;
 }
 
-inline void Cloud::setMass() const {
-	const double particleDensity = 2200.0;
-	const double particleMass = (4.0/3.0)*M_PI*particleRadius*particleRadius*particleRadius*particleDensity;
+inline void Cloud::setMass(const double dustRadius) const {
+	const double particleMass = 
+        (4.0/3.0)*M_PI*dustRadius*dustRadius*dustRadius*dustParticleMassDensity;
 	BEGIN_PARALLEL_FOR(i, e, n, 1, static)
         mass[i] = particleMass;
     END_PARALLEL_FOR
 }
 
-Cloud * const Cloud::initializeGrid(const cloud_index numParticles) {
-	Cloud * const cloud = new Cloud(numParticles);
+Cloud * const Cloud::initializeGrid(const cloud_index numParticles, const double dustRadius,
+                                    const double qMean, const double qSigma) {
+	Cloud * const cloud = new Cloud(numParticles, qMean, qSigma);
 
 	const cloud_index sqrtNumPar = (cloud_index)floor(sqrt(numParticles));
 	
@@ -75,7 +77,7 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles) {
 		- ((sqrtNumPar%2) ? 0.0 : interParticleSpacing/2.0);
 
 	cloud->setCharge();
-	cloud->setMass();
+	cloud->setMass(dustRadius);
     BEGIN_PARALLEL_FOR(i, e, numParticles, 1, static)
 		cloud->setPosition(i, 
 			cloudHalfSize - (double)(i%sqrtNumPar)*interParticleSpacing, 
