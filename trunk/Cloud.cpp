@@ -16,7 +16,7 @@ const double Cloud::electronCharge = -1.602E-19;
 const double Cloud::epsilon0 = 8.8541878E-12;
 const double Cloud::dustParticleMassDensity = 2200.0;
 
-Cloud::Cloud(const cloud_index numPar, const double qMean = 0.0, const double qSigma = 0.0) 
+Cloud::Cloud(const cloud_index numPar) 
 : n(numPar),
 x(new double[n]), y(new double[n]), Vx(new double[n]), Vy(new double[n]), 
 charge(new double[n]), mass(new double[n]),
@@ -24,7 +24,7 @@ k1(new double[n]), k2(new double[n]), k3(new double[n]), k4(new double[n]),
 l1(new double[n]), l2(new double[n]), l3(new double[n]), l4(new double[n]),
 m1(new double[n]), m2(new double[n]), m3(new double[n]), m4(new double[n]),
 n1(new double[n]), n2(new double[n]), n3(new double[n]), n4(new double[n]),
-forceX(new double[n]), forceY(new double[n]), rands(qMean, qSigma), //rands(6000.0, 50.0),
+forceX(new double[n]), forceY(new double[n]),
 xCache(new __m128d[n/2]), yCache(new __m128d[n/2]), 
 VxCache(new __m128d[n/2]), VyCache(new __m128d[n/2]) {
 #ifdef _OPENMP
@@ -44,7 +44,8 @@ Cloud::~Cloud() {
 	delete[] VxCache; delete[] VyCache;
 }
 
-inline void Cloud::setPosition(const cloud_index index, const double xVal, const double yVal) const {
+inline void Cloud::setPosition(const cloud_index index, 
+							   const double xVal, const double yVal) const {
 	x[index] = xVal;
 	y[index] = yVal;
 }
@@ -53,22 +54,25 @@ inline void Cloud::setVelocity(const cloud_index index) const {
 	Vx[index] = Vy[index] = 0.0;
 }
 
-inline void Cloud::setCharge() {
+inline void Cloud::setCharge(const double qMean, const double qSigma) {
+	std::normal_distribution<double> dist(qMean, qSigma);
 	for (cloud_index i = 0; i < n; i++)
-		charge[i] = rands.guassian()*electronCharge;
+		charge[i] = rands.arbitary(dist)*electronCharge;
 }
 
-inline void Cloud::setMass(const double dustRadius) const {
-	const double particleMass = 
-        (4.0/3.0)*M_PI*dustRadius*dustRadius*dustRadius*dustParticleMassDensity;
-	BEGIN_PARALLEL_FOR(i, e, n, 1, static)
-        mass[i] = particleMass;
-    END_PARALLEL_FOR
+inline void Cloud::setMass(const double rMean, const double rSigma) {
+	const double particleMassConsant = (4.0/3.0)*M_PI*dustParticleMassDensity;
+	std::normal_distribution<double> dist(rMean, rSigma);
+	for (cloud_index i = 0; i < n; i++) {
+		const double r = rands.arbitary(dist);
+		mass[i] = particleMassConsant*r*r*r;
+	}
 }
 
-Cloud * const Cloud::initializeGrid(const cloud_index numParticles, const double dustRadius,
+Cloud * const Cloud::initializeGrid(const cloud_index numParticles, 
+									const double rMean, const double rSigma,
                                     const double qMean, const double qSigma) {
-	Cloud * const cloud = new Cloud(numParticles, qMean, qSigma);
+	Cloud * const cloud = new Cloud(numParticles);
 
 	const cloud_index sqrtNumPar = (cloud_index)floor(sqrt(numParticles));
 	
@@ -76,8 +80,8 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles, const double
 	const double cloudHalfSize = (double)sqrtNumPar/2.0*interParticleSpacing 
 		- ((sqrtNumPar%2) ? 0.0 : interParticleSpacing/2.0);
 
-	cloud->setCharge();
-	cloud->setMass(dustRadius);
+	cloud->setCharge(qMean, qSigma);
+	cloud->setMass(rMean, rSigma);
     BEGIN_PARALLEL_FOR(i, e, numParticles, 1, static)
 		cloud->setPosition(i, 
 			cloudHalfSize - (double)(i%sqrtNumPar)*interParticleSpacing, 
@@ -87,7 +91,8 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles, const double
 	return cloud;
 }
 
-Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error, double * const currentTime) {
+Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error, 
+										double * const currentTime) {
 	int *anyNull = NULL;
 	long numParticles = 0;
 	long numTimeSteps = 0;
@@ -101,7 +106,7 @@ Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error
 		fits_get_num_rows(file, &numParticles, error);
 
 	// create cloud:
-	Cloud * const cloud = new Cloud((cloud_index)numParticles); // cloudSize not used in this case, so set to zero
+	Cloud * const cloud = new Cloud((cloud_index)numParticles);
 
 	// read mass information:
 	if (!*error) {
