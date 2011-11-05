@@ -19,7 +19,7 @@ public:
 	
 	const double uniformZeroToOne();
 	const double uniformZeroToTwoPi();
-	const double arbitary(std::normal_distribution<double> &dist);
+	const double guassian(std::normal_distribution<double> &dist);
 	
 private:
 	std::mt19937_64 engine;

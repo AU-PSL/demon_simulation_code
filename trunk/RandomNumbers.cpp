@@ -22,6 +22,6 @@ const double RandomNumbers::uniformZeroToTwoPi() {
 	return zeroToTwoPi(engine);
 }
 
-const double RandomNumbers::arbitary(std::normal_distribution<double> &dist) {
+const double RandomNumbers::guassian(std::normal_distribution<double> &dist) {
 	return dist(engine);
 }
