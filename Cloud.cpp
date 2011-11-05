@@ -57,14 +57,14 @@ inline void Cloud::setVelocity(const cloud_index index) const {
 inline void Cloud::setCharge(const double qMean, const double qSigma) {
 	std::normal_distribution<double> dist(qMean, qSigma);
 	for (cloud_index i = 0; i < n; i++)
-		charge[i] = rands.arbitary(dist)*electronCharge;
+		charge[i] = rands.guassian(dist)*electronCharge;
 }
 
 inline void Cloud::setMass(const double rMean, const double rSigma) {
 	const double particleMassConsant = (4.0/3.0)*M_PI*dustParticleMassDensity;
 	std::normal_distribution<double> dist(rMean, rSigma);
 	for (cloud_index i = 0; i < n; i++) {
-		const double r = rands.arbitary(dist);
+		const double r = rands.guassian(dist);
 		mass[i] = particleMassConsant*r*r*r;
 	}
 }
