@@ -73,7 +73,8 @@ double machSpeed = 0.2;             // firing speed for Mach Cone experiment
 double massFactor = 100;            // mass multiplier for fired Mach Cone particle
 double qMean = 6000.0;              // Mean number of charges of the guassian charge distriburion
 double qSigma = 100.0;              // Standard deviation of number of charges
-double dustRadius = 1.45E-6;        // Dust particle radius
+double rMean = 1.45E-6;             // Mean dust particle radius of the guassian size distribution
+double rSigma = 0.0;                // Standard deviation of the dust sise distribution
 double rmin = 
 	Cloud::interParticleSpacing*5.0;  // inner radius of shear layer
 double rmax = 
@@ -110,7 +111,7 @@ void help() {
           << " -O data.fits           set the name of the output file" << endl
           << " -q 6000.0 100.0        set charge mean and sigma" << endl
           << " -R 1000.0 10000.0      use RectConfinementForce; set confineConstX,Y" << endl
-          << " -r 1.45E-6             set particle radius" << endl
+          << " -r 1.45E-6 0.0         set mean particle radius and sigma" << endl
           << " -s 2E4                 set coulomb shelding constant" << endl
           << " -S 1E-15 0.005 0.007   use RotationalForce; set strength, rmin, rmax" << endl
           << " -t 0.0001              set the simulation time step" << endl
@@ -315,8 +316,9 @@ void parseCommandLineOptions(int argc, char * const argv[]) {
                             "number of charges sigma", D, &qSigma);
                 break;
             case 'r': // set dust "r"adius
-                checkOption(argc, argv, i, 'r', 1, 
-                            "dust radius", D, &dustRadius);
+                checkOption(argc, argv, i, 'r', 2, 
+                            "mean dust radius", D, &rMean,
+							"dust radius sigma", D, &rSigma);
                 break;
 			case 'R': // use "R"ectangular confinement:
 				checkForce(1, 'R', RectConfinementForceFlag);
@@ -465,7 +467,7 @@ int main (int argc, char * const argv[]) {
  		fits_close_file(file, &error);
 		checkFitsError(error, __LINE__);
 	} else // initialize new cloud on grid:
-		cloud = Cloud::initializeGrid(numParticles, dustRadius, qMean, qSigma);
+		cloud = Cloud::initializeGrid(numParticles, rMean, rSigma, qMean, qSigma);
 
 	// Create a new file if we aren't continueing one.
 	if (!continueFileIndex) {
