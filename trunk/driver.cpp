@@ -110,7 +110,7 @@ void help() {
           << " -o 0.01                set the data Output time step" << endl
           << " -O data.fits           set the name of the output file" << endl
           << " -q 6000.0 100.0        set charge mean and sigma" << endl
-          << " -R 1000.0 10000.0      use RectConfinementForce; set confineConstX,Y" << endl
+          << " -R 100.0 1000.0        use RectConfinementForce; set confineConstX,Y" << endl
           << " -r 1.45E-6 0.0         set mean particle radius and sigma" << endl
           << " -s 2E4                 set coulomb shelding constant" << endl
           << " -S 1E-15 0.005 0.007   use RotationalForce; set strength, rmin, rmax" << endl
