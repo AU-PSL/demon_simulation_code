@@ -29,7 +29,7 @@ public:
 
 protected:
 // protected variables:
-	double dragConst; //[s^-1]
+	double dragConst; // [Hz]
 
 private:
 //private functions:

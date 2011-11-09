@@ -29,9 +29,7 @@ public:
 
 private:
 // private variables:
-	double innerRad;
-	double outerRad;
-	double rotationalConst;
+	double innerRad, outerRad, rotationalConst; // [m], [m], [N]
 
 // private functions:
 	void force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY);

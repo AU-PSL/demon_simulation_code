@@ -73,9 +73,9 @@ void RectConfinementForce::writeForce(fitsfile * const file, int * const error) 
 	if (!*error) {
 		// file, key name, value, precision (scientific format), comment
 		fits_write_key_dbl(file, const_cast<char *> ("confineConstX"), confineX, 
-                           6, const_cast<char *> ("[N/m] (RectConfinementForce)"), error);
+                           6, const_cast<char *> ("[V/m^2] (RectConfinementForce)"), error);
 		fits_write_key_dbl(file, const_cast<char *> ("confineConstY"), confineY, 
-                           6, const_cast<char *> ("[N/m] (RectConfinementForce)"), error);
+                           6, const_cast<char *> ("[V/m^2] (RectConfinementForce)"), error);
 	}
 }
 

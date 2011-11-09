@@ -29,8 +29,7 @@ public:
 
 private:
 // private variables
-    double heatValScale;
-    double heatValOffset;
+    double heatValScale, heatValOffset; // [N/s], [N]
     
 // private functions:
     const double calculateHeatVal(const double currentTime) const;

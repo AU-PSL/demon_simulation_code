@@ -30,7 +30,7 @@ public:
 
 private:
 // private variables:
-	double confine;
+	double confine; // [V/m^2]
 
 // private functions:
 	void force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY);	// common force calculator
