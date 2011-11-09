@@ -31,11 +31,12 @@ void checkForce(const size_t numChecks, ...);
 bool isUnsigned(const char *val);
 bool isDouble(const char *val);
 bool isOption(const char *val);
-void checkOption(const int argc, char * const argv[], int &optionIndex, const char option, unsigned numOptions, ...);
+void checkOption(const int argc, char * const argv[], int &optionIndex, 
+                 const char option, unsigned numOptions, ...);
 void parseCommandLineOptions(int argc, char * const argv[]);
 void checkFitsError(const int error, const int lineNumber);
-void deleteFitsFile(char * const filename, int * const error);
-void fitsFileExists(char * const filename, int * const error);
+void deleteFitsFile(char * const filename, int &error);
+void fitsFileExists(char * const filename, int &error);
 
 using namespace std;
 
@@ -43,82 +44,86 @@ using namespace std;
 typedef int file_index;
 
 enum clFlagType : int {
-	CI, // Cloud Index
-	D,  // Double
-	F   // File index
+	CI, // cloud_Index
+	D,  // double
+	F   // file_index
 };
 
 bool Mach = false;                  // true -> perform Mach Cone experiment
 bool rk4 = true;
-double voidDecay = 0.4;             // decay constant in ConfinementForceVoid
+double voidDecay = 0.4;             // decay constant in ConfinementForceVoid [m^-1]
 double magneticFieldStrength = 1.0; // magnitude of B-field in z-direction [T]
-double startTime = 0.0;
-double dataTimeStep = 0.01;
-double simTimeStep = dataTimeStep/100.0;
-double endTime = 5.0;
-double confinementConst = 100.0;    // confinementForce
-double confinementConstX = 100.0;   // RectConfinementForce
-double confinementConstY = 1000.0;  // RectConfinementForce
-double shieldingConstant = 2E4;     // corresponds to 10*(ion debye length)
-double gamma = 10.0;                // dust drag frequency
-double thermRed = 1E-14;            // default thermal reduction factor
-double thermRed1 = thermRed;        // default outer reduction factor (-L)
-double thermScale = 1E-14;          // default for TimeVaryingThermalForce
-double thermOffset = 0.0;           // default for TimeVaryingThermalForce
-double heatRadius = 0.001;          // apply thermal force only within this radius
-double driveConst = 0.00001;        // used in DrivingForce.cpp for waves
-double waveAmplitude = 1E-13;       // driving wave amplitude (default comparable to other forces throughout cloud)
-double waveShift = 0.007;           // driving wave shift
-double machSpeed = 0.2;             // firing speed for Mach Cone experiment
+double startTime = 0.0;             // [s]
+double dataTimeStep = 0.01;         // [s]
+double simTimeStep =
+    dataTimeStep/100.0;             // [s]
+double endTime = 5.0;               // [s]
+double confinementConst = 100.0;    // confinementForce [V/m^2]
+double confinementConstX = 100.0;   // RectConfinementForce [V/m^2]
+double confinementConstY = 1000.0;  // RectConfinementForce [V/m^2]
+double shieldingConstant = 2E4;     // corresponds to 10*(ion debye length) [m^-1]
+double gamma = 10.0;                // dust drag frequency [Hz]
+double thermRed = 1E-14;            // default thermal reduction factor [N]
+double thermRed1 = thermRed;        // default outer reduction factor (-L) [N]
+double thermScale = 1E-14;          // default for TimeVaryingThermalForce [N/s]
+double thermOffset = 0.0;           // default for TimeVaryingThermalForce [N]
+double heatRadius = 0.001;          // apply thermal force only within this radius [m]
+double driveConst = 0.00001;        // used in DrivingForce.cpp for waves [m^2]
+double waveAmplitude = 1E-13;       // driving wave amplitude (default comparable to other forces throughout cloud) [N]
+double waveShift = 0.007;           // driving wave shift [m]
+double machSpeed = 0.2;             // firing speed for Mach Cone experiment [m/s]
 double massFactor = 100;            // mass multiplier for fired Mach Cone particle
-double qMean = 6000.0;              // Mean number of charges of the guassian charge distriburion
-double qSigma = 100.0;              // Standard deviation of number of charges
-double rMean = 1.45E-6;             // Mean dust particle radius of the guassian size distribution
-double rSigma = 0.0;                // Standard deviation of the dust sise distribution
+double qMean = 6000.0;              // Mean number of charges of the guassian charge distriburion [c]
+double qSigma = 100.0;              // Standard deviation of number of charges [c]
+double rMean = 1.45E-6;             // Mean dust particle radius of the guassian size distribution [m]
+double rSigma = 0.0;                // Standard deviation of the dust sise distribution [m]
 double rmin = 
-	Cloud::interParticleSpacing*5.0;  // inner radius of shear layer
+	Cloud::interParticleSpacing*5.0;  // inner radius of shear layer [m]
 double rmax = 
-	Cloud::interParticleSpacing*10.0; // outer ratius of shear layer
-double rotConst = 1E-15;            // rotational force in shear layer
-double dragScale = -1.0;            // used in TimeVaryingDragForce
+	Cloud::interParticleSpacing*10.0; // outer ratius of shear layer [m]
+double rotConst = 1E-15;            // rotational force in shear layer [N]
+double dragScale = -1.0;            // used in TimeVaryingDragForce [Hz/s]
 file_index continueFileIndex = 0;   // Index of argv array that holds the file name of the fitsfile to continue. 
 file_index finalsFileIndex = 0;     // Index of argv array that holds the file name of the fitsfile to use finals of.
 file_index outputFileIndex = 0;     // Index of argv array that holds the file name of the fitsfile to output.
 force_flags usedForces = 0;         // bitpacked forces
 cloud_index numParticles = 10;
 
-void help() {
-// This section is white space sensitive to render correctly in an 80 column 
-// terminal environment. There should be no tabs.
+// Displat help. This section is white space sensitive to render correctly in an 
+// 80 column terminal environment. There should be no tabs.
 // 80 cols is ********************************************************************************
+void help() {
      cout << endl 
           << "                                      DEMON" << endl
           << "        Dynamic Exploration of Microparticle clouds Optimized Numerically" << endl << endl
           << "Options:" << endl << endl
           << " -B 1.0                 set magnitude of B-field in z-direction [T]" << endl
           << " -c noDefault.fits      continue run from file" << endl
-          << " -C 1000.0              set confinementConst" << endl
-          << " -D -1.0 10.0           use TimeVaryingDragForce; set scale, offset" << endl
-          << " -e 5.0                 set simulation end time" << endl
+          << " -C 1000.0              set confinementConst [V/m^2]" << endl
+          << " -D -1.0 10.0           use TimeVaryingDragForce; set scale [Hz/s], offset [Hz]" << endl
+          << " -e 5.0                 set simulation end time [s]" << endl
           << " -f noDefaut.fits       use final positions and velocities from file" << endl
-          << " -g 10.0                set gamma (magnitute of drag constant)" << endl
+          << " -g 10.0                set gamma (magnitute of drag constant) [Hz]" << endl
           << " -h                     display Help (instead of running)" << endl
           << " -I                     use 2nd order Runge-Kutta integrator" << endl
-          << " -L 0.001 1E-14 1E-14   use ThermalForceLocalized; set rad, in/out therm vals" << endl
-          << " -M 0.2 100             create Mach Cone; set bullet velocity, mass factor" << endl
+          << " -L 0.001 1E-14 1E-14   use ThermalForceLocalized; set radius [m], in/out" << endl
+          << "                        thermal values [N]" << endl
+          << " -M 0.2 100             create Mach Cone; set bullet velocity [m/s], mass factor" << endl
           << " -n 10                  set number of particles" << endl
-          << " -o 0.01                set the data Output time step" << endl
+          << " -o 0.01                set the data Output time step [s]" << endl
           << " -O data.fits           set the name of the output file" << endl
-          << " -q 6000.0 100.0        set charge mean and sigma" << endl
-          << " -R 100.0 1000.0        use RectConfinementForce; set confineConstX,Y" << endl
-          << " -r 1.45E-6 0.0         set mean particle radius and sigma" << endl
-          << " -s 2E4                 set coulomb shelding constant" << endl
-          << " -S 1E-15 0.005 0.007   use RotationalForce; set strength, rmin, rmax" << endl
-          << " -t 0.0001              set the simulation time step" << endl
-          << " -T 1E-14               use ThermalForce; set thermal reduction factor" << endl
-          << " -v 1E-14 0.0           use TimeVaryingThermalForce; set scale and offset" << endl
-          << " -V 0.4                 use ConfinementForceVoid; set void decay constant" << endl
-          << " -w 1E-13 0.007 0.00001 use DrivingForce; set amplitude, shift, driveConst" << endl << endl
+          << " -q 6000.0 100.0        set charge mean and sigma [c]" << endl
+          << " -R 100.0 1000.0        use RectConfinementForce; set confineConstX,Y [V/m^2]" << endl
+          << " -r 1.45E-6 0.0         set mean particle radius and sigma [m]" << endl
+          << " -s 2E4                 set coulomb shelding constant [m^-1]" << endl
+          << " -S 1E-15 0.005 0.007   use RotationalForce; set strength [N], rmin, rmax [m]" << endl
+          << " -t 0.0001              set the simulation time step [s]" << endl
+          << " -T 1E-14               use ThermalForce; set thermal reduction factor [N]" << endl
+          << " -v 1E-14 0.0           use TimeVaryingThermalForce; set scale [N/s]" << endl
+          << "                        and offset [N]" << endl
+          << " -V 0.4                 use ConfinementForceVoid; set void decay constant [m^-1]" << endl
+          << " -w 1E-13 0.007 0.00001 use DrivingForce; set amplitude [N], shift [m]," << endl
+          << "                        driveConst [m^-2]" << endl << endl
           << "Notes: " << endl << endl
           << " Parameters specified above represent the default values and accepted type," << endl
           << "    with the exception of -c and -f, for which there are no default values." << endl
@@ -165,6 +170,7 @@ void checkForce(const size_t numChecks, ...) {
 	usedForces |= firstFlag;
 }
 
+// Check if string is a positive integer.
 bool isUnsigned(const char *val) {
 	for (const char *c = val; *c != '\0'; c++)
 		if (!isdigit(*c))
@@ -172,6 +178,7 @@ bool isUnsigned(const char *val) {
 	return true;
 }
 
+// Check if string uses a decimal or scientific notation.
 bool isDouble(const char *val) {
 	for (const char *c = val; *c != '\0'; c++)
 		if (!isdigit(*c) && *c != 'e' && *c != 'E' && *c != '.' && *c != '-')
@@ -179,10 +186,12 @@ bool isDouble(const char *val) {
 	return true;
 }
 
+// Check if string had the form "-x".
 bool isOption(const char *val) {
 	return val[0] == '-' && isalpha(val[1]) && val[2] == '\0';
 }
 
+// Warn about incomplete command line parses.
 template <typename T>
 void optionWarning(const char option, const char *name, const T val) {
 	cout << "Warning: -" << option << " option incomplete. Using default " 
@@ -201,7 +210,7 @@ void checkOption(const int argc, char * const argv[], int &optionIndex, const ch
 		void *val = va_arg(arglist, void *);
 		
 		switch (type) {
-			case CI: {
+			case CI: { // cloud_index argument
 				cloud_index *ci = (cloud_index *)val;
 				if (optionIndex < argc && isUnsigned(argv[optionIndex]))
 					*ci = (cloud_index)atoi(argv[optionIndex++]);
@@ -209,7 +218,7 @@ void checkOption(const int argc, char * const argv[], int &optionIndex, const ch
 					optionWarning<cloud_index> (option, name, *ci);
 				break;
 			}
-			case D: {
+			case D: { // double argument 
 				double *d = (double *)val;
 				if (optionIndex < argc && !isOption(argv[optionIndex]) && isDouble(argv[optionIndex]))
 					*d = atof(argv[optionIndex++]);
@@ -217,7 +226,7 @@ void checkOption(const int argc, char * const argv[], int &optionIndex, const ch
 					optionWarning<double> (option, name, *d);
 				break;
 			}
-			case F: {
+			case F: { // file_index argument
 				const char *defaultFileName = va_arg(arglist, char *);
 				file_index *fi = (file_index *)val;
 				if (optionIndex < argc && !isOption(argv[optionIndex]) && !isDouble(argv[optionIndex]) && !isUnsigned(argv[optionIndex]))
@@ -235,8 +244,9 @@ void checkOption(const int argc, char * const argv[], int &optionIndex, const ch
 }
 
 void parseCommandLineOptions(int argc, char * const argv[]) {
-	// argv[0] is the name of the exicutable. Increment is not needed since the
-	// checkOption increments i internally.
+	// argv[0] is the name of the exicutable. THe routine checkOption increments
+    // the array index internally. If check option is not used, i must be
+    // incremented manually.
 	for (int i = 1; i < argc;) {
 		switch (argv[i][1]) {
 			case 'B': // set "B"-field:
@@ -377,7 +387,7 @@ void parseCommandLineOptions(int argc, char * const argv[]) {
 	}
 }
 
-// check fitsfile for errors:
+// Check fits file for errors.
 void checkFitsError(const int error, const int lineNumber) {
 	if (!error)
 		return;
@@ -391,88 +401,80 @@ void checkFitsError(const int error, const int lineNumber) {
 	exit(1);
 }
 
-// delete fitsfile:
-void deleteFitsFile(char * const filename, int * const error) {
-	// check for pre-existing data file:
+// Delete existing fits file.
+void deleteFitsFile(char * const filename, int &error) {
 	int exists = 0;
-	fits_file_exists(filename, &exists, error);
+	fits_file_exists(filename, &exists, &error);
 
 	if (exists) {
 		cout << "Warning: Removing pre-existing \"" << filename << "\" file." << endl;
-		remove(filename); // required by fits, else can't create
+		remove(filename);
 	}
-	checkFitsError(*error, __LINE__);
+	checkFitsError(error, __LINE__);
 }
 
 // Check if fits file exists
-void fitsFileExists(char * const filename, int * const error) {
+void fitsFileExists(char * const filename, int &error) {
     int exists = 0;
-    fits_file_exists(filename, &exists, error);
+    fits_file_exists(filename, &exists, &error);
     if (!exists) {
         cout << "Error: Fits file \"" << filename << "\" does not exist." << endl;
         help();
         exit(1);
     }
 
-    checkFitsError(*error, __LINE__);
+    checkFitsError(error, __LINE__);
     cout << "Initializing with fits file \"" << filename << "\"." << endl;
 }
 
 int main (int argc, char * const argv[]) {
-	time_t timer = time(NULL); // start timer
+	time_t timer = time(NULL);
 	parseCommandLineOptions(argc, argv);
 
+    // All simulations require the folling three forces if subsitutes are not 
+    // used.
 	if (!(usedForces & TimeVaryingDragForceFlag))
 		usedForces |= DragForceFlag;
 	if (!(usedForces & RectConfinementForceFlag) && !(usedForces & ConfinementForceVoidFlag))
 		usedForces |= ConfinementForceFlag;
 	usedForces |= ShieldedCoulombForceFlag;
 
-/*------------------------------------------------------------------------------
- * Initialize cloud:
- -----------------------------------------------------------------------------*/
-	cout << "Status: Initializing cloud." << endl;
-    
-	// declare fits file and error:
 	fitsfile *file = NULL;
 	int error = 0;
 	Cloud *cloud;
 
 	if (continueFileIndex) {
-		fitsFileExists(argv[continueFileIndex], &error);
-		
-		// open file:
-		fits_open_file(&file, argv[continueFileIndex], READWRITE, &error); // file pointer, file name (char), read/write, error
+        // Create a cloud using a specified fits file. Subsequent time step data
+        // will be appended to this fits file.
+		fitsFileExists(argv[continueFileIndex], error);
+
+		fits_open_file(&file, argv[continueFileIndex], READWRITE, &error);
 		checkFitsError(error, __LINE__);
-		
-		// use the same forces:
+
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &usedForces, NULL, &error);
 		checkFitsError(error, __LINE__);
-		
-		// initialize with last time step from file:
+
 		cloud = Cloud::initializeFromFile(file, &error, &startTime);
 		checkFitsError(error, __LINE__);
 	} else if (finalsFileIndex) {
-		fitsFileExists(argv[finalsFileIndex], &error);
-
-		// open file:
-		fits_open_file(&file, argv[finalsFileIndex], READONLY, &error); // file pointer, file name (char), read only, error
+        // Create a cloud using the last time step of a specified fits file.
+        // Subsequent time step data will be written to a new file.
+		fitsFileExists(argv[finalsFileIndex], error);
+		fits_open_file(&file, argv[finalsFileIndex], READONLY, &error);
 		checkFitsError(error, __LINE__);
-
-		// initialize with last time step from file:
+        
 		cloud = Cloud::initializeFromFile(file, &error, NULL);
 		checkFitsError(error, __LINE__);
 		
-		// close file:
  		fits_close_file(file, &error);
 		checkFitsError(error, __LINE__);
-	} else // initialize new cloud on grid:
+	} else
 		cloud = Cloud::initializeGrid(numParticles, rMean, rSigma, qMean, qSigma);
 
-	// Create a new file if we aren't continueing one.
+	// Create a new file if we aren't continuing an old one.
 	if (!continueFileIndex) {
 		if (outputFileIndex) {// use specified file name
-			deleteFitsFile(argv[outputFileIndex], &error);
+			deleteFitsFile(argv[outputFileIndex], error);
 			fits_create_file(&file, argv[outputFileIndex], &error);
 			checkFitsError(error, __LINE__);
 			
@@ -481,7 +483,7 @@ int main (int argc, char * const argv[]) {
 			fits_create_img(file, 16, 0, NULL, &error);
 			checkFitsError(error, __LINE__);
 		} else {// use default file name
-			deleteFitsFile(const_cast<char *> ("data.fits"), &error);
+			deleteFitsFile(const_cast<char *> ("data.fits"), error);
 			fits_create_file(&file, const_cast<char *> ("data.fits"), &error);
 			checkFitsError(error, __LINE__);
 			
@@ -492,17 +494,8 @@ int main (int argc, char * const argv[]) {
 		}
 	}
 	
-/*------------------------------------------------------------------------------
- * This concludes initialization of cloud.
- * Initialize array of Force objects:
- -----------------------------------------------------------------------------*/
-	cout << "Status: Initializing forces." << endl;
-    
-	
-	ForceArray forces;
-	//const force_index numForces = getNumForces();
-	//Force **forceArray = new Force*[numForces];
-	
+    // Create all forces specified in used forces.
+    ForceArray forces;
 	if (usedForces & ConfinementForceFlag)
 		forces.push_back(new ConfinementForce(cloud, confinementConst));
 	if (usedForces & ConfinementForceVoidFlag)
@@ -528,22 +521,18 @@ int main (int argc, char * const argv[]) {
 	if (usedForces & TimeVaryingThermalForceFlag)
 		forces.push_back(new TimeVaryingThermalForce(cloud, thermScale, thermOffset));
 	
-	if (continueFileIndex) { // initialize forces from old file
+	if (continueFileIndex) { // Initialize forces from old file.
 		for (Force *F : forces)
 			F->readForce(file, &error);
 		checkFitsError(error, __LINE__);
-	} else { // write forces to new file
+	} else { // Write force config to new file.
 		for (Force *F : forces)
 			F->writeForce(file, &error);
 		checkFitsError(error, __LINE__);
 	}
 
-/*------------------------------------------------------------------------------
- * Commence Runge-Kutta algorithm:
- -----------------------------------------------------------------------------*/
-	cout << "Status: Commencing Runge-Kutta." << endl << endl;
-    
-	// write initial data:
+	
+    // Write initial data.
 	if (!continueFileIndex) {
 		cloud->writeCloudSetup(file, &error);
 		checkFitsError(error, __LINE__);
@@ -552,37 +541,37 @@ int main (int argc, char * const argv[]) {
 		checkFitsError(error, __LINE__);
 	}
 	
+    // If performing the mach cone experiments alter the first particle. The 
+    // first particles is move to the left of the cloud. It's mass is increased
+    // and it given an inital velocity toward the main cloud.
 	if (Mach) {
-		// reserve particle 1 for mach experiment
-		cloud->x[0] = -2.0*sqrt((double)cloud->n)*Cloud::interParticleSpacing;
+		cloud->x[0] = -0.75*sqrt((double)cloud->n)*Cloud::interParticleSpacing;
 		cloud->y[0] = 0.0;
 		cloud->Vx[0] = machSpeed;
 		cloud->Vy[0] = 0.0;
 		cloud->mass[0] *= massFactor;
 	}
     
+    // Create 2nd or 4th order Runge-Kutta integrator.
     Integrator * const I = rk4 ? new Runge_Kutta4(cloud, forces, simTimeStep, startTime)
                                : new Runge_Kutta2(cloud, forces, simTimeStep, startTime);
 
-	// execute simulation for desired length of time:
+	// Run the simulation. Add a blank line to provide space between warnings
+    // the completion counter.
+    cout << endl;
 	while (startTime < endTime) {
 		cout << clear_line << "\rCurrent Time: " << I->currentTime << "s (" 
 		<< I->currentTime/endTime*100.0 << "% Complete)" << flush;
 		
-		// call Runge-Kutta algorithm:
+		// Advance simulation to next timestep.
 		I->moveParticles(startTime += dataTimeStep);
-		// write positions and velocities:
 		cloud->writeTimeStep(file, &error, I->currentTime);
 	}
 
-/*------------------------------------------------------------------------------
- * This concludes the Runge-Kutta algorithm. Clean up.
- -----------------------------------------------------------------------------*/
-
-	// close fits file:
+	// Close fits file.
 	fits_close_file(file, &error);
 
-	// calculate and display elapsed time:
+	// Calculate and display elapsed time.
 	time_t seconds = time(NULL) - timer;
 	time_t minutes = seconds/60;
 	time_t hours = minutes/60;
