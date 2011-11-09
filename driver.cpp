@@ -554,7 +554,7 @@ int main (int argc, char * const argv[]) {
 	
 	if (Mach) {
 		// reserve particle 1 for mach experiment
-		cloud->x[0] = -2.0*sqrt((double)numParticles)*Cloud::interParticleSpacing;
+		cloud->x[0] = -2.0*sqrt((double)cloud->n)*Cloud::interParticleSpacing;
 		cloud->y[0] = 0.0;
 		cloud->Vx[0] = machSpeed;
 		cloud->Vy[0] = 0.0;
