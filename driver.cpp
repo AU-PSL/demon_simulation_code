@@ -452,7 +452,7 @@ int main (int argc, char * const argv[]) {
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &usedForces, NULL, &error);
 		checkFitsError(error, __LINE__);
 
-		cloud = Cloud::initializeFromFile(file, &error, &startTime);
+		cloud = Cloud::initializeFromFile(file, error, &startTime);
 		checkFitsError(error, __LINE__);
 	} else if (finalsFileIndex) {
         // Create a cloud using the last time step of a specified fits file.
@@ -461,7 +461,7 @@ int main (int argc, char * const argv[]) {
 		fits_open_file(&file, argv[finalsFileIndex], READONLY, &error);
 		checkFitsError(error, __LINE__);
         
-		cloud = Cloud::initializeFromFile(file, &error, NULL);
+		cloud = Cloud::initializeFromFile(file, error, NULL);
 		checkFitsError(error, __LINE__);
 		
  		fits_close_file(file, &error);
@@ -532,7 +532,7 @@ int main (int argc, char * const argv[]) {
 	
     // Write initial data.
 	if (!continueFileIndex) {
-		cloud->writeCloudSetup(file, &error);
+		cloud->writeCloudSetup(file, error);
 		checkFitsError(error, __LINE__);
 	} else {
 		fits_movnam_hdu(file, BINARY_TBL, const_cast<char *> ("TIME_STEP"), 0, &error);
@@ -563,7 +563,7 @@ int main (int argc, char * const argv[]) {
 		
 		// Advance simulation to next timestep.
 		I->moveParticles(startTime += dataTimeStep);
-		cloud->writeTimeStep(file, &error, I->currentTime);
+		cloud->writeTimeStep(file, error, I->currentTime);
 	}
 
 	// Close fits file.

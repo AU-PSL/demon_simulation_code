@@ -91,52 +91,52 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles,
 	return cloud;
 }
 
-Cloud * const Cloud::initializeFromFile(fitsfile * const file, int * const error, 
+Cloud * const Cloud::initializeFromFile(fitsfile * const file, int &error, 
 										double * const currentTime) {
-	int *anyNull = NULL;
+	int anyNull = 0;
 	long numParticles = 0;
 	long numTimeSteps = 0;
 
 	// move to CLOUD HDU:
-	if (!*error)
-		fits_movnam_hdu(file, BINARY_TBL, const_cast<char *> ("CLOUD"), 0, error);
+	if (!error)
+		fits_movnam_hdu(file, BINARY_TBL, const_cast<char *> ("CLOUD"), 0, &error);
 
 	// get number of particles:
-	if (!*error)
-		fits_get_num_rows(file, &numParticles, error);
+	if (!error)
+		fits_get_num_rows(file, &numParticles, &error);
 
 	// create cloud:
 	Cloud * const cloud = new Cloud((cloud_index)numParticles);
 
 	// read mass information:
-	if (!*error) {
+	if (!error) {
 		// file, column #, starting row, first element, num elements, mass array, pointless pointer, error
-		fits_read_col_dbl(file, 1, 1, 1, numParticles, 0.0, cloud->mass, anyNull, error);
-		fits_read_col_dbl(file, 2, 1, 1, numParticles, 0.0, cloud->charge, anyNull, error);
+		fits_read_col_dbl(file, 1, 1, 1, numParticles, 0.0, cloud->mass, &anyNull, &error);
+		fits_read_col_dbl(file, 2, 1, 1, numParticles, 0.0, cloud->charge, &anyNull, &error);
 	}
 
 	// move to TIME_STEP HDU:
-	if (!*error)
-		fits_movnam_hdu(file, BINARY_TBL, const_cast<char *> ("TIME_STEP"), 0, error);
+	if (!error)
+		fits_movnam_hdu(file, BINARY_TBL, const_cast<char *> ("TIME_STEP"), 0, &error);
 
 	// get number of time steps:
-	if (!*error)
-		fits_get_num_rows(file, &numTimeSteps, error);
+	if (!error)
+		fits_get_num_rows(file, &numTimeSteps, &error);
 
-	if (!*error) {
+	if (!error) {
 		if (currentTime)
-			fits_read_col_dbl(file, 1, numTimeSteps, 1, 1, 0.0, currentTime, anyNull, error);
+			fits_read_col_dbl(file, 1, numTimeSteps, 1, 1, 0.0, currentTime, &anyNull, &error);
 
-		fits_read_col_dbl(file, 2, numTimeSteps, 1, numParticles, 0.0, cloud->x, anyNull, error);
-		fits_read_col_dbl(file, 3, numTimeSteps, 1, numParticles, 0.0, cloud->y, anyNull, error);
-		fits_read_col_dbl(file, 4, numTimeSteps, 1, numParticles, 0.0, cloud->Vx, anyNull, error);
-		fits_read_col_dbl(file, 5, numTimeSteps, 1, numParticles, 0.0, cloud->Vy, anyNull, error);
+		fits_read_col_dbl(file, 2, numTimeSteps, 1, numParticles, 0.0, cloud->x, &anyNull, &error);
+		fits_read_col_dbl(file, 3, numTimeSteps, 1, numParticles, 0.0, cloud->y, &anyNull, &error);
+		fits_read_col_dbl(file, 4, numTimeSteps, 1, numParticles, 0.0, cloud->Vx, &anyNull, &error);
+		fits_read_col_dbl(file, 5, numTimeSteps, 1, numParticles, 0.0, cloud->Vy, &anyNull, &error);
 	}
 
 	return cloud;
 }
 
-void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const {
+void Cloud::writeCloudSetup(fitsfile * const file, int &error) const {
 	// format number of elements of type double as string, e.g. 1024D
 	std::stringstream numStream;
 	numStream << n << "D";
@@ -157,48 +157,48 @@ void Cloud::writeCloudSetup(fitsfile * const file, int * const error) const {
 		const_cast<char *> ("m/s"), const_cast<char *> ("m/s")};
 
 	// write mass:
-	if (!*error)
+	if (!error)
 		// file, storage type, num rows, num columns, ...
-		fits_create_tbl(file, BINARY_TBL, (LONGLONG)n, 2, ttypeCloud, tformCloud, tunitCloud, "CLOUD", error);	
-	if (!*error) {
+		fits_create_tbl(file, BINARY_TBL, (LONGLONG)n, 2, ttypeCloud, tformCloud, tunitCloud, "CLOUD", &error);	
+	if (!error) {
 		// file, column #, starting row, first element, num elements, mass array, error
-		fits_write_col_dbl(file, 1, 1, 1, (LONGLONG)n, mass, error);
-		fits_write_col_dbl(file, 2, 1, 1, (LONGLONG)n, charge, error);
+		fits_write_col_dbl(file, 1, 1, 1, (LONGLONG)n, mass, &error);
+		fits_write_col_dbl(file, 2, 1, 1, (LONGLONG)n, charge, &error);
 	}
 
 	// write position and velocity:
-	if (!*error)
-		fits_create_tbl(file, BINARY_TBL, 0, 5, ttypeRun, tformRun, tunitRun, "TIME_STEP", error);
+	if (!error)
+		fits_create_tbl(file, BINARY_TBL, 0, 5, ttypeRun, tformRun, tunitRun, "TIME_STEP", &error);
 		// n.b. num rows automatically incremented.
 		// Increment from 0 as opposed to preallocating to ensure
 		// proper output in the event of program interruption.
-	if (!*error) {
+	if (!error) {
 		double time = 0.0;
-		fits_write_col_dbl(file, 1, 1, 1, 1, &time, error);
-		fits_write_col_dbl(file, 2, 1, 1, (LONGLONG)n, x, error);
-		fits_write_col_dbl(file, 3, 1, 1, (LONGLONG)n, y, error);
-		fits_write_col_dbl(file, 4, 1, 1, (LONGLONG)n, Vx, error);
-		fits_write_col_dbl(file, 5, 1, 1, (LONGLONG)n, Vy, error);
+		fits_write_col_dbl(file, 1, 1, 1, 1, &time, &error);
+		fits_write_col_dbl(file, 2, 1, 1, (LONGLONG)n, x, &error);
+		fits_write_col_dbl(file, 3, 1, 1, (LONGLONG)n, y, &error);
+		fits_write_col_dbl(file, 4, 1, 1, (LONGLONG)n, Vx, &error);
+		fits_write_col_dbl(file, 5, 1, 1, (LONGLONG)n, Vy, &error);
 	}
 
 	// write buffer, close file, reopen at same point:
-	fits_flush_file(file, error);
+	fits_flush_file(file, &error);
 }
 
-void Cloud::writeTimeStep(fitsfile * const file, int * const error, double currentTime) const
+void Cloud::writeTimeStep(fitsfile * const file, int &error, double currentTime) const
 {
-	if (!*error) {
+	if (!error) {
 		long numRows = 0;
-		fits_get_num_rows(file, &numRows, error);
-		fits_write_col_dbl(file, 1, ++numRows, 1, 1, &currentTime, error);
-		fits_write_col_dbl(file, 2, numRows, 1, (LONGLONG)n, x, error);
-		fits_write_col_dbl(file, 3, numRows, 1, (LONGLONG)n, y, error);
-		fits_write_col_dbl(file, 4, numRows, 1, (LONGLONG)n, Vx, error);
-		fits_write_col_dbl(file, 5, numRows, 1, (LONGLONG)n, Vy, error);
+		fits_get_num_rows(file, &numRows, &error);
+		fits_write_col_dbl(file, 1, ++numRows, 1, 1, &currentTime, &error);
+		fits_write_col_dbl(file, 2, numRows, 1, (LONGLONG)n, x, &error);
+		fits_write_col_dbl(file, 3, numRows, 1, (LONGLONG)n, y, &error);
+		fits_write_col_dbl(file, 4, numRows, 1, (LONGLONG)n, Vx, &error);
+		fits_write_col_dbl(file, 5, numRows, 1, (LONGLONG)n, Vy, &error);
 	}
 
 	// write buffer, close file, reopen at same point:
-	fits_flush_file(file, error);
+	fits_flush_file(file, &error);
 }
 
 // 4th order Runge-Kutta subsetp helper methods. 
