@@ -22,7 +22,7 @@ public:
 
 // public variables:
 	const cloud_index n; // number of elements (particles)
-	double * const x, * const y, * const Vx, * const Vy; // current positions and velocities=
+	double * const x, * const y, * const Vx, * const Vy; // current positions and velocities
 	double * const charge, * const mass;
 	double * const k1, * const k2, * const k3, * const k4; // velocityX (Runge-Kutta) tidbits
 	double * const l1, * const l2, * const l3, * const l4; // positionsX (Runge-Kutta) tidbits
@@ -44,8 +44,8 @@ public:
 	void setCharge(const double qMean, const double qSigma);	
 	void setMass(const double rMean, const double rSigma);
 
-	void writeCloudSetup(fitsfile * const file, int * const error) const;
-	void writeTimeStep(fitsfile * const file, int * const error, double currentTime) const;
+	void writeCloudSetup(fitsfile * const file, int &error) const;
+	void writeTimeStep(fitsfile * const file, int &error, double currentTime) const;
     
 	const __m128d getx1_pd(const cloud_index i) const;
 	const __m128d getx2_pd(const cloud_index i) const;
@@ -80,7 +80,7 @@ public:
 	static Cloud * const initializeGrid(const cloud_index numParticles,
 										const double rMean, const double rSigma,
                                         const double qMean, const double qSigma);
-	static Cloud * const initializeFromFile(fitsfile * const file, int * const error, double * const currentTime);
+	static Cloud * const initializeFromFile(fitsfile * const file, int &error, double * const currentTime);
 };
 
 #endif // CLOUD_H
