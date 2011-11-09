@@ -29,7 +29,7 @@ public:
 
 protected:
 // protected variables:
-	double BField; //[T]
+	double BField; // [T]
 
 private:
 //private functions:

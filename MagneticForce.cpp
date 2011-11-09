@@ -66,12 +66,14 @@ void MagneticForce::writeForce(fitsfile * const file, int * const error) const {
 
 		// add or update keyword:
 		if (!*error) 
-			fits_update_key(file, TLONG, const_cast<char *> ("FORCES"), &forceFlags, const_cast<char *> ("Force configuration."), error);
+			fits_update_key(file, TLONG, const_cast<char *> ("FORCES"), 
+                            &forceFlags, const_cast<char *> ("Force configuration."), error);
 	}
 	
 	if (!*error)
 		// file, key name, value, precision (scientific format), comment
-		fits_write_key_dbl(file, const_cast<char *> ("magneticField"), BField, 6, const_cast<char *> ("[T] (MagneticForce)"), error);
+		fits_write_key_dbl(file, const_cast<char *> ("magneticField"), 
+                           BField, 6, const_cast<char *> ("[T] (MagneticForce)"), error);
 }
 
 void MagneticForce::readForce(fitsfile * const file, int * const error) {

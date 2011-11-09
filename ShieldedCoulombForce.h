@@ -29,7 +29,7 @@ public:
 
 private:
 // public variables:
-	double shielding;
+	double shielding; // [m^-1]
     SEMAPHORES
 	
 	static const double coulomb;

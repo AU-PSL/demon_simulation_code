@@ -40,9 +40,7 @@ private:
 	};
     
 // private variables:
-	double heatingRadius;
-	double heatVal1;
-	double heatVal2;
+	double heatingRadius, heatVal1, heatVal2; // [m], [N], [N]
 
     RandCache *evenRandCache, *oddRandCache;
 #ifdef DISPATCH_QUEUES

@@ -81,7 +81,7 @@ void ConfinementForceVoid::writeForce(fitsfile * const file, int * const error) 
                            6, const_cast<char *> ("[V/m^2] (ConfinementForceVoid)"), error);
 	if (!*error)
 		fits_write_key_dbl(file, const_cast<char *> ("decay"), decay, 
-                           6, const_cast<char *> ("[1/m] (ConfinementForceVoid)"), error);
+                           6, const_cast<char *> ("[m^-1] (ConfinementForceVoid)"), error);
 }
 
 void ConfinementForceVoid::readForce(fitsfile * const file, int * const error) {

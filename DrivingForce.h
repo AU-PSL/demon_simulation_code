@@ -30,10 +30,8 @@ public:
 
 private:
 // private variables:
-	double amplitude; // [N]
-	double driveConst; // [m]
-	double shift; // [m]
-	static const double waveNum; // [1/m]
+	double amplitude, driveConst, shift; // [N], [m^2], [m]
+	static const double waveNum; // [m^-1]
 	static const double angFreq; // [rad*Hz]
 
 // private functions:

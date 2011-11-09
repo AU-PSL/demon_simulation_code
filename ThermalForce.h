@@ -49,7 +49,7 @@ private:
 
 protected:
 // protected variables:
-	double heatVal;
+	double heatVal; // [N]
 };
 
 #endif // THERMALFORCE_H

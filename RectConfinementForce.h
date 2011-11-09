@@ -30,8 +30,7 @@ public:
 
 private:
 // private variables:
-	double confineX;
-	double confineY;
+	double confineX, confineY; // [V/m^2]
 
 // private functions:
 	void force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY);

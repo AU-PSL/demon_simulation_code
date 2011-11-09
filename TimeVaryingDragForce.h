@@ -29,8 +29,7 @@ public:
 
 private:
 // private variables:
-	double scaleConst; // [s^-2]
-	double offsetConst; // [s^-1]
+	double scaleConst, offsetConst; // [Hz/s], [Hz]
 	
 // private methods:
 	const double calculateGamma(const double currentTime) const;

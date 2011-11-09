@@ -72,7 +72,7 @@ void DragForce::writeForce(fitsfile * const file, int * const error) const {
 	if (!*error)
 		// file, key name, value, precision (scientific format), comment
 		fits_write_key_dbl(file, const_cast<char *> ("dragConst"), dragConst, 
-                           6, const_cast<char *> ("[s^-1] (DragForce)"), error);
+                           6, const_cast<char *> ("[Hz] (DragForce)"), error);
 }
 
 void DragForce::readForce(fitsfile * const file, int * const error) {
