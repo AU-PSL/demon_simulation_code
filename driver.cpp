@@ -422,9 +422,7 @@ void fitsFileExists(char * const filename, int &error) {
         help();
         exit(1);
     }
-
     checkFitsError(error, __LINE__);
-    cout << "Initializing with fits file \"" << filename << "\"." << endl;
 }
 
 int main (int argc, char * const argv[]) {
