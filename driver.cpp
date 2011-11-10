@@ -99,7 +99,7 @@ void help() {
           << "Options:" << endl << endl
           << " -B 1.0                 set magnitude of B-field in z-direction [T]" << endl
           << " -c noDefault.fits      continue run from file" << endl
-          << " -C 1000.0              set confinementConst [V/m^2]" << endl
+          << " -C 100.0               set confinementConst [V/m^2]" << endl
           << " -D -1.0 10.0           use TimeVaryingDragForce; set scale [Hz/s], offset [Hz]" << endl
           << " -e 5.0                 set simulation end time [s]" << endl
           << " -f noDefaut.fits       use final positions and velocities from file" << endl
