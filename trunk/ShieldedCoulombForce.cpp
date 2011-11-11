@@ -250,7 +250,7 @@ void ShieldedCoulombForce::writeForce(fitsfile * const file, int * const error) 
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &forceFlags, NULL, error);
 
 		// add ShieldedCoulombForce bit:
-		forceFlags |= ShieldedCoulombForceFlag; // compound bitwise OR
+		forceFlags |= ShieldedCoulombForceFlag;
 
 		if (*error == KEY_NO_EXIST || *error == VALUE_UNDEFINED)
 			*error = 0; // clear above error.

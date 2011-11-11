@@ -34,10 +34,7 @@ inline const double TimeVaryingDragForce::calculateGamma(const double currentTim
 }
 
 void TimeVaryingDragForce::writeForce(fitsfile * const file, int * const error) const {
-	// move to primary HDU:
-	if (!*error)
-		// file, # indicating primary HDU, HDU type, error
- 		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
+	DragForce::writeForce(file, error);
 	
 	// add flag indicating that the time varying drag force is used:
 	if (!*error) {
@@ -45,10 +42,8 @@ void TimeVaryingDragForce::writeForce(fitsfile * const file, int * const error) 
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &forceFlags, NULL, error);
 
 		// add TimeVaryingDragForce bit:
+		forceFlags |= DragForceFlag;
 		forceFlags |= TimeVaryingDragForceFlag;
-
-		if (*error == KEY_NO_EXIST || *error == VALUE_UNDEFINED)
-			*error = 0; // clear above error.
 
 		// add or update keyword:
 		if (!*error) 
@@ -66,10 +61,7 @@ void TimeVaryingDragForce::writeForce(fitsfile * const file, int * const error) 
 }
 
 void TimeVaryingDragForce::readForce(fitsfile * const file, int * const error) {
-	// move to primary HDU:
-	if (!*error)
-		// file, # indicating primary HDU, HDU type, error
- 		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
+	DragForce::readForce(file, error);
 	
 	if (!*error) {
 		// file, key name, value, don't read comment, error

@@ -53,10 +53,7 @@ inline void ConfinementForceVoid::force(const cloud_index currentParticle, const
 }
 
 void ConfinementForceVoid::writeForce(fitsfile * const file, int * const error) const {
-	// move to primary HDU:
-	if (!*error)
-		// file, # indicating primary HDU, HDU type, error
- 		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
+	ConfinementForce::writeForce(file, error);
 	
 	// add flag indicating that the confinement force void is used:
 	if (!*error) {
@@ -64,10 +61,8 @@ void ConfinementForceVoid::writeForce(fitsfile * const file, int * const error) 
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &forceFlags, NULL, error);
 
 		// add ConfinementForceVoid bit:
-		forceFlags |= ConfinementForceVoidFlag;	// compound bitwise OR
-
-		if (*error == KEY_NO_EXIST || *error == VALUE_UNDEFINED)
-			*error = 0; // clear above error
+		forceFlags |= ConfinementForceFlag;
+		forceFlags |= ConfinementForceVoidFlag;
 
 		// add or update keyword:
 		if (!*error) 
@@ -75,20 +70,17 @@ void ConfinementForceVoid::writeForce(fitsfile * const file, int * const error) 
                             const_cast<char *> ("Force configuration."), error);
 	}
 
-	if (!*error)
+	if (!*error) {
 		// file, key name, value, precision (scientific format), comment
 		fits_write_key_dbl(file, const_cast<char *> ("confineConst"), confine, 
                            6, const_cast<char *> ("[V/m^2] (ConfinementForceVoid)"), error);
-	if (!*error)
 		fits_write_key_dbl(file, const_cast<char *> ("decay"), decay, 
                            6, const_cast<char *> ("[m^-1] (ConfinementForceVoid)"), error);
+	}
 }
 
 void ConfinementForceVoid::readForce(fitsfile * const file, int * const error) {
-	// move to primary HDU:
-	if (!*error)
-		// file, # indicating primary HDU, HDU type, error
- 		fits_movabs_hdu(file, 1, IMAGE_HDU, error);
+	ConfinementForce::readForce(file, error);
 
 	if (!*error)
 		// file, key name, value, don't read comment, error

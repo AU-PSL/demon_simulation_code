@@ -59,8 +59,8 @@ void ConfinementForce::writeForce(fitsfile * const file, int * const error) cons
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &forceFlags, NULL, error);
 
 		// add ConfinementForce bit:
-		forceFlags |= ConfinementForceFlag;	// compound bitwise OR
-
+		forceFlags |= ConfinementForceFlag;
+		
 		if (*error == KEY_NO_EXIST || *error == VALUE_UNDEFINED)
 			*error = 0; // clear above error
 
