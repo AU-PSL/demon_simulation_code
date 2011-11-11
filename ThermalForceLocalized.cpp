@@ -149,7 +149,7 @@ void ThermalForceLocalized::writeForce(fitsfile * const file, int * const error)
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &forceFlags, NULL, error);
 
 		// add ThermalForce bit:
-		forceFlags |= ThermalForceLocalizedFlag; // compound bitwise OR
+		forceFlags |= ThermalForceLocalizedFlag;
 
 		if (*error == KEY_NO_EXIST || *error == VALUE_UNDEFINED)
 			*error = 0; // clear above error.
