@@ -18,7 +18,6 @@ public:
 	ShieldedCoulombForce(Cloud * const C, const double shieldingConstant);
 	~ShieldedCoulombForce();
 
-// public functions:
 	void force1(const double currentTime); //rk substep 1
 	void force2(const double currentTime); //rk substep 2
 	void force3(const double currentTime); //rk substep 3
@@ -28,13 +27,11 @@ public:
 	void readForce(fitsfile * const file, int * const error);
 
 private:
-// public variables:
 	double shielding; // [m^-1]
     SEMAPHORES
 	
 	static const double coulomb;
 
-// private functions:
 	void force(const cloud_index currentParticle, const cloud_index iParticle, 
 	           const double currentCharge, const double iCharge,
 	           const double displacementX, const double displacementY);

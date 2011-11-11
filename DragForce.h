@@ -17,8 +17,7 @@ public:
 	DragForce(Cloud * const myCloud, const double gamma)
 	: Force(myCloud), dragConst(-gamma) {}
 	~DragForce() {}
-	
-// public functions:
+
 	virtual void force1(const double currentTime); // rk substep 1
 	virtual void force2(const double currentTime); // rk substep 2
 	virtual void force3(const double currentTime); // rk substep 3
@@ -28,11 +27,9 @@ public:
 	virtual void readForce(fitsfile * const file, int * const error);
 
 protected:
-// protected variables:
 	double dragConst; // [Hz]
 
 private:
-//private functions:
 	void force(const cloud_index currentParticle, const __m128d currentVelocityX, const __m128d currentVelocityY);
 };
 

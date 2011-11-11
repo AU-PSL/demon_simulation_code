@@ -20,7 +20,6 @@ public:
 	Cloud(const cloud_index numPar);
 	~Cloud();
 
-// public variables:
 	const cloud_index n; // number of elements (particles)
 	double * const x, * const y, * const Vx, * const Vy; // current positions and velocities
 	double * const charge, * const mass;

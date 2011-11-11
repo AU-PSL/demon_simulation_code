@@ -18,7 +18,6 @@ public:
 	: DragForce(C, -offset), scaleConst(scale), offsetConst(offset) {}
 	~TimeVaryingDragForce() {}
 
-// public functions:
 	void force1(const double currentTime); // rk substep 1
 	void force2(const double currentTime); // rk substep 2
 	void force3(const double currentTime); // rk substep 3
@@ -28,10 +27,8 @@ public:
 	void readForce(fitsfile *file, int *error);
 
 private:
-// private variables:
 	double scaleConst, offsetConst; // [Hz/s], [Hz]
-	
-// private methods:
+
 	const double calculateGamma(const double currentTime) const;
 };
 

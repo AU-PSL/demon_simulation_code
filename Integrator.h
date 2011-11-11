@@ -20,8 +20,7 @@ public:
     Integrator(Cloud * const C, const ForceArray &FA,
                const double timeStep, double startTime);
     virtual ~Integrator();
-    
-    // public variables:
+
 	double currentTime;
     
     virtual void moveParticles(const double endTime)=0;

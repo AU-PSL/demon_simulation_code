@@ -18,7 +18,6 @@ public:
 	: ThermalForce(C, offset), heatValScale(scale), heatValOffset(offset) {}
 	~TimeVaryingThermalForce() {}
 
-// public functions:
 	void force1(const double currentTime); // rk substep 1
 	void force2(const double currentTime); // rk substep 2
 	void force3(const double currentTime); // rk substep 3

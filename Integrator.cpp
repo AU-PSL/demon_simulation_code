@@ -27,12 +27,10 @@ Integrator::~Integrator() {
     SEMAPHORES_FREE(1);
 }
 
-/*------------------------------------------------------------------------------
-* If a particle spacing is less than the specified distance reduce timestep by a
-* factor of 10 and recheck with disance reduced by a factor of 10. Once all
-* particle spacings are outside the specified distance use the current timestep.
-* This allows fine grain control of reduced timesteps.
-------------------------------------------------------------------------------*/
+// If particle spacing is less than the specified distance reduce timestep by a
+// factor of 10 and recheck with disance reduced by a factor of 10. Once all
+// particle spacings are outside the specified distance use the current 
+// timestep. This allows fine grain control of reduced timesteps.
 const double Integrator::modifyTimeStep(float currentDist, double currentTimeStep) const {
 	// set constants:	
 	const cloud_index numPar = cloud->n;

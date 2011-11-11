@@ -18,7 +18,6 @@ public:
 	: Force(C), innerRad(rmin), outerRad(rmax), rotationalConst(rotConst) {}
 	~RotationalForce() {}
 
-// public functions:
 	void force1(const double currentTime); // rk substep 1
 	void force2(const double currentTime); // rk substep 2
 	void force3(const double currentTime); // rk substep 3
@@ -28,10 +27,8 @@ public:
 	void readForce(fitsfile *file, int *error);
 
 private:
-// private variables:
 	double innerRad, outerRad, rotationalConst; // [m], [m], [N]
 
-// private functions:
 	void force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY);
 };
 
