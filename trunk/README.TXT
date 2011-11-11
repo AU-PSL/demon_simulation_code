@@ -1,6 +1,6 @@
 Requirements:
 
-Intel CPU with SSE2 or higher support.
+Intel CPU with SSE2 or higher support. Compiler with C++11 support.
 libcfitsio.a Avalible from http://heasarc.gsfc.nasa.gov/fitsio/
 
 Compiling:
@@ -26,14 +26,9 @@ CXXFLAGS = -O3
 where -O3 is the flag controlling the optimization level. To compile DEMON type
 make in the command line.
 
-1. Using xcode:
+2. Using xcode:
 
-    In the xcode project, right click the Simulation project icon under 
-"Groups & files". Select "Get Info" and click the build tab. Edit the entry for 
-"User Header Search Paths" with the path to the directories containing 
-cfitsio.h. Repeat for both release and debug build configurations. In targets 
-click on the DEMON target under targets and select get info. Add libcfitsio.a to
-linked libraries by clicking the + and choosing the pre compiled library. Click 
-build to compile. Compiled program and libSimulation.a can be found in the 
-/xcode/build/<Debug or Release>/ where Debug or Release depends on wheather a 
-Debug build or Release has been created.
+    In the xcode project, click on the Simulation project. In the "Build
+Settings" Tab, under the "Search Paths" section add the path to the cfitsio 
+header files and libcfitsio headers. Under the linking tab check to make sure 
+"Other Linking Flags" is set to -lcfitsio.
