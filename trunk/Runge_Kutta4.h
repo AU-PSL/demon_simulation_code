@@ -20,14 +20,9 @@ public:
                  const double timeStep, const double startTime);
 	~Runge_Kutta4() {}
 
-// public functions:
-	// Input: double endTime
-	// Preconditions: endTime > 0
-	// Postconditions: Runge-Kutta algorithm complete; position, velocity, time updated.
 	void moveParticles(const double endTime);
 
 private:
-// private functions:
 	void operate3(const double currentTime) const; // rk substep 3
 	void operate4(const double currentTime) const; // rk substep 4
   

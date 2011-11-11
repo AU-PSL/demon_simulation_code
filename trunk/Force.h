@@ -18,9 +18,8 @@ public:
 	Cloud * const cloud;
 	
 	Force(Cloud * const C) : cloud(C) {} 
-	virtual ~Force() {} // implementation of virtual destructor
+	virtual ~Force() {}
 
-	// Note: currentTime parameter necessary for DrivingForce, unused in others
 	virtual void force1(const double currentTime)=0; // rk substep 1
 	virtual void force2(const double currentTime)=0; // rk substep 2
 	virtual void force3(const double currentTime)=0; // rk substep 3

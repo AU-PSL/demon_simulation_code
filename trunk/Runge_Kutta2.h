@@ -19,15 +19,10 @@ public:
 	Runge_Kutta2(Cloud * const C, const ForceArray &FA, 
                  const double timeStep, const double startTime);
 	~Runge_Kutta2() {}
-    
-    // public functions:
-	// Input: double endTime
-	// Preconditions: endTime > 0
-	// Postconditions: Runge-Kutta algorithm complete; position, velocity, time updated.
+
 	void moveParticles(const double endTime);
     
 protected:
-    // private functions:
 	void operate1(const double currentTime) const; // rk substep 1
 	void operate2(const double currentTime) const; // rk substep 2
     
