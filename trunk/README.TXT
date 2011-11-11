@@ -24,7 +24,8 @@ CXX = g++
 CXXFLAGS = -O3
 
 where -O3 is the flag controlling the optimization level. To compile DEMON type
-make in the command line.
+make in the command line. Parallel builds can be activatled by adding -openmp to
+to the CXXFLAGS if using an OpenMP compatable compiler.
 
 2. Using xcode:
 
