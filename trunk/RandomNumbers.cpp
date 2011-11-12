@@ -8,11 +8,13 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "RandomNumbers.h"
-#include <ctime>
+#include <chrono>
+
+using namespace std::chrono;
 
 RandomNumbers::RandomNumbers() 
-: engine((unsigned int)time(NULL)), zeroToOne(0.0, 1.0), 
-zeroToTwoPi(0.0, 2.0*M_PI) {}
+: engine(static_cast<uint64_t> (system_clock::to_time_t(system_clock::now()))), 
+zeroToOne(0.0, 1.0), zeroToTwoPi(0.0, 2.0*M_PI) {}
 
 const double RandomNumbers::uniformZeroToOne() {
 	return zeroToOne(engine);
