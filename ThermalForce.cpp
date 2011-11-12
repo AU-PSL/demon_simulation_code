@@ -9,7 +9,6 @@
 
 #include "ThermalForce.h"
 #include <cmath>
-#include <ctime>
 
 ThermalForce::ThermalForce(Cloud * const C, const double redFactor) 
 : Force(C), evenRandCache(new RandCache[C->n/2]), oddRandCache(new RandCache[C->n/2]),

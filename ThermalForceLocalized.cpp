@@ -8,7 +8,6 @@
 *===-----------------------------------------------------------------------===*/
 
 #include "ThermalForceLocalized.h"
-#include <ctime>
 #include <cmath>
 
 ThermalForceLocalized::ThermalForceLocalized(Cloud * const C, const double thermRed1, 

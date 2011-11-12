@@ -39,6 +39,7 @@ void deleteFitsFile(char * const filename, int &error);
 void fitsFileExists(char * const filename, int &error);
 
 using namespace std;
+using namespace chrono;
 
 #define clear_line "\33[2K" // VT100 signal to clear line.
 typedef int file_index;
@@ -426,7 +427,7 @@ void fitsFileExists(char * const filename, int &error) {
 }
 
 int main (int argc, char * const argv[]) {
-	time_t timer = time(NULL);
+	time_t start = system_clock::to_time_t(system_clock::now());
 	parseCommandLineOptions(argc, argv);
 
     // All simulations require the folling three forces if subsitutes are not 
@@ -570,7 +571,7 @@ int main (int argc, char * const argv[]) {
 	fits_close_file(file, &error);
 
 	// Calculate and display elapsed time.
-	time_t seconds = time(NULL) - timer;
+	time_t seconds = system_clock::to_time_t(system_clock::now()) - start;
 	time_t minutes = seconds/60;
 	time_t hours = minutes/60;
 	time_t days = hours/24;
