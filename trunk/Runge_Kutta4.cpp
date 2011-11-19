@@ -148,13 +148,13 @@ void Runge_Kutta4::moveParticles(const double endTime) {
 }
 
 inline void Runge_Kutta4::operate3(const double time) const {
- 	for (Operator *opt : operations)
-		opt->operation3(time);
+ 	for (Operator *O : operations)
+		O->operation3(time);
 }
 
 inline void Runge_Kutta4::operate4(const double time) const {
- 	for (Operator *opt : operations)
-		opt->operation4(time);
+ 	for (Operator *O : operations)
+		O->operation4(time);
 }
 
 inline void Runge_Kutta4::force3(const double time) const {
