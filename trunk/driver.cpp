@@ -522,11 +522,11 @@ int main (int argc, char * const argv[]) {
 		forces.push_back(new TimeVaryingThermalForce(cloud, thermScale, thermOffset));
 	
 	if (continueFileIndex) { // Initialize forces from old file.
-		for (Force *F : forces)
+		for (Force * const F : forces)
 			F->readForce(file, &error);
 		checkFitsError(error, __LINE__);
 	} else { // Write force config to new file.
-		for (Force *F : forces)
+		for (Force * const F : forces)
 			F->writeForce(file, &error);
 		checkFitsError(error, __LINE__);
 	}
@@ -572,7 +572,7 @@ int main (int argc, char * const argv[]) {
 	fits_close_file(file, &error);
 
 	// clean up objects:
-	for (Force *F : forces)
+	for (Force * const F : forces)
 		delete F;
 	delete cloud;
     delete I;
