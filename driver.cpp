@@ -21,7 +21,6 @@
 #include <iostream>
 #include <cstdarg>
 #include <cassert>
-#include <cctype>
 
 // Cannot include cmath because it causes a conflict with gamma.
 extern "C" double sqrt(double);
