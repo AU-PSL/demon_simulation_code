@@ -19,13 +19,13 @@ public:
 	// IMPORTANT: In the above constructor, confineConst must be positive!
 	~ConfinementForce() {}
 
-	void force1(const double currentTime); // rk substep 1
-	void force2(const double currentTime); // rk substep 2
-	void force3(const double currentTime); // rk substep 3
-	void force4(const double currentTime); // rk substep 4
+	virtual void force1(const double currentTime); // rk substep 1
+	virtual void force2(const double currentTime); // rk substep 2
+	virtual void force3(const double currentTime); // rk substep 3
+	virtual void force4(const double currentTime); // rk substep 4
 
-	void writeForce(fitsfile * const file, int * const error) const;
-	void readForce(fitsfile * const file, int * const error);
+	virtual void writeForce(fitsfile * const file, int * const error) const;
+	virtual void readForce(fitsfile * const file, int * const error);
 
 private:
 	double confine; // [V/m^2]
