@@ -11,7 +11,6 @@
 #define CLOUD_H
 
 #include "fitsio.h"
-#include "VectorCompatibility.h"
 #include "Parallel.h"
 #include "RandomNumbers.h"
 
