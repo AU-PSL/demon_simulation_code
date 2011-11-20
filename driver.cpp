@@ -43,6 +43,7 @@ using namespace chrono;
 
 #define clear_line "\33[2K" // VT100 signal to clear line.
 typedef int file_index;
+typedef duration<long, ratio<86400> > days;
 
 enum clFlagType : int {
 	CI, // cloud_Index
@@ -427,7 +428,7 @@ void fitsFileExists(char * const filename, int &error) {
 }
 
 int main (int argc, char * const argv[]) {
-	time_t start = system_clock::to_time_t(system_clock::now());
+	steady_clock::time_point start = steady_clock::now();
 	parseCommandLineOptions(argc, argv);
 
     // All simulations require the folling three forces if subsitutes are not 
@@ -570,26 +571,24 @@ int main (int argc, char * const argv[]) {
 	// Close fits file.
 	fits_close_file(file, &error);
 
-	// Calculate and display elapsed time.
-	time_t seconds = system_clock::to_time_t(system_clock::now()) - start;
-	time_t minutes = seconds/60;
-	time_t hours = minutes/60;
-	time_t days = hours/24;
-	hours -= days*24;
-	minutes -= hours*60 + days*1440;
-	seconds -= minutes*60 + hours*3600 + days*86400;
-	
-	cout << clear_line << "\rTime elapsed: " 
-	<< days << (days == 1 ? " day, " : " days, ") 
-	<< hours << (hours == 1 ? " hour " : " hours, ") 
-	<< minutes << (minutes == 1 ? " minute " : " minutes, ") 
-	<< seconds << (seconds == 1 ? " second " : " seconds.") << endl;
-	
 	// clean up objects:
 	for (Force *F : forces)
 		delete F;
 	delete cloud;
     delete I;
+
+	// Calculate and display elapsed time.
+	const auto totalTime = steady_clock::now() - start;
+	const days d = duration_cast<days> (totalTime);
+	const hours h = duration_cast<hours> (totalTime - d);
+	const minutes m = duration_cast<minutes> (totalTime - d - h);
+	const seconds s = duration_cast<seconds> (totalTime - d - h - m);
+	
+	cout << clear_line << "\rTime elapsed: " 
+	<< d.count() << (d.count() == 1 ? " day, " : " days, ") 
+	<< h.count() << (h.count() == 1 ? " hour " : " hours, ") 
+	<< m.count() << (m.count() == 1 ? " minute " : " minutes, ") 
+	<< s.count() << (s.count() == 1 ? " second " : " seconds.") << endl;
 	
 	return 0;
 }
