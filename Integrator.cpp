@@ -21,7 +21,7 @@ SEMAPHORES_MALLOC(1) {
 }
 
 Integrator::~Integrator() {
-	for (Operator *opt : operations)
+	for (Operator * const opt : operations)
 		delete opt;
     
     SEMAPHORES_FREE(1);

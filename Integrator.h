@@ -29,7 +29,7 @@ protected:
 	Cloud * const cloud; // pointer to cloud object
 	const ForceArray &forces;
 	const double init_dt; // store initial time step
-    const std::array<Operator *, 1> operations;
+    const std::array<Operator * const, 1> operations;
     SEMAPHORES
     
     const double modifyTimeStep(float currentDist, double currentTimeStep) const;
