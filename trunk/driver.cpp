@@ -36,6 +36,7 @@ void parseCommandLineOptions(int argc, char * const argv[]);
 void checkFitsError(const int error, const int lineNumber);
 void deleteFitsFile(char * const filename, int &error);
 void fitsFileExists(char * const filename, int &error);
+void fitsFileCreate(fitsfile **file, char * const fileName, int &error);
 
 using namespace std;
 using namespace chrono;
@@ -414,7 +415,7 @@ void deleteFitsFile(char * const filename, int &error) {
 	checkFitsError(error, __LINE__);
 }
 
-// Check if fits file exists
+// Check if fits file exists.
 void fitsFileExists(char * const filename, int &error) {
     int exists = 0;
     fits_file_exists(filename, &exists, &error);
@@ -424,6 +425,13 @@ void fitsFileExists(char * const filename, int &error) {
         exit(1);
     }
     checkFitsError(error, __LINE__);
+}
+
+// Create a new fits file by deleting an exiting one if it has the same name.
+void fitsFileCreate(fitsfile **file, char * const fileName, int &error) {
+	deleteFitsFile(fileName, error);
+	fits_create_file(file, fileName, &error);
+	checkFitsError(error, __LINE__);
 }
 
 int main (int argc, char * const argv[]) {
@@ -472,25 +480,13 @@ int main (int argc, char * const argv[]) {
 
 	// Create a new file if we aren't continuing an old one.
 	if (!continueFileIndex) {
-		if (outputFileIndex) {// use specified file name
-			deleteFitsFile(argv[outputFileIndex], error);
-			fits_create_file(&file, argv[outputFileIndex], &error);
-			checkFitsError(error, __LINE__);
-			
-			// create "proper" primary HDU
-			// (prevents fits from generating errors when creating binary tables)
-			fits_create_img(file, 16, 0, NULL, &error);
-			checkFitsError(error, __LINE__);
-		} else {// use default file name
-			deleteFitsFile(const_cast<char *> ("data.fits"), error);
-			fits_create_file(&file, const_cast<char *> ("data.fits"), &error);
-			checkFitsError(error, __LINE__);
-			
-			// create "proper" primary HDU
-			// (prevents fits from generating errors when creating binary tables)
-			fits_create_img(file, 16, 0, NULL, &error);
-			checkFitsError(error, __LINE__);
-		}
+		fitsFileCreate(&file, outputFileIndex ? argv[outputFileIndex] 
+											  : const_cast<char *> ("data.fits"), error);
+	
+		// create "proper" primary HDU
+		// (prevents fits from generating errors when creating binary tables)
+		fits_create_img(file, 16, 0, NULL, &error);
+		checkFitsError(error, __LINE__);
 	}
 	
     // Create all forces specified in used forces.
