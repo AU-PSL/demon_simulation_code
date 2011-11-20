@@ -27,10 +27,8 @@ public:
     void readForce(fitsfile * const file, int * const error);
 
 private:
-// private variables
     double heatValScale, heatValOffset; // [N/s], [N]
-    
-// private functions:
+
     const double calculateHeatVal(const double currentTime) const;
 };
 
