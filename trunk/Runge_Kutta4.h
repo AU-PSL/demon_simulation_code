@@ -11,8 +11,6 @@
 #define RUNGA_KUTTA4_H
 
 #include "Runge_Kutta2.h"
-#include "Force.h"
-#include "Operator.h"
 
 class Runge_Kutta4 : public Runge_Kutta2 {
 public:

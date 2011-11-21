@@ -11,8 +11,6 @@
 #define RUNGA_KUTTA2_H
 
 #include "Integrator.h"
-#include "Force.h"
-#include "Operator.h"
 
 class Runge_Kutta2 : public Integrator {
 public:
