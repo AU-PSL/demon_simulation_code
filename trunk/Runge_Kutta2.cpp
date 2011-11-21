@@ -13,10 +13,9 @@ Runge_Kutta2::Runge_Kutta2(Cloud * const C, const ForceArray &FA,
                            const double timeStep, const double startTime)
 : Integrator(C, FA, timeStep, startTime) {}
 
-// 4th order Runge-Kutta algorithm:
+// 2nd order Runge-Kutta algorithm:
 void Runge_Kutta2::moveParticles(const double endTime) {
 	while (currentTime < endTime) {
-		// Second argument must be 2 more than the first.
 		const double dt = modifyTimeStep(1.0e-4f, init_dt); // implement dynamic timstep (if necessary):
 		const __m128d vdt = _mm_set1_pd(dt); // store timestep as vector const
 		
