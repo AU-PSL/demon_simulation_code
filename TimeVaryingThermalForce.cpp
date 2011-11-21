@@ -42,7 +42,7 @@ void TimeVaryingThermalForce::writeForce(fitsfile * const file, int * const erro
 		long forceFlags = 0;
 		fits_read_key_lng(file, const_cast<char *> ("FORCES"), &forceFlags, NULL, error);
 
-		// add ThermalForce bit:
+		// add TimeVaryingThermalForce bit:
 		forceFlags |= ThermalForceFlag;
 		forceFlags |= TimeVaryingThermalForceFlag;
 
