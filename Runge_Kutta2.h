@@ -18,7 +18,7 @@ public:
                  const double timeStep, const double startTime);
 	~Runge_Kutta2() {}
 
-	void moveParticles(const double endTime);
+	virtual void moveParticles(const double endTime);
     
 protected:
 	void operate1(const double currentTime) const; // rk substep 1
