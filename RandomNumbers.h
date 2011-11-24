@@ -29,8 +29,8 @@ private:
 	std::uniform_real_distribution<double> zeroToTwoPi;
 };
 
-class RandCache {
-public:
+// Structure to hold precomuted random numbers for use with thermal forces.
+struct RandCache {
 	__m128d r;
 	double l, h;
 	
