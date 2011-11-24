@@ -37,6 +37,9 @@ const double Integrator::modifyTimeStep(float currentDist, double currentTimeSte
 	const float redFactor = 10.0f;
     
 #ifdef DISPATCH_QUEUES
+    // You cannot block capture method arguments. Store these values in to non
+    // const block captured variables. The correct names supsequently used by
+    // BLOCK_VALUE_DIST and BLOCK_VALUE_TIME
     __block float currDist = currentDist;
     __block double currTimeStep = currentTimeStep;
 #endif
