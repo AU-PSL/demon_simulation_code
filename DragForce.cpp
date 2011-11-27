@@ -37,6 +37,7 @@ void DragForce::force4(const double currentTime) {
     END_PARALLEL_FOR
 }
 
+// F = g*m*v
 inline void DragForce::force(const cloud_index currentParticle, const __m128d currentVelocityX, const __m128d currentVelocityY) {
 	const __m128d drag = _mm_set1_pd(dragConst)*_mm_load_pd(cloud->mass + currentParticle);
 	double * const pFx = cloud->forceX + currentParticle;

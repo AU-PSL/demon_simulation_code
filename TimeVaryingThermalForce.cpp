@@ -29,10 +29,12 @@ void TimeVaryingThermalForce::force4(const double currentTime) {
 	ThermalForce::force4(currentTime);
 }
 
+// F = c(t)*L : c(t) = m*t + b 
+// L is a uniformly distributed random number between 0 - 1 in a random 
+// direction.
 inline const double TimeVaryingThermalForce::calculateHeatVal(const double currentTime) const {
 	return heatValScale*currentTime + heatValOffset;
 }
-
 
 void TimeVaryingThermalForce::writeForce(fitsfile * const file, int * const error) const {
 	ThermalForce::writeForce(file, error);

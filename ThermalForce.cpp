@@ -121,6 +121,8 @@ void ThermalForce::force4(const double currentTime) {
     END_PARALLEL_FOR
 }
 
+// F = c*L : L is a uniformly distributed random number between 0 - 1 in a 
+// random direction.
 inline void ThermalForce::force(const cloud_index currentParticle, const RandCache &rc) {
 	const __m128d thermV = _mm_set1_pd(heatVal)*rc.r;
 	

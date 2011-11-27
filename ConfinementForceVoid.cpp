@@ -37,6 +37,7 @@ void ConfinementForceVoid::force4(const double currentTime) {
     END_PARALLEL_FOR
 }
 
+// F = F_c - d*Exp(-d*r)*r
 inline void ConfinementForceVoid::force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY) {
 	const __m128d decayV = _mm_set1_pd(decay)*_mm_load_pd(cloud->charge + currentParticle);
 	const __m128d r = _mm_sqrt_pd(currentPositionX*currentPositionX + currentPositionY*currentPositionY);
