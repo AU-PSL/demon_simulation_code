@@ -78,7 +78,8 @@ public:
 	static Cloud * const initializeGrid(const cloud_index numParticles,
 										const double rMean, const double rSigma,
                                         const double qMean, const double qSigma);
-	static Cloud * const initializeFromFile(fitsfile * const file, int &error, double * const currentTime);
+	static Cloud * const initializeFromFile(fitsfile * const file, int &error, 
+                                            double * const currentTime);
 };
 
 #endif // CLOUD_H
