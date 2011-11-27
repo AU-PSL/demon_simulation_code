@@ -54,12 +54,16 @@ inline void Cloud::setVelocity(const cloud_index index) const {
 	Vx[index] = Vy[index] = 0.0;
 }
 
+// Particle charges are set as a guassian distribution. To set a uniform 
+// distribution the charge sigma should be set to zero.
 inline void Cloud::setCharge(const double qMean, const double qSigma) {
 	std::normal_distribution<double> dist(qMean, qSigma);
 	for (cloud_index i = 0; i < n; i++)
 		charge[i] = rands.guassian(dist)*electronCharge;
 }
 
+// Particle sizes are set as a guassian distribution. To set a uniform 
+// distribution the radius sigma should be set to zero.
 inline void Cloud::setMass(const double rMean, const double rSigma) {
 	const double particleMassConsant = (4.0/3.0)*M_PI*dustParticleMassDensity;
 	std::normal_distribution<double> dist(rMean, rSigma);
@@ -69,6 +73,7 @@ inline void Cloud::setMass(const double rMean, const double rSigma) {
 	}
 }
 
+// Generates a cloud on a square grid with zero inital velocity.
 Cloud * const Cloud::initializeGrid(const cloud_index numParticles, 
 									const double rMean, const double rSigma,
                                     const double qMean, const double qSigma) {
@@ -91,6 +96,7 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles,
 	return cloud;
 }
 
+// Generates a cloud using the last time step of the specified file.
 Cloud * const Cloud::initializeFromFile(fitsfile * const file, int &error, 
 										double * const currentTime) {
 	int anyNull = 0;
@@ -136,6 +142,7 @@ Cloud * const Cloud::initializeFromFile(fitsfile * const file, int &error,
 	return cloud;
 }
 
+// Sets up and writes the intial timestep data to a the specified fitsfile.
 void Cloud::writeCloudSetup(fitsfile * const file, int &error) const {
 	// format number of elements of type double as string, e.g. 1024D
 	std::stringstream numStream;
@@ -185,8 +192,10 @@ void Cloud::writeCloudSetup(fitsfile * const file, int &error) const {
 	fits_flush_file(file, &error);
 }
 
-void Cloud::writeTimeStep(fitsfile * const file, int &error, double currentTime) const
-{
+// Appends the current cloud data to a fits file. This method requires that the
+// current HDU be "TIME_STEP". All data is flushed to the file incase exicution
+// is interupted.
+void Cloud::writeTimeStep(fitsfile * const file, int &error, double currentTime) const {
 	if (!error) {
 		long numRows = 0;
 		fits_get_num_rows(file, &numRows, &error);
