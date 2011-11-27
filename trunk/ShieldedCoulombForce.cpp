@@ -137,6 +137,8 @@ void ShieldedCoulombForce::force4(const double currentTime) {
 	END_PARALLEL_FOR
 }
 
+// F_i,i+1 = e0*q_i*q_i+1/(|r_i - r_i+1|)^2*Exp(-s*|r_i - r_i+1|)*(1 + c*|r_i - r_i+1|)
+// Calculates inteaction between i and i+1 particles.
 inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const cloud_index iParticle, 
                                         const double currentCharge, const double iCharge,
                                         const double displacementX, const double displacementY) {
@@ -160,6 +162,8 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
 	}
 }
 
+// F_i,j = e0*q_i*q_j/(|r_i - r_j|)^2*Exp(-s*|r_i - r_j|)*(1 + c*|r_i - r_j|)
+// Calculates inteaction between (i,i+1) and (j,j+1) particles.
 inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const cloud_index iParticle, 
                                         const __m128d currentCharge, const __m128d iCharge,
                                         const __m128d displacementX, const __m128d displacementY) {
@@ -199,6 +203,8 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
     SEMAPHORE_SIGNAL(iParticle/2)
 }
 
+// F_i,j = e0*q_i*q_j/(|r_i - r_j|)^2*Exp(-s*|r_i - r_j|)*(1 + c*|r_i - r_j|)
+// Calculates inteaction between (i,i+1) and (j+1,j) particles.
 inline void ShieldedCoulombForce::forcer(const cloud_index currentParticle, const cloud_index iParticle, 
                                          const __m128d currentCharge, const __m128d iCharge,
                                          const __m128d displacementX, const __m128d displacementY) {

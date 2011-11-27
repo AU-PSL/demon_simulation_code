@@ -37,6 +37,7 @@ void RectConfinementForce::force4(const double currentTime) {
     END_PARALLEL_FOR
 }
 
+// F_x = c_x*q*x, F_y = c_y*q*y
 inline void RectConfinementForce::force(const cloud_index currentParticle, const __m128d currentPositionX, 
                                         const __m128d currentPositionY) {
 	const __m128d charge = _mm_load_pd(cloud->charge + currentParticle); 

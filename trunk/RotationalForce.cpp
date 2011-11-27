@@ -37,7 +37,10 @@ void RotationalForce::force4(const double currentTime) {
     END_PARALLEL_FOR
 }
 
-inline void RotationalForce::force(const cloud_index currentParticle, const __m128d currentPositionX, 
+// F = 0 if r < rmin and r > rmax
+// F_x = -c*y/r. F_y = c*x/r
+inline void RotationalForce::force(const cloud_index currentParticle, 
+                                   const __m128d currentPositionX, 
                                    const __m128d currentPositionY) {
 	const __m128d dustRadV = _mm_sqrt_pd(currentPositionX*currentPositionX + currentPositionY*currentPositionY);
 

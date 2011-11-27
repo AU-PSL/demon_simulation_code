@@ -121,6 +121,10 @@ void ThermalForceLocalized::force4(const double currentTime) {
     END_PARALLEL_FOR
 }
 
+// F = c1*L : if r > h_r 
+// F = c2*L : if r < h_r 
+// L is a uniformly distributed random number between 0 - 1 in a random 
+// direction.
 inline void ThermalForceLocalized::force(const cloud_index currentParticle, const __m128d displacementX, 
                                          const __m128d displacementY, const RandCache &rc) {
 	const __m128d radiusV = _mm_sqrt_pd(displacementX*displacementX + displacementY*displacementY);

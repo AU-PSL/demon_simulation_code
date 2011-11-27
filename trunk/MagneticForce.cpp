@@ -37,6 +37,7 @@ void MagneticForce::force4(const double currentTime) {
     END_PARALLEL_FOR
 }
 
+// F = q*(v X B) : B is in the positive z direction.
 inline void MagneticForce::force(const cloud_index currentParticle, const __m128d currentVelocityX, 
                                  const __m128d currentVelocityY) {
 	const __m128d qB = _mm_set1_pd(BField)*_mm_load_pd(cloud->charge + currentParticle);
