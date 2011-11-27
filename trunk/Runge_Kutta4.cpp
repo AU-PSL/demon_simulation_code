@@ -104,7 +104,8 @@ void Runge_Kutta4::moveParticles(const double endTime) {
 			_mm_store_pd(pFy, _mm_setzero_pd());
 		END_PARALLEL_FOR
 
-        BEGIN_PARALLEL_FOR(i, e, numParticles, 2, static) // calculate next position and next velocity for entire cloud
+        // Calculate next position and next velocity for entire cloud.
+        BEGIN_PARALLEL_FOR(i, e, numParticles, 2, static)
 			// load ith and (i+1)th k's into vectors:
 			const __m128d vk1 = _mm_load_pd(cloud->k1 + i);
 			const __m128d vk2 = _mm_load_pd(cloud->k2 + i);
