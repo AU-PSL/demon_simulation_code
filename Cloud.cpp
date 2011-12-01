@@ -214,7 +214,7 @@ void Cloud::writeTimeStep(fitsfile * const file, int &error, double currentTime)
 
 // X position helper functions -------------------------------------------------
 const doubleV Cloud::getx1_pd(const cloud_index i) const {
-	return _mm_load_pd(x + i); // x
+	return load_pd(x + i); // x
 }
 
 const doubleV Cloud::getx2_pd(const cloud_index i) const {
@@ -250,7 +250,7 @@ const doubleV Cloud::getx4r_pd(const cloud_index i) const {
 
 // Y position helper functions -------------------------------------------------
 const doubleV Cloud::gety1_pd(const cloud_index i) const {
-	return _mm_load_pd(y + i); // y
+	return load_pd(y + i); // y
 }
 
 const doubleV Cloud::gety2_pd(const cloud_index i) const {
@@ -287,7 +287,7 @@ const doubleV Cloud::gety4r_pd(const cloud_index i) const {
 
 // Vx position helper functions ------------------------------------------------
 const doubleV Cloud::getVx1_pd(const cloud_index i) const {
-	return _mm_load_pd(Vx + i); // Vx
+	return load_pd(Vx + i); // Vx
 }
 
 const doubleV Cloud::getVx2_pd(const cloud_index i) const {
@@ -304,7 +304,7 @@ const doubleV Cloud::getVx4_pd(const cloud_index i) const {
 
 // Vy position helper functions ------------------------------------------------
 const doubleV Cloud::getVy1_pd(const cloud_index i) const {
-	return _mm_load_pd(Vy + i); // Vy
+	return load_pd(Vy + i); // Vy
 }
 
 const doubleV Cloud::getVy2_pd(const cloud_index i) const {
