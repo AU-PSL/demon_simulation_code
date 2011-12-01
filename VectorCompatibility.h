@@ -28,6 +28,10 @@ static inline void minusEqualr_pd(double * const a, const __m128d b) {
 	_mm_storer_pd(a, _mm_loadr_pd(a) + b);
 }
 
+static inline const __m128 fmadd_pd(const __m128d a, const __m128d b, const __m128d c) {
+	return a*b + c;
+}
+
 #if !defined(__GNUC__) && !defined(__clang__)
 __m128d operator+(const __m128d &a, const __m128d &b) {
 	return _mm_add_pd(a, b);
