@@ -250,7 +250,7 @@ static inline const doubleV and_pd(const doubleV a, const doubleV b) {
 /*===- math functions -----------------------------------------------------===*/
 
 static inline const doubleV exp_pd(const doubleV a) {
-    double b[FLOAT_STRIDE];
+    double b[DOUBLE_STRIDE];
     store_pd(b, a);
     
 #ifdef __AVX__
@@ -261,7 +261,7 @@ static inline const doubleV exp_pd(const doubleV a) {
 }
 
 static inline const doubleV sin_pd(const doubleV a) {
-    double b[FLOAT_STRIDE];
+    double b[DOUBLE_STRIDE];
     store_pd(b, a);
     
 #ifdef __AVX__
@@ -272,7 +272,7 @@ static inline const doubleV sin_pd(const doubleV a) {
 }
 
 static inline const doubleV cos_pd(const doubleV a) {
-    double b[FLOAT_STRIDE];
+    double b[DOUBLE_STRIDE];
     store_pd(b, a);
     
 #ifdef __AVX__
