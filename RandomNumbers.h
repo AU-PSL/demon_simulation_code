@@ -32,11 +32,23 @@ private:
 // Structure to hold precomuted random numbers for use with thermal forces.
 struct RandCache {
 	doubleV r;
-	double l, h;
-	
+    double r1, r2
+#ifdef __AVX__
+    r3, r4
+#endif
+    ;
+    
 	RandCache(const doubleV r_ = _mm_set1_pd(0.0), 
-			  const double l_ = 0.0, const double h_ = 0.0) 
-	: r(r_), l(l_), h(h_) {}
+			  const double r1_ = 0.0, const double r2_ = 0.0
+#ifdef __AVX__
+              const double r3_ = 0.0, const double r4_ = 0.0 
+#endif             
+              ) 
+	: r(r_), r1(r1_), r2(r2_) 
+#ifdef __AVX__
+    r3(r3_), r4(r4_) 
+#endif
+    {}
 };
 
 #endif // RANDOMNUMBERS
