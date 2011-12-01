@@ -53,11 +53,11 @@ const double Integrator::modifyTimeStep(float currentDist, double currentTimeSte
 #endif
     BEGIN_PARALLEL_FOR(outerIndex, e, outerLoop, 4, dynamic)
 		// caculate separation distance b/t adjacent elements:
-		const __m128 outPosX = loadFloatVector(cloud->x + outerIndex);
-		const __m128 outPosY = loadFloatVector(cloud->y + outerIndex);
+		const floatV outPosX = loadFloatVector(cloud->x + outerIndex);
+		const floatV outPosY = loadFloatVector(cloud->y + outerIndex);
 	
-		__m128 sepx = outPosX - _mm_shuffle_ps(outPosX, outPosX, _MM_SHUFFLE(0, 1, 2, 3));
-		__m128 sepy = outPosY - _mm_shuffle_ps(outPosY, outPosY, _MM_SHUFFLE(0, 1, 2, 3));
+		floatV sepx = outPosX - _mm_shuffle_ps(outPosX, outPosX, _MM_SHUFFLE(0, 1, 2, 3));
+		floatV sepy = outPosY - _mm_shuffle_ps(outPosY, outPosY, _MM_SHUFFLE(0, 1, 2, 3));
         
 		// If particles are too close, reduce time step:
         while (isWithInDistance(sepx, sepy, BLOCK_VALUE_DIST)) {
@@ -100,8 +100,8 @@ const double Integrator::modifyTimeStep(float currentDist, double currentTimeSte
         
 		// Calculate separation distance b/t nonadjacent elements:
 		for (cloud_index innerIndex = outerIndex + 4; innerIndex < numPar; innerIndex += 4) {
-			const __m128 inPosX = loadFloatVector(cloud->x + innerIndex);
-			const __m128 inPosY = loadFloatVector(cloud->y + innerIndex);
+			const floatV inPosX = loadFloatVector(cloud->x + innerIndex);
+			const floatV inPosY = loadFloatVector(cloud->y + innerIndex);
 			
 			sepx = outPosX - inPosX;
 			sepy = outPosY - inPosY;
@@ -164,10 +164,10 @@ const double Integrator::modifyTimeStep(float currentDist, double currentTimeSte
     return BLOCK_VALUE_TIME;
 }
 
-inline __m128 Integrator::loadFloatVector(double * const x) {
+inline floatV Integrator::loadFloatVector(double * const x) {
 	return _mm_set_ps((float)x[0], (float)x[1], (float)x[2], (float)x[3]);
 }
 
-inline bool Integrator::isWithInDistance(const __m128 a, const __m128 b, const float dist) {
+inline bool Integrator::isWithInDistance(const floatV a, const floatV b, const float dist) {
 	return (bool)_mm_movemask_ps(_mm_cmple_ps(_mm_sqrt_ps(a*a + b*b), _mm_set1_ps(dist)));
 }

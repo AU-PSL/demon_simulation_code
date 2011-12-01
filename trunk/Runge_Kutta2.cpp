@@ -17,14 +17,14 @@ Runge_Kutta2::Runge_Kutta2(Cloud * const C, const ForceArray &FA,
 void Runge_Kutta2::moveParticles(const double endTime) {
 	while (currentTime < endTime) {
 		const double dt = modifyTimeStep(1.0e-4f, init_dt); // implement dynamic timstep (if necessary):
-		const __m128d vdt = _mm_set1_pd(dt); // store timestep as vector const
+		const doubleV vdt = _mm_set1_pd(dt); // store timestep as vector const
 		
 		const cloud_index numParticles = cloud->n;
         
 		operate1(currentTime);
 		force1(currentTime); // compute net force1
 		BEGIN_PARALLEL_FOR(i, e, numParticles, 2, static) // calculate k1 and l1 for entire cloud
-			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass into vector
+			const doubleV vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass into vector
             
 			// assign force pointers for stylistic purposes:
 			double * const pFx = cloud->forceX + i;
@@ -44,7 +44,7 @@ void Runge_Kutta2::moveParticles(const double endTime) {
 		operate2(currentTime + dt/2.0);
 		force2(currentTime + dt/2.0); // compute net force2
 		BEGIN_PARALLEL_FOR(i, e, numParticles, 2, static) // calculate k2 and l for entire cloud
-			const __m128d vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
+			const doubleV vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
             
 			// assign force pointers:
 			double * const pFx = cloud->forceX + i;

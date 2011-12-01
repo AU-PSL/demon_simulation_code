@@ -12,44 +12,47 @@
 
 #include <immintrin.h>
 
-static inline void plusEqual_pd(double * const a, const __m128d b) {
+typedef __m128d doubleV;
+typedef __m128 floatV;
+
+static inline void plusEqual_pd(double * const a, const doubleV b) {
 	_mm_store_pd(a, _mm_load_pd(a) + b);
 }
 
-static inline void minusEqual_pd(double * const a, const __m128d b) {
+static inline void minusEqual_pd(double * const a, const doubleV b) {
 	_mm_store_pd(a, _mm_load_pd(a) + b);
 }
 
-static inline void plusEqualr_pd(double * const a, const __m128d b) {
+static inline void plusEqualr_pd(double * const a, const doubleV b) {
 	_mm_storer_pd(a, _mm_loadr_pd(a) + b);
 }
 
-static inline void minusEqualr_pd(double * const a, const __m128d b) {
+static inline void minusEqualr_pd(double * const a, const doubleV b) {
 	_mm_storer_pd(a, _mm_loadr_pd(a) + b);
 }
 
-static inline const __m128 fmadd_pd(const __m128d a, const __m128d b, const __m128d c) {
+static inline const doubleV fmadd_pd(const doubleV a, const doubleV b, const doubleV c) {
 	return a*b + c;
 }
 
 #if !defined(__GNUC__) && !defined(__clang__)
-__m128d operator+(const __m128d &a, const __m128d &b) {
+doubleV operator+(const doubleV &a, const doubleV &b) {
 	return _mm_add_pd(a, b);
 }
 
-__m128d operator-(const __m128d &a, const __m128d &b) {
+doubleV operator-(const doubleV &a, const doubleV &b) {
 	return _mm_sub_pd(a, b);
 }
 
-__m128d operator*(const __m128d &a, const __m128d &b) {
+doubleV operator*(const doubleV &a, const doubleV &b) {
 	return _mm_mul_pd(a, b);
 }
 
-__m128d operator/(const __m128d &a, const __m128d &b) {
+doubleV operator/(const doubleV &a, const doubleV &b) {
 	return _mm_div_pd(a, b);
 }
 
-__m128d operator&&(const __m128d &a, const __m128d &b) {
+doubleV operator&&(const doubleV &a, const doubleV &b) {
 	return _mm_and_pd(a, b);
 }
 #endif

@@ -32,7 +32,7 @@ private:
 	static const double waveNum; // [m^-1]
 	static const double angFreq; // [rad*Hz]
 
-	void force(const cloud_index currentParticle, const __m128d currentTime, const __m128d currentPositionX);
+	void force(const cloud_index currentParticle, const doubleV currentTime, const doubleV currentPositionX);
 };
 
 #endif // DRIVINGFORCE_H

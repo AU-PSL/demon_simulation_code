@@ -30,7 +30,7 @@ public:
 private:
 	double confineX, confineY; // [V/m^2]
 
-	void force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY);
+	void force(const cloud_index currentParticle, const doubleV currentPositionX, const doubleV currentPositionY);
 };
 
 #endif // RECTCONFINEMENTFORCE_H

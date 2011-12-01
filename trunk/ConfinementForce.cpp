@@ -38,9 +38,9 @@ void ConfinementForce::force4(const double currentTime) {
 }
 
 // F = c*q*r
-inline void ConfinementForce::force(const cloud_index currentParticle, const __m128d currentPositionX, 
-                                    const __m128d currentPositionY) {
-	const __m128d cV = _mm_set1_pd(confine)*_mm_load_pd(cloud->charge + currentParticle);
+inline void ConfinementForce::force(const cloud_index currentParticle, const doubleV currentPositionX, 
+                                    const doubleV currentPositionY) {
+	const doubleV cV = _mm_set1_pd(confine)*_mm_load_pd(cloud->charge + currentParticle);
 	
 	plusEqual_pd(cloud->forceX + currentParticle, cV*currentPositionX);
 	plusEqual_pd(cloud->forceY + currentParticle, cV*currentPositionY);

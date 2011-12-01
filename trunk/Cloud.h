@@ -27,7 +27,7 @@ public:
 	double * const m1, * const m2, * const m3, * const m4; // velocityY (Runge-Kutta) tidbits
 	double * const n1, * const n2, * const n3, * const n4; // positionsY (Runge-Kutta) tidbits
 	double * const forceX, * const forceY;
-	__m128d * const xCache, * const yCache, * const VxCache, * const VyCache;
+	doubleV * const xCache, * const yCache, * const VxCache, * const VyCache;
 	
 	RandomNumbers rands;
 	
@@ -45,35 +45,35 @@ public:
 	void writeCloudSetup(fitsfile * const file, int &error) const;
 	void writeTimeStep(fitsfile * const file, int &error, double currentTime) const;
     
-	const __m128d getx1_pd(const cloud_index i) const;
-	const __m128d getx2_pd(const cloud_index i) const;
-	const __m128d getx3_pd(const cloud_index i) const;
-	const __m128d getx4_pd(const cloud_index i) const;
+	const doubleV getx1_pd(const cloud_index i) const;
+	const doubleV getx2_pd(const cloud_index i) const;
+	const doubleV getx3_pd(const cloud_index i) const;
+	const doubleV getx4_pd(const cloud_index i) const;
 
-	const __m128d getx1r_pd(const cloud_index i) const;
-	const __m128d getx2r_pd(const cloud_index i) const;
-	const __m128d getx3r_pd(const cloud_index i) const;
-	const __m128d getx4r_pd(const cloud_index i) const;
+	const doubleV getx1r_pd(const cloud_index i) const;
+	const doubleV getx2r_pd(const cloud_index i) const;
+	const doubleV getx3r_pd(const cloud_index i) const;
+	const doubleV getx4r_pd(const cloud_index i) const;
 	
-	const __m128d gety1_pd(const cloud_index i) const;
-	const __m128d gety2_pd(const cloud_index i) const;
-	const __m128d gety3_pd(const cloud_index i) const;
-	const __m128d gety4_pd(const cloud_index i) const;
+	const doubleV gety1_pd(const cloud_index i) const;
+	const doubleV gety2_pd(const cloud_index i) const;
+	const doubleV gety3_pd(const cloud_index i) const;
+	const doubleV gety4_pd(const cloud_index i) const;
     
-	const __m128d gety1r_pd(const cloud_index i) const;
-	const __m128d gety2r_pd(const cloud_index i) const;
-	const __m128d gety3r_pd(const cloud_index i) const;
-	const __m128d gety4r_pd(const cloud_index i) const;
+	const doubleV gety1r_pd(const cloud_index i) const;
+	const doubleV gety2r_pd(const cloud_index i) const;
+	const doubleV gety3r_pd(const cloud_index i) const;
+	const doubleV gety4r_pd(const cloud_index i) const;
     
-	const __m128d getVx1_pd(const cloud_index i) const;
-	const __m128d getVx2_pd(const cloud_index i) const;
-	const __m128d getVx3_pd(const cloud_index i) const;
-	const __m128d getVx4_pd(const cloud_index i) const;
+	const doubleV getVx1_pd(const cloud_index i) const;
+	const doubleV getVx2_pd(const cloud_index i) const;
+	const doubleV getVx3_pd(const cloud_index i) const;
+	const doubleV getVx4_pd(const cloud_index i) const;
 	
-	const __m128d getVy1_pd(const cloud_index i) const;
-	const __m128d getVy2_pd(const cloud_index i) const;
-	const __m128d getVy3_pd(const cloud_index i) const;
-	const __m128d getVy4_pd(const cloud_index i) const;
+	const doubleV getVy1_pd(const cloud_index i) const;
+	const doubleV getVy2_pd(const cloud_index i) const;
+	const doubleV getVy3_pd(const cloud_index i) const;
+	const doubleV getVy4_pd(const cloud_index i) const;
 	
 	static Cloud * const initializeGrid(const cloud_index numParticles,
 										const double rMean, const double rSigma,
