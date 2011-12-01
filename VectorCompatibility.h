@@ -29,6 +29,50 @@ typedef __m128 floatV;
 
 #endif
 
+/*===- Load/Store ---------------------------------------------------------===*/
+
+static inline void store_pd(double * const a, const doubleV b) {
+#ifdef __AVX__
+    return _mm256_store_pd(a, b);
+#else
+    return _mm_store_pd(a, b);
+#endif
+}
+
+static inline const doubleV load_pd(double * const a) {
+#ifdef __AVX__
+    return _mm256_load_pd(a);
+#else
+    return _mm_load_pd(a);
+#endif
+}
+
+/*===- Set ----------------------------------------------------------------===*/
+
+static inline const doubleV set1_pd(const double a) {
+#ifdef __AVX__
+    return _mm256_set1_pd(a);
+#else
+    return _mm_set1_pd(a);
+#endif
+}
+
+static inline const floatV set1_ps(const float a) {
+#ifdef __AVX__
+    return _mm256_set1_ps(a);
+#else
+    return _mm_set1_ps(a);
+#endif
+}
+
+static inline const doubleV set0_pd() {
+#ifdef __AVX__
+    return _mm256_setzero_pd();
+#else
+    return _mm_setzero_pd();
+#endif
+}
+
 /*===- Arithmatic ---------------------------------------------------------===*/
 
 static inline void plusEqual_pd(double * const a, const doubleV b) {
@@ -153,6 +197,14 @@ static inline const floatV sqrt_ps(const floatV a) {
 
 /*===- Comparison ---------------------------------------------------------===*/
 
+static inline const int movemask_pd(const doubleV a) {
+#ifdef __AVX__
+    return _mm256_movemask_pd(a);
+#else
+    return _mm_movemask_pd(a);
+#endif
+}
+
 static inline const int movemask_ps(const floatV a) {
 #ifdef __AVX__
     return _mm256_movemask_ps(a);
@@ -169,47 +221,29 @@ static inline const floatV cmple_ps(const floatV a, const floatV b) {
 #endif
 }
 
-/*===- Set ----------------------------------------------------------------===*/
-
-static inline const doubleV set1_pd(const double a) {
+static inline const doubleV cmpgt_pd(const doubleV a, const double b) {
 #ifdef __AVX__
-    return _mm256_set1_pd(a);
+    return _mm256_cmp_pd(a, _mm256_set1_pd(b), LT_OS);
 #else
-    return _mm_set1_pd(a);
+    return _mm_cmpgt_pd(a, _mm_set1_pd(b));
 #endif
 }
 
-static inline const floatV set1_ps(const float a) {
+static inline const doubleV cmplt_pd(const doubleV a, const double b) {
 #ifdef __AVX__
-    return _mm256_set1_ps(a);
+    return _mm256_cmp_pd(a, _mm256_set1_pd(b), GT_OS);
 #else
-    return _mm_set1_ps(a);
+    return _mm_cmplt_pd(a, _mm_set1_pd(b));
 #endif
 }
 
-static inline const doubleV set0_pd() {
-#ifdef __AVX__
-    return _mm256_setzero_pd();
-#else
-    return _mm_setzero_pd();
-#endif
-}
+/*===- Logical ------------------------------------------------------------===*/
 
-/*===- Load/Store ---------------------------------------------------------===*/
-
-static inline void store_pd(double * const a, const doubleV b) {
+static inline const doubleV and_pd(const doubleV a, const doubleV b) {
 #ifdef __AVX__
-    return _mm256_store_pd(a, b);
+    return _mm256_and_pd(a, b);
 #else
-    return _mm_store_pd(a, b);
-#endif
-}
-
-static inline const doubleV load_pd(double * const a) {
-#ifdef __AVX__
-    return _mm256_load_pd(a);
-#else
-    return _mm_load_pd(a);
+    return _mm_and_pd(a, b);
 #endif
 }
 
