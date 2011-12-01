@@ -308,8 +308,8 @@ void parseCommandLineOptions(int argc, char * const argv[]) {
 			case 'n': // set "n"umber of particles:
 				checkOption(argc, argv, i, 'n', 1, 
                             "number of particles", CI, &numParticles);
-				if (numParticles%4) {
-                    numParticles += numParticles%4;
+				if (numParticles%FLOAT_STRIDE) {
+                    numParticles += numParticles%FLOAT_STRIDE;
                     cout << "Warning: -n requires multiples of 4 numbers of particles. Incrementing number of particles to (" 
 					<< numParticles << ")." << endl;
                 }

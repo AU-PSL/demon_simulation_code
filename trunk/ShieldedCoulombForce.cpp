@@ -13,11 +13,11 @@
 const double ShieldedCoulombForce::coulomb = 1.0/(4.0*M_PI*Cloud::epsilon0);
 
 ShieldedCoulombForce::ShieldedCoulombForce(Cloud * const C, const double shieldingConstant)
-: Force(C), shielding(shieldingConstant) SEMAPHORES_MALLOC(C->n/2) {
-    SEMAPHORES_INIT(cloud->n/2)
+: Force(C), shielding(shieldingConstant) SEMAPHORES_MALLOC(C->n/DOUBLE_STRIDE) {
+    SEMAPHORES_INIT(cloud->n/DOUBLE_STRIDE)
 }
 ShieldedCoulombForce::~ShieldedCoulombForce() {
-    SEMAPHORES_FREE(cloud->n/2)
+    SEMAPHORES_FREE(cloud->n/DOUBLE_STRIDE)
 }
 
 void ShieldedCoulombForce::force1(const double currentTime) {
@@ -28,7 +28,7 @@ void ShieldedCoulombForce::force1(const double currentTime) {
 #else
 	const cloud_index outerLoop = numParticles - 1;
 #endif
-    BEGIN_PARALLEL_FOR(currentParticle, e, outerLoop, 2, dynamic)
+    BEGIN_PARALLEL_FOR(currentParticle, e, outerLoop, DOUBLE_STRIDE, dynamic)
         const doubleV vx1 = cloud->getx1_pd(currentParticle);
         const doubleV vy1 = cloud->gety1_pd(currentParticle);
         const doubleV vq1 = _mm_load_pd(cloud->charge + currentParticle);
@@ -42,7 +42,7 @@ void ShieldedCoulombForce::force1(const double currentTime) {
                  
         force(currentParticle, currentParticle + 1, q1, q2, x1 - x2, y1 - y2);
                  
-        for (cloud_index i = currentParticle + 2; i < numParticles; i += 2) {
+        for (cloud_index i = currentParticle + DOUBLE_STRIDE; i < numParticles; i += DOUBLE_STRIDE) {
 			double * const c = cloud->charge + i;
             force(currentParticle, i, vq1, _mm_load_pd(c), vx1 - cloud->getx1_pd(i), vy1 - cloud->gety1_pd(i));
             forcer(currentParticle, i, vq1, _mm_loadr_pd(c), vx1 - cloud->getx1r_pd(i), vy1 - cloud->gety1r_pd(i));
@@ -58,7 +58,7 @@ void ShieldedCoulombForce::force2(const double currentTime) {
 #else
 	const cloud_index outerLoop = numParticles - 1;
 #endif
-    BEGIN_PARALLEL_FOR(currentParticle, e, outerLoop, 2, dynamic)
+    BEGIN_PARALLEL_FOR(currentParticle, e, outerLoop, DOUBLE_STRIDE, dynamic)
 		const doubleV vx1 = cloud->getx2_pd(currentParticle);
 		const doubleV vy1 = cloud->gety2_pd(currentParticle);
 		const doubleV vq1 = _mm_load_pd(cloud->charge + currentParticle);
@@ -71,7 +71,7 @@ void ShieldedCoulombForce::force2(const double currentTime) {
 		_mm_storeh_pd(&q2, vq1);
 
 		force(currentParticle, currentParticle + 1, q1, q2, x1 - x2, y1 - y2);
-		for (cloud_index i = currentParticle + 2; i < numParticles; i += 2) {
+		for (cloud_index i = currentParticle + DOUBLE_STRIDE; i < numParticles; i += DOUBLE_STRIDE) {
 			double * const c = cloud->charge + i;
 			force(currentParticle, i, vq1, _mm_load_pd(c), vx1 - cloud->getx2_pd(i), vy1 - cloud->gety2_pd(i));
 			forcer(currentParticle, i, vq1, _mm_loadr_pd(c), vx1 - cloud->getx2r_pd(i), vy1 - cloud->gety2r_pd(i));
@@ -87,7 +87,7 @@ void ShieldedCoulombForce::force3(const double currentTime) {
 #else
 	const cloud_index outerLoop = numParticles - 1;
 #endif
-    BEGIN_PARALLEL_FOR(currentParticle, e, outerLoop, 2, dynamic)
+    BEGIN_PARALLEL_FOR(currentParticle, e, outerLoop, DOUBLE_STRIDE, dynamic)
 		const doubleV vx1 = cloud->getx3_pd(currentParticle);
 		const doubleV vy1 = cloud->gety3_pd(currentParticle);
 		const doubleV vq1 = _mm_load_pd(cloud->charge + currentParticle);
@@ -100,7 +100,7 @@ void ShieldedCoulombForce::force3(const double currentTime) {
 		_mm_storeh_pd(&q2, vq1);
 
 		force(currentParticle, currentParticle + 1, q1, q2, x1 - x2, y1 - y2);
-		for (cloud_index i = currentParticle + 2; i < numParticles; i += 2) {
+		for (cloud_index i = currentParticle + DOUBLE_STRIDE; i < numParticles; i += DOUBLE_STRIDE) {
 			double * const c = cloud->charge + i;
 			force(currentParticle, i, vq1, _mm_load_pd(c), vx1 - cloud->getx3_pd(i), vy1 - cloud->gety3_pd(i));
 			forcer(currentParticle, i, vq1, _mm_loadr_pd(c), vx1 - cloud->getx3r_pd(i), vy1 - cloud->gety3r_pd(i));
@@ -116,7 +116,7 @@ void ShieldedCoulombForce::force4(const double currentTime) {
 #else
 	const cloud_index outerLoop = numParticles - 1;
 #endif
-    BEGIN_PARALLEL_FOR(currentParticle, e, outerLoop, 2, dynamic)
+    BEGIN_PARALLEL_FOR(currentParticle, e, outerLoop, DOUBLE_STRIDE, dynamic)
 		const doubleV vx1 = cloud->getx4_pd(currentParticle);
 		const doubleV vy1 = cloud->gety4_pd(currentParticle);
 		const doubleV vq1 = _mm_load_pd(cloud->charge + currentParticle);
@@ -129,7 +129,7 @@ void ShieldedCoulombForce::force4(const double currentTime) {
 		_mm_storeh_pd(&q2, vq1);
 
 		force(currentParticle, currentParticle + 1, q1, q2, x1 - x2, y1 - y2);
-		for (cloud_index i = currentParticle + 2; i < numParticles; i += 2) {
+		for (cloud_index i = currentParticle + DOUBLE_STRIDE; i < numParticles; i += DOUBLE_STRIDE) {
 			double * const c = cloud->charge + i;
 			force(currentParticle, i, vq1, _mm_load_pd(c), vx1 - cloud->getx4_pd(i), vy1 - cloud->gety4_pd(i));
 			forcer(currentParticle, i, vq1, _mm_loadr_pd(c), vx1 - cloud->getx4r_pd(i), vy1 - cloud->gety4r_pd(i));
@@ -151,14 +151,14 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
 		const double forceC = coulomb*currentCharge*iCharge*(1.0 + valExp)
             /(displacement*displacement*displacement*exp(valExp));
         
-        SEMAPHORE_WAIT(currentParticle/2)
+        SEMAPHORE_WAIT(currentParticle/DOUBLE_STRIDE)
 		cloud->forceX[currentParticle] += forceC*displacementX;
 		cloud->forceY[currentParticle] += forceC*displacementY;
 
 		// equal and opposite force:
 		cloud->forceX[iParticle] -= forceC*displacementX;
 		cloud->forceY[iParticle] -= forceC*displacementY;
-        SEMAPHORE_SIGNAL(currentParticle/2)
+        SEMAPHORE_SIGNAL(currentParticle/DOUBLE_STRIDE)
 	}
 }
 
@@ -193,16 +193,16 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
     const doubleV forcevX = forceC*displacementX;
 	const doubleV forcevY = forceC*displacementY;
 
-	SEMAPHORE_WAIT(currentParticle/2)
+	SEMAPHORE_WAIT(currentParticle/DOUBLE_STRIDE)
 	plusEqual_pd(cloud->forceX + currentParticle, forcevX);
 	plusEqual_pd(cloud->forceY + currentParticle, forcevY);
-    SEMAPHORE_SIGNAL(currentParticle/2)
+    SEMAPHORE_SIGNAL(currentParticle/DOUBLE_STRIDE)
 
-    SEMAPHORE_WAIT(iParticle/2)
+    SEMAPHORE_WAIT(iParticle/DOUBLE_STRIDE)
 	// equal and opposite force:
     minusEqual_pd(cloud->forceX + iParticle, forcevX);
 	minusEqual_pd(cloud->forceY + iParticle, forcevY);
-    SEMAPHORE_SIGNAL(iParticle/2)
+    SEMAPHORE_SIGNAL(iParticle/DOUBLE_STRIDE)
 }
 
 // F_i,j = e0*q_i*q_j/(|r_i - r_j|)^2*Exp(-s*|r_i - r_j|)*(1 + c*|r_i - r_j|)
@@ -236,16 +236,16 @@ inline void ShieldedCoulombForce::forcer(const cloud_index currentParticle, cons
 	const doubleV forcevX = forceC*displacementX;
 	const doubleV forcevY = forceC*displacementY;
 
-    SEMAPHORE_WAIT(currentParticle/2)
+    SEMAPHORE_WAIT(currentParticle/DOUBLE_STRIDE)
     plusEqual_pd(cloud->forceX + currentParticle, forcevX);
 	plusEqual_pd(cloud->forceY + currentParticle, forcevY);
-    SEMAPHORE_SIGNAL(currentParticle/2)
+    SEMAPHORE_SIGNAL(currentParticle/DOUBLE_STRIDE)
     
-    SEMAPHORE_WAIT(iParticle/2)
+    SEMAPHORE_WAIT(iParticle/DOUBLE_STRIDE)
 	// equal and opposite force:
     minusEqualr_pd(cloud->forceX + iParticle, forcevX);
 	minusEqualr_pd(cloud->forceY + iParticle, forcevY);
-    SEMAPHORE_SIGNAL(iParticle/2)
+    SEMAPHORE_SIGNAL(iParticle/DOUBLE_STRIDE)
 }
 
 void ShieldedCoulombForce::writeForce(fitsfile * const file, int * const error) const {

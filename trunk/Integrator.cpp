@@ -51,7 +51,7 @@ const double Integrator::modifyTimeStep(float currentDist, double currentTimeSte
 #else
 	const cloud_index outerLoop = numPar - 1;
 #endif
-    BEGIN_PARALLEL_FOR(outerIndex, e, outerLoop, 4, dynamic)
+    BEGIN_PARALLEL_FOR(outerIndex, e, outerLoop, FLOAT_STRIDE, dynamic)
 		// caculate separation distance b/t adjacent elements:
 		const floatV outPosX = loadFloatVector(cloud->x + outerIndex);
 		const floatV outPosY = loadFloatVector(cloud->y + outerIndex);
@@ -99,7 +99,7 @@ const double Integrator::modifyTimeStep(float currentDist, double currentTimeSte
 		}
         
 		// Calculate separation distance b/t nonadjacent elements:
-		for (cloud_index innerIndex = outerIndex + 4; innerIndex < numPar; innerIndex += 4) {
+		for (cloud_index innerIndex = outerIndex + FLOAT_STRIDE; innerIndex < numPar; innerIndex += FLOAT_STRIDE) {
 			const floatV inPosX = loadFloatVector(cloud->x + innerIndex);
 			const floatV inPosY = loadFloatVector(cloud->y + innerIndex);
 			

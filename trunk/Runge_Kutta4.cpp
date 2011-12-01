@@ -27,7 +27,7 @@ void Runge_Kutta4::moveParticles(const double endTime) {
         
 		operate1(currentTime);
 		force1(currentTime); // compute net force1
-		BEGIN_PARALLEL_FOR(i, e, numParticles, 2, static) // calculate k1 and l1 for entire cloud
+		BEGIN_PARALLEL_FOR(i, e, numParticles, DOUBLE_STRIDE, static) // calculate k1 and l1 for entire cloud
 			const doubleV vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass into vector
 
 			// assign force pointers for stylistic purposes:
@@ -47,7 +47,7 @@ void Runge_Kutta4::moveParticles(const double endTime) {
         
 		operate2(currentTime + dt/2.0);
 		force2(currentTime + dt/2.0); // compute net force2
-		BEGIN_PARALLEL_FOR(i, e, numParticles, 2, static) // calculate k2 and l2 for entire cloud
+		BEGIN_PARALLEL_FOR(i, e, numParticles, DOUBLE_STRIDE, static) // calculate k2 and l2 for entire cloud
 			const doubleV vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
 
 			// assign force pointers:
@@ -67,7 +67,7 @@ void Runge_Kutta4::moveParticles(const double endTime) {
 
 		operate3(currentTime + dt/2.0);
 		force3(currentTime + dt/2.0); // compute net force3
-		BEGIN_PARALLEL_FOR(i, e, numParticles, 2, static) // calculate k3 and l3 for entire cloud
+		BEGIN_PARALLEL_FOR(i, e, numParticles, DOUBLE_STRIDE, static) // calculate k3 and l3 for entire cloud
 			const doubleV vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
 
 			// assign force pointers:
@@ -87,7 +87,7 @@ void Runge_Kutta4::moveParticles(const double endTime) {
         
 		operate4(currentTime + dt);
 		force4(currentTime + dt); // compute net force4
-		BEGIN_PARALLEL_FOR(i, e, numParticles, 2, static) // calculate k4 and l4 for entire cloud
+		BEGIN_PARALLEL_FOR(i, e, numParticles, DOUBLE_STRIDE, static) // calculate k4 and l4 for entire cloud
 			const doubleV vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
 
 			// assign force pointers:
@@ -105,7 +105,7 @@ void Runge_Kutta4::moveParticles(const double endTime) {
 		END_PARALLEL_FOR
 
         // Calculate next position and next velocity for entire cloud.
-        BEGIN_PARALLEL_FOR(i, e, numParticles, 2, static)
+        BEGIN_PARALLEL_FOR(i, e, numParticles, DOUBLE_STRIDE, static)
 			// load ith and (i+1)th k's into vectors:
 			const doubleV vk1 = _mm_load_pd(cloud->k1 + i);
 			const doubleV vk2 = _mm_load_pd(cloud->k2 + i);
