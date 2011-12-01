@@ -13,13 +13,13 @@
 ThermalForceLocalized::ThermalForceLocalized(Cloud * const C, const double thermRed1, 
                                              const double thermRed2, const double specifiedRadius) 
 : Force(C), heatingRadius(specifiedRadius), heatVal1(thermRed1), heatVal2(thermRed2), 
-evenRandCache(new RandCache[C->n/2]), oddRandCache(new RandCache[C->n/2])
+evenRandCache(new RandCache[C->n/DOUBLE_STRIDE]), oddRandCache(new RandCache[C->n/DOUBLE_STRIDE])
 #ifdef DISPATCH_QUEUES
 , evenRandGroup(dispatch_group_create()), oddRandGroup(dispatch_group_create()),
 randQueue(dispatch_queue_create("com.DEMON.ThermalForceLocalized", NULL))
 #endif
 {
-    for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
+    for (cloud_index i = 0, e = cloud->n/DOUBLE_STRIDE; i < e; i++)
         oddRandCache[i] = RandCache(_mm_set_pd(cloud->rands.uniformZeroToOne(), 
 											   cloud->rands.uniformZeroToOne()), 
 									cloud->rands.uniformZeroToTwoPi(), 
@@ -42,7 +42,7 @@ void ThermalForceLocalized::force1(const double currentTime) {
 #ifdef DISPATCH_QUEUES
     dispatch_group_async(evenRandGroup, randQueue, ^{
 #endif
-    for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
+    for (cloud_index i = 0, e = cloud->n/DOUBLE_STRIDE; i < e; i++)
         evenRandCache[i] = RandCache(_mm_set_pd(cloud->rands.uniformZeroToOne(), 
 												cloud->rands.uniformZeroToOne()), 
 									 cloud->rands.uniformZeroToTwoPi(), 
@@ -52,9 +52,9 @@ void ThermalForceLocalized::force1(const double currentTime) {
 	dispatch_group_wait(oddRandGroup, DISPATCH_TIME_FOREVER);
 #endif   
 
-	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, DOUBLE_STRIDE, static)
 		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle), 
-              oddRandCache[currentParticle/2]);
+              oddRandCache[currentParticle/DOUBLE_STRIDE]);
     END_PARALLEL_FOR
 }
 
@@ -63,7 +63,7 @@ void ThermalForceLocalized::force2(const double currentTime) {
 #ifdef DISPATCH_QUEUES
     dispatch_group_async(oddRandGroup, randQueue, ^{
 #endif
-    for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
+    for (cloud_index i = 0, e = cloud->n/DOUBLE_STRIDE; i < e; i++)
         oddRandCache[i] = RandCache(_mm_set_pd(cloud->rands.uniformZeroToOne(), 
 											   cloud->rands.uniformZeroToOne()), 
 									cloud->rands.uniformZeroToTwoPi(), 
@@ -73,9 +73,9 @@ void ThermalForceLocalized::force2(const double currentTime) {
 	dispatch_group_wait(evenRandGroup, DISPATCH_TIME_FOREVER);
 #endif
     
-    BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static) 
+    BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, DOUBLE_STRIDE, static) 
 		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle), 
-              evenRandCache[currentParticle/2]);
+              evenRandCache[currentParticle/DOUBLE_STRIDE]);
     END_PARALLEL_FOR
 }
 
@@ -84,7 +84,7 @@ void ThermalForceLocalized::force3(const double currentTime) {
 #ifdef DISPATCH_QUEUES
     dispatch_group_async(evenRandGroup, randQueue, ^{
 #endif
-        for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
+        for (cloud_index i = 0, e = cloud->n/DOUBLE_STRIDE; i < e; i++)
             evenRandCache[i] = RandCache(_mm_set_pd(cloud->rands.uniformZeroToOne(), 
 													cloud->rands.uniformZeroToOne()), 
 										 cloud->rands.uniformZeroToTwoPi(), 
@@ -94,9 +94,9 @@ void ThermalForceLocalized::force3(const double currentTime) {
 	dispatch_group_wait(oddRandGroup, DISPATCH_TIME_FOREVER);
 #endif
     
-    BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static) 
+    BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, DOUBLE_STRIDE, static) 
     force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle), 
-          oddRandCache[currentParticle/2]);
+          oddRandCache[currentParticle/DOUBLE_STRIDE]);
     END_PARALLEL_FOR
 }
 
@@ -105,7 +105,7 @@ void ThermalForceLocalized::force4(const double currentTime) {
 #ifdef DISPATCH_QUEUES
     dispatch_group_async(oddRandGroup, randQueue, ^{
 #endif
-        for (cloud_index i = 0, e = cloud->n/2; i < e; i++)
+        for (cloud_index i = 0, e = cloud->n/DOUBLE_STRIDE; i < e; i++)
             oddRandCache[i] = RandCache(_mm_set_pd(cloud->rands.uniformZeroToOne(), 
 												   cloud->rands.uniformZeroToOne()), 
 										cloud->rands.uniformZeroToTwoPi(), 
@@ -115,9 +115,9 @@ void ThermalForceLocalized::force4(const double currentTime) {
 	dispatch_group_wait(evenRandGroup, DISPATCH_TIME_FOREVER);
 #endif
     
-    BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static) 
+    BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, DOUBLE_STRIDE, static) 
     force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle), 
-          evenRandCache[currentParticle/2]);
+          evenRandCache[currentParticle/DOUBLE_STRIDE]);
     END_PARALLEL_FOR
 }
 

@@ -12,6 +12,14 @@
 
 #include <immintrin.h>
 
+#ifdef __AVX__
+#define FLOAT_STRIDE  8
+#define DOUBLE_STRIDE 4
+#else
+#define FLOAT_STRIDE  4
+#define DOUBLE_STRIDE 2
+#endif
+
 typedef __m128d doubleV;
 typedef __m128 floatV;
 

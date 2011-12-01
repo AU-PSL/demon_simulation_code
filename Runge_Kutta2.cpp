@@ -23,7 +23,7 @@ void Runge_Kutta2::moveParticles(const double endTime) {
         
 		operate1(currentTime);
 		force1(currentTime); // compute net force1
-		BEGIN_PARALLEL_FOR(i, e, numParticles, 2, static) // calculate k1 and l1 for entire cloud
+		BEGIN_PARALLEL_FOR(i, e, numParticles, DOUBLE_STRIDE, static) // calculate k1 and l1 for entire cloud
 			const doubleV vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass into vector
             
 			// assign force pointers for stylistic purposes:
@@ -43,7 +43,7 @@ void Runge_Kutta2::moveParticles(const double endTime) {
         
 		operate2(currentTime + dt/2.0);
 		force2(currentTime + dt/2.0); // compute net force2
-		BEGIN_PARALLEL_FOR(i, e, numParticles, 2, static) // calculate k2 and l for entire cloud
+		BEGIN_PARALLEL_FOR(i, e, numParticles, DOUBLE_STRIDE, static) // calculate k2 and l for entire cloud
 			const doubleV vmass = _mm_load_pd(cloud->mass + i); // load ith and (i+1)th mass
             
 			// assign force pointers:
@@ -62,7 +62,7 @@ void Runge_Kutta2::moveParticles(const double endTime) {
 		END_PARALLEL_FOR
         
         // Calculate next position and next velocity for entire cloud.
-		BEGIN_PARALLEL_FOR(i, e, numParticles, 2, static)
+		BEGIN_PARALLEL_FOR(i, e, numParticles, DOUBLE_STRIDE, static)
 			plusEqual_pd(cloud->Vx + i, _mm_load_pd(cloud->k2 + i));
 			plusEqual_pd(cloud->x + i, _mm_load_pd(cloud->l2 + i));
 			plusEqual_pd(cloud->Vy + i, _mm_load_pd(cloud->m2 + i));

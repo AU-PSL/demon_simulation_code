@@ -15,28 +15,28 @@ const double DrivingForce::angFreq = 2.0*M_PI*10.0; // 10Hz
 
 void DrivingForce::force1(const double currentTime) {
 	const doubleV vtime = _mm_set1_pd(currentTime);
-	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, DOUBLE_STRIDE, static)
 		force(currentParticle, vtime, cloud->getx1_pd(currentParticle));
     END_PARALLEL_FOR
 }
 
 void DrivingForce::force2(const double currentTime) {
 	const doubleV vtime = _mm_set1_pd(currentTime);
-	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static) 
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, DOUBLE_STRIDE, static) 
 		force(currentParticle, vtime, cloud->getx2_pd(currentParticle));
     END_PARALLEL_FOR
 }
 
 void DrivingForce::force3(const double currentTime) {
 	const doubleV vtime = _mm_set1_pd(currentTime);
-	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static) 
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, DOUBLE_STRIDE, static) 
 		force(currentParticle, vtime, cloud->getx3_pd(currentParticle));
     END_PARALLEL_FOR
 }
 
 void DrivingForce::force4(const double currentTime) {
 	const doubleV vtime = _mm_set1_pd(currentTime);
-	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, DOUBLE_STRIDE, static)
 		force(currentParticle, vtime, cloud->getx4_pd(currentParticle));
     END_PARALLEL_FOR
 }

@@ -11,28 +11,28 @@
 
 void RectConfinementForce::force1(const double currentTime) {
     (void)currentTime;
-	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, DOUBLE_STRIDE, static)
 		force(currentParticle, cloud->getx1_pd(currentParticle), cloud->gety1_pd(currentParticle));
     END_PARALLEL_FOR
 }
 
 void RectConfinementForce::force2(const double currentTime) {
     (void)currentTime;
-	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static) 
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, DOUBLE_STRIDE, static) 
 		force(currentParticle, cloud->getx2_pd(currentParticle), cloud->gety2_pd(currentParticle));
     END_PARALLEL_FOR
 }
 
 void RectConfinementForce::force3(const double currentTime) {
     (void)currentTime;
-	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static)
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, DOUBLE_STRIDE, static)
 		force(currentParticle, cloud->getx3_pd(currentParticle), cloud->gety3_pd(currentParticle));
     END_PARALLEL_FOR
 }
 
 void RectConfinementForce::force4(const double currentTime) {
     (void)currentTime;
-	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static) 
+	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, DOUBLE_STRIDE, static) 
 		force(currentParticle, cloud->getx4_pd(currentParticle), cloud->gety4_pd(currentParticle));
     END_PARALLEL_FOR
 }

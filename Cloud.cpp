@@ -25,8 +25,8 @@ l1(new double[n]), l2(new double[n]), l3(new double[n]), l4(new double[n]),
 m1(new double[n]), m2(new double[n]), m3(new double[n]), m4(new double[n]),
 n1(new double[n]), n2(new double[n]), n3(new double[n]), n4(new double[n]),
 forceX(new double[n]), forceY(new double[n]),
-xCache(new doubleV[n/2]), yCache(new doubleV[n/2]), 
-VxCache(new doubleV[n/2]), VyCache(new doubleV[n/2]) {
+xCache(new doubleV[n/DOUBLE_STRIDE]), yCache(new doubleV[n/DOUBLE_STRIDE]), 
+VxCache(new doubleV[n/DOUBLE_STRIDE]), VyCache(new doubleV[n/DOUBLE_STRIDE]) {
 #ifdef _OPENMP
 	omp_set_num_threads(omp_get_num_procs());
 #endif
@@ -218,15 +218,15 @@ const doubleV Cloud::getx1_pd(const cloud_index i) const {
 }
 
 const doubleV Cloud::getx2_pd(const cloud_index i) const {
-	return xCache[i/2]; // x + l1/2
+	return xCache[i/DOUBLE_STRIDE]; // x + l1/2
 }
 
 const doubleV Cloud::getx3_pd(const cloud_index i) const {
-	return xCache[i/2]; // x + l2/2
+	return xCache[i/DOUBLE_STRIDE]; // x + l2/2
 }
 
 const doubleV Cloud::getx4_pd(const cloud_index i) const {
-	return xCache[i/2]; // x + l3
+	return xCache[i/DOUBLE_STRIDE]; // x + l3
 }
 
 const doubleV Cloud::getx1r_pd(const cloud_index i) const {
@@ -234,17 +234,17 @@ const doubleV Cloud::getx1r_pd(const cloud_index i) const {
 }
 
 const doubleV Cloud::getx2r_pd(const cloud_index i) const {
-	const cloud_index j = i/2;
+	const cloud_index j = i/DOUBLE_STRIDE;
 	return _mm_shuffle_pd(xCache[j], xCache[j], _MM_SHUFFLE2(0, 1));
 }
 
 const doubleV Cloud::getx3r_pd(const cloud_index i) const {
-	const cloud_index j = i/2;
+	const cloud_index j = i/DOUBLE_STRIDE;
 	return _mm_shuffle_pd(xCache[j], xCache[j], _MM_SHUFFLE2(0, 1));
 }
 
 const doubleV Cloud::getx4r_pd(const cloud_index i) const {
-	const cloud_index j = i/2;
+	const cloud_index j = i/DOUBLE_STRIDE;
 	return _mm_shuffle_pd(xCache[j], xCache[j], _MM_SHUFFLE2(0, 1));
 }
 
@@ -254,15 +254,15 @@ const doubleV Cloud::gety1_pd(const cloud_index i) const {
 }
 
 const doubleV Cloud::gety2_pd(const cloud_index i) const {
-	return yCache[i/2]; // y + n1/2
+	return yCache[i/DOUBLE_STRIDE]; // y + n1/2
 }
 
 const doubleV Cloud::gety3_pd(const cloud_index i) const {
-	return yCache[i/2]; // y + n2/2
+	return yCache[i/DOUBLE_STRIDE]; // y + n2/2
 }
 
 const doubleV Cloud::gety4_pd(const cloud_index i) const {
-	return yCache[i/2]; // y + n3
+	return yCache[i/DOUBLE_STRIDE]; // y + n3
 }
 
 const doubleV Cloud::gety1r_pd(const cloud_index i) const 
@@ -271,17 +271,17 @@ const doubleV Cloud::gety1r_pd(const cloud_index i) const
 }
 
 const doubleV Cloud::gety2r_pd(const cloud_index i) const {
-	const cloud_index j = i/2;
+	const cloud_index j = i/DOUBLE_STRIDE;
 	return _mm_shuffle_pd(yCache[j], yCache[j], _MM_SHUFFLE2(0, 1));
 }
 
 const doubleV Cloud::gety3r_pd(const cloud_index i) const {
-	const cloud_index j = i/2;
+	const cloud_index j = i/DOUBLE_STRIDE;
 	return _mm_shuffle_pd(yCache[j], yCache[j], _MM_SHUFFLE2(0, 1));
 }
 
 const doubleV Cloud::gety4r_pd(const cloud_index i) const {
-	const cloud_index j = i/2;
+	const cloud_index j = i/DOUBLE_STRIDE;
 	return _mm_shuffle_pd(yCache[j], yCache[j], _MM_SHUFFLE2(0, 1));
 }
 
@@ -291,15 +291,15 @@ const doubleV Cloud::getVx1_pd(const cloud_index i) const {
 }
 
 const doubleV Cloud::getVx2_pd(const cloud_index i) const {
-	return VxCache[i/2]; // Vx + k1/2
+	return VxCache[i/DOUBLE_STRIDE]; // Vx + k1/2
 }
 
 const doubleV Cloud::getVx3_pd(const cloud_index i) const {
-	return VxCache[i/2]; // Vx + k2/2
+	return VxCache[i/DOUBLE_STRIDE]; // Vx + k2/2
 }
 
 const doubleV Cloud::getVx4_pd(const cloud_index i) const {
-	return VxCache[i/2]; // Vx + k3
+	return VxCache[i/DOUBLE_STRIDE]; // Vx + k3
 }
 
 // Vy position helper functions ------------------------------------------------
@@ -308,13 +308,13 @@ const doubleV Cloud::getVy1_pd(const cloud_index i) const {
 }
 
 const doubleV Cloud::getVy2_pd(const cloud_index i) const {
-	return VyCache[i/2]; // Vy + m1/2
+	return VyCache[i/DOUBLE_STRIDE]; // Vy + m1/2
 }
 
 const doubleV Cloud::getVy3_pd(const cloud_index i) const {
-	return VyCache[i/2]; // Vy + m2/2
+	return VyCache[i/DOUBLE_STRIDE]; // Vy + m2/2
 }
 
 const doubleV Cloud::getVy4_pd(const cloud_index i) const {
-	return VyCache[i/2]; // Vy + m3
+	return VyCache[i/DOUBLE_STRIDE]; // Vy + m3
 }
