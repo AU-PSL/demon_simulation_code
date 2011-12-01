@@ -126,7 +126,7 @@ void ThermalForce::force4(const double currentTime) {
 inline void ThermalForce::force(const cloud_index currentParticle, const RandCache &rc) {
 	const doubleV thermV = _mm_set1_pd(heatVal)*rc.r;
 	
-	plusEqual_pd(cloud->forceX + currentParticle, thermV*_mm_set_pd(sin(rc.r2), sin(rc.r1))); // _mm_set_pd() is backwards
+	plusEqual_pd(cloud->forceX + currentParticle, thermV*_mm_set_pd(cos(rc.r2), cos(rc.r1))); // _mm_set_pd() is backwards
 	plusEqual_pd(cloud->forceY + currentParticle, thermV*_mm_set_pd(sin(rc.r2), sin(rc.r1)));
 }
 

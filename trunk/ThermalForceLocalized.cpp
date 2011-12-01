@@ -133,7 +133,7 @@ inline void ThermalForceLocalized::force(const cloud_index currentParticle, cons
 	const doubleV thermV = _mm_set_pd((mask & 2) ? heatVal1 : heatVal2, // _mm_set_pd() is backwards
 									  (mask & 1) ? heatVal1 : heatVal2)*rc.r;
 	
-	plusEqual_pd(cloud->forceX + currentParticle, thermV*_mm_set_pd(sin(rc.r2), sin(rc.r1))); // _mm_set_pd() is backwards
+	plusEqual_pd(cloud->forceX + currentParticle, thermV*_mm_set_pd(cos(rc.r2), cos(rc.r1))); // _mm_set_pd() is backwards
 	plusEqual_pd(cloud->forceY + currentParticle, thermV*_mm_set_pd(sin(rc.r2), sin(rc.r1)));
 }
 
