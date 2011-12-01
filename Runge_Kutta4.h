@@ -26,6 +26,9 @@ private:
   
 	void force3(const double currentTime) const; // rk substep 3
 	void force4(const double currentTime) const; // rk substep 4
+    
+    static const doubleV da(const doubleV a1, const doubleV a2, 
+                            const doubleV a3, const doubleV a4);
 };
 
 #endif // RUNGE_KUTTA4_H
