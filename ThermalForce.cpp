@@ -126,11 +126,8 @@ void ThermalForce::force4(const double currentTime) {
 inline void ThermalForce::force(const cloud_index currentParticle, const RandCache &rc) {
 	const __m128d thermV = _mm_set1_pd(heatVal)*rc.r;
 	
-	double * const pFx = cloud->forceX + currentParticle;
-	double * const pFy = cloud->forceY + currentParticle;
-	
-	_mm_store_pd(pFx, _mm_load_pd(pFx) + thermV*_mm_set_pd(sin(rc.h), sin(rc.l))); // _mm_set_pd() is backwards
-	_mm_store_pd(pFy, _mm_load_pd(pFy) + thermV*_mm_set_pd(cos(rc.h), cos(rc.l)));
+	plusEqual_pd(cloud->forceX + currentParticle, thermV*_mm_set_pd(sin(rc.h), sin(rc.l))); // _mm_set_pd() is backwards
+	plusEqual_pd(cloud->forceY + currentParticle, thermV*_mm_set_pd(sin(rc.h), sin(rc.l)));
 }
 
 void ThermalForce::writeForce(fitsfile * const file, int * const error) const {

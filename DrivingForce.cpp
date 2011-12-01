@@ -55,9 +55,9 @@ inline void DrivingForce::force(const cloud_index currentParticle, const __m128d
 	_mm_storeh_pd(&sinArgH, sinArg);
 	_mm_storel_pd(&expArgL, expArg);
 	_mm_storeh_pd(&expArgH, expArg);
-	
-	double * const pFx = cloud->forceX + currentParticle;
-	_mm_store_pd(pFx, _mm_load_pd(pFx) + _mm_set1_pd(amplitude)*_mm_set_pd(sin(sinArgH), sin(sinArgL))*_mm_set_pd(exp(expArgH), exp(expArgL))); // _mm_set_pd() is backwards
+
+	plusEqual_pd(cloud->forceX + currentParticle, 
+				 _mm_set1_pd(amplitude)*_mm_set_pd(sin(sinArgH), sin(sinArgL))*_mm_set_pd(exp(expArgH), exp(expArgL))); // _mm_set_pd() is backwards
 }
 
 void DrivingForce::writeForce(fitsfile * const file, int * const error) const {

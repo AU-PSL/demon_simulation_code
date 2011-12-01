@@ -130,17 +130,11 @@ void Runge_Kutta4::moveParticles(const double endTime) {
 			const __m128d vn3 = _mm_load_pd(cloud->n3 + i);
 			const __m128d vn4 = _mm_load_pd(cloud->n4 + i);
 
-			// assign position and velocity pointers (stylistic):
-			double * const px = cloud->x + i;
-			double * const py = cloud->y + i;
-			double * const pVx = cloud->Vx + i;
-			double * const pVy = cloud->Vy + i;
-
 			// calculate next positions and velocities:
-			_mm_store_pd(pVx, _mm_load_pd(pVx) + (vk1 + v2*(vk2 + vk3) + vk4)/v6);
-			_mm_store_pd(px, _mm_load_pd(px) + (vl1 + v2*(vl2 + vl3) + vl4)/v6);
-			_mm_store_pd(pVy, _mm_load_pd(pVy) + (vm1 + v2*(vm2 + vm3) + vm4)/v6);
-			_mm_store_pd(py, _mm_load_pd(py) + (vn1 + v2*(vn2 + vn3) + vn4)/v6);
+			plusEqual_pd(cloud->Vx + i, (vk1 + v2*(vk2 + vk3) + vk4)/v6);
+			plusEqual_pd(cloud->x + i, (vl1 + v2*(vl2 + vl3) + vl4)/v6);
+			plusEqual_pd(cloud->Vy + i, (vm1 + v2*(vm2 + vm3) + vm4)/v6);
+			plusEqual_pd(cloud->y + i, (vn1 + v2*(vn2 + vn3) + vn4)/v6);
 		END_PARALLEL_FOR
 
 		currentTime += dt;

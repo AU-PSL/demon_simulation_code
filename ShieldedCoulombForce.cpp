@@ -192,20 +192,16 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
         /(displacement*displacement*displacement);
     const __m128d forcevX = forceC*displacementX;
 	const __m128d forcevY = forceC*displacementY;
-    
-    double *pFx = cloud->forceX + currentParticle;
-	double *pFy = cloud->forceY + currentParticle;
-    SEMAPHORE_WAIT(currentParticle/2)
-    _mm_store_pd(pFx, _mm_load_pd(pFx) + forcevX);
-	_mm_store_pd(pFy, _mm_load_pd(pFy) + forcevY);
+
+	SEMAPHORE_WAIT(currentParticle/2)
+	plusEqual_pd(cloud->forceX + currentParticle, forcevX);
+	plusEqual_pd(cloud->forceY + currentParticle, forcevY);
     SEMAPHORE_SIGNAL(currentParticle/2)
 
-    pFx = cloud->forceX + iParticle;
-	pFy = cloud->forceY + iParticle;
     SEMAPHORE_WAIT(iParticle/2)
 	// equal and opposite force:
-    _mm_store_pd(pFx, _mm_load_pd(pFx) - forcevX);
-	_mm_store_pd(pFy, _mm_load_pd(pFy) - forcevY);
+    minusEqual_pd(cloud->forceX + iParticle, forcevX);
+	minusEqual_pd(cloud->forceY + iParticle, forcevY);
     SEMAPHORE_SIGNAL(iParticle/2)
 }
 
@@ -239,20 +235,16 @@ inline void ShieldedCoulombForce::forcer(const cloud_index currentParticle, cons
         /(displacement*displacement*displacement);
 	const __m128d forcevX = forceC*displacementX;
 	const __m128d forcevY = forceC*displacementY;
-    
-    double *pFx = cloud->forceX + currentParticle;
-	double *pFy = cloud->forceY + currentParticle;
+
     SEMAPHORE_WAIT(currentParticle/2)
-    _mm_store_pd(pFx, _mm_load_pd(pFx) + forcevX);
-	_mm_store_pd(pFy, _mm_load_pd(pFy) + forcevY);
+    plusEqual_pd(cloud->forceX + currentParticle, forcevX);
+	plusEqual_pd(cloud->forceY + currentParticle, forcevY);
     SEMAPHORE_SIGNAL(currentParticle/2)
     
-    pFx = cloud->forceX + iParticle;
-	pFy = cloud->forceY + iParticle;
     SEMAPHORE_WAIT(iParticle/2)
 	// equal and opposite force:
-	_mm_storer_pd(pFx, _mm_loadr_pd(pFx) - forcevX);
-	_mm_storer_pd(pFy, _mm_loadr_pd(pFy) - forcevY);
+    minusEqualr_pd(cloud->forceX + iParticle, forcevX);
+	minusEqualr_pd(cloud->forceY + iParticle, forcevY);
     SEMAPHORE_SIGNAL(iParticle/2)
 }
 

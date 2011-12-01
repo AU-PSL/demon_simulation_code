@@ -39,18 +39,16 @@ void ConfinementForceVoid::force4(const double currentTime) {
 
 // F = F_c - d*Exp(-d*r)*r
 inline void ConfinementForceVoid::force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY) {
-	const __m128d decayV = _mm_set1_pd(decay)*_mm_load_pd(cloud->charge + currentParticle);
+	const __m128d decayV = _mm_set1_pd(-decay)*_mm_load_pd(cloud->charge + currentParticle);
 	const __m128d r = _mm_sqrt_pd(currentPositionX*currentPositionX + currentPositionY*currentPositionY);
 
 	double rL, rH;
 	_mm_storel_pd(&rL, r);
 	_mm_storeh_pd(&rH, r);
 	const __m128d expR = _mm_set_pd(exp(-decay*rH), exp(-decay*rL))/r;
-
-	double * const pFx = cloud->forceX + currentParticle;
-	double * const pFy = cloud->forceY + currentParticle;
-	_mm_store_pd(pFx, _mm_load_pd(pFx) - decayV*expR*currentPositionX);
-	_mm_store_pd(pFy, _mm_load_pd(pFy) - decayV*expR*currentPositionY);
+	
+	plusEqual_pd(cloud->forceX + currentParticle, decayV*expR*currentPositionX);
+	plusEqual_pd(cloud->forceY + currentParticle, decayV*expR*currentPositionY);
 }
 
 void ConfinementForceVoid::writeForce(fitsfile * const file, int * const error) const {

@@ -41,11 +41,9 @@ void MagneticForce::force4(const double currentTime) {
 inline void MagneticForce::force(const cloud_index currentParticle, const __m128d currentVelocityX, 
                                  const __m128d currentVelocityY) {
 	const __m128d qB = _mm_set1_pd(BField)*_mm_load_pd(cloud->charge + currentParticle);
-	double * const pFx = cloud->forceX + currentParticle;
-	double * const pFy = cloud->forceY + currentParticle;
 
-	_mm_store_pd(pFx, _mm_load_pd(pFx) + qB*currentVelocityY);
-	_mm_store_pd(pFy, _mm_load_pd(pFy) - qB*currentVelocityX);
+	plusEqual_pd(cloud->forceX + currentParticle, qB*currentVelocityY);
+	minusEqual_pd(cloud->forceY + currentParticle, qB*currentVelocityX);
 }
 
 void MagneticForce::writeForce(fitsfile * const file, int * const error) const {
