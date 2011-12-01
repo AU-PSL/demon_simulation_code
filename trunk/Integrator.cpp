@@ -165,9 +165,14 @@ const double Integrator::modifyTimeStep(float currentDist, double currentTimeSte
 }
 
 inline floatV Integrator::loadFloatVector(double * const x) {
-	return _mm_set_ps((float)x[0], (float)x[1], (float)x[2], (float)x[3]);
+#ifdef __AVX__
+    return _mm256_set_ps((float)x[0], (float)x[1], (float)x[2], (float)x[3],
+                         (float)x[4], (float)x[5], (float)x[6], (float)x[7]);
+#else
+    return _mm_set_ps((float)x[0], (float)x[1], (float)x[2], (float)x[3]);
+#endif
 }
 
 inline bool Integrator::isWithInDistance(const floatV a, const floatV b, const float dist) {
-	return (bool)_mm_movemask_ps(_mm_cmple_ps(_mm_sqrt_ps(a*a + b*b), _mm_set1_ps(dist)));
+	return (bool)movemask_ps(cmple_ps(sqrt_ps(add_ps(mul_ps(a, a), mul_ps(b, b))), set1_ps(dist)));
 }
