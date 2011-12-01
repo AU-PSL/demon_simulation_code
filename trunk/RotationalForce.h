@@ -30,6 +30,7 @@ private:
 	double innerRad, outerRad, rotationalConst; // [m], [m], [N]
 
 	void force(const cloud_index currentParticle, const doubleV currentPositionX, const doubleV currentPositionY);
+    const doubleV rotationConstant(const int mask);
 };
 
 #endif // ROTATIONALFORCE_H
