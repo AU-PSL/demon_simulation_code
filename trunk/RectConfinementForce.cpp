@@ -38,12 +38,15 @@ void RectConfinementForce::force4(const double currentTime) {
 }
 
 // F_x = c_x*q*x, F_y = c_y*q*y
-inline void RectConfinementForce::force(const cloud_index currentParticle, const doubleV currentPositionX, 
+inline void RectConfinementForce::force(const cloud_index currentParticle, 
+                                        const doubleV currentPositionX, 
                                         const doubleV currentPositionY) {
-	const doubleV charge = _mm_load_pd(cloud->charge + currentParticle); 
+	const doubleV charge = load_pd(cloud->charge + currentParticle); 
 	
-	plusEqual_pd(cloud->forceX + currentParticle, _mm_set1_pd(confineX)*charge*currentPositionX);
-	plusEqual_pd(cloud->forceY + currentParticle, _mm_set1_pd(confineY)*charge*currentPositionY);
+	plusEqual_pd(cloud->forceX + currentParticle, 
+                 mul_pd(mul_pd(charge, confineX), currentPositionX));
+	plusEqual_pd(cloud->forceY + currentParticle, 
+                 mul_pd(mul_pd(charge, confineY), currentPositionY));
 }
 
 void RectConfinementForce::writeForce(fitsfile * const file, int * const error) const {

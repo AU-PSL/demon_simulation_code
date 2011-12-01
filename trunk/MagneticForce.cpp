@@ -40,10 +40,10 @@ void MagneticForce::force4(const double currentTime) {
 // F = q*(v X B) : B is in the positive z direction.
 inline void MagneticForce::force(const cloud_index currentParticle, const doubleV currentVelocityX, 
                                  const doubleV currentVelocityY) {
-	const doubleV qB = _mm_set1_pd(BField)*_mm_load_pd(cloud->charge + currentParticle);
+	const doubleV qB = mul_pd(load_pd(cloud->charge + currentParticle), BField);
 
-	plusEqual_pd(cloud->forceX + currentParticle, qB*currentVelocityY);
-	minusEqual_pd(cloud->forceY + currentParticle, qB*currentVelocityX);
+	plusEqual_pd(cloud->forceX + currentParticle, mul_pd(qB, currentVelocityY));
+	minusEqual_pd(cloud->forceY + currentParticle, mul_pd(qB, currentVelocityX));
 }
 
 void MagneticForce::writeForce(fitsfile * const file, int * const error) const {

@@ -39,10 +39,10 @@ void DragForce::force4(const double currentTime) {
 
 // F = g*m*v
 inline void DragForce::force(const cloud_index currentParticle, const doubleV currentVelocityX, const doubleV currentVelocityY) {
-	const doubleV drag = _mm_set1_pd(dragConst)*_mm_load_pd(cloud->mass + currentParticle);
+	const doubleV drag = mul_pd(load_pd(cloud->mass + currentParticle), dragConst);
 		
-	plusEqual_pd(cloud->forceX + currentParticle, drag*currentVelocityX);
-	plusEqual_pd(cloud->forceY + currentParticle, drag*currentVelocityY);
+	plusEqual_pd(cloud->forceX + currentParticle, mul_pd(drag, currentVelocityX));
+	plusEqual_pd(cloud->forceY + currentParticle, mul_pd(drag, currentVelocityY));
 
 }
 

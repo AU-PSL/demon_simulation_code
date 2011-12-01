@@ -40,10 +40,10 @@ void ConfinementForce::force4(const double currentTime) {
 // F = c*q*r
 inline void ConfinementForce::force(const cloud_index currentParticle, const doubleV currentPositionX, 
                                     const doubleV currentPositionY) {
-	const doubleV cV = _mm_set1_pd(confine)*_mm_load_pd(cloud->charge + currentParticle);
+	const doubleV cV = mul_pd(load_pd(cloud->charge + currentParticle), confine);
 	
-	plusEqual_pd(cloud->forceX + currentParticle, cV*currentPositionX);
-	plusEqual_pd(cloud->forceY + currentParticle, cV*currentPositionY);
+	plusEqual_pd(cloud->forceX + currentParticle, mul_pd(cV, currentPositionX));
+	plusEqual_pd(cloud->forceY + currentParticle, mul_pd(cV, currentPositionY));
 }
 
 void ConfinementForce::writeForce(fitsfile * const file, int * const error) const {

@@ -45,19 +45,12 @@ void DrivingForce::force4(const double currentTime) {
 inline void DrivingForce::force(const cloud_index currentParticle, const doubleV currentTime, const doubleV currentPositionX) {
 	// NOTE: This is different than the equation listed in the paper. The paper 
 	// is incorrect.
-	const doubleV distV = currentPositionX - _mm_set1_pd(shift);
-	const doubleV sinArg = _mm_set1_pd(waveNum)*currentPositionX - _mm_set1_pd(angFreq)*currentTime;
-	const doubleV expArg = -distV*distV/_mm_set1_pd(driveConst);
-	
-	// no SIMD trig instructions; break vectors and perform separately:
-	double sinArgL, sinArgH, expArgL, expArgH;
-	_mm_storel_pd(&sinArgL, sinArg);
-	_mm_storeh_pd(&sinArgH, sinArg);
-	_mm_storel_pd(&expArgL, expArg);
-	_mm_storeh_pd(&expArgH, expArg);
+	const doubleV distV = sub_pd(currentPositionX, shift);
+	const doubleV sinArg = sub_pd(mul_pd(currentPositionX, waveNum), mul_pd(currentTime, angFreq));
+	const doubleV expArg = div_pd(sub_pd(distV, distV), -driveConst);
 
 	plusEqual_pd(cloud->forceX + currentParticle, 
-				 _mm_set1_pd(amplitude)*_mm_set_pd(sin(sinArgH), sin(sinArgL))*_mm_set_pd(exp(expArgH), exp(expArgL))); // _mm_set_pd() is backwards
+                 mul_pd(mul_pd(sin_pd(sinArg), exp_pd(expArg)), amplitude)); // _mm_set_pd() is backwards
 }
 
 void DrivingForce::writeForce(fitsfile * const file, int * const error) const {

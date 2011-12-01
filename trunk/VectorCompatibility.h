@@ -79,6 +79,14 @@ static inline const doubleV sub_pd(const doubleV a, const doubleV b) {
 #endif
 }
 
+static inline const doubleV sub_pd(const doubleV a, const double b) {
+#ifdef __AVX__
+    return _mm256_sub_pd(a, _mm256_set1_pd(b));
+#else
+    return _mm_sub_pd(a, _mm_set1_pd(b));
+#endif
+}
+
 static inline const floatV sub_ps(const floatV a, const floatV b) {
 #ifdef __AVX__
     return _mm256_sub_ps(a, b);
@@ -95,6 +103,14 @@ static inline const doubleV mul_pd(const doubleV a, const doubleV b) {
 #endif
 }
 
+static inline const doubleV mul_pd(const doubleV a, const double b) {
+#ifdef __AVX__
+    return _mm256_mul_pd(a, _mm256_set1_pd(b));
+#else
+    return _mm_mul_pd(a, _mm_set1_pd(b));
+#endif
+}
+
 static inline const floatV mul_ps(const floatV a, const floatV b) {
 #ifdef __AVX__
     return _mm256_mul_ps(a, b);
@@ -108,6 +124,14 @@ static inline const doubleV div_pd(const doubleV a, const doubleV b) {
     return _mm256_div_pd(a, b);
 #else
     return _mm_div_pd(a, b);
+#endif
+}
+
+static inline const doubleV div_pd(const doubleV a, const double b) {
+#ifdef __AVX__
+    return _mm256_div_pd(a, _mm256_set1_pd(b));
+#else
+    return _mm_div_pd(a, _mm_set1_pd(b));
 #endif
 }
 
@@ -187,6 +211,45 @@ static inline const doubleV load_pd(double * const a) {
 #else
     return _mm_load_pd(a);
 #endif
+}
+
+/*===- math functions -----------------------------------------------------===*/
+
+static inline const doubleV exp_pd(const doubleV a) {
+    double b[FLOAT_STRIDE];
+    store_pd(b, a);
+    
+#ifdef __AVX__
+    return _mm256_set_pd(exp(b[3]), exp(b[2]), exp(b[1]), exp(b[0]));
+#else
+    return _mm_set_pd(exp(b[1]), exp(b[0]));
+#endif
+}
+
+static inline const doubleV sin_pd(const doubleV a) {
+    double b[FLOAT_STRIDE];
+    store_pd(b, a);
+    
+#ifdef __AVX__
+    return _mm256_set_pd(sin(b[3]), sin(b[2]), sin(b[1]), sin(b[0]));
+#else
+    return _mm_set_pd(sin(b[1]), sin(b[0]));
+#endif
+}
+
+static inline const doubleV cos_pd(const doubleV a) {
+    double b[FLOAT_STRIDE];
+    store_pd(b, a);
+    
+#ifdef __AVX__
+    return _mm256_set_pd(cos(b[3]), cos(b[2]), cos(b[1]), cos(b[0]));
+#else
+    return _mm_set_pd(cos(b[1]), cos(b[0]));
+#endif
+}
+
+static inline const doubleV length_pd(const doubleV a, const doubleV b) {
+    return sqrt_pd(add_pd(mul_pd(a, a), mul_pd(b, b)));
 }
 
 #endif // VECTORCOMPATIBILITY_H
