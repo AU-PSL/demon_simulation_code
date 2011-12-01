@@ -15,20 +15,34 @@
 #ifdef __AVX__
 #define FLOAT_STRIDE  8
 #define DOUBLE_STRIDE 4
+
+typedef __m256d doubleV;
+typedef __m256 floatV;
+
 #else
+
 #define FLOAT_STRIDE  4
 #define DOUBLE_STRIDE 2
-#endif
 
 typedef __m128d doubleV;
 typedef __m128 floatV;
 
+#endif
+
 static inline void plusEqual_pd(double * const a, const doubleV b) {
+#ifdef __AVX__
+    _mm256_store_pd(a, _mm256_load_pd(a) + b);
+#else
 	_mm_store_pd(a, _mm_load_pd(a) + b);
+#endif
 }
 
 static inline void minusEqual_pd(double * const a, const doubleV b) {
-	_mm_store_pd(a, _mm_load_pd(a) + b);
+#ifdef __AVX__
+    _mm256_store_pd(a, _mm256_load_pd(a) - b);
+#else
+	_mm_store_pd(a, _mm_load_pd(a) - b);
+#endif
 }
 
 static inline void plusEqualr_pd(double * const a, const doubleV b) {
@@ -36,7 +50,7 @@ static inline void plusEqualr_pd(double * const a, const doubleV b) {
 }
 
 static inline void minusEqualr_pd(double * const a, const doubleV b) {
-	_mm_storer_pd(a, _mm_loadr_pd(a) + b);
+	_mm_storer_pd(a, _mm_loadr_pd(a) - b);
 }
 
 static inline const doubleV fmadd_pd(const doubleV a, const doubleV b, const doubleV c) {
