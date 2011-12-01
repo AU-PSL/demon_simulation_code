@@ -130,6 +130,7 @@ void Runge_Kutta4::moveParticles(const double endTime) {
 	}
 }
 
+// 4th order Runge-Kutta full timstep parameter change.
 inline const doubleV Runge_Kutta4::da(const doubleV a1, const doubleV a2, 
                                       const doubleV a3, const doubleV a4) {
     return div_pd(add_pd(a1, add_pd(mul_pd(set1_pd(2.0), (add_pd(a2, a3))), a4)), set1_pd(6.0));
