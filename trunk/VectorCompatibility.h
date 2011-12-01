@@ -10,7 +10,23 @@
 #ifndef VECTORCOMPATIBILITY_H
 #define VECTORCOMPATIBILITY_H
 
-#include <smmintrin.h>
+#include <immintrin.h>
+
+static inline void plusEqual_pd(double * const a, const __m128d b) {
+	_mm_store_pd(a, _mm_load_pd(a) + b);
+}
+
+static inline void minusEqual_pd(double * const a, const __m128d b) {
+	_mm_store_pd(a, _mm_load_pd(a) + b);
+}
+
+static inline void plusEqualr_pd(double * const a, const __m128d b) {
+	_mm_storer_pd(a, _mm_loadr_pd(a) + b);
+}
+
+static inline void minusEqualr_pd(double * const a, const __m128d b) {
+	_mm_storer_pd(a, _mm_loadr_pd(a) + b);
+}
 
 #if !defined(__GNUC__) && !defined(__clang__)
 __m128d operator+(const __m128d &a, const __m128d &b) {

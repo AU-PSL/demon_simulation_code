@@ -63,23 +63,10 @@ void Runge_Kutta2::moveParticles(const double endTime) {
         
         // Calculate next position and next velocity for entire cloud.
 		BEGIN_PARALLEL_FOR(i, e, numParticles, 2, static)
-			// load ith and (i+1)th k's into vectors:
-			const __m128d vk2 = _mm_load_pd(cloud->k2 + i);
-			const __m128d vl2 = _mm_load_pd(cloud->l2 + i);
-			const __m128d vm2 = _mm_load_pd(cloud->m2 + i);
-			const __m128d vn2 = _mm_load_pd(cloud->n2 + i);
-            
-			// assign position and velocity pointers (stylistic):
-			double * const px = cloud->x + i;
-			double * const py = cloud->y + i;
-			double * const pVx = cloud->Vx + i;
-			double * const pVy = cloud->Vy + i;
-            
-			// calculate next positions and velocities:
-			_mm_store_pd(pVx, _mm_load_pd(pVx) + vk2);
-			_mm_store_pd(px, _mm_load_pd(px) + vl2);
-			_mm_store_pd(pVy, _mm_load_pd(pVy) + vm2);
-			_mm_store_pd(py, _mm_load_pd(py) + vn2);
+			plusEqual_pd(cloud->Vx + i, _mm_load_pd(cloud->k2 + i));
+			plusEqual_pd(cloud->x + i, _mm_load_pd(cloud->l2 + i));
+			plusEqual_pd(cloud->Vy + i, _mm_load_pd(cloud->m2 + i));
+			plusEqual_pd(cloud->y + i, _mm_load_pd(cloud->n2 + i));
 		END_PARALLEL_FOR
         
 		currentTime += dt;

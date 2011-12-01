@@ -54,13 +54,8 @@ inline void RotationalForce::force(const cloud_index currentParticle,
 								   (mask & 1) ? rotationalConst : 0.0);
 	
 	// force in theta direction:
-	double * const pFx = cloud->forceX + currentParticle;
-	double * const pFy = cloud->forceY + currentParticle;
-	
-	// Fx = -c*x/r;
-	// Fy = c*y/r;
-	_mm_store_pd(pFx, _mm_load_pd(pFx) - cRotConst*currentPositionY/dustRadV);
-	_mm_store_pd(pFy, _mm_load_pd(pFy) + cRotConst*currentPositionX/dustRadV);
+	minusEqual_pd(cloud->forceX + currentParticle, cRotConst*currentPositionY/dustRadV);
+	plusEqual_pd(cloud->forceY + currentParticle, cRotConst*currentPositionX/dustRadV);
 }
 
 void RotationalForce::writeForce(fitsfile * const file, int * const error) const {
