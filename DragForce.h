@@ -30,7 +30,7 @@ protected:
 	double dragConst; // [Hz]
 
 private:
-	void force(const cloud_index currentParticle, const __m128d currentVelocityX, const __m128d currentVelocityY);
+	void force(const cloud_index currentParticle, const doubleV currentVelocityX, const doubleV currentVelocityY);
 };
 
 #endif // DRAGFORCE_H

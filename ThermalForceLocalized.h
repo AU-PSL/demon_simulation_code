@@ -35,7 +35,7 @@ private:
 	dispatch_queue_t randQueue;
 #endif
 
-	void force(const cloud_index currentParticle, const __m128d displacementX, const __m128d displacementY, 
+	void force(const cloud_index currentParticle, const doubleV displacementX, const doubleV displacementY, 
                const RandCache &rc);
 };
 

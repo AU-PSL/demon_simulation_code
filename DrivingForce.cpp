@@ -14,40 +14,40 @@ const double DrivingForce::waveNum = 2.0*M_PI/0.002; // wavelength = 2mm
 const double DrivingForce::angFreq = 2.0*M_PI*10.0; // 10Hz
 
 void DrivingForce::force1(const double currentTime) {
-	const __m128d vtime = _mm_set1_pd(currentTime);
+	const doubleV vtime = _mm_set1_pd(currentTime);
 	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static)
 		force(currentParticle, vtime, cloud->getx1_pd(currentParticle));
     END_PARALLEL_FOR
 }
 
 void DrivingForce::force2(const double currentTime) {
-	const __m128d vtime = _mm_set1_pd(currentTime);
+	const doubleV vtime = _mm_set1_pd(currentTime);
 	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static) 
 		force(currentParticle, vtime, cloud->getx2_pd(currentParticle));
     END_PARALLEL_FOR
 }
 
 void DrivingForce::force3(const double currentTime) {
-	const __m128d vtime = _mm_set1_pd(currentTime);
+	const doubleV vtime = _mm_set1_pd(currentTime);
 	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static) 
 		force(currentParticle, vtime, cloud->getx3_pd(currentParticle));
     END_PARALLEL_FOR
 }
 
 void DrivingForce::force4(const double currentTime) {
-	const __m128d vtime = _mm_set1_pd(currentTime);
+	const doubleV vtime = _mm_set1_pd(currentTime);
 	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, 2, static)
 		force(currentParticle, vtime, cloud->getx4_pd(currentParticle));
     END_PARALLEL_FOR
 }
 
 // F = a*sin(k*x - w*t)*Exp(-(x + x0)^2/b)
-inline void DrivingForce::force(const cloud_index currentParticle, const __m128d currentTime, const __m128d currentPositionX) {
+inline void DrivingForce::force(const cloud_index currentParticle, const doubleV currentTime, const doubleV currentPositionX) {
 	// NOTE: This is different than the equation listed in the paper. The paper 
 	// is incorrect.
-	const __m128d distV = currentPositionX - _mm_set1_pd(shift);
-	const __m128d sinArg = _mm_set1_pd(waveNum)*currentPositionX - _mm_set1_pd(angFreq)*currentTime;
-	const __m128d expArg = -distV*distV/_mm_set1_pd(driveConst);
+	const doubleV distV = currentPositionX - _mm_set1_pd(shift);
+	const doubleV sinArg = _mm_set1_pd(waveNum)*currentPositionX - _mm_set1_pd(angFreq)*currentTime;
+	const doubleV expArg = -distV*distV/_mm_set1_pd(driveConst);
 	
 	// no SIMD trig instructions; break vectors and perform separately:
 	double sinArgL, sinArgH, expArgL, expArgH;

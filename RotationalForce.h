@@ -29,7 +29,7 @@ public:
 private:
 	double innerRad, outerRad, rotationalConst; // [m], [m], [N]
 
-	void force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY);
+	void force(const cloud_index currentParticle, const doubleV currentPositionX, const doubleV currentPositionY);
 };
 
 #endif // ROTATIONALFORCE_H

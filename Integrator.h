@@ -33,8 +33,8 @@ protected:
     SEMAPHORES
     
     const double modifyTimeStep(float currentDist, double currentTimeStep) const;
-	static __m128 loadFloatVector(double * const x);
-	static bool isWithInDistance(const __m128 a, const __m128 b, const float dist);
+	static floatV loadFloatVector(double * const x);
+	static bool isWithInDistance(const floatV a, const floatV b, const float dist);
 };
 
 #endif // INTEGRATOR_H

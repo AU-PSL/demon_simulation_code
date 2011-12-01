@@ -31,10 +31,10 @@ private:
 
 // Structure to hold precomuted random numbers for use with thermal forces.
 struct RandCache {
-	__m128d r;
+	doubleV r;
 	double l, h;
 	
-	RandCache(const __m128d r_ = _mm_set1_pd(0.0), 
+	RandCache(const doubleV r_ = _mm_set1_pd(0.0), 
 			  const double l_ = 0.0, const double h_ = 0.0) 
 	: r(r_), l(l_), h(h_) {}
 };

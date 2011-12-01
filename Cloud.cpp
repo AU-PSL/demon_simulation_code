@@ -25,8 +25,8 @@ l1(new double[n]), l2(new double[n]), l3(new double[n]), l4(new double[n]),
 m1(new double[n]), m2(new double[n]), m3(new double[n]), m4(new double[n]),
 n1(new double[n]), n2(new double[n]), n3(new double[n]), n4(new double[n]),
 forceX(new double[n]), forceY(new double[n]),
-xCache(new __m128d[n/2]), yCache(new __m128d[n/2]), 
-VxCache(new __m128d[n/2]), VyCache(new __m128d[n/2]) {
+xCache(new doubleV[n/2]), yCache(new doubleV[n/2]), 
+VxCache(new doubleV[n/2]), VyCache(new doubleV[n/2]) {
 #ifdef _OPENMP
 	omp_set_num_threads(omp_get_num_procs());
 #endif
@@ -213,108 +213,108 @@ void Cloud::writeTimeStep(fitsfile * const file, int &error, double currentTime)
 // 4th order Runge-Kutta subsetp helper methods. 
 
 // X position helper functions -------------------------------------------------
-const __m128d Cloud::getx1_pd(const cloud_index i) const {
+const doubleV Cloud::getx1_pd(const cloud_index i) const {
 	return _mm_load_pd(x + i); // x
 }
 
-const __m128d Cloud::getx2_pd(const cloud_index i) const {
+const doubleV Cloud::getx2_pd(const cloud_index i) const {
 	return xCache[i/2]; // x + l1/2
 }
 
-const __m128d Cloud::getx3_pd(const cloud_index i) const {
+const doubleV Cloud::getx3_pd(const cloud_index i) const {
 	return xCache[i/2]; // x + l2/2
 }
 
-const __m128d Cloud::getx4_pd(const cloud_index i) const {
+const doubleV Cloud::getx4_pd(const cloud_index i) const {
 	return xCache[i/2]; // x + l3
 }
 
-const __m128d Cloud::getx1r_pd(const cloud_index i) const {
+const doubleV Cloud::getx1r_pd(const cloud_index i) const {
 	return _mm_loadr_pd(x + i);
 }
 
-const __m128d Cloud::getx2r_pd(const cloud_index i) const {
+const doubleV Cloud::getx2r_pd(const cloud_index i) const {
 	const cloud_index j = i/2;
 	return _mm_shuffle_pd(xCache[j], xCache[j], _MM_SHUFFLE2(0, 1));
 }
 
-const __m128d Cloud::getx3r_pd(const cloud_index i) const {
+const doubleV Cloud::getx3r_pd(const cloud_index i) const {
 	const cloud_index j = i/2;
 	return _mm_shuffle_pd(xCache[j], xCache[j], _MM_SHUFFLE2(0, 1));
 }
 
-const __m128d Cloud::getx4r_pd(const cloud_index i) const {
+const doubleV Cloud::getx4r_pd(const cloud_index i) const {
 	const cloud_index j = i/2;
 	return _mm_shuffle_pd(xCache[j], xCache[j], _MM_SHUFFLE2(0, 1));
 }
 
 // Y position helper functions -------------------------------------------------
-const __m128d Cloud::gety1_pd(const cloud_index i) const {
+const doubleV Cloud::gety1_pd(const cloud_index i) const {
 	return _mm_load_pd(y + i); // y
 }
 
-const __m128d Cloud::gety2_pd(const cloud_index i) const {
+const doubleV Cloud::gety2_pd(const cloud_index i) const {
 	return yCache[i/2]; // y + n1/2
 }
 
-const __m128d Cloud::gety3_pd(const cloud_index i) const {
+const doubleV Cloud::gety3_pd(const cloud_index i) const {
 	return yCache[i/2]; // y + n2/2
 }
 
-const __m128d Cloud::gety4_pd(const cloud_index i) const {
+const doubleV Cloud::gety4_pd(const cloud_index i) const {
 	return yCache[i/2]; // y + n3
 }
 
-const __m128d Cloud::gety1r_pd(const cloud_index i) const 
+const doubleV Cloud::gety1r_pd(const cloud_index i) const 
 {
 	return _mm_loadr_pd(y + i);
 }
 
-const __m128d Cloud::gety2r_pd(const cloud_index i) const {
+const doubleV Cloud::gety2r_pd(const cloud_index i) const {
 	const cloud_index j = i/2;
 	return _mm_shuffle_pd(yCache[j], yCache[j], _MM_SHUFFLE2(0, 1));
 }
 
-const __m128d Cloud::gety3r_pd(const cloud_index i) const {
+const doubleV Cloud::gety3r_pd(const cloud_index i) const {
 	const cloud_index j = i/2;
 	return _mm_shuffle_pd(yCache[j], yCache[j], _MM_SHUFFLE2(0, 1));
 }
 
-const __m128d Cloud::gety4r_pd(const cloud_index i) const {
+const doubleV Cloud::gety4r_pd(const cloud_index i) const {
 	const cloud_index j = i/2;
 	return _mm_shuffle_pd(yCache[j], yCache[j], _MM_SHUFFLE2(0, 1));
 }
 
 // Vx position helper functions ------------------------------------------------
-const __m128d Cloud::getVx1_pd(const cloud_index i) const {
+const doubleV Cloud::getVx1_pd(const cloud_index i) const {
 	return _mm_load_pd(Vx + i); // Vx
 }
 
-const __m128d Cloud::getVx2_pd(const cloud_index i) const {
+const doubleV Cloud::getVx2_pd(const cloud_index i) const {
 	return VxCache[i/2]; // Vx + k1/2
 }
 
-const __m128d Cloud::getVx3_pd(const cloud_index i) const {
+const doubleV Cloud::getVx3_pd(const cloud_index i) const {
 	return VxCache[i/2]; // Vx + k2/2
 }
 
-const __m128d Cloud::getVx4_pd(const cloud_index i) const {
+const doubleV Cloud::getVx4_pd(const cloud_index i) const {
 	return VxCache[i/2]; // Vx + k3
 }
 
 // Vy position helper functions ------------------------------------------------
-const __m128d Cloud::getVy1_pd(const cloud_index i) const {
+const doubleV Cloud::getVy1_pd(const cloud_index i) const {
 	return _mm_load_pd(Vy + i); // Vy
 }
 
-const __m128d Cloud::getVy2_pd(const cloud_index i) const {
+const doubleV Cloud::getVy2_pd(const cloud_index i) const {
 	return VyCache[i/2]; // Vy + m1/2
 }
 
-const __m128d Cloud::getVy3_pd(const cloud_index i) const {
+const doubleV Cloud::getVy3_pd(const cloud_index i) const {
 	return VyCache[i/2]; // Vy + m2/2
 }
 
-const __m128d Cloud::getVy4_pd(const cloud_index i) const {
+const doubleV Cloud::getVy4_pd(const cloud_index i) const {
 	return VyCache[i/2]; // Vy + m3
 }

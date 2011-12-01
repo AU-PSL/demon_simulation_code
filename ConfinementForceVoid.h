@@ -31,7 +31,7 @@ public:
 private:
 	double confine, decay; // [V/m^2], [m^-1]
 
-	void force(const cloud_index currentParticle, const __m128d currentPositionX, const __m128d currentPositionY);	// common force calculator
+	void force(const cloud_index currentParticle, const doubleV currentPositionX, const doubleV currentPositionY);	// common force calculator
 };
 
 #endif // CONFINEMENTFORCEVOID_H

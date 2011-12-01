@@ -36,11 +36,11 @@ private:
 	           const double currentCharge, const double iCharge,
 	           const double displacementX, const double displacementY);
 	void force(const cloud_index currentParticle, const cloud_index iParticle, 
-	           const __m128d currentCharge, const __m128d iCharge,
-	           const __m128d displacementX, const __m128d displacementY);
+	           const doubleV currentCharge, const doubleV iCharge,
+	           const doubleV displacementX, const doubleV displacementY);
 	void forcer(const cloud_index currentParticle, const cloud_index iParticle,
-	            const __m128d currentCharge, const __m128d iCharge,
-	            const __m128d displacementX, const __m128d displacementY);
+	            const doubleV currentCharge, const doubleV iCharge,
+	            const doubleV displacementX, const doubleV displacementY);
 };
 
 #endif // SHIELDEDCOULOMBFORCE_H
