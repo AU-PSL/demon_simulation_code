@@ -287,3 +287,11 @@ void ShieldedCoulombForce::readForce(fitsfile * const file, int * const error) {
 		// file, key name, value, don't read comment, error
 		fits_read_key_dbl(file, const_cast<char *> ("shieldingConstant"), &shielding, NULL, error);
 }
+
+inline void ShieldedCoulombForce::plusEqualr_pd(double * const a, const doubleV b) {
+	_mm_storer_pd(a, _mm_add_pd(_mm_loadr_pd(a), b));
+}
+
+inline void ShieldedCoulombForce::minusEqualr_pd(double * const a, const doubleV b) {
+	_mm_storer_pd(a, _mm_sub_pd(_mm_loadr_pd(a), b));
+}

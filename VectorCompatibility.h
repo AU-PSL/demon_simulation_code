@@ -29,11 +29,13 @@ typedef __m128 floatV;
 
 #endif
 
+/*===- Arithmatic ---------------------------------------------------------===*/
+
 static inline void plusEqual_pd(double * const a, const doubleV b) {
 #ifdef __AVX__
     _mm256_store_pd(a, _mm256_load_pd(a) + b);
 #else
-	_mm_store_pd(a, _mm_load_pd(a) + b);
+	_mm_store_pd(a, _mm_add_pd(_mm_load_pd(a), b));
 #endif
 }
 
@@ -41,42 +43,56 @@ static inline void minusEqual_pd(double * const a, const doubleV b) {
 #ifdef __AVX__
     _mm256_store_pd(a, _mm256_load_pd(a) - b);
 #else
-	_mm_store_pd(a, _mm_load_pd(a) - b);
+	_mm_store_pd(a, _mm_sub_pd(_mm_load_pd(a), b));
 #endif
-}
-
-static inline void plusEqualr_pd(double * const a, const doubleV b) {
-	_mm_storer_pd(a, _mm_loadr_pd(a) + b);
-}
-
-static inline void minusEqualr_pd(double * const a, const doubleV b) {
-	_mm_storer_pd(a, _mm_loadr_pd(a) - b);
 }
 
 static inline const doubleV fmadd_pd(const doubleV a, const doubleV b, const doubleV c) {
-	return a*b + c;
-}
-
-#if !defined(__GNUC__) && !defined(__clang__)
-doubleV operator+(const doubleV &a, const doubleV &b) {
-	return _mm_add_pd(a, b);
-}
-
-doubleV operator-(const doubleV &a, const doubleV &b) {
-	return _mm_sub_pd(a, b);
-}
-
-doubleV operator*(const doubleV &a, const doubleV &b) {
-	return _mm_mul_pd(a, b);
-}
-
-doubleV operator/(const doubleV &a, const doubleV &b) {
-	return _mm_div_pd(a, b);
-}
-
-doubleV operator&&(const doubleV &a, const doubleV &b) {
-	return _mm_and_pd(a, b);
-}
+#ifdef __AVX__
+    return _mm256_fmadd_pd(a, b, c);
+#else
+    return _mm_add_pd(_mm_mul_pd(a, b), c);
 #endif
+}
+
+static inline const doubleV add_pd(const doubleV a, const doubleV b) {
+#ifdef __AVX__
+    return _mm256_add_pd(a, b);
+#else
+    return _mm_add_pd(a, b);
+#endif
+}
+
+static inline const doubleV sub_pd(const doubleV a, const doubleV b) {
+#ifdef __AVX__
+    return _mm256_sub_pd(a, b);
+#else
+    return _mm_sub_pd(a, b);
+#endif
+}
+
+static inline const doubleV mul_pd(const doubleV a, const doubleV b) {
+#ifdef __AVX__
+    return _mm256_mul_pd(a, b);
+#else
+    return _mm_mul_pd(a, b);
+#endif
+}
+
+static inline const doubleV div_pd(const doubleV a, const doubleV b) {
+#ifdef __AVX__
+    return _mm256_div_pd(a, b);
+#else
+    return _mm_div_pd(a, b);
+#endif
+}
+
+static inline const doubleV sqrt_pd(const doubleV a) {
+#ifdef __AVX__
+    return _mm256_sqrt_pd(a);
+#else
+    return _mm_sqrt_pd(a);
+#endif
+}
 
 #endif // VECTORCOMPATIBILITY_H
