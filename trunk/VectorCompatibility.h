@@ -145,13 +145,47 @@ static inline const floatV cmple_ps(const floatV a, const floatV b) {
 #endif
 }
 
-/*===- Comparison ---------------------------------------------------------===*/
+/*===- Set ----------------------------------------------------------------===*/
 
-static inline const doubleV set1_ps(const float a) {
+static inline const doubleV set1_pd(const double a) {
+#ifdef __AVX__
+    return _mm256_set1_pd(a);
+#else
+    return _mm_set1_pd(a);
+#endif
+}
+
+static inline const floatV set1_ps(const float a) {
 #ifdef __AVX__
     return _mm256_set1_ps(a);
 #else
-    return _mm_set1_pd(a);
+    return _mm_set1_ps(a);
+#endif
+}
+
+static inline const doubleV set0_pd() {
+#ifdef __AVX__
+    return _mm256_setzero_pd();
+#else
+    return _mm_setzero_pd();
+#endif
+}
+
+/*===- Load/Store ---------------------------------------------------------===*/
+
+static inline void store_pd(double * const a, const doubleV b) {
+#ifdef __AVX__
+    return _mm256_store_pd(a, b);
+#else
+    return _mm_store_pd(a, b);
+#endif
+}
+
+static inline const doubleV load_pd(double * const a) {
+#ifdef __AVX__
+    return _mm256_load_pd(a);
+#else
+    return _mm_load_pd(a);
 #endif
 }
 
