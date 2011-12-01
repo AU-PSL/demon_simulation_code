@@ -41,6 +41,9 @@ private:
 	void forcer(const cloud_index currentParticle, const cloud_index iParticle,
 	            const doubleV currentCharge, const doubleV iCharge,
 	            const doubleV displacementX, const doubleV displacementY);
+    
+    static void plusEqualr_pd(double * const a, const doubleV b);
+    static void minusEqualr_pd(double * const a, const doubleV b);
 };
 
 #endif // SHIELDEDCOULOMBFORCE_H
