@@ -129,9 +129,8 @@ inline void ThermalForceLocalized::force(const cloud_index currentParticle, cons
                                          const doubleV displacementY, const RandCache &RC) {
 	const doubleV radiusV = _mm_sqrt_pd(displacementX*displacementX + displacementY*displacementY);
 	
-	const int mask = _mm_movemask_pd(_mm_cmplt_pd(radiusV, _mm_set1_pd(heatingRadius)));
-	const doubleV thermV = _mm_set_pd((mask & 2) ? heatVal1 : heatVal2, // _mm_set_pd() is backwards
-									  (mask & 1) ? heatVal1 : heatVal2)*RC.r;
+	const int mask = movemask_pd(cmplt_pd(radiusV, heatingRadius));
+    const doubleV thermV = mul_pd(select_pd(mask, heatVal1, heatVal2), RC.r);
 	
 	plusEqual_pd(cloud->forceX + currentParticle, thermV*randomCos(RC)); // _mm_set_pd() is backwards
 	plusEqual_pd(cloud->forceY + currentParticle, thermV*randomSin(RC));

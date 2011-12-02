@@ -50,23 +50,11 @@ inline void RotationalForce::force(const cloud_index currentParticle,
 	if (!mask)
 		return; // niether in, early return
 	
-	doubleV cRotConst = rotationConstant(mask);
+	doubleV cRotConst = select_pd(mask, rotationalConst, 0.0);
 	
 	// force in theta direction:
 	minusEqual_pd(cloud->forceX + currentParticle, div_pd(mul_pd(cRotConst, currentPositionY), dustRadV));
 	plusEqual_pd(cloud->forceY + currentParticle, div_pd(mul_pd(cRotConst, currentPositionX), dustRadV));
-}
-
-inline const doubleV RotationalForce::rotationConstant(const int mask) {
-#ifdef __AVX__
-    return _mm256_set_pd((mask & 8) ? rotationalConst : 0.0, 
-                         (mask & 4) ? rotationalConst : 0.0,
-                         (mask & 2) ? rotationalConst : 0.0, // _mm256_set_pd() is backwards.
-                         (mask & 1) ? rotationalConst : 0.0);
-#else
-    return _mm_set_pd((mask & 2) ? rotationalConst : 0.0, // _mm_set_pd() is backwards.
-                      (mask & 1) ? rotationalConst : 0.0);
-#endif
 }
 
 void RotationalForce::writeForce(fitsfile * const file, int * const error) const {

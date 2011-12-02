@@ -286,4 +286,18 @@ static inline const doubleV length_pd(const doubleV a, const doubleV b) {
     return sqrt_pd(add_pd(mul_pd(a, a), mul_pd(b, b)));
 }
 
+/*===- Misc ---------------------------------------------------------------===*/
+
+static inline const doubleV select_pd(const int mask, const double trueValue, const double falseValue) {
+#ifdef __AVX__
+    return _mm256_set_pd((mask & 8) ? trueValue : falseValue, 
+                         (mask & 4) ? trueValue : falseValue,
+                         (mask & 2) ? trueValue : falseValue, // _mm256_set_pd() is backwards.
+                         (mask & 1) ? trueValue : falseValue);
+#else
+    return _mm_set_pd((mask & 2) ? trueValue : falseValue, // _mm_set_pd() is backwards.
+                      (mask & 1) ? trueValue : falseValue);
+#endif
+}
+
 #endif // VECTORCOMPATIBILITY_H
