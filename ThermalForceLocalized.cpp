@@ -126,15 +126,31 @@ void ThermalForceLocalized::force4(const double currentTime) {
 // L is a uniformly distributed random number between 0 - 1 in a random 
 // direction.
 inline void ThermalForceLocalized::force(const cloud_index currentParticle, const doubleV displacementX, 
-                                         const doubleV displacementY, const RandCache &rc) {
+                                         const doubleV displacementY, const RandCache &RC) {
 	const doubleV radiusV = _mm_sqrt_pd(displacementX*displacementX + displacementY*displacementY);
 	
 	const int mask = _mm_movemask_pd(_mm_cmplt_pd(radiusV, _mm_set1_pd(heatingRadius)));
 	const doubleV thermV = _mm_set_pd((mask & 2) ? heatVal1 : heatVal2, // _mm_set_pd() is backwards
-									  (mask & 1) ? heatVal1 : heatVal2)*rc.r;
+									  (mask & 1) ? heatVal1 : heatVal2)*RC.r;
 	
-	plusEqual_pd(cloud->forceX + currentParticle, thermV*_mm_set_pd(cos(rc.r2), cos(rc.r1))); // _mm_set_pd() is backwards
-	plusEqual_pd(cloud->forceY + currentParticle, thermV*_mm_set_pd(sin(rc.r2), sin(rc.r1)));
+	plusEqual_pd(cloud->forceX + currentParticle, thermV*randomCos(RC)); // _mm_set_pd() is backwards
+	plusEqual_pd(cloud->forceY + currentParticle, thermV*randomSin(RC));
+}
+
+inline const doubleV ThermalForceLocalized::randomCos(const RandCache &RC) {
+#ifdef __AVX__
+    return _mm256_set_pd(cos(RC.r4), cos(RC.r3), cos(RC.r2), cos(RC.r1));
+#else
+    return _mm_set_pd(cos(RC.r2), cos(RC.r1));
+#endif
+}
+
+inline const doubleV ThermalForceLocalized::randomSin(const RandCache &RC) {
+#ifdef __AVX__
+    return _mm256_set_pd(sin(RC.r4), sin(RC.r3), sin(RC.r2), sin(RC.r1));
+#else
+    return _mm_set_pd(sin(RC.r2), sin(RC.r1));
+#endif 
 }
 
 void ThermalForceLocalized::writeForce(fitsfile * const file, int * const error) const {

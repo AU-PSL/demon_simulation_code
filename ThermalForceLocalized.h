@@ -36,7 +36,9 @@ private:
 #endif
 
 	void force(const cloud_index currentParticle, const doubleV displacementX, const doubleV displacementY, 
-               const RandCache &rc);
+               const RandCache &RC);
+    static const doubleV randomCos(const RandCache &RC);
+    static const doubleV randomSin(const RandCache &RC);
 };
 
 #endif // THERMALFORCELOCALIZED_H
