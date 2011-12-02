@@ -32,8 +32,10 @@ private:
     dispatch_queue_t randQueue;
 #endif
 
-	void force(const cloud_index currentParticle, const RandCache &rc);
-
+	void force(const cloud_index currentParticle, const RandCache &RC);
+    static const doubleV randomCos(const RandCache &RC);
+    static const doubleV randomSin(const RandCache &RC);
+    
 protected:
 	double heatVal; // [N]
 };
