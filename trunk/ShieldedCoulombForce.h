@@ -32,7 +32,7 @@ private:
 	
 	static const double coulomb;
 
-	void force(const cloud_index currentParticle, const cloud_index iParticle, 
+	void force(const cloud_index currentParticle,
 	           const double currentCharge, const double iCharge,
 	           const double displacementX, const double displacementY);
 	void force(const cloud_index currentParticle, const cloud_index iParticle, 
