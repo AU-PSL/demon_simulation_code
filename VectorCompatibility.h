@@ -17,6 +17,8 @@
 #endif
 
 #ifdef __AVX__
+#error AVX support is incomplete.
+
 #define FLOAT_STRIDE  8
 #define DOUBLE_STRIDE 4
 
