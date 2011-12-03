@@ -12,7 +12,6 @@
 
 #include <immintrin.h>
 
-
 #ifndef __SSE4_2__
 #error DEMON requires a processor with SSE 4.2 support.
 #endif
