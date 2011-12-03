@@ -56,8 +56,9 @@ const double Integrator::modifyTimeStep(float currentDist, double currentTimeSte
 		const floatV outPosX = loadFloatVector(cloud->x + outerIndex);
 		const floatV outPosY = loadFloatVector(cloud->y + outerIndex);
 	
-		floatV sepx = outPosX - _mm_shuffle_ps(outPosX, outPosX, _MM_SHUFFLE(0, 1, 2, 3));
-		floatV sepy = outPosY - _mm_shuffle_ps(outPosY, outPosY, _MM_SHUFFLE(0, 1, 2, 3));
+        // seperation (a1 - a2, a3 - a4, a1 - a3, a2 - a4)
+        floatV sepx = _mm_hsub_ps(outPosX, _mm_shuffle_ps(outPosX, outPosX, _MM_SHUFFLE(1, 2, 0, 3)));
+        floatV sepy = _mm_hsub_ps(outPosY, _mm_shuffle_ps(outPosY, outPosY, _MM_SHUFFLE(1, 2, 0, 3)));
         
 		// If particles are too close, reduce time step:
         while (isWithInDistance(sepx, sepy, BLOCK_VALUE_DIST)) {
@@ -70,22 +71,10 @@ const double Integrator::modifyTimeStep(float currentDist, double currentTimeSte
             SEMAPHORE_SIGNAL(0)
         }
 		
-		sepx = outPosX - _mm_shuffle_ps(outPosX, outPosX, _MM_SHUFFLE(1, 0, 3, 2));
-		sepy = outPosY - _mm_shuffle_ps(outPosY, outPosY, _MM_SHUFFLE(1, 0, 3, 2));
-	
-		// If particles are too close, reduce time step:
-		while (isWithInDistance(sepx, sepy, BLOCK_VALUE_DIST)) {
-			// Only one thread should modify the distance and timesStep at a time.
-			SEMAPHORE_WAIT(0)
-			if (isWithInDistance(sepx, sepy, BLOCK_VALUE_DIST)) {
-				BLOCK_VALUE_DIST /= redFactor;
-				BLOCK_VALUE_TIME /= redFactor;
-			}
-			SEMAPHORE_SIGNAL(0)
-		}
-	
-		sepx = outPosX - _mm_shuffle_ps(outPosX, outPosX, _MM_SHUFFLE(2, 3, 0, 1));
-		sepy = outPosY - _mm_shuffle_ps(outPosY, outPosY, _MM_SHUFFLE(2, 3, 0, 1));
+        // seperation (a1 - a2, a3 - a4, a1 - a4, a2 - a3) The lower half 
+        // operation is a repeat of the lower half of the above.
+        sepx = _mm_hsub_ps(outPosX, _mm_shuffle_ps(outPosX, outPosX, _MM_SHUFFLE(1, 3, 0, 2)));
+        sepy = _mm_hsub_ps(outPosY, _mm_shuffle_ps(outPosY, outPosY, _MM_SHUFFLE(1, 3, 0, 2)));
 	
 		// If particles are too close, reduce time step:
 		while (isWithInDistance(sepx, sepy, BLOCK_VALUE_DIST)) {
