@@ -21,10 +21,10 @@ void CacheOperator::operation2(const double currentTime) {
 	const doubleV halfv = _mm_set1_pd(0.5);
     BEGIN_PARALLEL_FOR(i, e, cloud->n/DOUBLE_STRIDE, 1, static)
 		const cloud_index offset = DOUBLE_STRIDE*i;
-		cloud->xCache[i] = fmadd_pd(halfv, _mm_load_pd(cloud->l1 + offset), _mm_load_pd(cloud->x + offset));
-		cloud->yCache[i] = fmadd_pd(halfv, _mm_load_pd(cloud->n1 + offset), _mm_load_pd(cloud->y + offset));
-		cloud->VxCache[i] = fmadd_pd(halfv, _mm_load_pd(cloud->k1 + offset), _mm_load_pd(cloud->Vx + offset));
-		cloud->VyCache[i] = fmadd_pd(halfv, _mm_load_pd(cloud->m1 + offset), _mm_load_pd(cloud->Vy + offset));
+		cloud->xCache[i] = fmadd_pd(halfv, load_pd(cloud->l1 + offset), load_pd(cloud->x + offset));
+		cloud->yCache[i] = fmadd_pd(halfv, load_pd(cloud->n1 + offset), load_pd(cloud->y + offset));
+		cloud->VxCache[i] = fmadd_pd(halfv, load_pd(cloud->k1 + offset), load_pd(cloud->Vx + offset));
+		cloud->VyCache[i] = fmadd_pd(halfv, load_pd(cloud->m1 + offset), load_pd(cloud->Vy + offset));
     END_PARALLEL_FOR
 }
 
@@ -35,10 +35,10 @@ void CacheOperator::operation3(const double currentTime) {
 	const doubleV halfv = _mm_set1_pd(0.5);
 	BEGIN_PARALLEL_FOR(i, e, cloud->n/DOUBLE_STRIDE, 1, static)
 		const cloud_index offset = DOUBLE_STRIDE*i;
-		cloud->xCache[i] = fmadd_pd(halfv, _mm_load_pd(cloud->l2 + offset), _mm_load_pd(cloud->x + offset));
-		cloud->yCache[i] = fmadd_pd(halfv, _mm_load_pd(cloud->n2 + offset), _mm_load_pd(cloud->y + offset));
-		cloud->VxCache[i] = fmadd_pd(halfv, _mm_load_pd(cloud->k2 + offset), _mm_load_pd(cloud->Vx + offset));
-		cloud->VyCache[i] = fmadd_pd(halfv, _mm_load_pd(cloud->m2 + offset), _mm_load_pd(cloud->Vy + offset));
+		cloud->xCache[i] = fmadd_pd(halfv, load_pd(cloud->l2 + offset), load_pd(cloud->x + offset));
+		cloud->yCache[i] = fmadd_pd(halfv, load_pd(cloud->n2 + offset), load_pd(cloud->y + offset));
+		cloud->VxCache[i] = fmadd_pd(halfv, load_pd(cloud->k2 + offset), load_pd(cloud->Vx + offset));
+		cloud->VyCache[i] = fmadd_pd(halfv, load_pd(cloud->m2 + offset), load_pd(cloud->Vy + offset));
 	END_PARALLEL_FOR
 }
 
@@ -48,9 +48,9 @@ void CacheOperator::operation4(const double currentTime) {
     (void)currentTime;
 	BEGIN_PARALLEL_FOR(i, e, cloud->n/DOUBLE_STRIDE, 1, static)
 		const cloud_index offset = DOUBLE_STRIDE*i;
-		cloud->xCache[i] = add_pd(_mm_load_pd(cloud->x + offset), _mm_load_pd(cloud->l3 + offset));
-		cloud->yCache[i] = add_pd(_mm_load_pd(cloud->y + offset), _mm_load_pd(cloud->n3 + offset));
-		cloud->VxCache[i] = add_pd(_mm_load_pd(cloud->Vx + offset), _mm_load_pd(cloud->k3 + offset));
-		cloud->VyCache[i] = add_pd(_mm_load_pd(cloud->Vy + offset), _mm_load_pd(cloud->m3 + offset));
+		cloud->xCache[i] = add_pd(load_pd(cloud->x + offset), load_pd(cloud->l3 + offset));
+		cloud->yCache[i] = add_pd(load_pd(cloud->y + offset), load_pd(cloud->n3 + offset));
+		cloud->VxCache[i] = add_pd(load_pd(cloud->Vx + offset), load_pd(cloud->k3 + offset));
+		cloud->VyCache[i] = add_pd(load_pd(cloud->Vy + offset), load_pd(cloud->m3 + offset));
 	END_PARALLEL_FOR
 }
