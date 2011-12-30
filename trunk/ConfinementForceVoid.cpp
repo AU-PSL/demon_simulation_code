@@ -65,13 +65,10 @@ void ConfinementForceVoid::writeForce(fitsfile * const file, int * const error) 
                             const_cast<char *> ("Force configuration."), error);
 	}
 
-	if (!*error) {
+	if (!*error)
 		// file, key name, value, precision (scientific format), comment
-		fits_write_key_dbl(file, const_cast<char *> ("confineConst"), confine, 
-                           6, const_cast<char *> ("[V/m^2] (ConfinementForceVoid)"), error);
 		fits_write_key_dbl(file, const_cast<char *> ("decay"), decay, 
                            6, const_cast<char *> ("[m^-1] (ConfinementForceVoid)"), error);
-	}
 }
 
 void ConfinementForceVoid::readForce(fitsfile * const file, int * const error) {
@@ -79,6 +76,5 @@ void ConfinementForceVoid::readForce(fitsfile * const file, int * const error) {
 
 	if (!*error)
 		// file, key name, value, don't read comment, error
-		fits_read_key_dbl(file, const_cast<char *> ("confineConst"), &confine, NULL, error);
 		fits_read_key_dbl(file, const_cast<char *> ("decay"), &decay, NULL, error);
 }
