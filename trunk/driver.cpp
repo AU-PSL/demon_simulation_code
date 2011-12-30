@@ -91,7 +91,7 @@ file_index outputFileIndex = 0;     // Index of argv array that holds the file n
 force_flags usedForces = 0;         // bitpacked forces
 cloud_index numParticles = 8;
 
-// Displat help. This section is white space sensitive to render correctly in an 
+// Display help. This section is white space sensitive to render correctly in an 
 // 80 column terminal environment. There should be no tabs.
 // 80 cols is ********************************************************************************
 void help() {
