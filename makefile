@@ -10,7 +10,7 @@ LIBS = libSimulation.a
 include makefile.include
 
 # Compling Flags
-CXXFLAGS += -funroll-loops -m64 -Wall -mdynamic-no-pic -march=core2 -fomit-frame-pointer -falign-functions -mfpmath=sse -msse4.1 -fno-stack-protector -I $(CFITSIO)
+CXXFLAGS += -std=c++0x -stdlib=$(LIBCXX) -funroll-loops -m64 -Wall -mdynamic-no-pic -fomit-frame-pointer -falign-functions -mfpmath=sse -msse4.2 -fno-stack-protector -I $(CFITSIO) 
 
 # Linking Flags
 LDFLAGS = $(CXXFLAGS) -L$(CFITSIO)

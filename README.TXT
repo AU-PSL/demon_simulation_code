@@ -1,6 +1,7 @@
 Requirements:
 
-Intel CPU with SSE2 or higher support. Compiler with C++11 support.
+Intel CPU with SSE4.2 or higher support. 
+Compiler with C++11 support and C++11 standard library support.
 libcfitsio.a Avalible from http://heasarc.gsfc.nasa.gov/fitsio/
 
 Compiling:
@@ -15,13 +16,15 @@ makefile.include" with the following entries.
 CFITSIO = "path to the complied cfitsio"
 CXX = "command name of the C++ complier"
 CXXFLAGS = "-O3 and any other compiler flags needed."
+LIBCXX = "C++ standard library."
 
-For example compling with g++ where libcfitsio.a has been compiled into 
-/foo/cfitsio the makefile.include should appear as
+For example compling with clang using libc++ where libcfitsio.a has been 
+compiled into /foo/cfitsio the makefile.include should appear as
 
 CFITSIO = /foo/cfitsio
-CXX = g++
+CXX = clang++
 CXXFLAGS = -O3
+LIBCXX = libc++
 
 where -O3 is the flag controlling the optimization level. To compile DEMON type
 make in the command line. Parallel builds can be activatled by adding -openmp to
