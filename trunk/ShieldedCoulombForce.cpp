@@ -21,6 +21,9 @@ ShieldedCoulombForce::~ShieldedCoulombForce() {
 }
 
 void ShieldedCoulombForce::force1(const double currentTime) {
+#ifdef __AVX__
+#error "ShieldedCoulombForce::force1 does not fully support AVX."
+#endif
     (void)currentTime;
     const cloud_index numParticles = cloud->n;
 #ifdef DISPATCH_QUEUES
@@ -51,6 +54,9 @@ void ShieldedCoulombForce::force1(const double currentTime) {
 }
 
 void ShieldedCoulombForce::force2(const double currentTime) {
+#ifdef __AVX__
+#error "ShieldedCoulombForce::force2 does not fully support AVX."
+#endif
     (void)currentTime;
 	const cloud_index numParticles = cloud->n;
 #ifdef DISPATCH_QUEUES
@@ -80,6 +86,9 @@ void ShieldedCoulombForce::force2(const double currentTime) {
 }
 
 void ShieldedCoulombForce::force3(const double currentTime) {
+#ifdef __AVX__
+#error "ShieldedCoulombForce::force3 does not fully support AVX."
+#endif
     (void)currentTime;
     const cloud_index numParticles = cloud->n;
 #ifdef DISPATCH_QUEUES
@@ -109,6 +118,9 @@ void ShieldedCoulombForce::force3(const double currentTime) {
 }
 
 void ShieldedCoulombForce::force4(const double currentTime) {
+#ifdef __AVX__
+#error "ShieldedCoulombForce::force4 does not fully support AVX."
+#endif
     (void)currentTime;
 	const cloud_index numParticles = cloud->n;
 #ifdef DISPATCH_QUEUES
