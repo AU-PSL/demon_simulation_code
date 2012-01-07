@@ -32,6 +32,9 @@ Integrator::~Integrator() {
 // particle spacings are outside the specified distance use the current 
 // timestep. This allows fine grain control of reduced timesteps.
 const double Integrator::modifyTimeStep(float currentDist, double currentTimeStep) const {
+#ifdef __AVX__
+#error "Integartor::modifyTimeStep does not fully support AVX."
+#endif
 	// set constants:	
 	const cloud_index numPar = cloud->n;
 	const float redFactor = 10.0f;
