@@ -109,9 +109,8 @@ void ThermalForce::force4(const double currentTime) {
 // F = c*L : L is a uniformly distributed random number between 0 - 1 in a 
 // random direction.
 inline void ThermalForce::force(const cloud_index currentParticle, const RandCache &RC) {
-	const doubleV thermV = _mm_set1_pd(heatVal)*RC.r;
-	
-	plusEqual_pd(cloud->forceX + currentParticle, thermV*randomCos(RC)); // _mm_set_pd() is backwards
+    const doubleV thermV = mul_pd(RC.r, heatVal);
+	plusEqual_pd(cloud->forceX + currentParticle, thermV*randomCos(RC));
 	plusEqual_pd(cloud->forceY + currentParticle, thermV*randomSin(RC));
 }
 
