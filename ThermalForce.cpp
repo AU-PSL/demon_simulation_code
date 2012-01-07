@@ -21,10 +21,7 @@ heatVal(redFactor) {
     dispatch_group_async(oddRandGroup, randQueue, ^{
 #endif
     for (cloud_index i = 0, e = cloud->n/DOUBLE_STRIDE; i < e; i++)
-        oddRandCache[i] = RandCache(_mm_set_pd(cloud->rands.uniformZeroToOne(), 
-											   cloud->rands.uniformZeroToOne()), 
-									cloud->rands.uniformZeroToTwoPi(), 
-									cloud->rands.uniformZeroToTwoPi());
+        oddRandCache[i] = RandCache(cloud->rands);
 #ifdef DISPATCH_QUEUES
     });
 #endif
@@ -47,10 +44,7 @@ void ThermalForce::force1(const double currentTime) {
     dispatch_group_async(evenRandGroup, randQueue, ^{
 #endif
     for (cloud_index i = 0, e = cloud->n/DOUBLE_STRIDE; i < e; i++)
-        evenRandCache[i] = RandCache(_mm_set_pd(cloud->rands.uniformZeroToOne(), 
-												cloud->rands.uniformZeroToOne()), 
-									 cloud->rands.uniformZeroToTwoPi(), 
-									 cloud->rands.uniformZeroToTwoPi());
+        evenRandCache[i] = RandCache(cloud->rands);
 #ifdef DISPATCH_QUEUES
     });
 	dispatch_group_wait(oddRandGroup, DISPATCH_TIME_FOREVER);
@@ -67,10 +61,7 @@ void ThermalForce::force2(const double currentTime) {
     dispatch_group_async(oddRandGroup, randQueue, ^{
 #endif
 	for (cloud_index i = 0, e = cloud->n/DOUBLE_STRIDE; i < e; i++)
-        oddRandCache[i] = RandCache(_mm_set_pd(cloud->rands.uniformZeroToOne(), 
-											   cloud->rands.uniformZeroToOne()), 
-									cloud->rands.uniformZeroToTwoPi(), 
-									cloud->rands.uniformZeroToTwoPi());
+        oddRandCache[i] = RandCache(cloud->rands);
 #ifdef DISPATCH_QUEUES
     });
 	dispatch_group_wait(evenRandGroup, DISPATCH_TIME_FOREVER);
@@ -87,10 +78,7 @@ void ThermalForce::force3(const double currentTime) {
     dispatch_group_async(evenRandGroup, randQueue, ^{
 #endif
     for (cloud_index i = 0, e = cloud->n/DOUBLE_STRIDE; i < e; i++)
-        evenRandCache[i] = RandCache(_mm_set_pd(cloud->rands.uniformZeroToOne(), 
-												cloud->rands.uniformZeroToOne()), 
-									 cloud->rands.uniformZeroToTwoPi(), 
-									 cloud->rands.uniformZeroToTwoPi());
+        evenRandCache[i] = RandCache(cloud->rands);
 #ifdef DISPATCH_QUEUES
     });
 	dispatch_group_wait(oddRandGroup, DISPATCH_TIME_FOREVER);
@@ -107,10 +95,7 @@ void ThermalForce::force4(const double currentTime) {
     dispatch_group_async(oddRandGroup, randQueue, ^{
 #endif
     for (cloud_index i = 0, e = cloud->n/DOUBLE_STRIDE; i < e; i++)
-        oddRandCache[i] = RandCache(_mm_set_pd(cloud->rands.uniformZeroToOne(), 
-											   cloud->rands.uniformZeroToOne()), 
-									cloud->rands.uniformZeroToTwoPi(), 
-									cloud->rands.uniformZeroToTwoPi());
+        oddRandCache[i] = RandCache(cloud->rands);
 #ifdef DISPATCH_QUEUES
     });
 	dispatch_group_wait(evenRandGroup, DISPATCH_TIME_FOREVER);

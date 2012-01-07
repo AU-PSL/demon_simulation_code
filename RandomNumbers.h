@@ -38,15 +38,23 @@ struct RandCache {
 #endif
     ;
     
-	RandCache(const doubleV r_ = _mm_set1_pd(0.0), 
-			  const double r1_ = 0.0, const double r2_ = 0.0
+    RandCache(RandomNumbers &rands) :
 #ifdef __AVX__
-              const double r3_ = 0.0, const double r4_ = 0.0 
-#endif             
-              ) 
-	: r(r_), r1(r1_), r2(r2_) 
+    r(_mm256_set_pd(rands.uniformZeroToOne(),
+                    rands.uniformZeroToOne(),
+                    rands.uniformZeroToOne(),
+                    rands.uniformZeroToOne())),
+    r1(rands.uniformZeroToTwoPi()), r2(rands.uniformZeroToTwoPi()),
+    r3(rands.uniformZeroToTwoPi()), r4(rands.uniformZeroToTwoPi()) {}
+#else
+    r(_mm_set_pd(rands.uniformZeroToOne(),
+                 rands.uniformZeroToOne())),
+    r1(rands.uniformZeroToTwoPi()), r2(rands.uniformZeroToTwoPi()) {}
+#endif
+	RandCache() 
+	: r(set1_pd(0.0)), r1(0.0), r2(0.0) 
 #ifdef __AVX__
-    r3(r3_), r4(r4_) 
+    r3(0.0), r4(0.0) 
 #endif
     {}
 };
