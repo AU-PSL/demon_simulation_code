@@ -239,7 +239,7 @@ void checkOption(const int argc, char * const argv[], int &optionIndex, const ch
 			}
 			default:
 				va_end(arglist);
-				assert("Undefined Argument Type");
+				assert(false && "Undefined Argument Type");
 		}
 	}
 	va_end(arglist);
