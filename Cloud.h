@@ -37,11 +37,6 @@ public:
 	static const double particleRadius;
     static const double dustParticleMassDensity;
 
-	void setPosition(const cloud_index index, const double initialPosX, const double initialPosY) const;
-	void setVelocity(const cloud_index index) const;
-	void setCharge(const double qMean, const double qSigma);	
-	void setMass(const double rMean, const double rSigma);
-
 	void writeCloudSetup(fitsfile * const file, int &error) const;
 	void writeTimeStep(fitsfile * const file, int &error, double currentTime) const;
     
@@ -80,6 +75,12 @@ public:
                                         const double qMean, const double qSigma);
 	static Cloud * const initializeFromFile(fitsfile * const file, int &error, 
                                             double * const currentTime);
+	
+private:
+	void setPosition(const cloud_index index, const double initialPosX, const double initialPosY) const;
+	void setVelocity(const cloud_index index) const;
+	void setCharge(const double qMean, const double qSigma);	
+	void setMass(const double rMean, const double rSigma);
 };
 
 #endif // CLOUD_H
