@@ -162,8 +162,7 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle,
 		// calculate force
 		const double forceC = coulomb*currentCharge*iCharge*(1.0 + valExp)
             /(displacement*displacement*displacement*exp(valExp));
-        
-        
+
         const double forceX = forceC*displacementX;
         const double forceY = forceC*displacementY;
         SEMAPHORE_WAIT(currentParticle/DOUBLE_STRIDE)
