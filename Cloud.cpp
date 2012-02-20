@@ -44,16 +44,6 @@ Cloud::~Cloud() {
 	delete[] VxCache; delete[] VyCache;
 }
 
-inline void Cloud::initPosition(const cloud_index index, 
-							    const double xVal, const double yVal) const {
-	x[index] = xVal;
-	y[index] = yVal;
-}
-
-inline void Cloud::initVelocity(const cloud_index index) const {
-	Vx[index] = Vy[index] = 0.0;
-}
-
 // Particle charges are set as a guassian distribution. To set a uniform 
 // distribution the charge sigma should be set to zero.
 inline void Cloud::initCharge(const double qMean, const double qSigma) {
@@ -88,10 +78,9 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles,
 	cloud->initCharge(qMean, qSigma);
 	cloud->initMass(rMean, rSigma);
     BEGIN_PARALLEL_FOR(i, e, numParticles, 1, static)
-		cloud->initPosition(i, 
-			cloudHalfSize - (double)(i%sqrtNumPar)*interParticleSpacing, 
-			cloudHalfSize - (double)(i/sqrtNumPar)*interParticleSpacing);
-		cloud->initVelocity(i);
+    	cloud->x[i] = cloudHalfSize - (double)(i%sqrtNumPar)*interParticleSpacing;
+	    cloud->y[i] = cloudHalfSize - (double)(i%sqrtNumPar)*interParticleSpacing;
+		cloud->Vx[i] = cloud->Vy[i] = 0.0;
     END_PARALLEL_FOR
 	return cloud;
 }
