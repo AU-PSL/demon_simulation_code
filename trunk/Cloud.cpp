@@ -44,19 +44,19 @@ Cloud::~Cloud() {
 	delete[] VxCache; delete[] VyCache;
 }
 
-inline void Cloud::setPosition(const cloud_index index, 
-							   const double xVal, const double yVal) const {
+inline void Cloud::initPosition(const cloud_index index, 
+							    const double xVal, const double yVal) const {
 	x[index] = xVal;
 	y[index] = yVal;
 }
 
-inline void Cloud::setVelocity(const cloud_index index) const {
+inline void Cloud::initVelocity(const cloud_index index) const {
 	Vx[index] = Vy[index] = 0.0;
 }
 
 // Particle charges are set as a guassian distribution. To set a uniform 
 // distribution the charge sigma should be set to zero.
-inline void Cloud::setCharge(const double qMean, const double qSigma) {
+inline void Cloud::initCharge(const double qMean, const double qSigma) {
 	std::normal_distribution<double> dist(qMean, qSigma);
 	for (cloud_index i = 0; i < n; i++)
 		charge[i] = rands.guassian(dist)*electronCharge;
@@ -64,7 +64,7 @@ inline void Cloud::setCharge(const double qMean, const double qSigma) {
 
 // Particle sizes are set as a guassian distribution. To set a uniform 
 // distribution the radius sigma should be set to zero.
-inline void Cloud::setMass(const double rMean, const double rSigma) {
+inline void Cloud::initMass(const double rMean, const double rSigma) {
 	const double particleMassConsant = (4.0/3.0)*M_PI*dustParticleMassDensity;
 	std::normal_distribution<double> dist(rMean, rSigma);
 	for (cloud_index i = 0; i < n; i++) {
@@ -85,13 +85,13 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles,
 	const double cloudHalfSize = (double)sqrtNumPar/2.0*interParticleSpacing 
 		- ((sqrtNumPar%2) ? 0.0 : interParticleSpacing/2.0);
 
-	cloud->setCharge(qMean, qSigma);
-	cloud->setMass(rMean, rSigma);
+	cloud->initCharge(qMean, qSigma);
+	cloud->initMass(rMean, rSigma);
     BEGIN_PARALLEL_FOR(i, e, numParticles, 1, static)
-		cloud->setPosition(i, 
+		cloud->initPosition(i, 
 			cloudHalfSize - (double)(i%sqrtNumPar)*interParticleSpacing, 
 			cloudHalfSize - (double)(i/sqrtNumPar)*interParticleSpacing);
-		cloud->setVelocity(i);
+		cloud->initVelocity(i);
     END_PARALLEL_FOR
 	return cloud;
 }
