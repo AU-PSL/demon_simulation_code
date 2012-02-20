@@ -77,8 +77,6 @@ public:
                                             double * const currentTime);
 	
 private:
-	void initPosition(const cloud_index index, const double initialPosX, const double initialPosY) const;
-	void initVelocity(const cloud_index index) const;
 	void initCharge(const double qMean, const double qSigma);	
 	void initMass(const double rMean, const double rSigma);
 };
