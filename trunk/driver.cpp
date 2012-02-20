@@ -581,9 +581,9 @@ int main (int argc, char * const argv[]) {
 	
 	cout << clear_line << "\rTime elapsed: " 
 	<< d.count() << (d.count() == 1 ? " day, " : " days, ") 
-	<< h.count() << (h.count() == 1 ? " hour " : " hours, ") 
-	<< m.count() << (m.count() == 1 ? " minute " : " minutes, ") 
-	<< s.count() << (s.count() == 1 ? " second " : " seconds.") << endl;
+	<< h.count() << (h.count() == 1 ? " hour, " : " hours, ") 
+	<< m.count() << (m.count() == 1 ? " minute, " : " minutes, ") 
+	<< s.count() << (s.count() == 1 ? " second." : " seconds.") << endl;
 	
 	return 0;
 }
