@@ -77,10 +77,10 @@ public:
                                             double * const currentTime);
 	
 private:
-	void setPosition(const cloud_index index, const double initialPosX, const double initialPosY) const;
-	void setVelocity(const cloud_index index) const;
-	void setCharge(const double qMean, const double qSigma);	
-	void setMass(const double rMean, const double rSigma);
+	void initPosition(const cloud_index index, const double initialPosX, const double initialPosY) const;
+	void initVelocity(const cloud_index index) const;
+	void initCharge(const double qMean, const double qSigma);	
+	void initMass(const double rMean, const double rSigma);
 };
 
 #endif // CLOUD_H
