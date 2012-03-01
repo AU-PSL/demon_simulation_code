@@ -79,7 +79,7 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles,
 	cloud->initMass(rMean, rSigma);
     BEGIN_PARALLEL_FOR(i, e, numParticles, 1, static)
     	cloud->x[i] = cloudHalfSize - (double)(i%sqrtNumPar)*interParticleSpacing;
-	    cloud->y[i] = cloudHalfSize - (double)(i%sqrtNumPar)*interParticleSpacing;
+	    cloud->y[i] = cloudHalfSize - (double)(i/sqrtNumPar)*interParticleSpacing;
 		cloud->Vx[i] = cloud->Vy[i] = 0.0;
     END_PARALLEL_FOR
 	return cloud;
