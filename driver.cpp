@@ -537,8 +537,8 @@ int main (int argc, char * const argv[]) {
 	}
 	
     // If performing the mach cone experiments alter the first particle. The 
-    // first particles is move to the left of the cloud. It's mass is increased
-    // and it given an inital velocity toward the main cloud.
+    // first particle is move to the left of the cloud. It's mass is increased
+    // and it is given an inital velocity toward the main cloud.
 	if (Mach) {
 		cloud->x[0] = -0.75*sqrt((double)cloud->n)*Cloud::interParticleSpacing;
 		cloud->y[0] = 0.0;
