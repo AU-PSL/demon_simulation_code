@@ -254,8 +254,7 @@ const doubleV Cloud::gety4_pd(const cloud_index i) const {
 	return yCache[i/DOUBLE_STRIDE]; // y + n3
 }
 
-const doubleV Cloud::gety1r_pd(const cloud_index i) const 
-{
+const doubleV Cloud::gety1r_pd(const cloud_index i) const {
 	return _mm_loadr_pd(y + i);
 }
 
