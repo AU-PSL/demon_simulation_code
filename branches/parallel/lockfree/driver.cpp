@@ -89,7 +89,7 @@ file_index continueFileIndex = 0;   // Index of argv array that holds the file n
 file_index finalsFileIndex = 0;     // Index of argv array that holds the file name of the fitsfile to use finals of.
 file_index outputFileIndex = 0;     // Index of argv array that holds the file name of the fitsfile to output.
 force_flags usedForces = 0;         // bitpacked forces
-cloud_index numParticles = 8;
+cloud_index numParticles = FLOAT_STRIDE;
 
 // Display help. This section is white space sensitive to render correctly in an 
 // 80 column terminal environment. There should be no tabs.
@@ -111,7 +111,7 @@ void help() {
           << " -L 0.001 1E-14 1E-14   use ThermalForceLocalized; set radius [m], in/out" << endl
           << "                        thermal values [N]" << endl
           << " -M 0.2 100             create Mach Cone; set bullet velocity [m/s], mass factor" << endl
-          << " -n 8                   set number of particles" << endl
+          << " -n " << FLOAT_STRIDE << "                   set number of particles" << endl
           << " -o 0.01                set the data Output time step [s]" << endl
           << " -O data.fits           set the name of the output file" << endl
           << " -q 6000.0 100.0        set charge mean and sigma [c]" << endl
