@@ -28,22 +28,37 @@ public:
 
 private:
 	double shielding; // [m^-1]
-    SEMAPHORES
 	
 	static const double coulomb;
 
-	void force(const cloud_index currentParticle,
-	           const double currentCharge, const double iCharge,
-	           const double displacementX, const double displacementY);
-	void force(const cloud_index currentParticle, const cloud_index iParticle, 
-	           const doubleV currentCharge, const doubleV iCharge,
-	           const doubleV displacementX, const doubleV displacementY);
-	void forcer(const cloud_index currentParticle, const cloud_index iParticle,
-	            const doubleV currentCharge, const doubleV iCharge,
-	            const doubleV displacementX, const doubleV displacementY);
+    void force(const cloud_index currentParticle,
+               const double iCharge, const double jCharge,
+               const double displacementX, const double displacementY);
+    void force(const cloud_index currentParticle, const cloud_index iParticle, 
+               const doubleV currentCharge, const doubleV iCharge,
+               const doubleV displacementX, const doubleV displacementY);
+    void forcer(const cloud_index currentParticle, const cloud_index iParticle, 
+                const doubleV currentCharge, const doubleV iCharge,
+                const doubleV displacementX, const doubleV displacementY);
     
     static void plusEqualr_pd(double * const a, const doubleV b);
     static void minusEqualr_pd(double * const a, const doubleV b);
+    
+    void coulombForce1(const cloud_index i, const cloud_index j);
+    void block1(const cloud_index ilow, const cloud_index ihigh, 
+                const cloud_index jlow, const cloud_index jhigh);
+    
+    void coulombForce2(const cloud_index i, const cloud_index j);
+    void block2(const cloud_index ilow, const cloud_index ihigh, 
+                const cloud_index jlow, const cloud_index jhigh);
+    
+    void coulombForce3(const cloud_index i, const cloud_index j);
+    void block3(const cloud_index ilow, const cloud_index ihigh, 
+                const cloud_index jlow, const cloud_index jhigh);
+    
+    void coulombForce4(const cloud_index i, const cloud_index j);
+    void block4(const cloud_index ilow, const cloud_index ihigh, 
+                const cloud_index jlow, const cloud_index jhigh);
 };
 
 #endif // SHIELDEDCOULOMBFORCE_H
