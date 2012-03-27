@@ -33,9 +33,9 @@ void ShieldedCoulombForce::coulombForce1(const cloud_index i, const cloud_index 
         block1(i, half, half, j);
     } else {
         for (cloud_index ci = i, e = j - 1; ci < e; ci += DOUBLE_STRIDE) {
-            const doubleV vx1 = cloud->getx1_pd(i);
-            const doubleV vy1 = cloud->gety1_pd(i);
-            const doubleV vq1 = _mm_load_pd(cloud->charge + i);
+            const doubleV vx1 = cloud->getx1_pd(ci);
+            const doubleV vy1 = cloud->gety1_pd(ci);
+            const doubleV vq1 = _mm_load_pd(cloud->charge + ci);
             double x1, x2, y1, y2, q1, q2;
             _mm_storel_pd(&x1, vx1);
             _mm_storeh_pd(&x2, vx1);
@@ -44,12 +44,12 @@ void ShieldedCoulombForce::coulombForce1(const cloud_index i, const cloud_index 
             _mm_storel_pd(&q1, vq1);
             _mm_storeh_pd(&q2, vq1);
         
-            force(i, q1, q2, x1 - x2, y1 - y2);
+            force(ci, q1, q2, x1 - x2, y1 - y2);
             
-            for (cloud_index cj = i + DOUBLE_STRIDE; cj < j; cj += DOUBLE_STRIDE) {
+            for (cloud_index cj = ci + DOUBLE_STRIDE; cj < j; cj += DOUBLE_STRIDE) {
                 double * const c = cloud->charge + cj;
-                force(i, i, vq1, _mm_load_pd(c), vx1 - cloud->getx1_pd(cj), vy1 - cloud->gety1_pd(cj));
-                forcer(i, i, vq1, _mm_loadr_pd(c), vx1 - cloud->getx1r_pd(cj), vy1 - cloud->gety1r_pd(cj));
+                force(ci, cj, vq1, load_pd(c), vx1 - cloud->getx1_pd(cj), vy1 - cloud->gety1_pd(cj));
+                forcer(ci, cj, vq1, _mm_loadr_pd(c), vx1 - cloud->getx1r_pd(cj), vy1 - cloud->gety1r_pd(cj));
             }
         }
     }
@@ -99,9 +99,9 @@ void ShieldedCoulombForce::coulombForce2(const cloud_index i, const cloud_index 
         block2(i, half, half, j);
     } else
         for (cloud_index ci = i, e = j - 1; ci < e; ci += DOUBLE_STRIDE) {
-            const doubleV vx1 = cloud->getx2_pd(i);
-            const doubleV vy1 = cloud->gety2_pd(i);
-            const doubleV vq1 = _mm_load_pd(cloud->charge + i);
+            const doubleV vx1 = cloud->getx2_pd(ci);
+            const doubleV vy1 = cloud->gety2_pd(ci);
+            const doubleV vq1 = _mm_load_pd(cloud->charge + ci);
             double x1, x2, y1, y2, q1, q2;
             _mm_storel_pd(&x1, vx1);
             _mm_storeh_pd(&x2, vx1);
@@ -110,12 +110,12 @@ void ShieldedCoulombForce::coulombForce2(const cloud_index i, const cloud_index 
             _mm_storel_pd(&q1, vq1);
             _mm_storeh_pd(&q2, vq1);
             
-            force(i, q1, q2, x1 - x2, y1 - y2);
+            force(ci, q1, q2, x1 - x2, y1 - y2);
             
-            for (cloud_index cj = i + DOUBLE_STRIDE; cj < j; cj += DOUBLE_STRIDE) {
+            for (cloud_index cj = ci + DOUBLE_STRIDE; cj < j; cj += DOUBLE_STRIDE) {
                 double * const c = cloud->charge + cj;
-                force(i, i, vq1, _mm_load_pd(c), vx1 - cloud->getx2_pd(cj), vy1 - cloud->gety2_pd(cj));
-                forcer(i, i, vq1, _mm_loadr_pd(c), vx1 - cloud->getx2r_pd(cj), vy1 - cloud->gety2r_pd(cj));
+                force(ci, cj, vq1, load_pd(c), vx1 - cloud->getx2_pd(cj), vy1 - cloud->gety2_pd(cj));
+                forcer(ci, cj, vq1, _mm_loadr_pd(c), vx1 - cloud->getx2r_pd(cj), vy1 - cloud->gety2r_pd(cj));
             }
         }
 }
@@ -164,9 +164,9 @@ void ShieldedCoulombForce::coulombForce3(const cloud_index i, const cloud_index 
         block3(i, half, half, j);
     } else {
         for (cloud_index ci = i, e = j - 1; ci < e; ci += DOUBLE_STRIDE) {
-            const doubleV vx1 = cloud->getx3_pd(i);
-            const doubleV vy1 = cloud->gety3_pd(i);
-            const doubleV vq1 = _mm_load_pd(cloud->charge + i);
+            const doubleV vx1 = cloud->getx3_pd(ci);
+            const doubleV vy1 = cloud->gety3_pd(ci);
+            const doubleV vq1 = _mm_load_pd(cloud->charge + ci);
             double x1, x2, y1, y2, q1, q2;
             _mm_storel_pd(&x1, vx1);
             _mm_storeh_pd(&x2, vx1);
@@ -175,12 +175,12 @@ void ShieldedCoulombForce::coulombForce3(const cloud_index i, const cloud_index 
             _mm_storel_pd(&q1, vq1);
             _mm_storeh_pd(&q2, vq1);
             
-            force(i, q1, q2, x1 - x2, y1 - y2);
+            force(ci, q1, q2, x1 - x2, y1 - y2);
             
-            for (cloud_index cj = i + DOUBLE_STRIDE; cj < j; cj += DOUBLE_STRIDE) {
+            for (cloud_index cj = ci + DOUBLE_STRIDE; cj < j; cj += DOUBLE_STRIDE) {
                 double * const c = cloud->charge + cj;
-                force(i, i, vq1, _mm_load_pd(c), vx1 - cloud->getx3_pd(cj), vy1 - cloud->gety3_pd(cj));
-                forcer(i, i, vq1, _mm_loadr_pd(c), vx1 - cloud->getx3r_pd(cj), vy1 - cloud->gety3r_pd(cj));
+                force(ci, cj, vq1, load_pd(c), vx1 - cloud->getx3_pd(cj), vy1 - cloud->gety3_pd(cj));
+                forcer(ci, cj, vq1, _mm_loadr_pd(c), vx1 - cloud->getx3r_pd(cj), vy1 - cloud->gety3r_pd(cj));
             }
         }
     }
@@ -230,9 +230,9 @@ void ShieldedCoulombForce::coulombForce4(const cloud_index i, const cloud_index 
         block4(i, half, half, j);
     } else {
         for (cloud_index ci = i, e = j - 1; ci < e; ci += DOUBLE_STRIDE) {
-            const doubleV vx1 = cloud->getx4_pd(i);
-            const doubleV vy1 = cloud->gety4_pd(i);
-            const doubleV vq1 = _mm_load_pd(cloud->charge + i);
+            const doubleV vx1 = cloud->getx4_pd(ci);
+            const doubleV vy1 = cloud->gety4_pd(ci);
+            const doubleV vq1 = _mm_load_pd(cloud->charge + ci);
             double x1, x2, y1, y2, q1, q2;
             _mm_storel_pd(&x1, vx1);
             _mm_storeh_pd(&x2, vx1);
@@ -241,12 +241,12 @@ void ShieldedCoulombForce::coulombForce4(const cloud_index i, const cloud_index 
             _mm_storel_pd(&q1, vq1);
             _mm_storeh_pd(&q2, vq1);
             
-            force(i, q1, q2, x1 - x2, y1 - y2);
+            force(ci, q1, q2, x1 - x2, y1 - y2);
             
-            for (cloud_index cj = i + DOUBLE_STRIDE; cj < j; cj += DOUBLE_STRIDE) {
+            for (cloud_index cj = ci + DOUBLE_STRIDE; cj < j; cj += DOUBLE_STRIDE) {
                 double * const c = cloud->charge + cj;
-                force(i, i, vq1, _mm_load_pd(c), vx1 - cloud->getx4_pd(cj), vy1 - cloud->gety4_pd(cj));
-                forcer(i, i, vq1, _mm_loadr_pd(c), vx1 - cloud->getx4r_pd(cj), vy1 - cloud->gety4r_pd(cj));
+                force(ci, cj, vq1, _mm_load_pd(c), vx1 - cloud->getx4_pd(cj), vy1 - cloud->gety4_pd(cj));
+                forcer(ci, cj, vq1, _mm_loadr_pd(c), vx1 - cloud->getx4r_pd(cj), vy1 - cloud->gety4r_pd(cj));
             }
         }
     }
