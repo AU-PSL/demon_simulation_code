@@ -27,7 +27,7 @@ void ShieldedCoulombForce::force1(const double currentTime) {
 void ShieldedCoulombForce::coulombForce1(const cloud_index i, const cloud_index j) {
     const cloud_index n = j - i;
     if (n > cloud->n/16) {
-        const cloud_index half = i + n/2;
+        const cloud_index half = (i + n/2) & ~1ul; // Round down to even
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{coulombForce1(i, half);});
         dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{coulombForce1(half, j);});
         block1(i, half, half, j);
@@ -61,8 +61,8 @@ void ShieldedCoulombForce::block1(const cloud_index ilow, const cloud_index ihig
     const cloud_index n = jhigh - jlow;
     
     if (m*n > cloud->n*cloud->n/256) {
-        const cloud_index mhalf = ilow + m/2;
-        const cloud_index nhalf = jlow + n/2;
+        const cloud_index mhalf = (ilow + m/2) & ~1ul; // Round down to even
+        const cloud_index nhalf = (jlow + n/2) & ~1ul; // Round down to even
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{block1(mhalf, ihigh, jlow, nhalf);});
         dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{block1(ilow, mhalf, nhalf, jhigh);});
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{block1(ilow, mhalf, jlow, nhalf);});
@@ -93,7 +93,7 @@ void ShieldedCoulombForce::force2(const double currentTime) {
 void ShieldedCoulombForce::coulombForce2(const cloud_index i, const cloud_index j) {
     const cloud_index n = j - i;
     if (n > cloud->n/16) {
-        const cloud_index half = i + n/2;
+        const cloud_index half = (i + n/2) & ~1ul; // Round down to even
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{coulombForce2(i, half);});
         dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{coulombForce2(half, j);});
         block2(i, half, half, j);
@@ -126,8 +126,8 @@ void ShieldedCoulombForce::block2(const cloud_index ilow, const cloud_index ihig
     const cloud_index n = jhigh - jlow;
     
     if (m*n > cloud->n*cloud->n/256) {
-        const cloud_index mhalf = ilow + m/2;
-        const cloud_index nhalf = jlow + n/2;
+        const cloud_index mhalf = (ilow + m/2) & ~1ul; // Round down to even
+        const cloud_index nhalf = (jlow + n/2) & ~1ul; // Round down to even
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{block2(mhalf, ihigh, jlow, nhalf);});
         dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{block2(ilow, mhalf, nhalf, jhigh);});
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{block2(ilow, mhalf, jlow, nhalf);});
@@ -158,7 +158,7 @@ void ShieldedCoulombForce::force3(const double currentTime) {
 void ShieldedCoulombForce::coulombForce3(const cloud_index i, const cloud_index j) {
     const cloud_index n = j - i;
     if (n > cloud->n/16) {
-        const cloud_index half = i + n/2;
+        const cloud_index half = (i + n/2) & ~1ul; // Round down to even
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{coulombForce3(i, half);});
         dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{coulombForce3(half, j);});
         block3(i, half, half, j);
@@ -192,8 +192,8 @@ void ShieldedCoulombForce::block3(const cloud_index ilow, const cloud_index ihig
     const cloud_index n = jhigh - jlow;
     
     if (m*n > cloud->n*cloud->n/256) {
-        const cloud_index mhalf = ilow + m/2;
-        const cloud_index nhalf = jlow + n/2;
+        const cloud_index mhalf = (ilow + m/2) & ~1ul; // Round down to even
+        const cloud_index nhalf = (jlow + n/2) & ~1ul; // Round down to even
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{block3(mhalf, ihigh, jlow, nhalf);});
         dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{block3(ilow, mhalf, nhalf, jhigh);});
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{block3(ilow, mhalf, jlow, nhalf);});
@@ -224,7 +224,7 @@ void ShieldedCoulombForce::force4(const double currentTime) {
 void ShieldedCoulombForce::coulombForce4(const cloud_index i, const cloud_index j) {
     const cloud_index n = j - i;
     if (n > cloud->n/16) {
-        const cloud_index half = i + n/2;
+        const cloud_index half = (i + n/2) & ~1ul; // Round down to even
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{coulombForce4(i, half);});
         dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{coulombForce4(half, j);});
         block4(i, half, half, j);
@@ -258,8 +258,8 @@ void ShieldedCoulombForce::block4(const cloud_index ilow, const cloud_index ihig
     const cloud_index n = jhigh - jlow;
     
     if (m*n > cloud->n*cloud->n/256) {
-        const cloud_index mhalf = ilow + m/2;
-        const cloud_index nhalf = jlow + n/2;
+        const cloud_index mhalf = (ilow + m/2) & ~1ul; // Round down to even
+        const cloud_index nhalf = (jlow + n/2) & ~1ul; // Round down to even
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{block4(mhalf, ihigh, jlow, nhalf);});
         dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{block4(ilow, mhalf, nhalf, jhigh);});
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{block4(ilow, mhalf, jlow, nhalf);});
