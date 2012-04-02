@@ -49,7 +49,6 @@ void ShieldedCoulombForce::force1(const double currentTime) {
         _mm_storeh_pd(&q2, vq1);
                  
         force(currentParticle, q1, q2, x1 - x2, y1 - y2);
-                 
         for (cloud_index i = currentParticle + DOUBLE_STRIDE; i < numParticles; i += DOUBLE_STRIDE) {
 			double * const c = cloud->charge + i;
             force(currentParticle, i, vq1, load_pd(c), sub_pd(vx1, cloud->getx1_pd(i)), sub_pd(vy1, cloud->gety1_pd(i)));
