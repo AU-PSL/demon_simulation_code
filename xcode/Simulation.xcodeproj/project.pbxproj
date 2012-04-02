@@ -416,6 +416,7 @@
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LLVM_LTO = YES;
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Simulation;
 			};
@@ -429,6 +430,7 @@
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LLVM_LTO = YES;
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Simulation;
 			};
