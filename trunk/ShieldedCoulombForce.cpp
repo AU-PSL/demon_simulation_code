@@ -263,7 +263,7 @@ void ShieldedCoulombForce::readForce(fitsfile * const file, int * const error) {
 		fits_read_key_dbl(file, const_cast<char *> ("shieldingConstant"), &shielding, NULL, error);
 }
 
-inline doubleV exp_pd(const int mask, const doubleV a) {
+inline doubleV ShieldedCoulombForce::exp_pd(const int mask, const doubleV a) {
 	double expl = 0.0, exph = 0.0;
     if (mask & 1) {
         double expVal;
