@@ -10,6 +10,12 @@
 #include "ShieldedCoulombForce.h"
 #include <cmath>
 
+#ifdef DISPATCH_QUEUES
+#define LOOP_END(num) num
+#else
+#define LOOP_END(num) num - 1
+#endif
+
 const double ShieldedCoulombForce::coulomb = 1.0/(4.0*M_PI*Cloud::epsilon0);
 
 ShieldedCoulombForce::ShieldedCoulombForce(Cloud * const C, const double shieldingConstant)
@@ -26,12 +32,7 @@ void ShieldedCoulombForce::force1(const double currentTime) {
 #endif
     (void)currentTime;
     const cloud_index numParticles = cloud->n;
-#ifdef DISPATCH_QUEUES
-	const cloud_index outerLoop = numParticles;
-#else
-	const cloud_index outerLoop = numParticles - 1;
-#endif
-    BEGIN_PARALLEL_FOR(currentParticle, e, outerLoop, DOUBLE_STRIDE, dynamic)
+    BEGIN_PARALLEL_FOR(currentParticle, e, LOOP_END(numParticles), DOUBLE_STRIDE, dynamic)
         const doubleV vx1 = cloud->getx1_pd(currentParticle);
         const doubleV vy1 = cloud->gety1_pd(currentParticle);
         const doubleV vq1 = _mm_load_pd(cloud->charge + currentParticle);
@@ -59,12 +60,7 @@ void ShieldedCoulombForce::force2(const double currentTime) {
 #endif
     (void)currentTime;
 	const cloud_index numParticles = cloud->n;
-#ifdef DISPATCH_QUEUES
-	const cloud_index outerLoop = numParticles;
-#else
-	const cloud_index outerLoop = numParticles - 1;
-#endif
-    BEGIN_PARALLEL_FOR(currentParticle, e, outerLoop, DOUBLE_STRIDE, dynamic)
+    BEGIN_PARALLEL_FOR(currentParticle, e, LOOP_END(numParticles), DOUBLE_STRIDE, dynamic)
 		const doubleV vx1 = cloud->getx2_pd(currentParticle);
 		const doubleV vy1 = cloud->gety2_pd(currentParticle);
 		const doubleV vq1 = _mm_load_pd(cloud->charge + currentParticle);
@@ -91,12 +87,7 @@ void ShieldedCoulombForce::force3(const double currentTime) {
 #endif
     (void)currentTime;
     const cloud_index numParticles = cloud->n;
-#ifdef DISPATCH_QUEUES
-	const cloud_index outerLoop = numParticles;
-#else
-	const cloud_index outerLoop = numParticles - 1;
-#endif
-    BEGIN_PARALLEL_FOR(currentParticle, e, outerLoop, DOUBLE_STRIDE, dynamic)
+    BEGIN_PARALLEL_FOR(currentParticle, e, LOOP_END(numParticles), DOUBLE_STRIDE, dynamic)
 		const doubleV vx1 = cloud->getx3_pd(currentParticle);
 		const doubleV vy1 = cloud->gety3_pd(currentParticle);
 		const doubleV vq1 = _mm_load_pd(cloud->charge + currentParticle);
@@ -123,12 +114,7 @@ void ShieldedCoulombForce::force4(const double currentTime) {
 #endif
     (void)currentTime;
 	const cloud_index numParticles = cloud->n;
-#ifdef DISPATCH_QUEUES
-	const cloud_index outerLoop = numParticles;
-#else
-	const cloud_index outerLoop = numParticles - 1;
-#endif
-    BEGIN_PARALLEL_FOR(currentParticle, e, outerLoop, DOUBLE_STRIDE, dynamic)
+    BEGIN_PARALLEL_FOR(currentParticle, e, LOOP_END(numParticles), DOUBLE_STRIDE, dynamic)
 		const doubleV vx1 = cloud->getx4_pd(currentParticle);
 		const doubleV vy1 = cloud->gety4_pd(currentParticle);
 		const doubleV vq1 = _mm_load_pd(cloud->charge + currentParticle);
