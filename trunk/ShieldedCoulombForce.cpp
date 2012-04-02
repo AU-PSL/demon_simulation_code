@@ -26,6 +26,10 @@ ShieldedCoulombForce::~ShieldedCoulombForce() {
     SEMAPHORES_FREE(cloud->n/DOUBLE_STRIDE)
 }
 
+// FIXME: When changing this over to AVX to simplify, change force methods to
+// triangle and block forces. Triangle forces cover the outter loop force. Block
+// covers the inner loop forces. AVX specific differences would go into that 
+// section.
 void ShieldedCoulombForce::force1(const double currentTime) {
 #ifdef __AVX__
 #error "ShieldedCoulombForce::force1 does not fully support AVX."
@@ -35,7 +39,7 @@ void ShieldedCoulombForce::force1(const double currentTime) {
     BEGIN_PARALLEL_FOR(currentParticle, e, LOOP_END(numParticles), DOUBLE_STRIDE, dynamic)
         const doubleV vx1 = cloud->getx1_pd(currentParticle);
         const doubleV vy1 = cloud->gety1_pd(currentParticle);
-        const doubleV vq1 = _mm_load_pd(cloud->charge + currentParticle);
+        const doubleV vq1 = load_pd(cloud->charge + currentParticle);
         double x1, x2, y1, y2, q1, q2;
         _mm_storel_pd(&x1, vx1);
         _mm_storeh_pd(&x2, vx1);
@@ -48,8 +52,8 @@ void ShieldedCoulombForce::force1(const double currentTime) {
                  
         for (cloud_index i = currentParticle + DOUBLE_STRIDE; i < numParticles; i += DOUBLE_STRIDE) {
 			double * const c = cloud->charge + i;
-            force(currentParticle, i, vq1, _mm_load_pd(c), vx1 - cloud->getx1_pd(i), vy1 - cloud->gety1_pd(i));
-            forcer(currentParticle, i, vq1, _mm_loadr_pd(c), vx1 - cloud->getx1r_pd(i), vy1 - cloud->gety1r_pd(i));
+            force(currentParticle, i, vq1, load_pd(c), sub_pd(vx1, cloud->getx1_pd(i)), sub_pd(vy1, cloud->gety1_pd(i)));
+            forcer(currentParticle, i, vq1, _mm_loadr_pd(c), sub_pd(vx1, cloud->getx1r_pd(i)), sub_pd(vy1, cloud->gety1r_pd(i)));
         }
     END_PARALLEL_FOR
 }
@@ -63,7 +67,7 @@ void ShieldedCoulombForce::force2(const double currentTime) {
     BEGIN_PARALLEL_FOR(currentParticle, e, LOOP_END(numParticles), DOUBLE_STRIDE, dynamic)
 		const doubleV vx1 = cloud->getx2_pd(currentParticle);
 		const doubleV vy1 = cloud->gety2_pd(currentParticle);
-		const doubleV vq1 = _mm_load_pd(cloud->charge + currentParticle);
+		const doubleV vq1 = load_pd(cloud->charge + currentParticle);
 		double x1, x2, y1, y2, q1, q2;
 		_mm_storel_pd(&x1, vx1);
 		_mm_storeh_pd(&x2, vx1);
@@ -75,8 +79,8 @@ void ShieldedCoulombForce::force2(const double currentTime) {
 		force(currentParticle, q1, q2, x1 - x2, y1 - y2);
 		for (cloud_index i = currentParticle + DOUBLE_STRIDE; i < numParticles; i += DOUBLE_STRIDE) {
 			double * const c = cloud->charge + i;
-			force(currentParticle, i, vq1, _mm_load_pd(c), vx1 - cloud->getx2_pd(i), vy1 - cloud->gety2_pd(i));
-			forcer(currentParticle, i, vq1, _mm_loadr_pd(c), vx1 - cloud->getx2r_pd(i), vy1 - cloud->gety2r_pd(i));
+			force(currentParticle, i, vq1, load_pd(c), sub_pd(vx1, cloud->getx2_pd(i)), sub_pd(vy1, cloud->gety2_pd(i)));
+			forcer(currentParticle, i, vq1, _mm_loadr_pd(c), sub_pd(vx1, cloud->getx2r_pd(i)), sub_pd(vy1, cloud->gety2r_pd(i)));
 		}
 	END_PARALLEL_FOR
 }
@@ -90,7 +94,7 @@ void ShieldedCoulombForce::force3(const double currentTime) {
     BEGIN_PARALLEL_FOR(currentParticle, e, LOOP_END(numParticles), DOUBLE_STRIDE, dynamic)
 		const doubleV vx1 = cloud->getx3_pd(currentParticle);
 		const doubleV vy1 = cloud->gety3_pd(currentParticle);
-		const doubleV vq1 = _mm_load_pd(cloud->charge + currentParticle);
+		const doubleV vq1 = load_pd(cloud->charge + currentParticle);
 		double x1, x2, y1, y2, q1, q2;
 		_mm_storel_pd(&x1, vx1);
 		_mm_storeh_pd(&x2, vx1);
@@ -102,8 +106,8 @@ void ShieldedCoulombForce::force3(const double currentTime) {
 		force(currentParticle, q1, q2, x1 - x2, y1 - y2);
 		for (cloud_index i = currentParticle + DOUBLE_STRIDE; i < numParticles; i += DOUBLE_STRIDE) {
 			double * const c = cloud->charge + i;
-			force(currentParticle, i, vq1, _mm_load_pd(c), vx1 - cloud->getx3_pd(i), vy1 - cloud->gety3_pd(i));
-			forcer(currentParticle, i, vq1, _mm_loadr_pd(c), vx1 - cloud->getx3r_pd(i), vy1 - cloud->gety3r_pd(i));
+			force(currentParticle, i, vq1, load_pd(c), sub_pd(vx1, cloud->getx3_pd(i)), sub_pd(vy1, cloud->gety3_pd(i)));
+			forcer(currentParticle, i, vq1, _mm_loadr_pd(c), sub_pd(vx1, cloud->getx3r_pd(i)), sub_pd(vy1, cloud->gety3r_pd(i)));
 		}
 	END_PARALLEL_FOR
 }
@@ -117,7 +121,7 @@ void ShieldedCoulombForce::force4(const double currentTime) {
     BEGIN_PARALLEL_FOR(currentParticle, e, LOOP_END(numParticles), DOUBLE_STRIDE, dynamic)
 		const doubleV vx1 = cloud->getx4_pd(currentParticle);
 		const doubleV vy1 = cloud->gety4_pd(currentParticle);
-		const doubleV vq1 = _mm_load_pd(cloud->charge + currentParticle);
+		const doubleV vq1 = load_pd(cloud->charge + currentParticle);
 		double x1, x2, y1, y2, q1, q2;
 		_mm_storel_pd(&x1, vx1);
 		_mm_storeh_pd(&x2, vx1);
@@ -129,8 +133,8 @@ void ShieldedCoulombForce::force4(const double currentTime) {
 		force(currentParticle, q1, q2, x1 - x2, y1 - y2);
 		for (cloud_index i = currentParticle + DOUBLE_STRIDE; i < numParticles; i += DOUBLE_STRIDE) {
 			double * const c = cloud->charge + i;
-			force(currentParticle, i, vq1, _mm_load_pd(c), vx1 - cloud->getx4_pd(i), vy1 - cloud->gety4_pd(i));
-			forcer(currentParticle, i, vq1, _mm_loadr_pd(c), vx1 - cloud->getx4r_pd(i), vy1 - cloud->gety4r_pd(i));
+			force(currentParticle, i, vq1, load_pd(c), sub_pd(vx1, cloud->getx4_pd(i)), sub_pd(vy1, cloud->gety4_pd(i)));
+			forcer(currentParticle, i, vq1, _mm_loadr_pd(c), sub_pd(vx1, cloud->getx4r_pd(i)), sub_pd(vy1, cloud->gety4r_pd(i)));
 		}
 	END_PARALLEL_FOR
 }
@@ -164,10 +168,10 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
                                         const doubleV currentCharge, const doubleV iCharge,
                                         const doubleV displacementX, const doubleV displacementY) {
 	// Calculate displacement between particles.
-	const doubleV displacement = _mm_sqrt_pd(displacementX*displacementX + displacementY*displacementY);
-	const doubleV valExp = displacement*_mm_set1_pd(shielding);
+	const doubleV displacement = sqrt_pd(add_pd(displacementX*displacementX, displacementY*displacementY));
+	const doubleV valExp = displacement*set1_pd(shielding);
 	
-	const int mask = _mm_movemask_pd(_mm_cmplt_pd(valExp, _mm_set1_pd(10.0)));
+	const int mask = movemask_pd(_mm_cmplt_pd(valExp, set1_pd(10.0)));
 	if (!mask)
 		return;
 	
@@ -184,7 +188,7 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
     }
     
     // calculate force
-	const doubleV forceC = _mm_set1_pd(coulomb)*currentCharge*iCharge*(_mm_set1_pd(1.0) + valExp)*_mm_set_pd(exph, expl)
+	const doubleV forceC = set1_pd(coulomb)*currentCharge*iCharge*(set1_pd(1.0) + valExp)*_mm_set_pd(exph, expl)
         /(displacement*displacement*displacement);
     const doubleV forcevX = forceC*displacementX;
 	const doubleV forcevY = forceC*displacementY;
@@ -207,10 +211,10 @@ inline void ShieldedCoulombForce::forcer(const cloud_index currentParticle, cons
                                          const doubleV currentCharge, const doubleV iCharge,
                                          const doubleV displacementX, const doubleV displacementY) {
 	// Calculate displacement between particles.
-	const doubleV displacement = _mm_sqrt_pd(displacementX*displacementX + displacementY*displacementY);
-	const doubleV valExp = displacement*_mm_set1_pd(shielding);
+	const doubleV displacement = sqrt_pd(add_pd(displacementX*displacementX, displacementY*displacementY));
+	const doubleV valExp = displacement*set1_pd(shielding);
 	
-	const int mask = _mm_movemask_pd(_mm_cmplt_pd(valExp, _mm_set1_pd(10.0)));
+	const int mask = movemask_pd(_mm_cmplt_pd(valExp, set1_pd(10.0)));
 	if (!mask)
 		return;
 
@@ -227,7 +231,7 @@ inline void ShieldedCoulombForce::forcer(const cloud_index currentParticle, cons
     }
     
     // calculate force
-	const doubleV forceC = _mm_set1_pd(coulomb)*currentCharge*iCharge*(_mm_set1_pd(1.0) + valExp)*_mm_set_pd(exph, expl)
+	const doubleV forceC = set1_pd(coulomb)*currentCharge*iCharge*(set1_pd(1.0) + valExp)*_mm_set_pd(exph, expl)
         /(displacement*displacement*displacement);
 	const doubleV forcevX = forceC*displacementX;
 	const doubleV forcevY = forceC*displacementY;
