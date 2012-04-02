@@ -173,21 +173,9 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
 	const int mask = movemask_pd(_mm_cmplt_pd(valExp, set1_pd(10.0)));
 	if (!mask)
 		return;
-	
-	double expl = 0.0, exph = 0.0;
-    if (mask & 1) {
-        double expVal;
-        _mm_storel_pd(&expVal, valExp);
-        expl = exp(-expVal);
-    }
-    if (mask & 2) {
-        double expVal;
-        _mm_storeh_pd(&expVal, valExp);
-        exph = exp(-expVal);
-    }
     
     // calculate force
-	const doubleV forceC = set1_pd(coulomb)*currentCharge*iCharge*(set1_pd(1.0) + valExp)*_mm_set_pd(exph, expl)
+	const doubleV forceC = set1_pd(coulomb)*currentCharge*iCharge*(set1_pd(1.0) + valExp)*exp_pd(mask, valExp)
         /(displacement*displacement*displacement);
     const doubleV forcevX = forceC*displacementX;
 	const doubleV forcevY = forceC*displacementY;
@@ -216,21 +204,9 @@ inline void ShieldedCoulombForce::forcer(const cloud_index currentParticle, cons
 	const int mask = movemask_pd(_mm_cmplt_pd(valExp, set1_pd(10.0)));
 	if (!mask)
 		return;
-
-    double expl = 0.0, exph = 0.0;
-    if (mask & 1) {
-        double expVal;
-        _mm_storel_pd(&expVal, valExp);
-        expl = exp(-expVal);
-    }
-    if (mask & 2) {
-        double expVal;
-        _mm_storeh_pd(&expVal, valExp);
-        exph = exp(-expVal);
-    }
     
     // calculate force
-	const doubleV forceC = set1_pd(coulomb)*currentCharge*iCharge*(set1_pd(1.0) + valExp)*_mm_set_pd(exph, expl)
+	const doubleV forceC = set1_pd(coulomb)*currentCharge*iCharge*(set1_pd(1.0) + valExp)*exp_pd(mask, valExp)
         /(displacement*displacement*displacement);
 	const doubleV forcevX = forceC*displacementX;
 	const doubleV forcevY = forceC*displacementY;
@@ -285,6 +261,21 @@ void ShieldedCoulombForce::readForce(fitsfile * const file, int * const error) {
 	if (!*error)
 		// file, key name, value, don't read comment, error
 		fits_read_key_dbl(file, const_cast<char *> ("shieldingConstant"), &shielding, NULL, error);
+}
+
+inline doubleV exp_pd(const int mask, const doubleV a) {
+	double expl = 0.0, exph = 0.0;
+    if (mask & 1) {
+        double expVal;
+        _mm_storel_pd(&expVal, a);
+        expl = exp(-expVal);
+    }
+    if (mask & 2) {
+        double expVal;
+        _mm_storeh_pd(&expVal, a);
+        exph = exp(-expVal);
+    }
+	return _mm_set_pd(exph, expl);
 }
 
 inline void ShieldedCoulombForce::plusEqualr_pd(double * const a, const doubleV b) {
