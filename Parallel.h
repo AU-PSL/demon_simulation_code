@@ -10,9 +10,6 @@
 #ifndef PARALLEL_H
 #define PARALLEL_H
 
-#define BLOCK_VALUE_TIME currentTimeStep
-#define BLOCK_VALUE_DIST currentDist
-
 /*===- OpenMP -------------------------------------------------------------===*/
 // Implements OpenMP parallelization if the compiler contains support.
 #ifdef _OPENMP
@@ -88,12 +85,6 @@ dispatch_apply(num, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), 
 #define SEMAPHORE_WAIT(i) dispatch_semaphore_wait(semaphores[i], DISPATCH_TIME_FOREVER);
 
 #define SEMAPHORE_SIGNAL(i) dispatch_semaphore_signal(semaphores[i]);
-
-#undef BLOCK_VALUE_TIME
-#define BLOCK_VALUE_TIME currTimeStep
-
-#undef BLOCK_VALUE_DIST
-#define BLOCK_VALUE_DIST currDist
 
 /*===- scalar -------------------------------------------------------------===*/
 // If no parallelization is availible fallback to single treaded code.
