@@ -33,14 +33,11 @@ private:
 	static const double coulomb;
 
 	void force(const cloud_index currentParticle,
-	           const double currentCharge, const double iCharge,
-	           const doubleV displacementV);
+	           const double charges, const doubleV displacementV);
 	void force(const cloud_index currentParticle, const cloud_index iParticle, 
-	           const doubleV currentCharge, const doubleV iCharge,
-	           const doubleV displacementX, const doubleV displacementY);
+	           const doubleV charges, const doubleV displacementX, const doubleV displacementY);
 	void forcer(const cloud_index currentParticle, const cloud_index iParticle,
-	            const doubleV currentCharge, const doubleV iCharge,
-	            const doubleV displacementX, const doubleV displacementY);
+	            const doubleV charges, const doubleV displacementX, const doubleV displacementY);
     
 	static doubleV exp_pd(const int mask, const doubleV a);
     static void plusEqualr_pd(double * const a, const doubleV b);
