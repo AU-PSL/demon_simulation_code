@@ -30,18 +30,16 @@ for (cloud_index i = 0; i < num; i += step) {
 // Thread synronization routines.
 #define SEMAPHORES omp_lock_t *locks;
 
-#define SEMAPHORES_MALLOC(num) , locks(new omp_lock_t[myCloud->n/2])
+#define SEMAPHORES_MALLOC(num) , locks(new omp_lock_t[num])
 
 #define SEMAPHORES_INIT(num) \
-const cloud_index numParticles = cloud->n/2; \
 _Pragma("omp parallel for schedule(static)") \
-for (cloud_index i = 0; i < numParticles; i++) \
+for (cloud_index i = 0; i < (num); i++) \
 omp_init_lock(locks + i);
 
 #define SEMAPHORES_FREE(num) \
-const cloud_index numParticles = cloud->n/2; \
 _Pragma("omp parallel for schedule(static)") \
-for (cloud_index i = 0; i < numParticles; i++) \
+for (cloud_index i = 0; i < (num); i++) \
 omp_destroy_lock(locks + i);
 
 #define SEMAPHORE_WAIT(i) omp_set_lock(locks + i);
