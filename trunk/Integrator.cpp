@@ -12,6 +12,14 @@
 #include <cmath>
 #include <limits>
 
+#ifdef DISPATCH_QUEUES
+#define BLOCK_VALUE_TIME currTimeStep
+#define BLOCK_VALUE_DIST currDist
+#else
+#define BLOCK_VALUE_TIME currentTimeStep
+#define BLOCK_VALUE_DIST currentDist
+#endif
+
 Integrator::Integrator(Cloud * const C, const ForceArray &FA,
                        const double timeStep, double startTime)
 : currentTime(startTime), cloud(C), forces(FA), init_dt(timeStep),
