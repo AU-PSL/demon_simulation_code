@@ -34,7 +34,7 @@ private:
 
 	void force(const cloud_index currentParticle,
 	           const double currentCharge, const double iCharge,
-	           const double displacementX, const double displacementY);
+	           const doubleV displacementV);
 	void force(const cloud_index currentParticle, const cloud_index iParticle, 
 	           const doubleV currentCharge, const doubleV iCharge,
 	           const doubleV displacementX, const doubleV displacementY);
