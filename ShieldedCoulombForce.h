@@ -42,6 +42,7 @@ private:
 	            const doubleV currentCharge, const doubleV iCharge,
 	            const doubleV displacementX, const doubleV displacementY);
     
+	static doubleV exp_pd(const int mask, const doubleV a);
     static void plusEqualr_pd(double * const a, const doubleV b);
     static void minusEqualr_pd(double * const a, const doubleV b);
 };
