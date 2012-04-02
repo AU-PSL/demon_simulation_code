@@ -33,6 +33,7 @@ protected:
     SEMAPHORES
     
     const double modifyTimeStep(float currentDist, double currentTimeStep) const;
+	void tryToReduceTimeStep(const floatV sepx, const floatV sepy, float &distance, double &time) const;
 	static floatV loadFloatVector(double * const x);
 	static bool isWithInDistance(const floatV a, const floatV b, const float dist);
 };
