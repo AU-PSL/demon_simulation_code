@@ -32,12 +32,14 @@ Integrator::~Integrator() {
 // particle spacings are outside the specified distance use the current 
 // timestep. This allows fine grain control of reduced timesteps.
 const double Integrator::modifyTimeStep(float currentDist, double currentTimeStep) const {
+	// FIXME: When changing this over to AVX to simplify, change force methods to
+	// triangle and block forces. Triangle forces cover the outter loop force. Block
+	// covers the inner loop forces. AVX specific differences would go into that 
+	// section.
 #ifdef __AVX__
 #error "Integartor::modifyTimeStep does not fully support AVX."
 #endif
-	// set constants:	
-	const cloud_index numPar = cloud->n;
-	const float redFactor = 10.0f;
+	const cloud_index numParticles = cloud->n;
     
 #ifdef DISPATCH_QUEUES
     // You cannot block capture method arguments. Store these values in to non
@@ -50,9 +52,9 @@ const double Integrator::modifyTimeStep(float currentDist, double currentTimeSte
 	// Loop through entire cloud, or until reduction occures. Reset innerIndex 
     // after each loop iteration.
 #ifdef DISPATCH_QUEUES
-	const cloud_index outerLoop = numPar;
+	const cloud_index outerLoop = numParticles;
 #else
-	const cloud_index outerLoop = numPar - 1;
+	const cloud_index outerLoop = numParticles - 1;
 #endif
     BEGIN_PARALLEL_FOR(outerIndex, e, outerLoop, FLOAT_STRIDE, dynamic)
 		// caculate separation distance b/t adjacent elements:
@@ -62,102 +64,55 @@ const double Integrator::modifyTimeStep(float currentDist, double currentTimeSte
         // seperation (a1 - a2, a3 - a4, a1 - a3, a2 - a4)
         floatV sepx = _mm_hsub_ps(outPosX, _mm_shuffle_ps(outPosX, outPosX, _MM_SHUFFLE(1, 2, 0, 3)));
         floatV sepy = _mm_hsub_ps(outPosY, _mm_shuffle_ps(outPosY, outPosY, _MM_SHUFFLE(1, 2, 0, 3)));
-        
-		// If particles are too close, reduce time step:
-        while (isWithInDistance(sepx, sepy, BLOCK_VALUE_DIST)) {
-            // Only one thread should modify the distance and timesStep at a time.
-            SEMAPHORE_WAIT(0)
-            if (isWithInDistance(sepx, sepy, BLOCK_VALUE_DIST)) {
-                BLOCK_VALUE_DIST /= redFactor;
-                BLOCK_VALUE_TIME /= redFactor;
-            }
-            SEMAPHORE_SIGNAL(0)
-        }
+        tryToReduceTimeStep(sepx, sepy, BLOCK_VALUE_DIST, BLOCK_VALUE_TIME);
 		
         // seperation (a1 - a2, a3 - a4, a1 - a4, a2 - a3) The lower half 
         // operation is a repeat of the lower half of the above.
         sepx = _mm_hsub_ps(outPosX, _mm_shuffle_ps(outPosX, outPosX, _MM_SHUFFLE(1, 3, 0, 2)));
         sepy = _mm_hsub_ps(outPosY, _mm_shuffle_ps(outPosY, outPosY, _MM_SHUFFLE(1, 3, 0, 2)));
-	
-		// If particles are too close, reduce time step:
-		while (isWithInDistance(sepx, sepy, BLOCK_VALUE_DIST)) {
-			// Only one thread should modify the distance and timesStep at a time.
-			SEMAPHORE_WAIT(0)
-			if (isWithInDistance(sepx, sepy, BLOCK_VALUE_DIST)) {
-				BLOCK_VALUE_DIST /= redFactor;
-				BLOCK_VALUE_TIME /= redFactor;
-			}
-			SEMAPHORE_SIGNAL(0)
-		}
+		tryToReduceTimeStep(sepx, sepy, BLOCK_VALUE_DIST, BLOCK_VALUE_TIME);
         
 		// Calculate separation distance b/t nonadjacent elements:
-		for (cloud_index innerIndex = outerIndex + FLOAT_STRIDE; innerIndex < numPar; innerIndex += FLOAT_STRIDE) {
+		for (cloud_index innerIndex = outerIndex + FLOAT_STRIDE; innerIndex < numParticles; innerIndex += FLOAT_STRIDE) {
 			const floatV inPosX = loadFloatVector(cloud->x + innerIndex);
 			const floatV inPosY = loadFloatVector(cloud->y + innerIndex);
 			
             // seperation (a1 - b1, a2 - b2, a3 - b3, a4 - b4) 
 			sepx = outPosX - inPosX;
 			sepy = outPosY - inPosY;
-			
-			// If particles are too close, reduce time step:
-			while (isWithInDistance(sepx, sepy, BLOCK_VALUE_DIST)) {
-				// Only one thread should modify the distance and timesStep at a time.
-				SEMAPHORE_WAIT(0)
-				if (isWithInDistance(sepx, sepy, BLOCK_VALUE_DIST)) {
-					BLOCK_VALUE_DIST /= redFactor;
-					BLOCK_VALUE_TIME /= redFactor;
-				}
-				SEMAPHORE_SIGNAL(0)
-			}
+			tryToReduceTimeStep(sepx, sepy, BLOCK_VALUE_DIST, BLOCK_VALUE_TIME);
 			
             // seperation (a1 - b2, a2 - b3, a3 - b4, a4 - b5)
 			sepx = outPosX - _mm_shuffle_ps(inPosX, inPosX, _MM_SHUFFLE(3, 2, 1, 0));
 			sepy = outPosY - _mm_shuffle_ps(inPosY, inPosY, _MM_SHUFFLE(3, 2, 1, 0));
-			
-			// If particles are too close, reduce time step:
-			while (isWithInDistance(sepx, sepy, BLOCK_VALUE_DIST)) {
-				// Only one thread should modify the distance and timesStep at a time.
-				SEMAPHORE_WAIT(0)
-				if (isWithInDistance(sepx, sepy, BLOCK_VALUE_DIST)) {
-					BLOCK_VALUE_DIST /= redFactor;
-					BLOCK_VALUE_TIME /= redFactor;
-				}
-				SEMAPHORE_SIGNAL(0)
-			}
+			tryToReduceTimeStep(sepx, sepy, BLOCK_VALUE_DIST, BLOCK_VALUE_TIME);
 			
             // seperation (a1 - b3, a2 - b4, a3 - b1, a4 - b2)
 			sepx = outPosX - _mm_shuffle_ps(inPosX, inPosX, _MM_SHUFFLE(0, 3, 2, 1));
 			sepy = outPosY - _mm_shuffle_ps(inPosY, inPosY, _MM_SHUFFLE(0, 3, 2, 1));
-			
-			// If particles are too close, reduce time step:
-			while (isWithInDistance(sepx, sepy, BLOCK_VALUE_DIST)) {
-				// Only one thread should modify the distance and timesStep at a time.
-				SEMAPHORE_WAIT(0)
-				if (isWithInDistance(sepx, sepy, BLOCK_VALUE_DIST)) {
-					BLOCK_VALUE_DIST /= redFactor;
-					BLOCK_VALUE_TIME /= redFactor;
-				}
-				SEMAPHORE_SIGNAL(0)
-			}
+			tryToReduceTimeStep(sepx, sepy, BLOCK_VALUE_DIST, BLOCK_VALUE_TIME);
 			
             // seperation (a1 - b4, a2 - b1, a3 - b2, a4 - b3)
 			sepx = outPosX - _mm_shuffle_ps(inPosX, inPosX, _MM_SHUFFLE(1, 0, 3, 2));
 			sepy = outPosY - _mm_shuffle_ps(inPosY, inPosY, _MM_SHUFFLE(1, 0, 3, 2));
-			
-			// If particles are too close, reduce time step:
-			while (isWithInDistance(sepx, sepy, BLOCK_VALUE_DIST)) {
-				// Only one thread should modify the distance and timesStep at a time.
-				SEMAPHORE_WAIT(0)
-				if (isWithInDistance(sepx, sepy, BLOCK_VALUE_DIST)) {
-					BLOCK_VALUE_DIST /= redFactor;
-					BLOCK_VALUE_TIME /= redFactor;
-				}
-				SEMAPHORE_SIGNAL(0)
-			}
+			tryToReduceTimeStep(sepx, sepy, BLOCK_VALUE_DIST, BLOCK_VALUE_TIME);
 		}
 	END_PARALLEL_FOR
 
     return BLOCK_VALUE_TIME;
+}
+
+inline void Integrator::tryToReduceTimeStep(const floatV sepx, const floatV sepy, float &distance, double &time) const {
+	// If particles are too close, reduce time step:
+	while (isWithInDistance(sepx, sepy, distance)) {
+		// Only one thread should modify the distance and timesStep at a time.
+		SEMAPHORE_WAIT(0)
+		if (isWithInDistance(sepx, sepy, distance)) {
+			distance /= 10.0f;
+			time /= 10.0f;
+		}
+		SEMAPHORE_SIGNAL(0)
+	}
 }
 
 inline floatV Integrator::loadFloatVector(double * const x) {
