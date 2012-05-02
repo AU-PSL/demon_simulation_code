@@ -1,4 +1,3 @@
-// This is a test
 /*===- Force.h - libSimulation -================================================
 *
 *                                  DEMON
