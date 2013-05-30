@@ -21,9 +21,7 @@
 #include <iostream>
 #include <cstdarg>
 #include <cassert>
-
-// Cannot include cmath because it causes a conflict with gamma.
-extern "C" double sqrt(double);
+#include <cmath>
 
 void help();
 void checkForce(const size_t numChecks, ...);
@@ -64,7 +62,7 @@ double confinementConst = 100.0;    // confinementForce [V/m^2]
 double confinementConstX = 100.0;   // RectConfinementForce [V/m^2]
 double confinementConstY = 1000.0;  // RectConfinementForce [V/m^2]
 double shieldingConstant = 2E4;     // corresponds to 10*(ion debye length) [m^-1]
-double gamma = 10.0;                // dust drag frequency [Hz]
+double dragGamma = 10.0;            // dust drag frequency [Hz]
 double thermRed = 1E-14;            // default thermal reduction factor [N]
 double thermRed1 = thermRed;        // default outer reduction factor (-L) [N]
 double thermScale = 1E-14;          // default for TimeVaryingThermalForce [N/s]
@@ -496,7 +494,7 @@ int main (int argc, char * const argv[]) {
 	if (usedForces & ConfinementForceVoidFlag)
 		forces.push_back(new ConfinementForceVoid(cloud, confinementConst, voidDecay));
 	if (usedForces & DragForceFlag) 
-		forces.push_back(new DragForce(cloud, gamma));
+		forces.push_back(new DragForce(cloud, dragGamma));
 	if (usedForces & DrivingForceFlag)
 		forces.push_back(new DrivingForce(cloud, driveConst, waveAmplitude, waveShift));
 	if (usedForces & MagneticForceFlag)
@@ -512,7 +510,7 @@ int main (int argc, char * const argv[]) {
 	if (usedForces & ThermalForceLocalizedFlag)
 		forces.push_back(new ThermalForceLocalized(cloud, thermRed, thermRed1, heatRadius));
 	if (usedForces & TimeVaryingDragForceFlag)
-		forces.push_back(new TimeVaryingDragForce(cloud, dragScale, gamma));
+		forces.push_back(new TimeVaryingDragForce(cloud, dragScale, dragGamma));
 	if (usedForces & TimeVaryingThermalForceFlag)
 		forces.push_back(new TimeVaryingThermalForce(cloud, thermScale, thermOffset));
 	
