@@ -8,27 +8,24 @@ Compiling:
 
     Download and build libcfitsio.a from the above link.
 
-1. Using Make:
+1. Using CMake:
 
-    In the same directory as the DEMON makefile create a file called 
-makefile.include" with the following entries.
+    DEMON requires that the cfitsio library and include paths be set with the
+following command.
 
-CFITSIO = "path to the complied cfitsio"
-CXX = "command name of the C++ complier"
-CXXFLAGS = "-O3 and any other compiler flags needed."
-LIBCXX = "C++ standard library."
+cmake -DCFITSIO_INC_PATH=/path/to/include -DCFITSIO_LIB_PATH=/path/to/lib
 
-For example compling with clang using libc++ where libcfitsio.a has been 
-compiled into /foo/cfitsio the makefile.include should appear as
+extra build flags maybe included by setting
 
-CFITSIO = /foo/cfitsio
-CXX = clang++
-CXXFLAGS = -O3
-LIBCXX = libc++
+cmake -DCMAKE_CXX_FLAGS="flags"
 
-where -O3 is the flag controlling the optimization level. To compile DEMON type
-make in the command line. Parallel builds can be activatled by adding -openmp to
-to the CXXFLAGS if using an OpenMP compatable compiler.
+A optimized build maybe specifed by
+
+cmake -DCMAKE_BUILD_TYPE=Release
+
+Cmake will generate a make file. The built executable can be found in 
+
+build/bin
 
 2. Using xcode:
 
