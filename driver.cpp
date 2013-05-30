@@ -22,6 +22,7 @@
 #include <cstdarg>
 #include <cassert>
 #include <cmath>
+#include <chrono>
 
 void help();
 void checkForce(const size_t numChecks, ...);
