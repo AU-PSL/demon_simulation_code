@@ -104,7 +104,7 @@ void help() {
           << " -D -1.0 10.0           use TimeVaryingDragForce; set scale [Hz/s], offset [Hz]" << endl
           << " -e 5.0                 set simulation end time [s]" << endl
           << " -f noDefaut.fits       use final positions and velocities from file" << endl
-          << " -g 10.0                set gamma (magnitute of drag constant) [Hz]" << endl
+          << " -g 10.0                set dragGamma (magnitute of drag constant) [Hz]" << endl
           << " -h                     display Help (instead of running)" << endl
           << " -I                     use 2nd order Runge-Kutta integrator" << endl
           << " -L 0.001 1E-14 1E-14   use ThermalForceLocalized; set radius [m], in/out" << endl
@@ -267,7 +267,7 @@ void parseCommandLineOptions(int argc, char * const argv[]) {
 				checkForce(1, 'D', TimeVaryingDragForceFlag);
 				checkOption(argc, argv, i, 'D', 2, 
                             "scale factor", D, &dragScale, 
-                            "offset",       D, &gamma);
+                            "offset",       D, &dragGamma);
 				break;
 			case 'e': // set "e"nd time:
 				checkOption(argc, argv, i, 'e', 1, 
@@ -279,7 +279,7 @@ void parseCommandLineOptions(int argc, char * const argv[]) {
 				break;
 			case 'g': // set "g"amma:
 				checkOption(argc, argv, i, 'g', 1, 
-                            "gamma", D, &gamma);
+                            "dragGamma", D, &dragGamma);
 				break;
 			case 'h': // display "h"elp:
 				help();
