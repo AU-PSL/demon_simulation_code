@@ -17,6 +17,7 @@
 #include "ThermalForceLocalized.h"
 #include "TimeVaryingDragForce.h"
 #include "TimeVaryingThermalForce.h"
+#include "ElectricForce.h"
 
 #include <iostream>
 #include <cstdarg>
@@ -59,9 +60,9 @@ double dataTimeStep = 0.01;         // [s]
 double simTimeStep =
     dataTimeStep/100.0;             // [s]
 double endTime = 5.0;               // [s]
-double confinementConst = 100.0;    // confinementForce [V/m^2]
-double confinementConstX = 100.0;   // RectConfinementForce [V/m^2]
-double confinementConstY = 1000.0;  // RectConfinementForce [V/m^2]
+double confinementConst = 0.0;      // confinementForce [V/m^2]
+double confinementConstX = 0.0;     // RectConfinementForce [V/m^2]
+double confinementConstY = 0.0;     // RectConfinementForce [V/m^2]
 double shieldingConstant = 2E4;     // corresponds to 10*(ion debye length) [m^-1]
 double dragGamma = 10.0;            // dust drag frequency [Hz]
 double thermRed = 1E-14;            // default thermal reduction factor [N]
@@ -84,6 +85,8 @@ double rmax =
 	Cloud::interParticleSpacing*10.0; // outer ratius of shear layer [m]
 double rotConst = 1E-15;            // rotational force in shear layer [N]
 double dragScale = -1.0;            // used in TimeVaryingDragForce [Hz/s]
+double electricFieldStrength = 100;  // ElectricForce [V/m^2]
+double plasmaRadius = 10;           // ElectricForce [m]
 file_index continueFileIndex = 0;   // Index of argv array that holds the file name of the fitsfile to continue. 
 file_index finalsFileIndex = 0;     // Index of argv array that holds the file name of the fitsfile to use finals of.
 file_index outputFileIndex = 0;     // Index of argv array that holds the file name of the fitsfile to output.
@@ -124,14 +127,15 @@ void help() {
           << "                        and offset [N]" << endl
           << " -V 0.4                 use ConfinementForceVoid; set void decay constant [m^-1]" << endl
           << " -w 1E-13 0.007 0.00001 use DrivingForce; set amplitude [N], shift [m]," << endl
-          << "                        driveConst [m^-2]" << endl << endl
+          << "                        driveConst [m^-2]" << endl
+          << " -E 10 10               set Electric field strength; set plasma radius" << endl << endl
           << "Notes: " << endl << endl
           << " Parameters specified above represent the default values and accepted type," << endl
           << "    with the exception of -c and -f, for which there are no default values." << endl
           << " -c appends to file; ignores all force flags (use -f to run with different" << endl
           << "    forces). -c overrides -f if both are specified" << endl
           << " -D uses strengthening drag if scale > 0, weakening drag if scale < 0." << endl
-          << " -M is best used by loading up a previous cloud that has reached equalibrium." << endl
+          << " -M is best used by loading up a previous cloud that has reached equilibrium." << endl
           << " -n expects even number, else will add 1 (required for SIMD)." << endl
           << " -S creates a shear layer between rmin = cloudsize/2 and" << endl
           << "    rmax = rmin + cloudsize/5." << endl
@@ -245,8 +249,8 @@ void checkOption(const int argc, char * const argv[], int &optionIndex, const ch
 }
 
 void parseCommandLineOptions(int argc, char * const argv[]) {
-	// argv[0] is the name of the exicutable. THe routine checkOption increments
-    // the array index internally. If check option is not used, i must be
+	// argv[0] is the name of the exicutable. The routine checkOption increments
+    // the array index internally. If check option is not used, it must be
     // incremented manually.
 	for (int i = 1; i < argc;) {
 		switch (argv[i][1]) {
@@ -380,6 +384,12 @@ void parseCommandLineOptions(int argc, char * const argv[]) {
                             "wave shift",       D, &waveShift, 
                             "driving constant", D, &driveConst);
 				break;
+        		case 'E': // use "E"lectricForce:
+        			checkForce(1, 'E', ElectricForceFlag);
+        			checkOption(argc, argv, i, 'E', 2, 
+                            "electric field const", D, &electricFieldStrength, 
+                            "plasma radius", D, &plasmaRadius);
+        			break;
 			default: // Handle unknown options by issuing error.
 				cout << "Error: Unknown option " << argv[i] << endl;
 				help();
@@ -514,6 +524,9 @@ int main (int argc, char * const argv[]) {
 		forces.push_back(new TimeVaryingDragForce(cloud, dragScale, dragGamma));
 	if (usedForces & TimeVaryingThermalForceFlag)
 		forces.push_back(new TimeVaryingThermalForce(cloud, thermScale, thermOffset));
+	if (usedForces & ElectricForceFlag)
+		forces.push_back(new ElectricForce(cloud, electricFieldStrength, plasmaRadius));
+
 	
 	if (continueFileIndex) { // Initialize forces from old file.
 		for (Force * const F : forces)

@@ -8,7 +8,7 @@ set (LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/build/lib)
 find_library (CFITSIO_LIB NAMES cfitsio PATHS ${CFITSIO_LIB_PATH})
 include_directories(${CFITSIO_INC_PATH})
 
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -msse4.2")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -msse4.2 -pedantic")
 
 list (APPEND demon_sources
 	CacheOperator.cpp
@@ -50,6 +50,8 @@ list (APPEND demon_sources
 	TimeVaryingDragForce.h
 	TimeVaryingThermalForce.cpp
 	TimeVaryingThermalForce.h
+        ElectricForce.cpp
+        ElectricForce.h
 )
 
 add_library (simulation STATIC ${demon_sources})
