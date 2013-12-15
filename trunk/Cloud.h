@@ -32,12 +32,16 @@ public:
 	doubleV * const xCache, * const yCache, * const VxCache, * const VyCache;
 	
 	RandomNumbers rands;
-	
+
 	static const double interParticleSpacing;
 	static const double electronCharge;
 	static const double epsilon0;
 	static const double particleRadius;
-    static const double dustParticleMassDensity;
+        static const double dustParticleMassDensity;
+        static const double justX;
+        static const double justY;
+        static const double velX;
+        static const double velY;
 
 	void writeCloudSetup(fitsfile * const file, int &error) const;
 	void writeTimeStep(fitsfile * const file, int &error, double currentTime) const;
@@ -73,7 +77,7 @@ public:
 	const doubleV getVy4_pd(const cloud_index i) const;
 	
 	static Cloud * const initializeGrid(const cloud_index numParticles,
-										const double rMean, const double rSigma,
+					const double rMean, const double rSigma,
                                         const double qMean, const double qSigma);
 	static Cloud * const initializeFromFile(fitsfile * const file, int &error, 
                                             double * const currentTime);

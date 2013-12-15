@@ -59,10 +59,11 @@ double startTime = 0.0;             // [s]
 double dataTimeStep = 0.01;         // [s]
 double simTimeStep =
     dataTimeStep/100.0;             // [s]
+double spacing = 0.003;             // inter-particle spacing[m]
 double endTime = 5.0;               // [s]
-double confinementConst = 0.0;      // confinementForce [V/m^2]
-double confinementConstX = 0.0;     // RectConfinementForce [V/m^2]
-double confinementConstY = 0.0;     // RectConfinementForce [V/m^2]
+double confinementConst = 0;        // confinementForce [V/m^2]
+double confinementConstX = 0;       // RectConfinementForce [V/m^2]
+double confinementConstY = 0;       // RectConfinementForce [V/m^2]
 double shieldingConstant = 2E4;     // corresponds to 10*(ion debye length) [m^-1]
 double dragGamma = 10.0;            // dust drag frequency [Hz]
 double thermRed = 1E-14;            // default thermal reduction factor [N]
@@ -78,20 +79,33 @@ double massFactor = 100;            // mass multiplier for fired Mach Cone parti
 double qMean = 6000.0;              // Mean number of charges of the guassian charge distriburion [c]
 double qSigma = 100.0;              // Standard deviation of number of charges [c]
 double rMean = 1.45E-6;             // Mean dust particle radius of the guassian size distribution [m]
-double rSigma = 0.0;                // Standard deviation of the dust sise distribution [m]
+double rSigma = 0.0;                // Standard deviation of the dust size distribution [m]
 double rmin = 
-	Cloud::interParticleSpacing*5.0;  // inner radius of shear layer [m]
+	spacing*5.0;  // inner radius of shear layer [m]
 double rmax = 
-	Cloud::interParticleSpacing*10.0; // outer ratius of shear layer [m]
+	spacing*10.0; // outer radius of shear layer [m]
 double rotConst = 1E-15;            // rotational force in shear layer [N]
 double dragScale = -1.0;            // used in TimeVaryingDragForce [Hz/s]
-double electricFieldStrength = 100;  // ElectricForce [V/m^2]
-double plasmaRadius = 10;           // ElectricForce [m]
+double electricFieldStrength = 100; // ElectricForce [V/m^2]
+double plasmaRadius = 1;            // ElectricForce [m]
+double justifyX = 0;                // Translation of cloud [m]
+double justifyY = 0;                // Translation of cloud [m]
+double massDensity = 2200;          // Mass Density
+double velocityX = 0.0;             // velocity [m/s]
+double velocityY = 0.0;             // velocity [m/s]
+
 file_index continueFileIndex = 0;   // Index of argv array that holds the file name of the fitsfile to continue. 
 file_index finalsFileIndex = 0;     // Index of argv array that holds the file name of the fitsfile to use finals of.
 file_index outputFileIndex = 0;     // Index of argv array that holds the file name of the fitsfile to output.
 force_flags usedForces = 0;         // bitpacked forces
 cloud_index numParticles = 8;
+
+const double Cloud::interParticleSpacing = spacing;
+const double Cloud::dustParticleMassDensity = massDensity;
+const double Cloud::justX = justifyX;
+const double Cloud::justY = justifyY;
+const double Cloud::velX = velocityX;
+const double Cloud::velY = velocityY;
 
 // Display help. This section is white space sensitive to render correctly in an 
 // 80 column terminal environment. There should be no tabs.
@@ -105,11 +119,15 @@ void help() {
           << " -c noDefault.fits      continue run from file" << endl
           << " -C 100.0               set confinementConst [V/m^2]" << endl
           << " -D -1.0 10.0           use TimeVaryingDragForce; set scale [Hz/s], offset [Hz]" << endl
+          << " -d 2200                set dust density" << endl 
+          << " -E 10 10               set Electric field strength; set plasma radius" << endl
           << " -e 5.0                 set simulation end time [s]" << endl
           << " -f noDefaut.fits       use final positions and velocities from file" << endl
           << " -g 10.0                set dragGamma (magnitute of drag constant) [Hz]" << endl
           << " -h                     display Help (instead of running)" << endl
           << " -I                     use 2nd order Runge-Kutta integrator" << endl
+          << " -k 0 0                 kick the particles in the x,y directions" << endl
+          << " -i                     set initial inter-particle spacing" << endl
           << " -L 0.001 1E-14 1E-14   use ThermalForceLocalized; set radius [m], in/out" << endl
           << "                        thermal values [N]" << endl
           << " -M 0.2 100             create Mach Cone; set bullet velocity [m/s], mass factor" << endl
@@ -128,7 +146,8 @@ void help() {
           << " -V 0.4                 use ConfinementForceVoid; set void decay constant [m^-1]" << endl
           << " -w 1E-13 0.007 0.00001 use DrivingForce; set amplitude [N], shift [m]," << endl
           << "                        driveConst [m^-2]" << endl
-          << " -E 10 10               set Electric field strength; set plasma radius" << endl << endl
+          << " -J 0 0                 Justify entire cloud by x,y * inter particle spacing" << endl << endl
+
           << "Notes: " << endl << endl
           << " Parameters specified above represent the default values and accepted type," << endl
           << "    with the exception of -c and -f, for which there are no default values." << endl
@@ -288,10 +307,10 @@ void parseCommandLineOptions(int argc, char * const argv[]) {
 			case 'h': // display "h"elp:
 				help();
 				exit(0);
-            case 'I': // use 2nd order "i"ntegrator
-                rk4 = false;
-                i++;
-                break;
+                        case 'I': // use 2nd order "i"ntegrator
+                                rk4 = false;
+                                i++;
+                                break;
 			case 'L': // perform "L"ocalized heating experiment:
 				checkForce(3, 
                            'L', ThermalForceLocalizedFlag, 
@@ -325,16 +344,16 @@ void parseCommandLineOptions(int argc, char * const argv[]) {
 				checkOption(argc, argv, i, 'O', 1, 
                             "output file", F, &outputFileIndex, "data.fits");
 				break;
-            case 'q':
-                checkOption(argc, argv, i, 'q', 2, 
+                        case 'q':
+                                checkOption(argc, argv, i, 'q', 2, 
                             "mean number of charges",  D, &qMean,
                             "number of charges sigma", D, &qSigma);
-                break;
-            case 'r': // set dust "r"adius
-                checkOption(argc, argv, i, 'r', 2, 
+                                break;
+                         case 'r': // set dust "r"adius
+                                checkOption(argc, argv, i, 'r', 2, 
                             "mean dust radius", D, &rMean,
-							"dust radius sigma", D, &rSigma);
-                break;
+                            "dust radius sigma", D, &rSigma);
+                                break;
 			case 'R': // use "R"ectangular confinement:
 				checkForce(1, 'R', RectConfinementForceFlag);
 				checkOption(argc, argv, i, 'R', 2, 
@@ -390,10 +409,30 @@ void parseCommandLineOptions(int argc, char * const argv[]) {
                             "electric field const", D, &electricFieldStrength, 
                             "plasma radius", D, &plasmaRadius);
         			break;
+			case 'd': // set dust mass "d"ensity:
+			        checkOption(argc, argv, i, 'd', 1, 
+                            "massDensity", D, &Cloud::dustParticleMassDensity);
+                                break;
+			case 'i': // set "i"nter-particle spacing:
+			        checkOption(argc, argv, i, 'i', 1, 
+                            "spacing", D, &Cloud::interParticleSpacing);
+                                break;
+                        case 'J': // set "J"ustification [x,y]:
+                                checkOption(argc, argv, i, 'J', 2, 
+                            "justify x", D, &Cloud::justX, 
+                            "justify y", D, &Cloud::justY);
+                                break;
+                        case 'k': // velocity "kick" [x,y]:
+                                checkOption(argc, argv, i, 'k', 2, 
+                            "velocity x", D, &Cloud::velX, 
+                            "velocity y", D, &Cloud::velY);
+        			break;
+
 			default: // Handle unknown options by issuing error.
 				cout << "Error: Unknown option " << argv[i] << endl;
 				help();
 				exit(1);
+
 		}
 	}
 }
@@ -552,7 +591,7 @@ int main (int argc, char * const argv[]) {
     // first particle is move to the left of the cloud. It's mass is increased
     // and it is given an inital velocity toward the main cloud.
 	if (Mach) {
-		cloud->x[0] = -0.75*sqrt((double)cloud->n)*Cloud::interParticleSpacing;
+		cloud->x[0] = -0.75*sqrt((double)cloud->n)*spacing;
 		cloud->y[0] = 0.0;
 		cloud->Vx[0] = machSpeed;
 		cloud->Vy[0] = 0.0;
