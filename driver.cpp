@@ -126,7 +126,7 @@ void help() {
           << " -g 10.0                set dragGamma (magnitute of drag constant) [Hz]" << endl
           << " -h                     display Help (instead of running)" << endl
           << " -I                     use 2nd order Runge-Kutta integrator" << endl
-          << " -k 0 0                 kick the particles in the x,y directions" << endl
+          << " -k 0 0                 kick the particles in the x;y directions [m/s]" << endl
           << " -i                     set initial inter-particle spacing" << endl
           << " -L 0.001 1E-14 1E-14   use ThermalForceLocalized; set radius [m], in/out" << endl
           << "                        thermal values [N]" << endl
@@ -134,6 +134,7 @@ void help() {
           << " -n 8                   set number of particles" << endl
           << " -o 0.01                set the data Output time step [s]" << endl
           << " -O data.fits           set the name of the output file" << endl
+          << " -p 0 0                 sets initial x;y positions[m]" <<endl
           << " -q 6000.0 100.0        set charge mean and sigma [c]" << endl
           << " -R 100.0 1000.0        use RectConfinementForce; set confineConstX,Y [V/m^2]" << endl
           << " -r 1.45E-6 0.0         set mean particle radius and sigma [m]" << endl
@@ -145,8 +146,7 @@ void help() {
           << "                        and offset [N]" << endl
           << " -V 0.4                 use ConfinementForceVoid; set void decay constant [m^-1]" << endl
           << " -w 1E-13 0.007 0.00001 use DrivingForce; set amplitude [N], shift [m]," << endl
-          << "                        driveConst [m^-2]" << endl
-          << " -J 0 0                 Justify entire cloud by x;y" <<endl << endl
+          << "                        driveConst [m^-2]" << endl << endl
 
           << "Notes: " << endl << endl
           << " Parameters specified above represent the default values and accepted type," << endl
@@ -417,8 +417,8 @@ void parseCommandLineOptions(int argc, char * const argv[]) {
 			        checkOption(argc, argv, i, 'i', 1, 
                             "spacing", D, &Cloud::interParticleSpacing);
                                 break;
-                        case 'J': // set "J"ustification [x,y]:
-                                checkOption(argc, argv, i, 'J', 2, 
+                        case 'p': // set "p"osition [x,y]:
+                                checkOption(argc, argv, i, 'p', 2, 
                             "justify x", D, &Cloud::justX, 
                             "justify y", D, &Cloud::justY);
                                 break;
