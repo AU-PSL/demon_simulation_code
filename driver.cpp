@@ -146,7 +146,7 @@ void help() {
           << " -V 0.4                 use ConfinementForceVoid; set void decay constant [m^-1]" << endl
           << " -w 1E-13 0.007 0.00001 use DrivingForce; set amplitude [N], shift [m]," << endl
           << "                        driveConst [m^-2]" << endl
-          << " -J 0 0                 Justify entire cloud by x,y * inter particle spacing" << endl << endl
+          << " -J 0 0                 Justify entire cloud by x;y" <<endl << endl
 
           << "Notes: " << endl << endl
           << " Parameters specified above represent the default values and accepted type," << endl
