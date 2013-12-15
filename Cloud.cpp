@@ -11,10 +11,8 @@
 #include <cmath>
 #include <sstream>
 
-const double Cloud::interParticleSpacing = 0.0003;
 const double Cloud::electronCharge = -1.602E-19;
 const double Cloud::epsilon0 = 8.8541878E-12;
-const double Cloud::dustParticleMassDensity = 2200.0;
 
 Cloud::Cloud(const cloud_index numPar) 
 : n(numPar),
@@ -55,17 +53,17 @@ inline void Cloud::initCharge(const double qMean, const double qSigma) {
 // Particle sizes are set as a guassian distribution. To set a uniform 
 // distribution the radius sigma should be set to zero.
 inline void Cloud::initMass(const double rMean, const double rSigma) {
-	const double particleMassConsant = (4.0/3.0)*M_PI*dustParticleMassDensity;
+	const double particleMassConstant = (4.0/3.0)*M_PI*dustParticleMassDensity;
 	std::normal_distribution<double> dist(rMean, rSigma);
 	for (cloud_index i = 0; i < n; i++) {
 		const double r = rands.guassian(dist);
-		mass[i] = particleMassConsant*r*r*r;
+		mass[i] = particleMassConstant*r*r*r;
 	}
 }
 
 // Generates a cloud on a square grid with zero inital velocity.
 Cloud * const Cloud::initializeGrid(const cloud_index numParticles, 
-									const double rMean, const double rSigma,
+                                                                        const double rMean, const double rSigma,
                                     const double qMean, const double qSigma) {
 	Cloud * const cloud = new Cloud(numParticles);
 
@@ -78,9 +76,11 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles,
 	cloud->initCharge(qMean, qSigma);
 	cloud->initMass(rMean, rSigma);
     BEGIN_PARALLEL_FOR(i, e, numParticles, 1, static)
-    	cloud->x[i] = cloudHalfSize - (double)(i%sqrtNumPar)*interParticleSpacing;
-	    cloud->y[i] = cloudHalfSize - (double)(i/sqrtNumPar)*interParticleSpacing;
-		cloud->Vx[i] = cloud->Vy[i] = 0.0;
+      cloud->x[i] = cloudHalfSize - (double)(i%sqrtNumPar)*interParticleSpacing + justX; 
+      cloud->y[i] = cloudHalfSize - (double)(i/sqrtNumPar)*interParticleSpacing + justY;
+
+ 		cloud->Vx[i] = velX;
+                cloud->Vy[i] = velY;
     END_PARALLEL_FOR
 	return cloud;
 }
