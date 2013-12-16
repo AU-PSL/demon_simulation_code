@@ -120,7 +120,7 @@ void help() {
           << " -C 100.0               set confinementConst [V/m^2]" << endl
           << " -D -1.0 10.0           use TimeVaryingDragForce; set scale [Hz/s], offset [Hz]" << endl
           << " -d 2200                set dust density [kg/m^-3]" << endl 
-          << " -E 10 10               set Electric field strength [v/m]; decay constant [m]" << endl
+          << " -E 10 10               set Electric field strength [V/m]; decay constant [m]" << endl
           << " -e 5.0                 set simulation end time [s]" << endl
           << " -f noDefaut.fits       use final positions and velocities from file" << endl
           << " -g 10.0                set dragGamma (magnitute of drag constant) [Hz]" << endl
