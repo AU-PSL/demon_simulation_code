@@ -120,7 +120,7 @@ void help() {
           << " -C 100.0               set confinementConst [V/m^2]" << endl
           << " -D -1.0 10.0           use TimeVaryingDragForce; set scale [Hz/s], offset [Hz]" << endl
           << " -d 2200                set dust density [kg/m^-3]" << endl 
-          << " -E 10 10               set Electric field strength[v/m]; set decay constant[m]" << endl
+          << " -E 10 10               set Electric field strength [v/m]; decay constant [m]" << endl
           << " -e 5.0                 set simulation end time [s]" << endl
           << " -f noDefaut.fits       use final positions and velocities from file" << endl
           << " -g 10.0                set dragGamma (magnitute of drag constant) [Hz]" << endl
@@ -134,11 +134,11 @@ void help() {
           << " -n 8                   set number of particles" << endl
           << " -o 0.01                set the data Output time step [s]" << endl
           << " -O data.fits           set the name of the output file" << endl
-          << " -p 0 0                 sets initial x;y positions [m] of cloud" <<endl
+          << " -p 0 0                 set initial x;y positions [m] of cloud" <<endl
           << " -q 6000.0 100.0        set charge mean and sigma [c]" << endl
           << " -R 100.0 1000.0        use RectConfinementForce; set confineConstX,Y [V/m^2]" << endl
           << " -r 1.45E-6 0.0         set mean particle radius and sigma [m]" << endl
-          << " -s 2E4                 set coulomb shelding constant [m^-1]" << endl
+          << " -s 2E4                 set coulomb shielding constant [m^-1]" << endl
           << " -S 1E-15 0.005 0.007   use RotationalForce; set strength [N], rmin, rmax [m]" << endl
           << " -t 0.0001              set the simulation time step [s]" << endl
           << " -T 1E-14               use ThermalForce; set thermal reduction factor [N]" << endl
