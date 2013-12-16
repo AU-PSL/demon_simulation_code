@@ -61,9 +61,9 @@ double simTimeStep =
     dataTimeStep/100.0;             // [s]
 double spacing = 0.003;             // inter-particle spacing[m]
 double endTime = 5.0;               // [s]
-double confinementConst = 0;        // confinementForce [V/m^2]
-double confinementConstX = 0;       // RectConfinementForce [V/m^2]
-double confinementConstY = 0;       // RectConfinementForce [V/m^2]
+double confinementConst = 100;      // confinementForce [V/m^2]
+double confinementConstX = 100;     // RectConfinementForce [V/m^2]
+double confinementConstY = 1000;    // RectConfinementForce [V/m^2]
 double shieldingConstant = 2E4;     // corresponds to 10*(ion debye length) [m^-1]
 double dragGamma = 10.0;            // dust drag frequency [Hz]
 double thermRed = 1E-14;            // default thermal reduction factor [N]
@@ -86,8 +86,8 @@ double rmax =
 	spacing*10.0; // outer radius of shear layer [m]
 double rotConst = 1E-15;            // rotational force in shear layer [N]
 double dragScale = -1.0;            // used in TimeVaryingDragForce [Hz/s]
-double electricFieldStrength = 100; // ElectricForce [V/m^2]
-double plasmaRadius = 1;            // ElectricForce [m]
+double electricFieldStrength = 0;   // ElectricForce [V/m^2]
+double plasmaRadius = 1;            // ElectricForce decay const[m]
 double justifyX = 0;                // Translation of cloud [m]
 double justifyY = 0;                // Translation of cloud [m]
 double massDensity = 2200;          // Mass Density
@@ -120,7 +120,7 @@ void help() {
           << " -C 100.0               set confinementConst [V/m^2]" << endl
           << " -D -1.0 10.0           use TimeVaryingDragForce; set scale [Hz/s], offset [Hz]" << endl
           << " -d 2200                set dust density [kg/m^-3]" << endl 
-          << " -E 10 10               set Electric field strength [V/m]; decay constant [m]" << endl
+          << " -E 100 10              set Electric field strength [V/m]; decay constant [m]" << endl
           << " -e 5.0                 set simulation end time [s]" << endl
           << " -f noDefaut.fits       use final positions and velocities from file" << endl
           << " -g 10.0                set dragGamma (magnitute of drag constant) [Hz]" << endl
@@ -160,7 +160,9 @@ void help() {
           << "    rmax = rmin + cloudsize/5." << endl
           << " -T runs with heat; otherwise, runs cold." << endl
           << " -v uses increases temp if scale > 0, decreasing temp if scale < 0." << endl
-          << " -w creates acoustic waves along the x-axis (best with -R)." << endl << endl;
+          << " -w creates acoustic waves along the x-axis (best with -R)." << endl 
+          << " -E is set to 0 0 initially. If you would like to run DEMON with an" << endl
+          << "    Electric force, you may also want to turn the Confinement Force to 0." << endl <<endl;
 }
 
 // check if force is used or conflicts with a previously set force.
