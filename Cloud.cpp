@@ -63,7 +63,7 @@ inline void Cloud::initMass(const double rMean, const double rSigma) {
 
 // Generates a cloud on a square grid with zero inital velocity.
 Cloud * const Cloud::initializeGrid(const cloud_index numParticles, 
-                                                                        const double rMean, const double rSigma,
+                                    const double rMean, const double rSigma,
                                     const double qMean, const double qSigma) {
 	Cloud * const cloud = new Cloud(numParticles);
 
@@ -87,7 +87,7 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles,
 
 // Generates a cloud using the last time step of the specified file.
 Cloud * const Cloud::initializeFromFile(fitsfile * const file, int &error, 
-										double * const currentTime) {
+					double * const currentTime) {
 	int anyNull = 0;
 	long numParticles = 0;
 	long numTimeSteps = 0;
