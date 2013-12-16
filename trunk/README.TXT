@@ -33,3 +33,10 @@ build/bin
 Settings" Tab, under the "Search Paths" section add the path to the cfitsio 
 header files and libcfitsio headers. Under the linking tab check to make sure 
 "Other Linking Flags" is set to -lcfitsio.
+
+3. Multicore Support on Linux:
+
+For parallel processing support on linux, use the -fopenmp flag,
+
+cmake -DCMAKE_CXX_FLAGS="-fopenmp"
+

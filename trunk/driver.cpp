@@ -119,22 +119,22 @@ void help() {
           << " -c noDefault.fits      continue run from file" << endl
           << " -C 100.0               set confinementConst [V/m^2]" << endl
           << " -D -1.0 10.0           use TimeVaryingDragForce; set scale [Hz/s], offset [Hz]" << endl
-          << " -d 2200                set dust density" << endl 
-          << " -E 10 10               set Electric field strength; set plasma radius" << endl
+          << " -d 2200                set dust density [kg/m^-3]" << endl 
+          << " -E 10 10               set Electric field strength[v/m]; set decay constant[m]" << endl
           << " -e 5.0                 set simulation end time [s]" << endl
           << " -f noDefaut.fits       use final positions and velocities from file" << endl
           << " -g 10.0                set dragGamma (magnitute of drag constant) [Hz]" << endl
           << " -h                     display Help (instead of running)" << endl
           << " -I                     use 2nd order Runge-Kutta integrator" << endl
           << " -k 0 0                 kick the particles in the x;y directions [m/s]" << endl
-          << " -i                     set initial inter-particle spacing" << endl
+          << " -i 0.003               set initial inter-particle spacing [m]" << endl
           << " -L 0.001 1E-14 1E-14   use ThermalForceLocalized; set radius [m], in/out" << endl
           << "                        thermal values [N]" << endl
           << " -M 0.2 100             create Mach Cone; set bullet velocity [m/s], mass factor" << endl
           << " -n 8                   set number of particles" << endl
           << " -o 0.01                set the data Output time step [s]" << endl
           << " -O data.fits           set the name of the output file" << endl
-          << " -p 0 0                 sets initial x;y positions[m]" <<endl
+          << " -p 0 0                 sets initial x;y positions [m] of cloud" <<endl
           << " -q 6000.0 100.0        set charge mean and sigma [c]" << endl
           << " -R 100.0 1000.0        use RectConfinementForce; set confineConstX,Y [V/m^2]" << endl
           << " -r 1.45E-6 0.0         set mean particle radius and sigma [m]" << endl
