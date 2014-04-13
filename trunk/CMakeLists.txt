@@ -24,6 +24,8 @@ list (APPEND demon_sources
 	DrivingForce.cpp
 	DrivingForce.h
 	Force.h
+	GravitationalForce.cpp
+	GravitationalForce.h
 	Integrator.cpp
 	Integrator.h
 	MagneticForce.cpp
@@ -52,6 +54,8 @@ list (APPEND demon_sources
 	TimeVaryingThermalForce.h
         ElectricForce.cpp
         ElectricForce.h
+	VertElectricForce.cpp
+	VertElectricForce.h
 )
 
 add_library (simulation STATIC ${demon_sources})

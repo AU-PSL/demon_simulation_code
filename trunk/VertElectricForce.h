@@ -1,4 +1,4 @@
-/*===- ElectricForce.h - libSimulation -=======================================
+/*===- VertElectricForce.h - libSimulation -=======================================
 *
 *                                  DEMON
 *
@@ -10,16 +10,16 @@
 *
 *===-----------------------------------------------------------------------===*/
 
-#ifndef ELECTRICFORCE_H
-#define ELECTRICFORCE_H
+#ifndef VERTELECTRICFORCE_H
+#define VERTELECTRICFORCE_H
 
 #include "Force.h"
 
-class ElectricForce : public Force {
+class VertElectricForce : public Force {
 public:
-	ElectricForce(Cloud * const C, double electricField, double plasmaRad)
-	: Force(C), electric(electricField), radius(plasmaRad) {}
-	~ElectricForce() {}
+	VertElectricForce(Cloud * const C, double vertElectricField, double vertDecay)
+	: Force(C), vertElectric(vertElectricField), vertDec(vertDecay) {}
+	~VertElectricForce() {}
 
 	virtual void force1(const double currentTime); // rk substep 1
 	virtual void force2(const double currentTime); // rk substep 2
@@ -30,9 +30,9 @@ public:
 	virtual void readForce(fitsfile * const file, int * const error);
 
 private:
-	double electric, radius; // [V/m^2],[m]
+	double vertElectric, vertDec; // [V/m^2],[m],[m]
 
-	void force(const cloud_index currentParticle, const doubleV currentPositionX, const doubleV currentPositionY);
+	void force(const cloud_index currentParticle, const doubleV currentPositionY);
 };
 
-#endif // ELECTRICFORCE_H
+#endif // VERTELECTRICFORCE_H

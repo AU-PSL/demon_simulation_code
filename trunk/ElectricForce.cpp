@@ -54,6 +54,7 @@ inline void ElectricForce::force(const cloud_index currentParticle, const double
 	
 	plusEqual_pd(cloud->forceX + currentParticle, mul_pd(eV, currentPositionX));
 	plusEqual_pd(cloud->forceY + currentParticle, mul_pd(eV, currentPositionY));
+
 }
 
 void ElectricForce::writeForce(fitsfile * const file, int * const error) const {

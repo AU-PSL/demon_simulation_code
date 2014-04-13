@@ -34,19 +34,21 @@ typedef long force_flags;
 
 // Binary assignments for the bit-packed FORCES keyword in Fits file:
 enum ForceFlag : force_flags {
-	ConfinementForceFlag = 1,          // 0000000000001
-	DragForceFlag = 2,                 // 0000000000010
-	ShieldedCoulombForceFlag = 4,      // 0000000000100
-	RectConfinementForceFlag = 8,      // 0000000001000
-	ThermalForceFlag = 16,             // 0000000010000
-	ThermalForceLocalizedFlag = 32,    // 0000000100000
-	DrivingForceFlag = 64,             // 0000001000000
-	RotationalForceFlag = 128,         // 0000010000000
-	TimeVaryingDragForceFlag = 256,    // 0000100000000
-	TimeVaryingThermalForceFlag = 512, // 0001000000000
-	MagneticForceFlag = 1024,          // 0010000000000
-	ConfinementForceVoidFlag = 2048,   // 0100000000000
-        ElectricForceFlag = 4096           // 1000000000000
+	ConfinementForceFlag = 1,          // 000000000000001
+	DragForceFlag = 2,                 // 000000000000010
+	ShieldedCoulombForceFlag = 4,      // 000000000000100
+	GravitationalForceFlag = 8,        // 000000000001000
+	ThermalForceFlag = 16,             // 000000000010000
+	ThermalForceLocalizedFlag = 32,    // 000000000100000
+	DrivingForceFlag = 64,             // 000000001000000
+	RotationalForceFlag = 128,         // 000000010000000
+	TimeVaryingDragForceFlag = 256,    // 000000100000000
+	TimeVaryingThermalForceFlag = 512, // 000001000000000
+	MagneticForceFlag = 1024,          // 000010000000000
+	ConfinementForceVoidFlag = 2048,   // 000100000000000
+        ElectricForceFlag = 4096,          // 001000000000000
+	RectConfinementForceFlag = 8192,   // 010000000000000
+	VertElectricForceFlag = 16384      // 100000000000000
 };
 
 #endif // FORCE_H
