@@ -18,6 +18,8 @@
 #include "TimeVaryingDragForce.h"
 #include "TimeVaryingThermalForce.h"
 #include "ElectricForce.h"
+#include "GravitationalForce.h"
+#include "VertElectricForce.h"
 
 #include <iostream>
 #include <cstdarg>
@@ -78,7 +80,7 @@ double machSpeed = 0.2;             // firing speed for Mach Cone experiment [m/
 double massFactor = 100;            // mass multiplier for fired Mach Cone particle
 double qMean = 6000.0;              // Mean number of charges of the guassian charge distriburion [c]
 double qSigma = 100.0;              // Standard deviation of number of charges [c]
-double rMean = 1.45E-6;             // Mean dust particle radius of the guassian size distribution [m]
+double rMean = 1.45E-6;             // Mean dust particle radius of the gaussian size distribution [m]
 double rSigma = 0.0;                // Standard deviation of the dust size distribution [m]
 double rmin = 
 	spacing*5.0;  // inner radius of shear layer [m]
@@ -88,6 +90,10 @@ double rotConst = 1E-15;            // rotational force in shear layer [N]
 double dragScale = -1.0;            // used in TimeVaryingDragForce [Hz/s]
 double electricFieldStrength = 0;   // ElectricForce [V/m^2]
 double plasmaRadius = 1;            // ElectricForce decay const[m]
+double vertElectricFieldStrength=0; // VertElectricForce [V/m^2]
+double verticalDecay = 1;          // top position of VertElectricForce where F = 0; [m]
+//double bottomPosition = 0.0;        // bottom position of VertElectricForce where F = q*vertElectricFieldStrength [m]
+double gravitationalFieldStrength = 0;
 double justifyX = 0;                // Translation of cloud [m]
 double justifyY = 0;                // Translation of cloud [m]
 double massDensity = 2200;          // Mass Density
@@ -123,7 +129,9 @@ void help() {
           << " -E 100 10              set Electric field strength [V/m]; decay constant [m]" << endl
           << " -e 5.0                 set simulation end time [s]" << endl
           << " -f noDefaut.fits       use final positions and velocities from file" << endl
+	  << " -F 100 1               set verticalElectricField and top and bottom positions" << endl
           << " -g 10.0                set dragGamma (magnitute of drag constant) [Hz]" << endl
+	  << " -G 0.0                 set Gravitational field strength [m/s^2]" << endl
           << " -h                     display Help (instead of running)" << endl
           << " -I                     use 2nd order Runge-Kutta integrator" << endl
           << " -k 0 0                 kick the particles in the x;y directions [m/s]" << endl
@@ -270,7 +278,7 @@ void checkOption(const int argc, char * const argv[], int &optionIndex, const ch
 }
 
 void parseCommandLineOptions(int argc, char * const argv[]) {
-	// argv[0] is the name of the exicutable. The routine checkOption increments
+	// argv[0] is the name of the executable. The routine checkOption increments
     // the array index internally. If check option is not used, it must be
     // incremented manually.
 	for (int i = 1; i < argc;) {
@@ -411,6 +419,18 @@ void parseCommandLineOptions(int argc, char * const argv[]) {
                             "electric field const", D, &electricFieldStrength, 
                             "plasma radius", D, &plasmaRadius);
         			break;
+			case 'F': // use VertElectricForce:
+        			checkForce(1, 'F', VertElectricForceFlag);
+        			checkOption(argc, argv, i, 'F', 2, 
+                            "vert electric field const",  D, &vertElectricFieldStrength, 
+                            "vertical decay const",       D, &verticalDecay);
+			    //"bottom position",            D, &bottomPosition);
+				break;
+			case 'G': // use "G"ravitationalForce
+				checkForce(1, 'G', GravitationalForceFlag);
+				checkOption(argc, argv, i, 'G', 1,
+			    "gravitational field const", D, &gravitationalFieldStrength);
+				break;
 			case 'd': // set dust mass "d"ensity:
 			        checkOption(argc, argv, i, 'd', 1, 
                             "massDensity", D, &Cloud::dustParticleMassDensity);
@@ -567,6 +587,10 @@ int main (int argc, char * const argv[]) {
 		forces.push_back(new TimeVaryingThermalForce(cloud, thermScale, thermOffset));
 	if (usedForces & ElectricForceFlag)
 		forces.push_back(new ElectricForce(cloud, electricFieldStrength, plasmaRadius));
+	if (usedForces & GravitationalForceFlag)
+		forces.push_back(new GravitationalForce(cloud, gravitationalFieldStrength));
+	if (usedForces & VertElectricForceFlag)
+		forces.push_back(new VertElectricForce(cloud, vertElectricFieldStrength, verticalDecay));
 
 	
 	if (continueFileIndex) { // Initialize forces from old file.
@@ -590,7 +614,7 @@ int main (int argc, char * const argv[]) {
 	}
 	
     // If performing the mach cone experiments alter the first particle. The 
-    // first particle is move to the left of the cloud. It's mass is increased
+    // first particle is moved to the left of the cloud. Its mass is increased
     // and it is given an inital velocity toward the main cloud.
 	if (Mach) {
 		cloud->x[0] = -0.75*sqrt((double)cloud->n)*spacing;
