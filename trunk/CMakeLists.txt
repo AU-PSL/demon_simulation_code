@@ -8,7 +8,7 @@ set (LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/build/lib)
 find_library (CFITSIO_LIB NAMES cfitsio PATHS ${CFITSIO_LIB_PATH})
 include_directories(${CFITSIO_INC_PATH})
 
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -msse4.2 -pedantic")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -msse4.2")
 
 list (APPEND demon_sources
 	CacheOperator.cpp
@@ -60,5 +60,8 @@ list (APPEND demon_sources
 
 add_library (simulation STATIC ${demon_sources})
 add_executable (DEMON driver.cpp)
+add_executable (ANGEL ANGEL.cpp)
 add_dependencies (DEMON simulation)
+add_dependencies (ANGEL simulation)
 target_link_libraries (DEMON simulation ${CFITSIO_LIB})
+target_link_libraries (ANGEL simulation ${CFITSIO_LIB})
