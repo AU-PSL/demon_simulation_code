@@ -1,3 +1,12 @@
+/*===- ANGEL.cpp -=============================================================
+*
+*                                  DEMON
+*
+* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
+* for details. 
+*
+*===-----------------------------------------------------------------------===*/
+
 #include <string.h>
 #include <vector>
 #include <iostream>
@@ -9,24 +18,23 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
- {
-   freopen ("com.dat","w",stdout); //opens output file for array writing
+    std::fstream angel;
+    angel.open ("com.dat", std::fstream::out);
 
     fitsfile *fptr; //establishes FITS pointer
     char *val, value[1000], nullstr[]="*";
     char keyword[FLEN_KEYWORD], colname[FLEN_VALUE];
-    int status = 0;
-    int hdunum, hdutype, ncols, ii, anynul, dispwidth[1000];
+    int hdunum, hdutype, ncols, anynul, dispwidth[1000], status = 0;
     int firstcol, lastcol = 0, linewidth;
-    long jj, nrows;
+    long nrows;
 
     if (argc != 2) {
-      printf("NO INPUT");
+      angel << "NO INPUT";
       return(0);
     }
 
-    if (!fits_open_file(&fptr, argv[1], READONLY, &status)) //opens FITS file for data
-    {
+    fits_open_file(&fptr, argv[1], READONLY, &status);
+    if (!status) {
       if ( fits_get_hdu_num(fptr, &hdunum) == 1 )
           fits_movabs_hdu(fptr, 2, &hdutype, &status);
        else 
@@ -46,30 +54,26 @@ int main(int argc, char *argv[])
 
           if (lastcol > firstcol)lastcol--; 
 
-          printf("\n");
-
           val = value; 
-          for (jj = 1; jj <= nrows && !status; jj++) {
-              printf("%4d ", jj);
-              for (ii = firstcol; ii <= lastcol; ii++)
+          for ( long jj = 1; jj <= nrows && !status; jj++) {
+              angel << jj;
+              for (int ii = firstcol; ii <= lastcol; ii++)
               {
                   if (fits_read_col_str (fptr,ii,jj, 1, 1, nullstr,
                       &val, &anynul, &status) )
                      break;
 
-                  printf("%-*s ",dispwidth[ii], value);
+                  angel << value;
               }
-              printf("\n");
+              angel << endl;
           }
       }
       fits_close_file(fptr, &status);
     } 
 
-    if (status) fits_report_error(stderr, status);
-    return(status);
+      angel.close();
 
-   fclose (stdout);
-   return 0;
- }
-
+      if (status) fits_report_error(stderr, status);
+      return(status);
+      return 0;
 }
