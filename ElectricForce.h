@@ -5,9 +5,6 @@
 * This file is distributed under the BSD Open Source License. See LICENSE.TXT  
 * for details. 
 *
-* This file is a member of the DEMON BETA project to create a more physical
-* dusty plasma simulator
-*
 *===-----------------------------------------------------------------------===*/
 
 #ifndef ELECTRICFORCE_H

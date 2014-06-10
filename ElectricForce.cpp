@@ -5,9 +5,6 @@
 * This file is distributed under the BSD Open Source License. See LICENSE.TXT  
 * for details. 
 *
-* This file is a member of the DEMON BETA project to create a more physical
-* dusty plasma simulator
-*
 *===-----------------------------------------------------------------------===*/
 
 #include "ElectricForce.h"
@@ -40,7 +37,7 @@ void ElectricForce::force4(const double currentTime) {
     END_PARALLEL_FOR
 }
 
-// F = q*E*(1-exp(-r/R))
+// F = q*E*(exp(-r/R))
 inline void ElectricForce::force(const cloud_index currentParticle, const doubleV currentPositionX, 
                                     const doubleV currentPositionY) {
 	const doubleV cV = mul_pd(load_pd(cloud->charge + currentParticle), electric);

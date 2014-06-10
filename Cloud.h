@@ -1,5 +1,3 @@
-// Add other comment
-// Add comment
 /*===- Cloud.h - libSimulation -================================================
 *
 *                                  DEMON
