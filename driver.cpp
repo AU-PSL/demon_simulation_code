@@ -26,6 +26,8 @@
 #include <cassert>
 #include <cmath>
 #include <chrono>
+#include <fstream>
+#include <string>
 
 void help();
 void checkForce(const size_t numChecks, ...);
@@ -39,6 +41,7 @@ void checkFitsError(const int error, const int lineNumber);
 void deleteFitsFile(char * const filename, int &error);
 void fitsFileExists(char * const filename, int &error);
 void fitsFileCreate(fitsfile **file, char * const fileName, int &error);
+void checkParams(const char* inputFile);
 
 using namespace std;
 using namespace chrono;
@@ -50,11 +53,12 @@ typedef duration<long, ratio<86400> > days;
 enum clFlagType : int {
 	CI, // cloud_Index
 	D,  // double
-	F   // file_index
+	F,  // file_index
 };
 
 bool Mach = false;                  // true -> perform Mach Cone experiment
 bool rk4 = true;
+bool pflag = false;                 // Parameter flag. False except case P
 double voidDecay = 0.4;             // decay constant in ConfinementForceVoid [m^-1]
 double magneticFieldStrength = 1.0; // magnitude of B-field in z-direction [T]
 double startTime = 0.0;             // [s]
@@ -103,15 +107,17 @@ double velocityY = 0.0;             // velocity [m/s]
 file_index continueFileIndex = 0;   // Index of argv array that holds the file name of the fitsfile to continue. 
 file_index finalsFileIndex = 0;     // Index of argv array that holds the file name of the fitsfile to use finals of.
 file_index outputFileIndex = 0;     // Index of argv array that holds the file name of the fitsfile to output.
+file_index inputFileIndex = 0;      // input parameter file
+
 force_flags usedForces = 0;         // bitpacked forces
 cloud_index numParticles = 8;
 
-const double Cloud::interParticleSpacing = spacing;
-const double Cloud::dustParticleMassDensity = massDensity;
-const double Cloud::justX = justifyX;
-const double Cloud::justY = justifyY;
-const double Cloud::velX = velocityX;
-const double Cloud::velY = velocityY;
+double Cloud::interParticleSpacing = spacing;
+double Cloud::dustParticleMassDensity = massDensity;
+double Cloud::justX = justifyX;
+double Cloud::justY = justifyY;
+double Cloud::velX = velocityX;
+double Cloud::velY = velocityY;
 
 // Display help. This section is white space sensitive to render correctly in an 
 // 80 column terminal environment. There should be no tabs.
@@ -142,7 +148,8 @@ void help() {
           << " -n 8                   set number of particles" << endl
           << " -o 0.01                set the data Output time step [s]" << endl
           << " -O data.fits           set the name of the output file" << endl
-          << " -p 0 0                 set initial x;y positions [m] of cloud" <<endl
+          << " -P Parameters.cfg      Read parameters from file" << endl
+          << " -p 0 0                 set initial x;y positions [m] of cloud" << endl
           << " -q 6000.0 100.0        set charge mean and sigma [c]" << endl
           << " -R 100.0 1000.0        use RectConfinementForce; set confineConstX,Y [V/m^2]" << endl
           << " -r 1.45E-6 0.0         set mean particle radius and sigma [m]" << endl
@@ -278,19 +285,55 @@ void checkOption(const int argc, char * const argv[], int &optionIndex, const ch
 }
 
 void parseCommandLineOptions(int argc, char * const argv[]) {
-	// argv[0] is the name of the executable. The routine checkOption increments
+    // argv[0] is the name of the executable. The routine checkOption increments
     // the array index internally. If check option is not used, it must be
     // incremented manually.
 	for (int i = 1; i < argc;) {
 		switch (argv[i][1]) {
+                        // All F cases:
+                        case 'P': // Read "P"arameter file
+                                checkOption(argc, argv, i, 'P', 1, 
+                            "input file", F, &inputFileIndex, "Params.cfg");
+                                pflag = true;
+
+                                // We now need to parse the config file:
+                                // Follow flags below to determine how to read everything in
+                                checkParams(argv[inputFileIndex]);
+                                break;
+
+                        case 'O': // name "O"utput file:
+                                checkOption(argc, argv, i, 'O', 1, 
+                            "output file", F, &outputFileIndex, "data.fits");
+                                break;
+
+                        case 'c': // "c"ontinue from file:
+                                checkOption(argc, argv, i, 'c', 1, 
+                            "contine file", F, &continueFileIndex, "");
+                                break;
+
+                        case 'f': // use "f"inal positions and velocities from previous run:
+                                checkOption(argc, argv, i, 'f', 1, 
+                            "finals file", F, &finalsFileIndex, "");
+                                break;
+
+                        // All CI cases
+                        case 'n': // set "n"umber of particles:
+                                checkOption(argc, argv, i, 'n', 1, 
+                            "number of particles", CI, &numParticles);
+                                if (numParticles%FLOAT_STRIDE) {
+                                    numParticles += numParticles%FLOAT_STRIDE;
+                                    cout << "Warning: -n requires multiples of 4 numbers of particles. Incrementing number of particles to (" 
+                                        << numParticles << ")." << endl;
+                                }
+                                break;
+
+                        // All D Cases. 
+                        // Note: if pflag = true, these are not going to be read.
+                        if (pflag == false){
 			case 'B': // set "B"-field:
 				checkForce(1, 'B', MagneticForceFlag);
 				checkOption(argc, argv, i, 'B', 1, 
                             "magnetic field", D, &magneticFieldStrength);
-				break;
-			case 'c': // "c"ontinue from file:
-				checkOption(argc, argv, i, 'c', 1, 
-                            "contine file", F, &continueFileIndex, "");
 				break;
 			case 'C': // set "C"onfinementConst:
 				checkOption(argc, argv, i, 'C', 1, 
@@ -306,10 +349,6 @@ void parseCommandLineOptions(int argc, char * const argv[]) {
 				checkOption(argc, argv, i, 'e', 1, 
                             "end time", D, &endTime);
 				break;		
-			case 'f': // use "f"inal positions and velocities from previous run:
-				checkOption(argc, argv, i, 'f', 1, 
-                            "finals file", F, &finalsFileIndex, "");
-				break;
 			case 'g': // set "g"amma:
 				checkOption(argc, argv, i, 'g', 1, 
                             "dragGamma", D, &dragGamma);
@@ -337,22 +376,9 @@ void parseCommandLineOptions(int argc, char * const argv[]) {
                             "velocity", D, &machSpeed, 
                             "mass",     D, &massFactor);
 				break;
-			case 'n': // set "n"umber of particles:
-				checkOption(argc, argv, i, 'n', 1, 
-                            "number of particles", CI, &numParticles);
-				if (numParticles%FLOAT_STRIDE) {
-                    numParticles += numParticles%FLOAT_STRIDE;
-                    cout << "Warning: -n requires multiples of 4 numbers of particles. Incrementing number of particles to (" 
-					<< numParticles << ")." << endl;
-                }
-				break;
 			case 'o': // set dataTimeStep, which conrols "o"utput rate:
 				checkOption(argc, argv, i, 'o', 1, 
                             "data time step", D, &dataTimeStep);
-				break;
-			case 'O': // name "O"utput file:
-				checkOption(argc, argv, i, 'O', 1, 
-                            "output file", F, &outputFileIndex, "data.fits");
 				break;
                         case 'q':
                                 checkOption(argc, argv, i, 'q', 2, 
@@ -449,6 +475,7 @@ void parseCommandLineOptions(int argc, char * const argv[]) {
                             "velocity x", D, &Cloud::velX, 
                             "velocity y", D, &Cloud::velY);
         			break;
+                        }
 
 			default: // Handle unknown options by issuing error.
 				cout << "Error: Unknown option " << argv[i] << endl;
@@ -504,6 +531,203 @@ void fitsFileCreate(fitsfile **file, char * const fileName, int &error) {
 	checkFitsError(error, __LINE__);
 }
 
+void checkParams(const char* inputFile){
+//    cout << "check " << inputFile << endl;
+    ifstream paramfile;
+    string varname, value;
+    paramfile.open(inputFile);
+    if (!inputFile){
+        cout << "Incorrect parameter filepath. Please input an appropriate parameter file." << endl;
+    }
+
+    while (paramfile >> varname >> value){
+
+        // Now a bunch of if statements to parse this.
+        if (varname == "voidDecay"){
+            voidDecay = atof(value.c_str());
+        }
+        if (varname == "magneticFieldStrength"){
+            magneticFieldStrength = atof(value.c_str());
+        }
+        if (varname == "startTime"){
+            startTime = atof(value.c_str());
+        }
+        if (varname == "dataTimeStep"){
+            dataTimeStep = atof(value.c_str());
+        }
+        if (varname == "simTimeStep"){
+            simTimeStep = atof(value.c_str());
+        }
+        if (varname == "spacing"){
+            Cloud::interParticleSpacing = atof(value.c_str());
+        }
+        if (varname == "endTime"){
+            endTime = atof(value.c_str());
+        }
+        if (varname == "confinementConst"){
+            confinementConst = atof(value.c_str());
+        }
+        if (varname == "confinementConstX"){
+            confinementConstX = atof(value.c_str());
+        }
+        if (varname == "confinementConstY"){
+            confinementConstY = atof(value.c_str());
+        }
+        if (varname == "shieldingConstant"){
+            shieldingConstant = atof(value.c_str());
+        }
+        if (varname == "dragGamma"){
+            dragGamma = atof(value.c_str());
+        }
+        if (varname == "thermRed"){
+            thermRed = atof(value.c_str());
+        }
+        if (varname == "thermRed1"){
+            thermRed1 = atof(value.c_str());
+        }
+        if (varname == "thermScale"){
+            thermScale = atof(value.c_str());
+        }
+        if (varname == "thermOffset"){
+            thermOffset = atof(value.c_str());
+        }
+        if (varname == "heatRadius"){
+            heatRadius = atof(value.c_str());
+        }
+        if (varname == "driveConst"){
+            driveConst = atof(value.c_str());
+        }
+        if (varname == "waveAmplitude"){
+            waveAmplitude = atof(value.c_str());
+        }
+        if (varname == "waveShift"){
+            waveShift = atof(value.c_str());
+        }
+        if (varname == "machSpeed"){
+            machSpeed = atof(value.c_str());
+        }
+        if (varname == "massFactor"){
+            massFactor = atof(value.c_str());
+        }
+        if (varname == "qMean"){
+            qMean = atof(value.c_str());
+        }
+        if (varname == "qSigma"){
+            qSigma = atof(value.c_str());
+        }
+        if (varname == "rMean"){
+            rMean = atof(value.c_str());
+        }
+        if (varname == "rSigma"){
+            rSigma = atof(value.c_str());
+        }
+        if (varname == "rmin"){
+            rmin = atof(value.c_str());
+        }
+        if (varname == "rmax"){
+            rmax = atof(value.c_str());
+        }
+        if (varname == "rotConst"){
+            rotConst = atof(value.c_str());
+        }
+        if (varname == "dragScale"){
+            dragScale = atof(value.c_str());
+        }
+        if (varname == "electricFieldStrength"){
+            electricFieldStrength = atof(value.c_str());
+        }
+        if (varname == "plasmaRadius"){
+            plasmaRadius = atof(value.c_str());
+        }
+        if (varname == "vertElectricFieldStrength"){
+            vertElectricFieldStrength = atof(value.c_str());
+        }
+        if (varname == "verticalDecay"){
+            verticalDecay = atof(value.c_str());
+        }
+        if (varname == "gravitationalFieldStrength"){
+            gravitationalFieldStrength = atof(value.c_str());
+        }
+        if (varname == "justifyX"){
+            Cloud::justX = atof(value.c_str());
+        }
+        if (varname == "justifyY"){
+            Cloud::justY = atof(value.c_str());
+        }
+        if (varname == "massDensity"){
+            Cloud::dustParticleMassDensity = atof(value.c_str());
+        }
+        if (varname == "velocityX"){
+            Cloud::velX = atof(value.c_str());
+        }
+        if (varname == "velocityY"){
+            Cloud::velY = atof(value.c_str());
+        }
+        if (varname == "forceFlags"){
+            // Now we need to flip the appropriate force flags
+            vector<string> flags;
+            int comma;
+            while (value.size() > 1){
+                comma = value.find(",");
+                flags.push_back(value.substr(0,value.find(",")));
+                value = value.substr(comma+1,value.size() - comma);
+            }
+
+           // Now we need to figure out which forces to use
+           for (int i = 0; i < flags.size(); i++){
+               if (flags[i] == "B"){
+                   checkForce(1, 'B', MagneticForceFlag);
+               }
+               if (flags[i] == "D"){
+                   checkForce(1, 'D', TimeVaryingDragForceFlag);
+               }
+               if (flags[i] == "L"){
+                   checkForce(3, 
+                              'L', ThermalForceLocalizedFlag, 
+                              'T', ThermalForceFlag, 
+                              'v', TimeVaryingThermalForceFlag);
+
+               }
+               if (flags[i] == "R"){
+                   checkForce(1, 'R', RectConfinementForceFlag);
+               }
+               if (flags[i] == "S"){
+                   checkForce(1, 'S', RotationalForceFlag);
+               }
+               if (flags[i] == "T"){
+                   checkForce(3, 
+                              'T', ThermalForceFlag, 
+                              'L', ThermalForceLocalizedFlag, 
+                              'v', TimeVaryingThermalForceFlag);
+
+               }
+               if (flags[i] == "v"){
+                   checkForce(3,
+                              'v', TimeVaryingThermalForceFlag,
+                              'L', ThermalForceLocalizedFlag,
+                              'T', ThermalForceFlag);
+
+               }
+               if (flags[i] == "V"){
+                   checkForce(1, 'V', ConfinementForceVoidFlag);
+               }
+               if (flags[i] == "w"){
+                   checkForce(1, 'w', DrivingForceFlag);
+               }
+               if (flags[i] == "E"){
+                   checkForce(1, 'E', ElectricForceFlag);
+               }
+               if (flags[i] == "F"){
+                   checkForce(1, 'F', VertElectricForceFlag);
+               }
+               if (flags[i] == "G"){
+                   checkForce(1, 'G', GravitationalForceFlag);
+               }
+           }
+        }
+    } 
+}
+
 int main (int argc, char * const argv[]) {
 	steady_clock::time_point start = steady_clock::now();
 	parseCommandLineOptions(argc, argv);
@@ -551,7 +775,7 @@ int main (int argc, char * const argv[]) {
 	// Create a new file if we aren't continuing an old one.
 	if (!continueFileIndex) {
 		fitsFileCreate(&file, outputFileIndex ? argv[outputFileIndex] 
-											  : const_cast<char *> ("data.fits"), error);
+                               : const_cast<char *> ("data.fits"), error);
 	
 		// create "proper" primary HDU
 		// (prevents fits from generating errors when creating binary tables)
