@@ -31,15 +31,15 @@ public:
 	
 	RandomNumbers rands;
 
-	static const double interParticleSpacing;
+	static double interParticleSpacing;
 	static const double electronCharge;
 	static const double epsilon0;
 	static const double particleRadius;
-        static const double dustParticleMassDensity;
-        static const double justX;
-        static const double justY;
-        static const double velX;
-        static const double velY;
+        static double dustParticleMassDensity;
+        static double justX;
+        static double justY;
+        static double velX;
+        static double velY;
 
 	void writeCloudSetup(fitsfile * const file, int &error) const;
 	void writeTimeStep(fitsfile * const file, int &error, double currentTime) const;
