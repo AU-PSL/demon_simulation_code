@@ -117,3 +117,7 @@ echo export PATH=$PATH:/home/USER/builds/demonsimulationcode-read-only//build/bi
 echo export PATH=$PATH:/home/USER/builds/demonsimulationcode-read-only//build/bin >> ~/.PROFILE
 
      And there you have it, a full copy of DEMON on your machine!
+
+5. Notes on github
+
+    DEMON is now available on github and can be mondified with both svn and git.
