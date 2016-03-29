@@ -1,0 +1,6 @@
+This is a simple example of running the DEMON code. 
+
+run:
+    DEMON -P Params_vortex.cfg
+
+Then output the data using a script like the one in read_data.py

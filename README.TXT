@@ -121,3 +121,7 @@ echo export PATH=$PATH:/home/USER/builds/demonsimulationcode-read-only//build/bi
 5. Notes on github
 
     DEMON is now available on github and can be mondified with both svn and git.
+
+6. Looking at Data
+
+    DEMON data will be stored in a fits file. Please use additional software, such as astropy.io to use this data.
