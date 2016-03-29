@@ -549,6 +549,9 @@ void checkParams(const char* inputFile){
         if (varname == "magneticFieldStrength"){
             magneticFieldStrength = atof(value.c_str());
         }
+        if (varname == "numParticles"){
+            numParticles = atof(value.c_str());
+        }
         if (varname == "startTime"){
             startTime = atof(value.c_str());
         }
