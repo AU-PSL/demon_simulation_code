@@ -26,7 +26,7 @@ forceX(new double[n]), forceY(new double[n]),
 xCache(new doubleV[n/DOUBLE_STRIDE]), yCache(new doubleV[n/DOUBLE_STRIDE]), 
 VxCache(new doubleV[n/DOUBLE_STRIDE]), VyCache(new doubleV[n/DOUBLE_STRIDE]) {
 #ifdef _OPENMP
-	omp_set_num_threads(omp_get_num_procs());
+	omp_set_num_threads(omp_get_num_procs()); 
 #endif
 }
 
@@ -42,48 +42,68 @@ Cloud::~Cloud() {
 	delete[] VxCache; delete[] VyCache;
 }
 
-// Particle charges are set as a guassian distribution. To set a uniform 
+// Particle charges are set as a gaussian distribution. To set a uniform 
 // distribution the charge sigma should be set to zero.
 inline void Cloud::initCharge(const double qMean, const double qSigma) {
 	std::normal_distribution<double> dist(qMean, qSigma);
 	for (cloud_index i = 0; i < n; i++)
-		charge[i] = rands.guassian(dist)*electronCharge;
+		charge[i] = rands.gaussian(dist)*electronCharge;
 }
 
-// Particle sizes are set as a guassian distribution. To set a uniform 
+// Particle sizes are set as a gaussian distribution. To set a uniform 
 // distribution the radius sigma should be set to zero.
 inline void Cloud::initMass(const double rMean, const double rSigma) {
 	const double particleMassConstant = (4.0/3.0)*M_PI*dustParticleMassDensity;
 	std::normal_distribution<double> dist(rMean, rSigma);
 	for (cloud_index i = 0; i < n; i++) {
-		const double r = rands.guassian(dist);
+		const double r = rands.gaussian(dist);
 		mass[i] = particleMassConstant*r*r*r;
 	}
 }
 
 // Generates a cloud on a square grid with zero inital velocity.
-Cloud * const Cloud::initializeGrid(const cloud_index numParticles, 
-                                    const double rMean, const double rSigma,
+Cloud * const Cloud::initializeGrid(const cloud_index numParticles,
+									cloud_index row_x_particles,
+									cloud_index row_y_particles,
+									const double rMean, const double rSigma,
                                     const double qMean, const double qSigma) {
+
 	Cloud * const cloud = new Cloud(numParticles);
 
 	const cloud_index sqrtNumPar = (cloud_index)floor(sqrt(numParticles));
-	
-	// For even numbers of partciles on a row center the row over the origin.
-	const double cloudHalfSize = (double)sqrtNumPar/2.0*interParticleSpacing 
-		- ((sqrtNumPar%2) ? 0.0 : interParticleSpacing/2.0);
+
+	//If only numParticles defined, creates as square of a grid as possible
+	if(row_y_particles==0){
+		row_x_particles = sqrtNumPar;
+		while(numParticles%row_x_particles!=0){
+			++row_x_particles;
+		}
+		row_y_particles = numParticles/row_x_particles;
+	}
+
+	const double cloudHalfSizeX = ((double)row_x_particles-1.0)/2.0*interParticleSpacing;
+	const double cloudHalfSizeY = ((double)row_y_particles-1.0)/2.0*interParticleSpacing;
 
 	cloud->initCharge(qMean, qSigma);
 	cloud->initMass(rMean, rSigma);
-    BEGIN_PARALLEL_FOR(i, e, numParticles, 1, static)
-      cloud->x[i] = cloudHalfSize - (double)(i%sqrtNumPar)*interParticleSpacing + justX; 
-      cloud->y[i] = cloudHalfSize - (double)(i/sqrtNumPar)*interParticleSpacing + justY;
+	
+	//Put particles into grid
+    for(int i = 0; i < row_x_particles; i++) {
+    	for(int j = 0; j < row_y_particles; j++) {
+      		cloud->x[i*row_y_particles+j] = cloudHalfSizeX - (i*interParticleSpacing) + justX;
+      		cloud->y[i*row_y_particles+j] = cloudHalfSizeY - (j*interParticleSpacing) + justY;
+	    }
+	}
 
- 		cloud->Vx[i] = velX;
-                cloud->Vy[i] = velY;
+	//Set particle velocities
+    BEGIN_PARALLEL_FOR(l, e, numParticles, 1, static)
+    	cloud->Vx[l] = velX;
+		cloud->Vy[l] = velY;
     END_PARALLEL_FOR
+	
 	return cloud;
 }
+
 
 // Generates a cloud using the last time step of the specified file.
 Cloud * const Cloud::initializeFromFile(fitsfile * const file, int &error, 

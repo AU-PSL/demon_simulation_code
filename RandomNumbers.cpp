@@ -27,6 +27,6 @@ const double RandomNumbers::uniformZeroToTwoPi() {
 }
 
 // Gaussian distributed random numbers.
-const double RandomNumbers::guassian(std::normal_distribution<double> &dist) {
+const double RandomNumbers::gaussian(std::normal_distribution<double> &dist) {
 	return dist(engine);
 }

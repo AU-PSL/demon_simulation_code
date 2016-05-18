@@ -75,7 +75,9 @@ public:
 	const doubleV getVy4_pd(const cloud_index i) const;
 	
 	static Cloud * const initializeGrid(const cloud_index numParticles,
-					const double rMean, const double rSigma,
+										cloud_index row_x_particles,
+										cloud_index row_y_particles,
+										const double rMean, const double rSigma,
                                         const double qMean, const double qSigma);
 	static Cloud * const initializeFromFile(fitsfile * const file, int &error, 
                                             double * const currentTime);
