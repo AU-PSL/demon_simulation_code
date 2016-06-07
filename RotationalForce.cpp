@@ -1,11 +1,12 @@
-/*===- RotationalForce.cpp - libSimulation -====================================
+/**
+* @file  RotationalForce.cpp
+* @class RotationalForce RotationalForce.h
 *
-*                                  DEMON
+* @brief Computes a rotational force in the azimuthal direction
 *
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT 
-* for details. 
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #include "RotationalForce.h"
 
@@ -37,8 +38,15 @@ void RotationalForce::force4(const double currentTime) {
     END_PARALLEL_FOR
 }
 
-// F = 0 if r < rmin and r > rmax
-// F_x = -c*y/r. F_y = c*x/r
+
+/**
+* @brief Computes a rotational force if a particle is within a radial range
+*        with form F_x = -c*y/r. F_y = c*x/r
+*
+* @param[in] currentParticle  The particle whose force is being computed
+* @param[in] currentPositionX The x-position of the current particle
+* @param[in] currentPositionY The y-position of the current particle
+**/
 inline void RotationalForce::force(const cloud_index currentParticle, 
                                    const doubleV currentPositionX, 
                                    const doubleV currentPositionY) {

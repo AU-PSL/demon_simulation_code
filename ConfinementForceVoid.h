@@ -1,11 +1,10 @@
-/*===- ConfinementForceVoid.h - libSimulation -=================================
+/**
+* @file  ConfinementForceVoid.h
+* @brief Defines the data and methods of the ConfinementForceVoid class
 *
-*                                  DEMON
-*
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #ifndef CONFINEMENTFORCEVOID_H
 #define CONFINEMENTFORCEVOID_H
@@ -29,7 +28,8 @@ public:
 	void readForce(fitsfile * const file, int * const error);
 
 private:
-	double confine, decay; // [V/m^2], [m^-1]
+	double confine; //<! Strength of confinement force [V/m^2]
+	double decay; 	//<! Strength of decay term [m^-1]
 
 	void force(const cloud_index currentParticle, const doubleV currentPositionX, const doubleV currentPositionY);	// common force calculator
 };

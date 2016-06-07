@@ -1,11 +1,13 @@
-/*===- ShieldedCoulombForce.cpp - libSimulation -===============================
+/**
+* @file  ShieldedCoulombForce.cpp
+* @class ShieldedCoulombForce ShieldedCoulombForce.h
 *
-*                                  DEMON
+* @brief Models the coulomb interaction between particles once
+*		 particles are within the shielding distance.
 *
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT 
-* for details. 
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #include "ShieldedCoulombForce.h"
 #include <cmath>
@@ -26,10 +28,12 @@ ShieldedCoulombForce::~ShieldedCoulombForce() {
     SEMAPHORES_FREE(cloud->n/DOUBLE_STRIDE)
 }
 
-// FIXME: When changing this over to AVX to simplify, change force methods to
-// triangle and block forces. Triangle forces cover the outter loop force. Block
-// covers the inner loop forces. AVX specific differences would go into that 
-// section.
+/**
+* @bug FIXME: When changing this over to AVX to simplify, change force methods to
+* 	   triangle and block forces. Triangle forces cover the outter loop force. Block
+*      covers the inner loop forces. AVX specific differences would go into that 
+*      section.
+**/
 void ShieldedCoulombForce::force1(const double currentTime) {
 #ifdef __AVX__
 #error "ShieldedCoulombForce::force1 does not fully support AVX."
@@ -122,8 +126,15 @@ void ShieldedCoulombForce::force4(const double currentTime) {
 	END_PARALLEL_FOR
 }
 
-// F_i,i+1 = e0*q_i*q_i+1/(|r_i - r_i+1|)^2*Exp(-s*|r_i - r_i+1|)*(1 + c*|r_i - r_i+1|)
-// Calculates inteaction between i and i+1 particles.
+
+/**
+* @brief Calculates inteaction between i and i+1 particles with form 
+*        F_i,i+1 = e0*q_i*q_i+1/(|r_i - r_i+1|)^2*Exp(-s*|r_i - r_i+1|)*(1 + c*|r_i - r_i+1|)
+* 
+* @param[in] currentParticle Particle whose force is being computed
+* @param[in] charges 		 Charge of particle
+* @param[in] displacementV   Displacement vector of particle
+**/
 inline void ShieldedCoulombForce::force(const cloud_index currentParticle,
                                         const double charges, const doubleV displacementV) {
 	// Calculate displacement between particles.
@@ -147,8 +158,17 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle,
 	}
 }
 
-// F_i,j = e0*q_i*q_j/(|r_i - r_j|)^2*Exp(-s*|r_i - r_j|)*(1 + c*|r_i - r_j|)
-// Calculates inteaction between (i,i+1) and (j,j+1) particles.
+
+/**
+* @brief Calculates inteaction between (i,i+1) and (j,j+1) particles with form
+*        F_i,j = e0*q_i*q_j/(|r_i - r_j|)^2*Exp(-s*|r_i - r_j|)*(1 + c*|r_i - r_j|)
+* 
+* @param[in] currentParticle Particle whose force is being computed
+* @param[in] iParticle		 The other particle
+* @param[in] charges 		 Vector of particle charges
+* @param[in] displacementX   Vector of x-direction displacements
+* @param[in] displacementY   Vector of y-direction displacements
+**/
 inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const cloud_index iParticle, 
                                         const doubleV charges, const doubleV displacementX, const doubleV displacementY) {
 	// Calculate displacement between particles.
@@ -161,7 +181,7 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
     
     // calculate force
 	const doubleV forceC = set1_pd(coulomb)*charges*(set1_pd(1.0) + valExp)*exp_pd(mask, valExp)
-        /(displacement*displacement*displacement);
+        				   /(displacement*displacement*displacement);
     const doubleV forcevX = forceC*displacementX;
 	const doubleV forcevY = forceC*displacementY;
 
@@ -177,8 +197,17 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
     SEMAPHORE_SIGNAL(iParticle/DOUBLE_STRIDE)
 }
 
-// F_i,j = e0*q_i*q_j/(|r_i - r_j|)^2*Exp(-s*|r_i - r_j|)*(1 + c*|r_i - r_j|)
-// Calculates inteaction between (i,i+1) and (j+1,j) particles.
+
+/**
+* @brief Calculates inteaction between (i,i+1) and (j+1,j) particles with form
+*        F_i,j = e0*q_i*q_j/(|r_i - r_j|)^2*Exp(-s*|r_i - r_j|)*(1 + c*|r_i - r_j|)
+* 
+* @param[in] currentParticle Particle whose force is being computed
+* @param[in] iParticle		 The other particle
+* @param[in] charges 		 Vector of particle charges
+* @param[in] displacementX   Vector of x-direction displacements
+* @param[in] displacementY   Vector of y-direction displacements
+**/
 inline void ShieldedCoulombForce::forcer(const cloud_index currentParticle, const cloud_index iParticle, 
                                          const doubleV charges, const doubleV displacementX, const doubleV displacementY) {
 	// Calculate displacement between particles.

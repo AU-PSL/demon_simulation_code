@@ -1,14 +1,12 @@
-/*===- GravitationalForce.cpp - libSimulation -=====================================
+/**
+* @file  GravitationalForce.cpp
+* @class GravitationalForce GravitationalForce.h
 *
-*                                  DEMON
+* @brief Computes a graviational force that acts in the y-direction
 *
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-*
-* This file is a member of the DEMON BETA project to create a more physical
-* dusty plasma simulator
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #include "GravitationalForce.h"
 
@@ -40,7 +38,11 @@ void GravitationalForce::force4(const double currentTime) {
     END_PARALLEL_FOR
 }
 
-// F = -m*g
+/**
+* @brief Computes the gravitation force with form F = -m*g
+*
+* @param[in] currentParticle  The particle whose force is being computed
+**/
 inline void GravitationalForce::force(const cloud_index currentParticle) {
 	const doubleV gravity = mul_pd(load_pd(cloud->mass + currentParticle), gravitational);
 

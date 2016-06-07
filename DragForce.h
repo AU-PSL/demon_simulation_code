@@ -1,11 +1,10 @@
-/*===- DragForce.h - libSimulation -============================================
+/**
+* @file  DragForce.h
+* @brief Defines the data and methods of the DragForce class
 *
-*                                  DEMON
-* 
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #ifndef DRAGFORCE_H
 #define DRAGFORCE_H
@@ -27,7 +26,7 @@ public:
 	virtual void readForce(fitsfile * const file, int * const error);
 
 protected:
-	double dragConst; // [Hz]
+	double dragConst; //<! The strength of the drag force (Hz)
 
 private:
 	void force(const cloud_index currentParticle, const doubleV currentVelocityX, const doubleV currentVelocityY);

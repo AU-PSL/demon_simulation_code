@@ -1,11 +1,10 @@
-/*===- DrivingForce.h - libSimulation -=========================================
+/**
+* @file  DrivingForce.h
+* @brief Defines the data and methods of the DrivingForce class
 *
-*                                  DEMON
-*
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #ifndef DRIVINGFORCE_H
 #define DRIVINGFORCE_H
@@ -28,9 +27,11 @@ public:
 	void readForce(fitsfile * const file, int * const error);
 
 private:
-	double amplitude, driveConst, shift; // [N], [m^2], [m]
-	static const double waveNum; // [m^-1]
-	static const double angFreq; // [rad*Hz]
+	double amplitude;            //!< Amplitude of driving force [N]
+	double driveConst;			 //!< [m^2]
+	double shift; 				 //!< [m]
+	static const double waveNum; //!< [m^-1]
+	static const double angFreq; //!< [rad*Hz]
 
 	void force(const cloud_index currentParticle, const doubleV currentTime, const doubleV currentPositionX);
 };

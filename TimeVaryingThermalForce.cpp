@@ -1,11 +1,13 @@
-/*===- TimeVaryingThermalForce.cpp - libSimulation -============================
+/**
+* @file  TimeVaryingThermalForce.cpp
+* @class TimeVaryingThermalForce TimeVaryingThermalForce.h
 *
-*                                  DEMON
-* 
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-* 
-*===-----------------------------------------------------------------------===*/
+* @brief Computes a random force to model thermal effects
+*		 with a scale factor that changes with a defined function
+*
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #include "TimeVaryingThermalForce.h"
 
@@ -29,9 +31,12 @@ void TimeVaryingThermalForce::force4(const double currentTime) {
 	ThermalForce::force4(currentTime);
 }
 
-// F = c(t)*L : c(t) = m*t + b 
-// L is a uniformly distributed random number between 0 - 1 in a random 
-// direction.
+/**
+* @brief Computes strength of thermal force with function c(t) = m*t + b
+		 where the thermal force F has form F = c(t)*L
+*
+* @param[in] currentTime Current simulation time
+**/
 inline const double TimeVaryingThermalForce::calculateHeatVal(const double currentTime) const {
 	return heatValScale*currentTime + heatValOffset;
 }

@@ -1,11 +1,12 @@
-/*===- DrivingForce.cpp - libSimulation -=======================================
+/**
+* @file  DrivingForce.cpp
+* @class DrivingForce DrivingForce.h
 *
-*                                  DEMON
+* @brief Creates a sinusoidal driving force to move the particles
 *
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #include "DrivingForce.h"
 #include <cmath>
@@ -41,7 +42,13 @@ void DrivingForce::force4(const double currentTime) {
     END_PARALLEL_FOR
 }
 
-// F = a*sin(k*x - w*t)*Exp(-(x + x0)^2/b)
+/**
+* @brief Computes the driving force with form F = a*sin(k*x - w*t)*Exp(-(x + x0)^2/b)
+*
+* @param[in] currentParticle  The particle whose force is being computed
+* @param[in] currentTime      Current simulation time
+* @param[in] currentPositionX The x-position of the current particle
+**/
 inline void DrivingForce::force(const cloud_index currentParticle, const doubleV currentTime, const doubleV currentPositionX) {
 	// NOTE: This is different than the equation listed in the paper. The paper 
 	// is incorrect.

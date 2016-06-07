@@ -1,14 +1,10 @@
-/*===- VertElectricForce.h - libSimulation -=======================================
+/**
+* @file  VertElectricForce.h
+* @brief Defines the data and methods of the VertElectricForce class
 *
-*                                  DEMON
-*
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-*
-* This file is a member of the DEMON BETA project to create a more physical
-* dusty plasma simulator
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #ifndef VERTELECTRICFORCE_H
 #define VERTELECTRICFORCE_H
@@ -30,7 +26,8 @@ public:
 	virtual void readForce(fitsfile * const file, int * const error);
 
 private:
-	double vertElectric, vertDec; // [V/m^2],[m],[m]
+	double vertElectric; //<! Strength of vertical electric force [V/m^2]
+	double vertDec;      //<! Strength of the vertical decay factor [m]
 
 	void force(const cloud_index currentParticle, const doubleV currentPositionY);
 };

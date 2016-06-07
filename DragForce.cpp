@@ -1,11 +1,12 @@
-/*===- DragForce.cpp - libSimulation -==========================================
+/**
+* @file  DragForce.cpp
+* @class DragForce DragForce.h
 *
-*                                  DEMON
-* 
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-* 
-*===-----------------------------------------------------------------------===*/
+* @brief Adds a drag force proportional to velocity
+*
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #include "DragForce.h"
 
@@ -29,7 +30,7 @@ void DragForce::force3(const double currentTime) {
 		force(currentParticle, cloud->getVx3_pd(currentParticle), cloud->getVy3_pd(currentParticle));
     END_PARALLEL_FOR
 }
-
+ 
 void DragForce::force4(const double currentTime) {
     (void)currentTime;
 	BEGIN_PARALLEL_FOR(currentParticle, numParticles, cloud->n, DOUBLE_STRIDE, static) 
@@ -37,7 +38,14 @@ void DragForce::force4(const double currentTime) {
     END_PARALLEL_FOR
 }
 
-// F = g*m*v
+
+/**
+* @brief Computes the confinement force with form F = -d*m*v
+*
+* @param[in] currentParticle  The particle whose force is being computed
+* @param[in] currentVelocityX The x-velocity of the current particle
+* @param[in] currentVelocityY The y-velocity of the current particle
+**/
 inline void DragForce::force(const cloud_index currentParticle, const doubleV currentVelocityX, const doubleV currentVelocityY) {
 	const doubleV drag = mul_pd(load_pd(cloud->mass + currentParticle), dragConst);
 		

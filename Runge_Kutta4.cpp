@@ -1,11 +1,12 @@
-/*===- Runge_Kutta4.cpp - libSimulation -=======================================
+ /**
+* @file  Runge_Kutta4.cpp
+* @class Runge_Kutta4 Runge_Kutta4.h
 *
-*                                  DEMON
+* @brief Implementation of a fourth-order Runge-Kutta integration method
 *
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT 
-* for details.
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #include "Runge_Kutta4.h"
 
@@ -13,7 +14,12 @@ Runge_Kutta4::Runge_Kutta4(Cloud * const C, const ForceArray &FA,
                            const double timeStep, const double startTime)
 : Runge_Kutta2(C, FA, timeStep, startTime) {}
 
-// 4th order Runge-Kutta algorithm:
+
+/**
+* @brief Moves particles forward based on 4th order Runge-Kutta method
+*
+* @param[in] endTime Final time of the simulation
+**/
 void Runge_Kutta4::moveParticles(const double endTime) {
 	while (currentTime < endTime) {
 		const double dt = modifyTimeStep(1.0e-4f, init_dt); // implement dynamic timstep (if necessary):
@@ -130,7 +136,14 @@ void Runge_Kutta4::moveParticles(const double endTime) {
 	}
 }
 
-// 4th order Runge-Kutta full timstep parameter change.
+/**
+* @brief Updates positions or velocities after full timestep
+*
+* @param[in] a1 First increment based on slope at beginning of interval
+* @param[in] a2 Second increment based on slope  midpoint of interval
+* @param[in] a3	Third increment based on slope at midpoint of interval
+* @param[in] a4 Fourth increment based on slope at end of interval
+**/
 inline const doubleV Runge_Kutta4::da(const doubleV a1, const doubleV a2, 
                                       const doubleV a3, const doubleV a4) {
     // (a1 + 2.0*(a2 + a3) + a4)/6.0

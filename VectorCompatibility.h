@@ -1,11 +1,10 @@
-/*===- VectorCompatibility.h - libSimulation -==================================
+/**
+* @file  VectorCompatibility.h
+* @brief Provides methods and typedefs for the use of vectors in the code
 *
-*                                  DEMON
-*
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT 
-* for details.
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #ifndef VECTORCOMPATIBILITY_H
 #define VECTORCOMPATIBILITY_H

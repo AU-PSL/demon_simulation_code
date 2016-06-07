@@ -1,21 +1,30 @@
-/*===- CacheOperator.cpp - libSimulation -======================================
+/**
+* @file  CacheOperator.cpp
+* @class CacheOperator CacheOperator.h
 *
-*                                  DEMON
+* @brief Caches positions of velocities for the Runge-Kutta substeps
 *
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT 
-* for details.
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #include "CacheOperator.h"
 
-// The first Runge-Kutta sub-timeStep positions and velocitys remain unaltered.
+/**
+* @brief The first Runge-Kutta sub-timeStep positions and velocities remain unaltered.
+*
+* @param[in] currentTime Current simulaton time
+**/
 void CacheOperator::operation1(const double currentTime) {
     (void)currentTime;
 }
 
-// Cache positions and velocities for second Runge-Kutta sub-timeStep. Values 
-// take the form of (a + b1/2)
+/**
+* @brief Cache positions and velocities for second Runge-Kutta sub-timeStep. Values 
+*        take the form of (a + b1/2)
+*
+* @param[in] currentTime Current simulaton time
+**/
 void CacheOperator::operation2(const double currentTime) {
     (void)currentTime;
 	const doubleV halfv = set1_pd(0.5);
@@ -28,8 +37,12 @@ void CacheOperator::operation2(const double currentTime) {
     END_PARALLEL_FOR
 }
 
-// Cache positions and velocities for second Runge-Kutta sub-timeStep. Values 
-// take the form of (a + b2/2)
+/**
+* @brief Cache positions and velocities for second Runge-Kutta sub-timeStep. Values 
+*        take the form of (a + b2/2)
+*
+* @param[in] currentTime Current simulaton time
+**/
 void CacheOperator::operation3(const double currentTime) {
     (void)currentTime;
 	const doubleV halfv = set1_pd(0.5);
@@ -42,8 +55,12 @@ void CacheOperator::operation3(const double currentTime) {
 	END_PARALLEL_FOR
 }
 
-// Cache positions and velocities for second Runge-Kutta sub-timeStep. Values 
-// take the form of (a + b3)
+/**
+* @brief Cache positions and velocities for second Runge-Kutta sub-timeStep. Values 
+*        take the form of (a + b3)
+*
+* @param[in] currentTime Current simulaton time
+**/
 void CacheOperator::operation4(const double currentTime) {
     (void)currentTime;
 	BEGIN_PARALLEL_FOR(i, e, cloud->n/DOUBLE_STRIDE, 1, static)

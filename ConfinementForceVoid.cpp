@@ -1,11 +1,12 @@
-/*===- ConfinementForceVoid.cpp - libSimulation -===============================
+/**
+* @file  ConfinementForceVoid.cpp
+* @class ConfinementForceVoid ConfinementForceVoid.h
 *
-*                                  DEMON
+* @brief ??UNKNOWN??
 *
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #include "ConfinementForceVoid.h"
 	
@@ -37,7 +38,13 @@ void ConfinementForceVoid::force4(const double currentTime) {
     END_PARALLEL_FOR
 }
 
-// F = F_c - d*Exp(-d*r)*r
+/**
+* @brief Computes the confinement force with form F = F_c - d*Exp(-d*r)*r
+*
+* @param[in] currentParticle  The particle whose force is being computed
+* @param[in] currentPositionX The x-position of the current particle
+* @param[in] currentPositionY The y-position of the current particle
+**/
 inline void ConfinementForceVoid::force(const cloud_index currentParticle, const doubleV currentPositionX, const doubleV currentPositionY) {
 	const doubleV decayV = mul_pd(load_pd(cloud->charge + currentParticle), -decay);
     const doubleV r = length_pd(currentPositionX, currentPositionY);

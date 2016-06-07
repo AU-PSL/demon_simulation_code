@@ -1,11 +1,12 @@
-/*===- MagneticForce.cpp - libSimulation -======================================
+/**
+* @file  MagneticForce.cpp
+* @class MagneticForce MagneticForce.h
 *
-*                                  DEMON
-* 
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-* 
-*===-----------------------------------------------------------------------===*/
+* @brief Computes a magnetic force that acts in the z-direction
+*
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #include "MagneticForce.h"
 
@@ -37,12 +38,18 @@ void MagneticForce::force4(const double currentTime) {
     END_PARALLEL_FOR
 }
 
-// F = q*(v X B) : B is in the positive z direction.
+/**
+* @brief Computes the magnetic force with form F = q*(v x B)
+*
+* @param[in] currentParticle  The particle whose force is being computed
+* @param[in] currentVelocityX The x-velocity of the current particle
+* @param[in] currentVelocityY The y-velocity of the current particle
+**/
 inline void MagneticForce::force(const cloud_index currentParticle, const doubleV currentVelocityX, 
                                  const doubleV currentVelocityY) {
 	const doubleV qB = mul_pd(load_pd(cloud->charge + currentParticle), BField);
 
-	plusEqual_pd(cloud->forceX + currentParticle, mul_pd(qB, currentVelocityY));
+	plusEqual_pd(cloud->forceX  + currentParticle, mul_pd(qB, currentVelocityY));
 	minusEqual_pd(cloud->forceY + currentParticle, mul_pd(qB, currentVelocityX));
 }
 

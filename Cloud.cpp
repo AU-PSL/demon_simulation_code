@@ -1,11 +1,12 @@
-/*===- Cloud.cpp - libSimulation -==============================================
+/**
+* @file  Cloud.cpp
+* @class Cloud Cloud.h
 *
-*                                  DEMON
+* @brief Defines the physical parameters of the dust cloud
 *
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT 
-* for details.
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #include "Cloud.h"
 #include <cmath>
@@ -14,22 +15,30 @@
 const double Cloud::electronCharge = -1.602E-19;
 const double Cloud::epsilon0 = 8.8541878E-12;
 
-Cloud::Cloud(const cloud_index numPar) 
-: n(numPar),
-x(new double[n]), y(new double[n]), Vx(new double[n]), Vy(new double[n]), 
-charge(new double[n]), mass(new double[n]),
-k1(new double[n]), k2(new double[n]), k3(new double[n]), k4(new double[n]),
-l1(new double[n]), l2(new double[n]), l3(new double[n]), l4(new double[n]),
-m1(new double[n]), m2(new double[n]), m3(new double[n]), m4(new double[n]),
-n1(new double[n]), n2(new double[n]), n3(new double[n]), n4(new double[n]),
-forceX(new double[n]), forceY(new double[n]),
-xCache(new doubleV[n/DOUBLE_STRIDE]), yCache(new doubleV[n/DOUBLE_STRIDE]), 
-VxCache(new doubleV[n/DOUBLE_STRIDE]), VyCache(new doubleV[n/DOUBLE_STRIDE]) {
-#ifdef _OPENMP
-	omp_set_num_threads(omp_get_num_procs()); 
-#endif
+
+/**
+* @brief Constructor for the cloud class
+* @param[in] numPar The number of particles
+**/
+Cloud::Cloud(const cloud_index numPar) :
+	n(numPar),
+	x(new double[n]), y(new double[n]), Vx(new double[n]), Vy(new double[n]), 
+	charge(new double[n]), mass(new double[n]),
+	k1(new double[n]), k2(new double[n]), k3(new double[n]), k4(new double[n]),
+	l1(new double[n]), l2(new double[n]), l3(new double[n]), l4(new double[n]),
+	m1(new double[n]), m2(new double[n]), m3(new double[n]), m4(new double[n]),
+	n1(new double[n]), n2(new double[n]), n3(new double[n]), n4(new double[n]),
+	forceX(new double[n]), forceY(new double[n]),
+	xCache(new doubleV[n/DOUBLE_STRIDE]), yCache(new doubleV[n/DOUBLE_STRIDE]), 
+	VxCache(new doubleV[n/DOUBLE_STRIDE]), VyCache(new doubleV[n/DOUBLE_STRIDE]) {
+	#ifdef _OPENMP
+		omp_set_num_threads(omp_get_num_procs()); 
+	#endif
 }
 
+/**
+* @brief Destructor for the cloud class
+**/
 Cloud::~Cloud() {
 	delete[] x; delete[] y; delete[] Vx; delete[] Vy;
 	delete[] charge; delete[] mass; 
@@ -42,16 +51,26 @@ Cloud::~Cloud() {
 	delete[] VxCache; delete[] VyCache;
 }
 
-// Particle charges are set as a gaussian distribution. To set a uniform 
-// distribution the charge sigma should be set to zero.
+/**
+* @brief Sets the charges for the dust particles as a gaussian distribution.
+*		   
+*
+* @param[in] qMean  The average charge in Coulombs
+* @param[in] qSigma The standard deviation for the charge in Coulombs
+**/
 inline void Cloud::initCharge(const double qMean, const double qSigma) {
 	std::normal_distribution<double> dist(qMean, qSigma);
 	for (cloud_index i = 0; i < n; i++)
 		charge[i] = rands.gaussian(dist)*electronCharge;
 }
 
-// Particle sizes are set as a gaussian distribution. To set a uniform 
-// distribution the radius sigma should be set to zero.
+/**
+* @brief Sets the masses for the dust particles as a gaussian distribution.
+*		   
+*
+* @param[in] rMean  The average radius in meters
+* @param[in] rSigma The standard deviation for the radius in meters
+**/
 inline void Cloud::initMass(const double rMean, const double rSigma) {
 	const double particleMassConstant = (4.0/3.0)*M_PI*dustParticleMassDensity;
 	std::normal_distribution<double> dist(rMean, rSigma);
@@ -61,7 +80,18 @@ inline void Cloud::initMass(const double rMean, const double rSigma) {
 	}
 }
 
-// Generates a cloud on a square grid with zero inital velocity.
+/**
+* @brief Sets the initial position for each dust particle.
+*		   
+*
+* @param[in] numParticles  The total number of particles
+* @param[in] row_x_particles The number of rows in the x-direction
+* @param[in] row_y_particles The number of rows in the y-direction
+* @param[in] rMean  The average radius in meters
+* @param[in] rSigma The standard deviation for the radius in meters
+* @param[in] qMean  The average charge in Coulombs
+* @param[in] qSigma The standard deviation for the charge in Coulombs
+**/
 Cloud * const Cloud::initializeGrid(const cloud_index numParticles,
 									cloud_index row_x_particles,
 									cloud_index row_y_particles,
@@ -73,12 +103,12 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles,
 	const cloud_index sqrtNumPar = (cloud_index)floor(sqrt(numParticles));
 
 	//If only numParticles defined, creates as square of a grid as possible
-	if(row_y_particles==0){
+	if(row_y_particles==0) {
 		row_x_particles = sqrtNumPar;
-		while(numParticles%row_x_particles!=0){
+		while(numParticles % row_x_particles != 0) {
 			++row_x_particles;
 		}
-		row_y_particles = numParticles/row_x_particles;
+		row_y_particles = numParticles / row_x_particles;
 	}
 
 	const double cloudHalfSizeX = ((double)row_x_particles-1.0)/2.0*interParticleSpacing;
@@ -105,7 +135,14 @@ Cloud * const Cloud::initializeGrid(const cloud_index numParticles,
 }
 
 
-// Generates a cloud using the last time step of the specified file.
+/**
+* @brief Generates a cloud using the last time step of the specified file
+*		   
+*
+* @param[in]  file        The name of the fits file
+* @param[out] error       The error code (if any) that was produced when opening the file
+* @param[in]  currentTime ??UNKNOWN??
+**/
 Cloud * const Cloud::initializeFromFile(fitsfile * const file, int &error, 
 					double * const currentTime) {
 	int anyNull = 0;
@@ -151,7 +188,13 @@ Cloud * const Cloud::initializeFromFile(fitsfile * const file, int &error,
 	return cloud;
 }
 
-// Sets up and writes the intial timestep data to a the specified fitsfile.
+/**
+* @brief Sets up and writes the intial timestep data to a the specified fits file
+*		   
+*
+* @param[in]  file        The name of the fits file
+* @param[out] error       The error code (if any) that was produced when opening the file
+**/
 void Cloud::writeCloudSetup(fitsfile * const file, int &error) const {
 	// format number of elements of type double as string, e.g. 1024D
 	std::stringstream numStream;
@@ -201,9 +244,17 @@ void Cloud::writeCloudSetup(fitsfile * const file, int &error) const {
 	fits_flush_file(file, &error);
 }
 
-// Appends the current cloud data to a fits file. This method requires that the
-// current HDU be "TIME_STEP". All data is flushed to the file incase exicution
-// is interupted.
+
+/**
+* @brief Appends the current cloud data to a fits file
+* @details Appends the current cloud data to a fits file. This method requires that the
+*          current HDU be "TIME_STEP". All data is flushed to the file in case execution
+*          is interrupted.	   
+*
+* @param[in]  file        The name of the fits file
+* @param[out] error       The error code (if any) that was produced when opening the file
+* @param[in]  currentTime ??UNKNOWN??
+**/
 void Cloud::writeTimeStep(fitsfile * const file, int &error, double currentTime) const {
 	if (!error) {
 		long numRows = 0;
@@ -219,110 +270,206 @@ void Cloud::writeTimeStep(fitsfile * const file, int &error, double currentTime)
 	fits_flush_file(file, &error);
 }
 
-// 4th order Runge-Kutta subsetp helper methods. 
-
-// X position helper functions -------------------------------------------------
+/**
+* @brief x-position helper method for 4th-order Runge-Kutta substep
+* @param[in] i ??UNKNOWN??
+**/
 const doubleV Cloud::getx1_pd(const cloud_index i) const {
 	return load_pd(x + i); // x
 }
 
+/**
+* @brief x-position helper method for 4th-order Runge-Kutta substep
+* @param[in] i ??UNKNOWN??
+**/
 const doubleV Cloud::getx2_pd(const cloud_index i) const {
 	return xCache[i/DOUBLE_STRIDE]; // x + l1/2
 }
 
+/**
+* @brief x-position helper method for 4th-order Runge-Kutta substep
+* @param[in] i ??UNKNOWN??
+**/
 const doubleV Cloud::getx3_pd(const cloud_index i) const {
 	return xCache[i/DOUBLE_STRIDE]; // x + l2/2
 }
 
+/**
+* @brief x-position helper method for 4th-order Runge-Kutta substep
+* @param[in] i ??UNKNOWN??
+**/
 const doubleV Cloud::getx4_pd(const cloud_index i) const {
 	return xCache[i/DOUBLE_STRIDE]; // x + l3
 }
 
+/**
+* @brief x-position helper method for 4th-order Runge-Kutta substep
+* @param[in] i ??UNKNOWN??
+**/
 const doubleV Cloud::getx1r_pd(const cloud_index i) const {
 	return _mm_loadr_pd(x + i);
 }
 
+/**
+* @brief x-position helper method for 4th-order Runge-Kutta substep
+* @param[in] i ??UNKNOWN??
+**/
 const doubleV Cloud::getx2r_pd(const cloud_index i) const {
 	const cloud_index j = i/DOUBLE_STRIDE;
 	return _mm_shuffle_pd(xCache[j], xCache[j], _MM_SHUFFLE2(0, 1));
 }
 
+/**
+* @brief x-position helper method for 4th-order Runge-Kutta substep
+* @param[in] i ??UNKNOWN??
+**/
 const doubleV Cloud::getx3r_pd(const cloud_index i) const {
 	const cloud_index j = i/DOUBLE_STRIDE;
 	return _mm_shuffle_pd(xCache[j], xCache[j], _MM_SHUFFLE2(0, 1));
 }
 
+/**
+* @brief x-position helper method for 4th-order Runge-Kutta substep
+* @param[in] i ??UNKNOWN??
+**/
 const doubleV Cloud::getx4r_pd(const cloud_index i) const {
 	const cloud_index j = i/DOUBLE_STRIDE;
 	return _mm_shuffle_pd(xCache[j], xCache[j], _MM_SHUFFLE2(0, 1));
 }
 
 // Y position helper functions -------------------------------------------------
+
+/**
+* @brief y-position helper method for 4th-order Runge-Kutta substep
+* @param[in] i ??UNKNOWN??
+**/
 const doubleV Cloud::gety1_pd(const cloud_index i) const {
 	return load_pd(y + i); // y
 }
 
+/**
+* @brief y-position helper method for 4th-order Runge-Kutta substep
+* @param[in] i ??UNKNOWN??
+**/
 const doubleV Cloud::gety2_pd(const cloud_index i) const {
 	return yCache[i/DOUBLE_STRIDE]; // y + n1/2
 }
 
+/**
+* @brief y-position helper method for 4th-order Runge-Kutta substep
+* @param[in] i ??UNKNOWN??
+**/
 const doubleV Cloud::gety3_pd(const cloud_index i) const {
 	return yCache[i/DOUBLE_STRIDE]; // y + n2/2
 }
 
+/**
+* @brief y-position helper method for 4th-order Runge-Kutta substep
+* @param[in] i ??UNKNOWN??
+**/
 const doubleV Cloud::gety4_pd(const cloud_index i) const {
 	return yCache[i/DOUBLE_STRIDE]; // y + n3
 }
 
+/**
+* @brief y-position helper method for 4th-order Runge-Kutta substep
+* @param[in] i ??UNKNOWN??
+**/
 const doubleV Cloud::gety1r_pd(const cloud_index i) const {
 	return _mm_loadr_pd(y + i);
 }
 
+/**
+* @brief y-position helper method for 4th-order Runge-Kutta substep
+* @param[in] i ??UNKNOWN??
+**/
 const doubleV Cloud::gety2r_pd(const cloud_index i) const {
 	const cloud_index j = i/DOUBLE_STRIDE;
 	return _mm_shuffle_pd(yCache[j], yCache[j], _MM_SHUFFLE2(0, 1));
 }
 
+/**
+* @brief y-position helper method for 4th-order Runge-Kutta substep
+* @param[in] i ??UNKNOWN??
+**/
 const doubleV Cloud::gety3r_pd(const cloud_index i) const {
 	const cloud_index j = i/DOUBLE_STRIDE;
 	return _mm_shuffle_pd(yCache[j], yCache[j], _MM_SHUFFLE2(0, 1));
 }
 
+/**
+* @brief y-position helper method for 4th-order Runge-Kutta substep
+* @param[in] i ??UNKNOWN??
+**/
 const doubleV Cloud::gety4r_pd(const cloud_index i) const {
 	const cloud_index j = i/DOUBLE_STRIDE;
 	return _mm_shuffle_pd(yCache[j], yCache[j], _MM_SHUFFLE2(0, 1));
 }
 
 // Vx position helper functions ------------------------------------------------
+
+/**
+* @brief x-velocity helper method for 4th-order Runge-Kutta substep
+* @param[in] i ??UNKNOWN??
+**/
 const doubleV Cloud::getVx1_pd(const cloud_index i) const {
 	return load_pd(Vx + i); // Vx
 }
 
+/**
+* @brief x-velocity helper method for 4th-order Runge-Kutta substep
+* @param[in] i ??UNKNOWN??
+**/
 const doubleV Cloud::getVx2_pd(const cloud_index i) const {
 	return VxCache[i/DOUBLE_STRIDE]; // Vx + k1/2
 }
 
+/**
+* @brief x-velocity helper method for 4th-order Runge-Kutta substep
+* @param[in] i ??UNKNOWN??
+**/
 const doubleV Cloud::getVx3_pd(const cloud_index i) const {
 	return VxCache[i/DOUBLE_STRIDE]; // Vx + k2/2
 }
 
+/**
+* @brief x-velocity helper method for 4th-order Runge-Kutta substep
+* @param[in] i ??UNKNOWN??
+**/
 const doubleV Cloud::getVx4_pd(const cloud_index i) const {
 	return VxCache[i/DOUBLE_STRIDE]; // Vx + k3
 }
 
 // Vy position helper functions ------------------------------------------------
+
+/**
+* @brief y-velocity helper method for 4th-order Runge-Kutta substep
+* @param[in] i ??UNKNOWN??
+**/
 const doubleV Cloud::getVy1_pd(const cloud_index i) const {
 	return load_pd(Vy + i); // Vy
 }
 
+/**
+* @brief y-velocity helper method for 4th-order Runge-Kutta substep
+* @param[in] i ??UNKNOWN??
+**/
 const doubleV Cloud::getVy2_pd(const cloud_index i) const {
 	return VyCache[i/DOUBLE_STRIDE]; // Vy + m1/2
 }
 
+/**
+* @brief y-velocity helper method for 4th-order Runge-Kutta substep
+* @param[in] i ??UNKNOWN??
+**/
 const doubleV Cloud::getVy3_pd(const cloud_index i) const {
 	return VyCache[i/DOUBLE_STRIDE]; // Vy + m2/2
 }
 
+/**
+* @brief y-velocity helper method for 4th-order Runge-Kutta substep
+* @param[in] i ??UNKNOWN??
+**/
 const doubleV Cloud::getVy4_pd(const cloud_index i) const {
 	return VyCache[i/DOUBLE_STRIDE]; // Vy + m3
 }

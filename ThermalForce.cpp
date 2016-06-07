@@ -1,11 +1,12 @@
-/*===- ThermalForce.cpp - libSimulation -=======================================
+/**
+* @file  ThermalForce.cpp
+* @class ThermalForce ThermalForce.h
 *
-*                                  DEMON
-* 
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-* 
-*===-----------------------------------------------------------------------===*/
+* @brief Computes a random force to model thermal effects
+*
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #include "ThermalForce.h"
 #include <cmath>
@@ -106,13 +107,21 @@ void ThermalForce::force4(const double currentTime) {
     END_PARALLEL_FOR
 }
 
-// F = c*L : L is a uniformly distributed random number between 0 - 1 in a 
-// random direction.
+/**
+* @brief Computes a thermal force with form F = c*L where L is a
+*        uniformly distributed random number between 0 - 1 in a 
+*        random direction.
+*
+* @param[in] currentParticle The particle whose force is being computed
+* @param[in] RC              RandCache struct from RandomNumbers.h
+**/
 inline void ThermalForce::force(const cloud_index currentParticle, const RandCache &RC) {
     const doubleV thermV = mul_pd(RC.r, heatVal);
 	plusEqual_pd(cloud->forceX + currentParticle, thermV*randomCos(RC));
 	plusEqual_pd(cloud->forceY + currentParticle, thermV*randomSin(RC));
 }
+
+
 
 inline const doubleV ThermalForce::randomCos(const RandCache &RC) {
 #ifdef __AVX__

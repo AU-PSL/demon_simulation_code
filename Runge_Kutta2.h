@@ -1,11 +1,10 @@
-/*===- Runge_Kutta2.h - libSimulation -=========================================
+/**
+* @file  Runge_Kutta2.h
+* @brief Defines the data and methods of the Runge_Kutta2 class
 *
-*                                  DEMON
-*
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT 
-* for details.
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #ifndef RUNGA_KUTTA2_H
 #define RUNGA_KUTTA2_H

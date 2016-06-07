@@ -1,11 +1,10 @@
-/*===- RandomNumbers.h - libSimulation -========================================
+/**
+* @file  RandomNumbers.h
+* @brief Defines the data and methods of the RandomNumbers class
 *
-*                                  DEMON
-*
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT 
-* for details.
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #ifndef RANDOMNUMBERS
 #define RANDOMNUMBERS
@@ -23,13 +22,15 @@ public:
 	const double gaussian(std::normal_distribution<double> &dist);
 	
 private:
-	std::mt19937_64 engine;
+	std::mt19937_64 engine; //<! Mersenne Twister pseudo-random generator of 64-bit numbers with a state size of 19937 bits
 	
 	std::uniform_real_distribution<double> zeroToOne;
 	std::uniform_real_distribution<double> zeroToTwoPi;
 };
 
-// Structure to hold precomuted random numbers for use with thermal forces.
+/**
+* @brief Structure to hold precomputed random numbers for use with thermal forces.
+**/
 struct RandCache {
 	doubleV r;
     double r1, r2

@@ -1,11 +1,12 @@
-/*===- ConfinementForce.cpp - libSimulation -===================================
+/**
+* @file  ConfinementForce.cpp
+* @class ConfinementForce ConfinementForce.h
 *
-*                                  DEMON
+* @brief Adds a force towards the center to keep the particles confined.
 *
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #include "ConfinementForce.h"
 
@@ -37,7 +38,13 @@ void ConfinementForce::force4(const double currentTime) {
     END_PARALLEL_FOR
 }
 
-// F = c*q*r
+/**
+* @brief Computes the confinement force with form F = -c*q*r
+*
+* @param[in] currentParticle  The particle whose force is being computed
+* @param[in] currentPositionX The x-position of the current particle
+* @param[in] currentPositionY The y-position of the current particle
+**/
 inline void ConfinementForce::force(const cloud_index currentParticle, const doubleV currentPositionX, 
                                     const doubleV currentPositionY) {
 	const doubleV cV = mul_pd(load_pd(cloud->charge + currentParticle), confine);

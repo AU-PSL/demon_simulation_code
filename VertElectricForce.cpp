@@ -1,14 +1,12 @@
-/*===- VertElectricForce.cpp - libSimulation -=====================================
+/**
+* @file  VertElectricForce.cpp
+* @class VertElectricForce VertElectricForce.h
 *
-*                                  DEMON
+* @brief Computes a spacially-varying electric force in the y-direction
 *
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-*
-* This file is a member of the DEMON BETA project to create a more physical
-* dusty plasma simulator
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #include "VertElectricForce.h"
 
@@ -40,16 +38,15 @@ void VertElectricForce::force4(const double currentTime) {
     END_PARALLEL_FOR
 }
 
-// F = q*E*(y-top)/(bottom-top)
+/**
+* @brief Computes a vertical electric force with form F = q*E*Exp(y/d)
+*
+* @param[in] currentParticle  The particle whose force is being computed
+* @param[in] currentPositionY The y-position of the current particle
+**/
 inline void VertElectricForce::force(const cloud_index currentParticle, const doubleV currentPositionY) {
 
 	const doubleV cV = mul_pd(load_pd(cloud->charge + currentParticle), vertElectric);
-
-        //const doubleV num = sub_pd(currentPositionY, top);
-        //const double denom = top-bottom;
-        //const doubleV frac = div_pd(num,denom);
-	//const doubleV eV = mul_pd(cV,frac);
-
 	const doubleV eV = mul_pd(cV, exp_pd(div_pd(currentPositionY,vertDec)));
 	
 	plusEqual_pd(cloud->forceY + currentParticle, eV);

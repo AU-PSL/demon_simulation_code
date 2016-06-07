@@ -1,11 +1,10 @@
-/*===- ThermalForceLocalized.h - libSimulation -================================
+/**
+* @file  ThermalForceLocalized.h
+* @brief Defines the data and methods of the ThermalForceLocalized class
 *
-*                                  DEMON
-* 
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-* 
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #ifndef THERMALFORCELOCALIZED_H
 #define THERMALFORCELOCALIZED_H
@@ -27,7 +26,9 @@ public:
 	void readForce(fitsfile * const file, int * const error);
 
 private:
-	double heatingRadius, heatVal1, heatVal2; // [m], [N], [N]
+	double heatingRadius; //<! Radius where thermal force changes [m]
+	double heatVal1;	  //<! Strength of thermal force inside heatingRadius [N]
+	double heatVal2; 	  //<! Strength of thermal force outside heatingRadius [N]
 
     RandCache *evenRandCache, *oddRandCache;
 #ifdef DISPATCH_QUEUES

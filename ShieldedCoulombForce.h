@@ -1,11 +1,10 @@
-/*===- ShieldedCoulombForce.h - libSimulation -=================================
+/**
+* @file  ShieldedCoulombForce.h
+* @brief Defines the data and methods of the ShieldedCoulombForce class
 *
-*                                  DEMON
-*
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT 
-* for details. 
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #ifndef SHIELDEDCOULOMBFORCE_H
 #define SHIELDEDCOULOMBFORCE_H
@@ -27,10 +26,10 @@ public:
 	void readForce(fitsfile * const file, int * const error);
 
 private:
-	double shielding; // [m^-1]
+	double shielding; //<! Inverse of shielding distance [m^-1]
     SEMAPHORES
 	
-	static const double coulomb;
+	static const double coulomb; //<! Coulomb constant: 8.987551787 [m/F]
 
 	void force(const cloud_index currentParticle,
 	           const double charges, const doubleV displacementV);

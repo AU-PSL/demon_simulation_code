@@ -1,11 +1,12 @@
-/*===- Runge_Kutta2.cpp - libSimulation -=======================================
+/**
+* @file  Runge_Kutta2.cpp
+* @class Runge_Kutta2 Runge_Kutta2.h
 *
-*                                  DEMON
+* @brief Implementation of a second-order Runge-Kutta integration method
 *
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT 
-* for details.
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #include "Runge_Kutta2.h"
 
@@ -13,7 +14,12 @@ Runge_Kutta2::Runge_Kutta2(Cloud * const C, const ForceArray &FA,
                            const double timeStep, const double startTime)
 : Integrator(C, FA, timeStep, startTime) {}
 
-// 2nd order Runge-Kutta algorithm:
+
+/**
+* @brief Moves particles forward based on 2nd order Runge-Kutta method
+*
+* @param[in] endTime Final time of the simulation
+**/
 void Runge_Kutta2::moveParticles(const double endTime) {
 	while (currentTime < endTime) {
 		const double dt = modifyTimeStep(1.0e-4f, init_dt); // implement dynamic timstep (if necessary):

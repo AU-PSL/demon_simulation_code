@@ -1,11 +1,12 @@
-/*===- ElectricForce.cpp - libSimulation -=====================================
+/**
+* @file  ElectricForce.cpp
+* @class ElectricForce ElectricForce.h
 *
-*                                  DEMON
+* @brief Computes a radial electric force
 *
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #include "ElectricForce.h"
 
@@ -37,23 +38,29 @@ void ElectricForce::force4(const double currentTime) {
     END_PARALLEL_FOR
 }
 
-// F = q*E*(exp(-r/R))
+/**
+* @brief Computes the electric force with form F = q*E*(exp(-r/R))
+*
+* @param[in] currentParticle  The particle whose force is being computed
+* @param[in] currentPositionX The x-position of the current particle
+* @param[in] currentPositionY The y-position of the current particle
+**/
 inline void ElectricForce::force(const cloud_index currentParticle, const doubleV currentPositionX, 
                                     const doubleV currentPositionY) {
-	const doubleV cV = mul_pd(load_pd(cloud->charge + currentParticle), electric);
 
-        const doubleV PX = mul_pd(currentPositionX,currentPositionX);
-        const doubleV PY = mul_pd(currentPositionY,currentPositionY);
-        const doubleV Ra = add_pd(PX,PY);
-        const doubleV R  = sqrt_pd(Ra);
-        const doubleV rad= set1_pd(radius * (-1));
-        const doubleV eV = mul_pd(cV, exp_pd(div_pd(R,rad)));
+	const doubleV cV = mul_pd(load_pd(cloud->charge + currentParticle), electric);
+    const doubleV PX = mul_pd(currentPositionX,currentPositionX);
+    const doubleV PY = mul_pd(currentPositionY,currentPositionY);
+    const doubleV Ra = add_pd(PX,PY);
+    const doubleV R  = sqrt_pd(Ra);
+    const doubleV rad= set1_pd(radius * (-1));
+    const doubleV eV = mul_pd(cV, exp_pd(div_pd(R,rad)));
 	
 	plusEqual_pd(cloud->forceX + currentParticle, mul_pd(eV, currentPositionX));
 	plusEqual_pd(cloud->forceY + currentParticle, mul_pd(eV, currentPositionY));
 
 }
-
+ 
 void ElectricForce::writeForce(fitsfile * const file, int * const error) const {
 	// move to primary HDU:
 	if (!*error)

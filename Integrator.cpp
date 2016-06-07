@@ -1,11 +1,12 @@
-/*===- Integrator.cpp - libSimulation -=========================================
+/**
+* @file  Integrator.cpp
+* @class Integrator Integrator.h
 *
-*                                  DEMON
+* @brief Provides support for integration methods
 *
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT 
-* for details.
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #include "Integrator.h"
 #include "CacheOperator.h"
@@ -13,13 +14,21 @@
 #include <limits>
 
 #ifdef DISPATCH_QUEUES
-#define BLOCK_VALUE_TIME currTimeStep
-#define BLOCK_VALUE_DIST currDist
+#define BLOCK_VALUE_TIME currTimeStep    //!< ??UNKNOWN??
+#define BLOCK_VALUE_DIST currDist        //!< ??UNKNOWN??
 #else
-#define BLOCK_VALUE_TIME currentTimeStep
-#define BLOCK_VALUE_DIST currentDist
+#define BLOCK_VALUE_TIME currentTimeStep //!< ??UNKNOWN??
+#define BLOCK_VALUE_DIST currentDist     //!< ??UNKNOWN??
 #endif
 
+/**
+* @brief Constructor for the Integrator class
+*
+* @param[in] C         Cloud object
+* @param[in] FA        Array of forces
+* @param[in] timeStep  Simulation time step
+* @param[in] startTime Simulation start time
+**/
 Integrator::Integrator(Cloud * const C, const ForceArray &FA,
                        const double timeStep, double startTime)
 : currentTime(startTime), cloud(C), forces(FA), init_dt(timeStep),
@@ -28,6 +37,9 @@ SEMAPHORES_MALLOC(1) {
     SEMAPHORES_INIT(1);
 }
 
+/**
+* @brief Destructor for the Integrator class
+**/
 Integrator::~Integrator() {
 	for (Operator * const opt : operations)
 		delete opt;
@@ -35,37 +47,48 @@ Integrator::~Integrator() {
     SEMAPHORES_FREE(1);
 }
 
-// If particle spacing is less than the specified distance reduce timestep by a
-// factor of 10 and recheck with disance reduced by a factor of 10. Once all
-// particle spacings are outside the specified distance use the current 
-// timestep. This allows fine grain control of reduced timesteps.
+/**
+* @brief Reduces timestep if partices within a given distance.
+*
+* @details If particle spacing is less than the specified distance reduce timestep by a
+* 		   factor of 10 and recheck with disance reduced by a factor of 10. Once all
+*          particle spacings are outside the specified distance use the current 
+*          timestep. This allows fine grain control of reduced timesteps
+*
+* @param[in] currentDist     The current distance..?
+* @param[in] currentTImeStep The current simulation timestep
+*
+* @return The new timestep
+*
+* @bug When changing this over to AVX to simplify, change force methods to
+* 	   triangle and block forces. Triangle forces cover the outter loop force. Block
+*	   covers the inner loop forces. AVX specific differences would go into that 
+*	   section.
+**/
 const double Integrator::modifyTimeStep(float currentDist, double currentTimeStep) const {
-	// FIXME: When changing this over to AVX to simplify, change force methods to
-	// triangle and block forces. Triangle forces cover the outter loop force. Block
-	// covers the inner loop forces. AVX specific differences would go into that 
-	// section.
-#ifdef __AVX__
-#error "Integartor::modifyTimeStep does not fully support AVX."
-#endif
-	const cloud_index numParticles = cloud->n;
-    
-#ifdef DISPATCH_QUEUES
-    // You cannot block capture method arguments. Store these values in to non
-    // const block captured variables. The correct names subsequently used by
-    // BLOCK_VALUE_DIST and BLOCK_VALUE_TIME
-    __block float currDist = currentDist;
-    __block double currTimeStep = currentTimeStep;
-#endif
-    
-	// Loop through entire cloud, or until reduction occures. Reset innerIndex 
-    // after each loop iteration.
-#ifdef DISPATCH_QUEUES
-	const cloud_index outerLoop = numParticles;
-#else
-	const cloud_index outerLoop = numParticles - 1;
-#endif
+	#ifdef __AVX__
+	#error "Integrator::modifyTimeStep does not fully support AVX."
+	#endif
+		const cloud_index numParticles = cloud->n;
+	    
+	#ifdef DISPATCH_QUEUES
+	    // You cannot block capture method arguments. Store these values in to non
+	    // const block captured variables. The correct names subsequently used by
+	    // BLOCK_VALUE_DIST and BLOCK_VALUE_TIME
+	    __block float currDist = currentDist;
+	    __block double currTimeStep = currentTimeStep;
+	#endif
+	    
+		// Loop through entire cloud, or until reduction occurs. Reset innerIndex 
+	    // after each loop iteration.
+	#ifdef DISPATCH_QUEUES
+		const cloud_index outerLoop = numParticles;
+	#else
+		const cloud_index outerLoop = numParticles - 1;
+	#endif
+
     BEGIN_PARALLEL_FOR(outerIndex, e, outerLoop, FLOAT_STRIDE, dynamic)
-		// caculate separation distance b/t adjacent elements:
+		// calculate separation distance b/t adjacent elements:
 		const floatV outPosX = loadFloatVector(cloud->x + outerIndex);
 		const floatV outPosY = loadFloatVector(cloud->y + outerIndex);
 	
@@ -110,6 +133,14 @@ const double Integrator::modifyTimeStep(float currentDist, double currentTimeSte
     return BLOCK_VALUE_TIME;
 }
 
+/**
+* @brief Reduces timestep if particles are within distance
+*
+* @param[in]     sepX      Particle separation in x-direction
+* @param[in]     sepY 	   Particle separation in y-direction
+* @param[in,out] distance  Distance to check if less than
+* @param[in,out] time      Current simulation timestep
+**/
 inline void Integrator::tryToReduceTimeStep(const floatV sepx, const floatV sepy, float &distance, double &time) const {
 	// If particles are too close, reduce time step:
 	while (isWithInDistance(sepx, sepy, distance)) {
@@ -123,6 +154,11 @@ inline void Integrator::tryToReduceTimeStep(const floatV sepx, const floatV sepy
 	}
 }
 
+/**
+* @brief Loads a float vector with particle locations
+*
+* @param[in] x Particle location
+**/
 inline floatV Integrator::loadFloatVector(double * const x) {
 #ifdef __AVX__
     return _mm256_set_ps((float)x[0], (float)x[1], (float)x[2], (float)x[3],
@@ -132,6 +168,15 @@ inline floatV Integrator::loadFloatVector(double * const x) {
 #endif
 }
 
+/**
+* @brief Checks if any particles are within a certain distance
+*
+* @param[in] a    Vector of particle separations in x-direction
+* @param[in] b    Vector of particle separations in y-direction
+* @param[in] dist Distance to check
+* 
+* @return True if particle is within the set distance
+**/
 inline bool Integrator::isWithInDistance(const floatV a, const floatV b, const float dist) {
 	return (bool)movemask_ps(cmple_ps(sqrt_ps(add_ps(mul_ps(a, a), mul_ps(b, b))), set1_ps(dist)));
 }

@@ -1,11 +1,10 @@
-/*===- TimeVaryingThermalForce.h - libSimulation -==============================
+/**
+* @file  TimeVaryingThermalForce.h
+* @brief Defines the data and methods of the TimeVaryingThermalForce class
 *
-*                                  DEMON
-* 
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-* 
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #ifndef TIMEVARYINGTHERMALFORCE_H
 #define TIMEVARYINGTHERMALFORCE_H
@@ -27,7 +26,8 @@ public:
     void readForce(fitsfile * const file, int * const error);
 
 private:
-    double heatValScale, heatValOffset; // [N/s], [N]
+    double heatValScale;  //<! Scale of function that changes heatVal [N/s]
+    double heatValOffset; //<! Offset of function that changes heatVal [N]
 
     const double calculateHeatVal(const double currentTime) const;
 };

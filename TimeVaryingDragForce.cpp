@@ -1,11 +1,12 @@
-/*===- TimeVaryingDragForce.cpp - libSimulation -===============================
+/**
+* @file  ThermalForce.cpp
+* @class TimeVaryingDragForce TimeVaryingDragForce.h
 *
-*                                  DEMON
-* 
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-* 
-*===-----------------------------------------------------------------------===*/
+* @brief Computes a drag force that changes with defined gamma function
+*
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #include "TimeVaryingDragForce.h"
 
@@ -29,7 +30,11 @@ void TimeVaryingDragForce::force4(const double currentTime) {
 	DragForce::force4(currentTime);
 }
 
-// F = g(t)*m*v : g(t) = -m*t + b
+/**
+* @brief Calculates the gamma function that determines how the drag force changes with form g(t) = -m*t + b
+*
+* @param[in] currentTime Current time of the simulation
+**/
 inline const double TimeVaryingDragForce::calculateGamma(const double currentTime) const {
 	return -(scaleConst*currentTime + offsetConst);
 }

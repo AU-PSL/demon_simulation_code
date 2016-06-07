@@ -1,11 +1,10 @@
-/*===- CacheOperator.h - libSimulation -========================================
+/**
+* @file  CacheOperator.h
+* @brief Defines the data and methods of the CacheOperator class
 *
-*                                  DEMON
-*
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT 
-* for details.
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #ifndef CACHEOPERATOR_H
 #define CACHEOPERATOR_H

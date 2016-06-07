@@ -1,11 +1,10 @@
-/*===- ConfinementForce.h - libSimulation -=====================================
+/**
+* @file  ConfinementForce.h
+* @brief Defines the data and methods of the ConfinementForce class
 *
-*                                  DEMON
-*
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #ifndef CONFINEMENTFORCE_H
 #define CONFINEMENTFORCE_H
@@ -28,7 +27,7 @@ public:
 	virtual void readForce(fitsfile * const file, int * const error);
 
 private:
-	double confine; // [V/m^2]
+	double confine; //<! The strength of the confinement force (V/m^2)
 
 	void force(const cloud_index currentParticle, const doubleV currentPositionX, const doubleV currentPositionY);
 };

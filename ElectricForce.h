@@ -1,11 +1,10 @@
-/*===- ElectricForce.h - libSimulation -=======================================
+/**
+* @file  ElectricForce.h
+* @brief Defines the data and methods of the ElectricForce class
 *
-*                                  DEMON
-*
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #ifndef ELECTRICFORCE_H
 #define ELECTRICFORCE_H
@@ -27,7 +26,8 @@ public:
 	virtual void readForce(fitsfile * const file, int * const error);
 
 private:
-	double electric, radius; // [V/m^2],[m]
+	double electric; //!< Strength of the electric force [V/m^2]
+	double radius; 	 //!< Decay constant of the electric force [m]
 
 	void force(const cloud_index currentParticle, const doubleV currentPositionX, const doubleV currentPositionY);
 };

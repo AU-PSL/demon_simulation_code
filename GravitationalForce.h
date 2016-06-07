@@ -1,11 +1,10 @@
-/*===- GravitationalForce.h - libSimulation -========================================
+/**
+* @file  GravitationalForce.h
+* @brief Defines the data and methods of the GravitationalForce class
 *
-*                                  DEMON
-* 
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #ifndef GRAVITATIONALFORCE_H
 #define GRAVITATIONALFORCE_H
@@ -27,7 +26,7 @@ public:
 	void readForce(fitsfile * const file, int * const error);
 
 protected:
-	double gravitational; // [m/s^2]
+	double gravitational; //!< The strength of the gravitational force [m/s^2]
 
 private:
 	void force(const cloud_index currentParticle);

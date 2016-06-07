@@ -1,11 +1,10 @@
-/*===- ThermalForce.h - libSimulation -=========================================
+/**
+* @file  ThermalForce.h
+* @brief Defines the data and methods of the ThermalForce class
 *
-*                                  DEMON
-* 
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-* 
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #ifndef THERMALFORCE_H
 #define THERMALFORCE_H
@@ -37,7 +36,7 @@ private:
     static const doubleV randomSin(const RandCache &RC);
     
 protected:
-	double heatVal; // [N]
+	double heatVal; //<! Strength of thermal force [N]
 };
 
 #endif // THERMALFORCE_H

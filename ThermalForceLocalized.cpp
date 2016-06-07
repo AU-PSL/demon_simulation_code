@@ -1,11 +1,13 @@
-/*===- ThermalForceLocalized.cpp - libSimulation -==============================
+/**
+* @file  ThermalForceLocalized.cpp
+* @class ThermalForceLocalized ThermalForceLocalized.h
 *
-*                                  DEMON
-* 
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-* 
-*===-----------------------------------------------------------------------===*/
+* @brief Computes a random force to model thermal effects
+*		 where the force changes at a given radius
+*
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #include "ThermalForceLocalized.h"
 #include <cmath>
@@ -110,6 +112,15 @@ void ThermalForceLocalized::force4(const double currentTime) {
 // F = c2*L : if r < h_r 
 // L is a uniformly distributed random number between 0 - 1 in a random 
 // direction.
+/**
+* @brief Computes a thermal force with form F = c1*L : if r > h_r 
+*										and F = c2*L : if r < h_r
+*		 where L is a uniformly distributed random number between 0 - 1 in a 
+*        random direction.
+*
+* @param[in] currentParticle The particle whose force is being computed
+* @param[in] RC              RandCache struct from RandomNumbers.h
+**/
 inline void ThermalForceLocalized::force(const cloud_index currentParticle, const doubleV displacementX, 
                                          const doubleV displacementY, const RandCache &RC) {
 	const doubleV radiusV = _mm_sqrt_pd(displacementX*displacementX + displacementY*displacementY);

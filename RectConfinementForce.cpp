@@ -1,11 +1,12 @@
-/*===- RectConfinementForce.cpp - libSimulation -===============================
+/**
+* @file  RectConfinementForce.cpp
+* @class RectConfinementForce RectConfinementForce.h
 *
-*                                  DEMON
-* 
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
+* @brief Computes a rectangular confinement force to keep particles in
 *
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #include "RectConfinementForce.h"
 
@@ -37,7 +38,15 @@ void RectConfinementForce::force4(const double currentTime) {
     END_PARALLEL_FOR
 }
 
-// F_x = c_x*q*x, F_y = c_y*q*y
+
+/**
+* @brief Computes a confinement force in the x and y directions
+*		 with forms F_x = c_x*q*x, F_y = c_y*q*y
+*
+* @param[in] currentParticle  Particle whose force is being computed
+* @param[in] currentPositionX The x-position of the current particle
+* @param[in] currentPositionY The y-position of the current particle
+**/
 inline void RectConfinementForce::force(const cloud_index currentParticle, 
                                         const doubleV currentPositionX, 
                                         const doubleV currentPositionY) {

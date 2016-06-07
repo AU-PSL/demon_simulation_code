@@ -1,11 +1,10 @@
-/*===- Parallel.h - libSimulation -=============================================
+/**
+* @file  Parallel.h
+* @brief Gives the code parallelization support
 *
-*                                  DEMON
-*
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT 
-* for details.
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #ifndef PARALLEL_H
 #define PARALLEL_H
@@ -85,7 +84,7 @@ dispatch_apply(num, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), 
 #define SEMAPHORE_SIGNAL(i) dispatch_semaphore_signal(semaphores[i]);
 
 /*===- scalar -------------------------------------------------------------===*/
-// If no parallelization is availible fallback to single treaded code.
+// If no parallelization is availible fallback to single threaded code.
 #else
 
 typedef unsigned int cloud_index;

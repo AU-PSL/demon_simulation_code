@@ -1,11 +1,10 @@
-/*===- TimeVaryingDragForce.h - libSimulation -=================================
+/**
+* @file  TimeVaryingDragForce.h
+* @brief Defines the data and methods of the TimeVaryingDragForce class
 *
-*                                  DEMON
-* 
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-* 
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #ifndef TIMEVARYINGDRAGFORCE_H
 #define TIMEVARYINGDRAGFORCE_H
@@ -27,7 +26,8 @@ public:
 	void readForce(fitsfile *file, int *error);
 
 private:
-	double scaleConst, offsetConst; // [Hz/s], [Hz]
+	double scaleConst;
+	double offsetConst; // [Hz/s], [Hz]
 
 	const double calculateGamma(const double currentTime) const;
 };

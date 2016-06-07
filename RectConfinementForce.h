@@ -1,11 +1,10 @@
-/*===- RectConfinementForce.h - libSimulation -=================================
+/**
+* @file  RectConfinementForce.h
+* @brief Defines the data and methods of the RectConfinementForce class
 *
-*                                  DEMON
-* 
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #ifndef RECTCONFINEMENTFORCE_H
 #define RECTCONFINEMENTFORCE_H
@@ -14,9 +13,16 @@
 
 class RectConfinementForce : public Force {
 public:
+
+	/**
+	* @brief Constructor for the RectConfinementForce class
+	**/
 	RectConfinementForce(Cloud * const C, double confineConstX, double confineConstY)
 	: Force(C), confineX(confineConstX), confineY(confineConstY) {}
-	// IMPORTANT: In the above constructor, confineConst_'s must be positive!
+	
+	/**
+	* @brief Destructor for the RectConfinementForce class
+	**/
 	~RectConfinementForce() {}
 
 	void force1(const double currentTime); // rk substep 1
@@ -28,7 +34,8 @@ public:
 	void readForce(fitsfile * const file, int * const error);
 
 private:
-	double confineX, confineY; // [V/m^2]
+	double confineX; //<! Strength of the confinement force in the x-direction
+	double confineY; //<! Strength of the confinement force in the y-direction
 
 	void force(const cloud_index currentParticle, const doubleV currentPositionX, const doubleV currentPositionY);
 };

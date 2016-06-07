@@ -1,11 +1,10 @@
-/*===- MagneticForce.h - libSimulation -========================================
+/**
+* @file  MagneticForce.h
+* @brief Defines the data and methods of the MagneticForde
 *
-*                                  DEMON
-* 
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT  
-* for details. 
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #ifndef MAGNETICFORCE_H
 #define MAGNETICFORCE_H
@@ -27,7 +26,7 @@ public:
 	void readForce(fitsfile * const file, int * const error);
 
 protected:
-	double BField; // [T]
+	double BField; //!< The strength of the magnetic force [T]
 
 private:
 	void force(const cloud_index currentParticle, const doubleV currentVelocityX, const doubleV currentVelocityY);

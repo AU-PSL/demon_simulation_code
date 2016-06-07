@@ -1,11 +1,10 @@
-/*===- Integrator.h - libSimulation -===========================================
+/**
+* @file  Integrator.h
+* @brief Defines the data and methods of the Integrator class
 *
-*                                  DEMON
-*
-* This file is distributed under the BSD Open Source License. See LICENSE.TXT 
-* for details.
-*
-*===-----------------------------------------------------------------------===*/
+* @license This file is distributed under the BSD Open Source License. 
+*          See LICENSE.TXT for details. 
+**/
 
 #ifndef INTEGRATOR_H
 #define INTEGRATOR_H
