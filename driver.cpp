@@ -43,6 +43,7 @@ void checkFitsError(const int error, const int lineNumber);
 void deleteFitsFile(char * const filename, int &error);
 void fitsFileExists(char * const filename, int &error);
 void fitsFileCreate(fitsfile **file, char * const fileName, int &error);
+void setParticleRows();
 
 using namespace std;
 using namespace chrono;
@@ -260,6 +261,48 @@ void fitsFileCreate(fitsfile **file, char * const fileName, int &error) {
 	deleteFitsFile(fileName, error);
 	fits_create_file(file, fileName, &error);
 	checkFitsError(error, __LINE__);
+}
+
+
+/**
+* @brief Changes number/arrangement of particles if necesssary
+*
+* @details If only one number is defined, DEMON will try to arrange the grid
+*          as squarely as possible. Otherwise, they will be set as rows and columns.
+*		   There must be a multiple of either 4 or 8 particles, depending on AVX support.
+**/
+void setParticleRows() {
+	if(row_y_particles == 0)
+		numParticles = row_x_particles;
+	else
+		numParticles = row_x_particles*row_y_particles;
+
+	if (numParticles < 4) {
+		row_x_particles = 2;
+		row_y_particles = 2;
+		numParticles = row_x_particles * row_y_particles;
+		cout << "Warning: -n requires multiples of " << FLOAT_STRIDE << " numbers of particles. Incrementing number of particles to (" 
+		<< numParticles << ")." << endl;
+	}
+	else if(numParticles%FLOAT_STRIDE) {
+		while(numParticles%FLOAT_STRIDE) {
+			if(row_y_particles == 0) {
+				++row_x_particles;
+				numParticles = row_x_particles;
+			}
+			else if(row_y_particles < row_x_particles) {
+				++row_y_particles;
+				numParticles = row_x_particles * row_y_particles;
+			}
+			else {
+				++row_x_particles;
+				numParticles = row_x_particles * row_y_particles;
+			}
+		}
+
+		cout << "Warning: -n requires multiples of " << FLOAT_STRIDE << " numbers of particles. Incrementing number of particles to (" 
+		<< numParticles << ")." << endl;
+	}
 }
 
 
@@ -825,39 +868,7 @@ void parseCommandLineOptions(int argc, char * const argv[]){
 				checkOption(argc, argv, i, 'n', 2, 
 	                        "number of row x particles", CI, &row_x_particles,
 	                        "number of row y particles", CI, &row_y_particles);
-
-				if(row_y_particles == 0)
-					numParticles = row_x_particles;
-				else
-					numParticles = row_x_particles*row_y_particles;
-
-				if (numParticles < 4) {
-					row_x_particles = 2;
-					row_y_particles = 2;
-					numParticles = row_x_particles * row_y_particles;
-					cout << "Warning: -n requires multiples of 4 numbers of particles. Incrementing number of particles to (" 
-					<< numParticles << ")." << endl;
-				}
-				else if(numParticles%FLOAT_STRIDE) {
-					while(numParticles%FLOAT_STRIDE) {
-						if(row_y_particles == 0) {
-							++row_x_particles;
-							numParticles = row_x_particles;
-						}
-						else if(row_y_particles < row_x_particles) {
-							++row_y_particles;
-							numParticles = row_x_particles * row_y_particles;
-						}
-						else {
-							++row_x_particles;
-							numParticles = row_x_particles * row_y_particles;
-						}
-					}
-
-					cout << "Warning: -n requires multiples of 4 numbers of particles. Incrementing number of particles to (" 
-					<< numParticles << ")." << endl;
-				}
-
+				setParticleRows();
 				break;
 
             // All D Cases. 
