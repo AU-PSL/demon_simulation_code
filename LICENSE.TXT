@@ -1,4 +1,4 @@
-Copyright (c) 2012, Plasma Sciences Laboratory
+Copyright (c) 2016, Plasma Sciences Laboratory
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, 
