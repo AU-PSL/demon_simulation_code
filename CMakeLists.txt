@@ -8,6 +8,13 @@ set (LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/build/lib)
 find_library (CFITSIO_LIB NAMES cfitsio PATHS ${CFITSIO_LIB_PATH})
 include_directories(${CFITSIO_INC_PATH})
 
+find_library(FFTW_LIBRARY NAMES fftw3 fftw)
+set(FFTW_LIBRARIES "${FFTW_LIBRARY}")
+if(UNIX AND NOT WIN32)
+     find_library(FFTW_libm_LIBRARY NAMES m)
+     list(APPEND FFTW_LIBRARIES "${FFTW_libm_LIBRARY}")
+endif()
+
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -msse4.2")
 
 list (APPEND demon_sources
@@ -61,7 +68,10 @@ list (APPEND demon_sources
 add_library (simulation STATIC ${demon_sources})
 add_executable (DEMON driver.cpp)
 add_executable (ANGEL ANGEL.cpp)
+add_executable (FFTAnalysis FFTAnalysis.cpp)
 add_dependencies (DEMON simulation)
 add_dependencies (ANGEL simulation)
+add_dependencies (FFTAnalysis simulation)
 target_link_libraries (DEMON simulation ${CFITSIO_LIB})
 target_link_libraries (ANGEL simulation ${CFITSIO_LIB})
+target_link_libraries (FFTAnalysis simulation ${CFITSIO_LIB} ${FFTW_LIBRARIES})

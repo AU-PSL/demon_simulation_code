@@ -74,6 +74,16 @@ Otherwise do the following:
     make
     cd ..
 
+The FFTAnalysis code requires fftw3 to be installed. This can be done
+with the package manager, or it can be done through the command line
+as follows:
+    wget http://www.fftw.org/fftw-3.3.4.tar.gz
+    tar xvzf fftw-3.3.4.tar.gz
+    cd fftw-3.3.4
+    ./configure
+    make
+    make install
+
 Now, make sure that cmake is installed correctly. More than likely,
 you can do this with your package manager, but if you insist on doing this
 through the command line, do the following:
@@ -101,22 +111,22 @@ Do the following:
 
 Now place a path to that directory in your bashrc file. On Linux:
 
-    echo export PATH=$PATH:/home/USER/builds/demonsimulationcode-read-only//build/bin >> ~/.bashrc 
+    echo export PATH=$PATH:/home/USER/builds/demonsimulationcode-read-only/build/bin >> ~/.bashrc 
 
 On Mac:
 
-    echo export PATH=$PATH:/home/USER/builds/demonsimulationcode-read-only//build/bin >> ~/.PROFILE
+    echo export PATH=$PATH:/home/USER/builds/demonsimulationcode-read-only/build/bin >> ~/.PROFILE
 
 And there you have it, a full copy of DEMON on your machine!
 
 
 5. Notes on github
 
-DEMON is now available on github and can be mondified with both svn and git.
+DEMON is now available on github and can be modified with both svn and git.
 
 
 6. Looking at Data
 
 DEMON data will be stored in a fits file. Please use additional software, such 
 as astropy.io to use this data. An example of how to use astropy.io can be found
-in the exammple directory.
+in the example directory.
