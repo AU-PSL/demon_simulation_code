@@ -8,7 +8,11 @@
 * @license This file is distributed under the BSD Open Source License. 
 *          See LICENSE.TXT for details. 
 **/
-
+/***********
+ Temporarily change the format of this force to be anisotropic
+ Will make a new .h and .cpp for anisotropic later on, this is test case
+ 3/3/18 LS
+ **********/
 #include "ShieldedCoulombForce.h"
 #include <cmath>
 
@@ -19,9 +23,14 @@
 #endif
 
 const double ShieldedCoulombForce::coulomb = 1.0/(4.0*M_PI*Cloud::epsilon0);
-
+/***
 ShieldedCoulombForce::ShieldedCoulombForce(Cloud * const C, const double shieldingConstant)
-: Force(C), shielding(shieldingConstant) SEMAPHORES_MALLOC(C->n/DOUBLE_STRIDE) {
+: Force(C), shielding(shieldingConstant), SEMAPHORES_MALLOC(C->n/DOUBLE_STRIDE) {
+    SEMAPHORES_INIT(cloud->n/DOUBLE_STRIDE)
+}
+***/
+ShieldedCoulombForce::ShieldedCoulombForce(Cloud * const C, const double shieldingConstX, const double shieldingConstY)
+: Force(C), shieldingX(shieldingConstX), shieldingY(shieldingConstY) SEMAPHORES_MALLOC(C->n/DOUBLE_STRIDE) {
     SEMAPHORES_INIT(cloud->n/DOUBLE_STRIDE)
 }
 ShieldedCoulombForce::~ShieldedCoulombForce() {
@@ -142,12 +151,11 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle,
     _mm_storel_pd(&displacementX, displacementV);
     _mm_storeh_pd(&displacementY, displacementV);
 	const double displacement = sqrt(displacementX*displacementX + displacementY*displacementY);
-	const double valExp = displacement*shielding;
-
-	if (valExp < 10.0) {// restrict to 10*(ion debye length)
+	const double valExpAnisotropic = sqrt(displacementX*shieldingX*displacementX*shieldingX + displacementY*shieldingY*displacementY*shieldingY);
+	if (valExpAnisotropic < 10.0) {// restrict to 10*(ion debye length)
 		// calculate force
-		const double forceC = coulomb*charges*(1.0 + valExp)
-            /(displacement*displacement*displacement*exp(valExp));
+		const double forceC = coulomb*charges*(1.0 + valExpAnisotropic)
+            /(displacement*displacement*displacement*exp(valExpAnisotropic));
 
         const double forceX = forceC*displacementX;
         const double forceY = forceC*displacementY;
@@ -173,14 +181,14 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
                                         const doubleV charges, const doubleV displacementX, const doubleV displacementY) {
 	// Calculate displacement between particles.
 	const doubleV displacement = sqrt_pd(add_pd(displacementX*displacementX, displacementY*displacementY));
-	const doubleV valExp = displacement*set1_pd(shielding);
+	const doubleV valExpAnisotropic = sqrt_pd(add_pd(displacementX*set1_pd(shieldingX)*displacementX*set1_pd(shieldingX),displacementY*set1_pd(shieldingY)*displacementY*set1_pd(shieldingY)));
 	
-	const int mask = movemask_pd(_mm_cmplt_pd(valExp, set1_pd(10.0)));
+    const int mask = movemask_pd(_mm_cmplt_pd(valExpAnisotropic, set1_pd(10.0)));
 	if (!mask)
 		return;
     
     // calculate force
-	const doubleV forceC = set1_pd(coulomb)*charges*(set1_pd(1.0) + valExp)*exp_pd(mask, valExp)
+	const doubleV forceC = set1_pd(coulomb)*charges*(set1_pd(1.0) + valExpAnisotropic)*exp_pd(mask, valExpAnisotropic)
         				   /(displacement*displacement*displacement);
     const doubleV forcevX = forceC*displacementX;
 	const doubleV forcevY = forceC*displacementY;
@@ -208,6 +216,8 @@ inline void ShieldedCoulombForce::force(const cloud_index currentParticle, const
 * @param[in] displacementX   Vector of x-direction displacements
 * @param[in] displacementY   Vector of y-direction displacements
 **/
+
+/*************** COMMENT OUT ISOTROPIC FORCE TO TEST ANISOTROPIC
 inline void ShieldedCoulombForce::forcer(const cloud_index currentParticle, const cloud_index iParticle, 
                                          const doubleV charges, const doubleV displacementX, const doubleV displacementY) {
 	// Calculate displacement between particles.
@@ -235,6 +245,37 @@ inline void ShieldedCoulombForce::forcer(const cloud_index currentParticle, cons
 	minusEqualr_pd(cloud->forceY + iParticle, forcevY);
     SEMAPHORE_SIGNAL(iParticle/DOUBLE_STRIDE)
 }
+ END COMMENTED SECTION **********/
+
+//Begin Anisotropic calculation of force
+inline void ShieldedCoulombForce::forcer(const cloud_index currentParticle, const cloud_index iParticle,
+                                         const doubleV charges, const doubleV displacementX, const doubleV displacementY) {
+    // Calculate displacement between particles. displacement is same, valExp changes
+    const doubleV displacement = sqrt_pd(add_pd(displacementX*displacementX, displacementY*displacementY));
+    const doubleV valExpAnisotropic = sqrt_pd(add_pd(displacementX*set1_pd(shieldingX)*displacementX*set1_pd(shieldingX),displacementY*set1_pd(shieldingY)*displacementY*set1_pd(shieldingY)));
+    
+    const int mask = movemask_pd(_mm_cmplt_pd(valExpAnisotropic, set1_pd(10.0)));
+    if (!mask)
+        return;
+    
+    // calculate force
+    const doubleV forceC = set1_pd(coulomb)*charges*(set1_pd(1.0) + valExpAnisotropic)*exp_pd(mask, valExpAnisotropic)
+    /(displacement*displacement*displacement);
+    const doubleV forcevX = forceC*displacementX;
+    const doubleV forcevY = forceC*displacementY;
+    
+    SEMAPHORE_WAIT(currentParticle/DOUBLE_STRIDE)
+    plusEqual_pd(cloud->forceX + currentParticle, forcevX);
+    plusEqual_pd(cloud->forceY + currentParticle, forcevY);
+    SEMAPHORE_SIGNAL(currentParticle/DOUBLE_STRIDE)
+    
+    SEMAPHORE_WAIT(iParticle/DOUBLE_STRIDE)
+    // equal and opposite force:
+    minusEqualr_pd(cloud->forceX + iParticle, forcevX);
+    minusEqualr_pd(cloud->forceY + iParticle, forcevY);
+    SEMAPHORE_SIGNAL(iParticle/DOUBLE_STRIDE)
+}
+//End Anisotropic calculation of force
 
 void ShieldedCoulombForce::writeForce(fitsfile * const file, int * const error) const {
 	// move to primary HDU:

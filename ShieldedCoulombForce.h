@@ -14,8 +14,13 @@
 
 class ShieldedCoulombForce : public Force {
 public:
-	ShieldedCoulombForce(Cloud * const C, const double shieldingConstant);
+    /*** Commented out Isotropic Section
+    ShieldedCoulombForce(Cloud * const C, const double shieldingConstant);
 	~ShieldedCoulombForce();
+    ***/
+    
+    ShieldedCoulombForce(Cloud * const C, const double shieldingConstX, const double shieldingConstY);
+    ~ShieldedCoulombForce();
 
 	void force1(const double currentTime); //rk substep 1
 	void force2(const double currentTime); //rk substep 2
@@ -27,6 +32,8 @@ public:
 
 private:
 	double shielding; //<! Inverse of shielding distance [m^-1]
+    double shieldingX;
+    double shieldingY;
     SEMAPHORES
 	
 	static const double coulomb; //<! Coulomb constant: 8.987551787 [m/F]

@@ -76,6 +76,8 @@ double confinementConstX = 100;     //!< Strength of RectConfinementForce in x-d
 double confinementConstY = 1000;    //!< Strength of RectConfinementForce in y-direction [V/m^2]
 double shieldingConstant = 2E4;     //!< Defines inverse of distance where ShieldedCoulombForce kicks in [m^-1]
 									//!< corresponds to 10*(ion debye length) [m^-1]
+double shieldingConstX = 2E4;       //!< Inverse shielding length in x-direction [m^-1]
+double shieldingConstY = 2E4;       //!< Inverse shielding lenght in y-direction [m^-1]
 double dragGamma = 10.0;            //!< Dust drag frequency [Hz]
 double thermRed = 1E-14;            //!< Thermal reduction factor [N]
 double thermRed1 = thermRed;        //!< Outer reduction factor (-L) [N]
@@ -384,8 +386,12 @@ int main (int argc, char * const argv[]) {
 		forces.push_back(new RectConfinementForce(cloud, confinementConstX, confinementConstY));
 	if (usedForces & RotationalForceFlag)
 		forces.push_back(new RotationalForce(cloud, rmin, rmax, rotConst));
-	if (usedForces & ShieldedCoulombForceFlag) 
-		forces.push_back(new ShieldedCoulombForce(cloud, shieldingConstant));
+    /**
+    if (usedForces & ShieldedCoulombForceFlag)
+        forces.push_back(new ShieldedCoulombForce(cloud, shieldingConstant));
+    **/
+    if (usedForces & ShieldedCoulombForceFlag)
+		forces.push_back(new ShieldedCoulombForce(cloud, shieldingConstX, shieldingConstY));
 	if (usedForces & ThermalForceFlag)
 		forces.push_back(new ThermalForce(cloud, thermRed));
 	if (usedForces & ThermalForceLocalizedFlag)
@@ -670,6 +676,12 @@ void checkParams(const char* inputFile){
         }
         if (varname == "shieldingConstant"){
             shieldingConstant = atof(value.c_str());
+        }
+        if (varname == "shieldingConstX"){
+            shieldingConstX = atof(value.c_str());
+        }
+        if (varname == "shieldingConstY"){
+            shieldingConstY = atof(value.c_str());
         }
         if (varname == "dragGamma"){
             dragGamma = atof(value.c_str());

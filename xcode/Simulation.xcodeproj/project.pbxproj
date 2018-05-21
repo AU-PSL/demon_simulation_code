@@ -21,6 +21,13 @@
 		4DDA63DB145A012E00E795F8 /* Runge_Kutta2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4DDA63DA145A012E00E795F8 /* Runge_Kutta2.cpp */; };
 		4DDDB4F912BA7E62003AC69F /* Operator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DDDB4F812BA7E62003AC69F /* Operator.h */; };
 		4DFB6DBE145B8E5700F82DA1 /* Parallel.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DFB6DBD145B8E5600F82DA1 /* Parallel.h */; };
+		A7BB667920536289004C6174 /* ElectricForce.h in Headers */ = {isa = PBXBuildFile; fileRef = A7BB667320536289004C6174 /* ElectricForce.h */; };
+		A7BB667A20536289004C6174 /* GravitationalForce.h in Headers */ = {isa = PBXBuildFile; fileRef = A7BB667420536289004C6174 /* GravitationalForce.h */; };
+		A7BB667B20536289004C6174 /* VertElectricForce.h in Headers */ = {isa = PBXBuildFile; fileRef = A7BB667520536289004C6174 /* VertElectricForce.h */; };
+		A7BB667C20536289004C6174 /* GravitationalForce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7BB667620536289004C6174 /* GravitationalForce.cpp */; };
+		A7BB667D20536289004C6174 /* VertElectricForce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7BB667720536289004C6174 /* VertElectricForce.cpp */; };
+		A7BB667E20536289004C6174 /* ElectricForce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7BB667820536289004C6174 /* ElectricForce.cpp */; };
+		A7BB667F20536295004C6174 /* driver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FD947812999A8900EBC94D /* driver.cpp */; };
 		E1B3A959129D710500599DFF /* VectorCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B3A958129D710500599DFF /* VectorCompatibility.h */; };
 		E1FD94351299994F00EBC94D /* Cloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FD942F1299994C00EBC94D /* Cloud.cpp */; };
 		E1FD94361299994F00EBC94D /* Cloud.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FD94301299994F00EBC94D /* Cloud.h */; };
@@ -48,7 +55,6 @@
 		E1FD94631299996F00EBC94D /* TimeVaryingThermalForce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FD94511299996F00EBC94D /* TimeVaryingThermalForce.cpp */; };
 		E1FD94641299996F00EBC94D /* TimeVaryingThermalForce.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FD94521299996F00EBC94D /* TimeVaryingThermalForce.h */; };
 		E1FD947112999A5700EBC94D /* libSimulation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AAC046055464E500DB518D /* libSimulation.a */; };
-		E1FD947912999A8900EBC94D /* driver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FD947812999A8900EBC94D /* driver.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,6 +82,12 @@
 		4DDA63DA145A012E00E795F8 /* Runge_Kutta2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Runge_Kutta2.cpp; path = ../Runge_Kutta2.cpp; sourceTree = "<group>"; };
 		4DDDB4F812BA7E62003AC69F /* Operator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Operator.h; path = ../Operator.h; sourceTree = SOURCE_ROOT; };
 		4DFB6DBD145B8E5600F82DA1 /* Parallel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parallel.h; path = ../Parallel.h; sourceTree = "<group>"; };
+		A7BB667320536289004C6174 /* ElectricForce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ElectricForce.h; path = ../ElectricForce.h; sourceTree = "<group>"; };
+		A7BB667420536289004C6174 /* GravitationalForce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GravitationalForce.h; path = ../GravitationalForce.h; sourceTree = "<group>"; };
+		A7BB667520536289004C6174 /* VertElectricForce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VertElectricForce.h; path = ../VertElectricForce.h; sourceTree = "<group>"; };
+		A7BB667620536289004C6174 /* GravitationalForce.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GravitationalForce.cpp; path = ../GravitationalForce.cpp; sourceTree = "<group>"; };
+		A7BB667720536289004C6174 /* VertElectricForce.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VertElectricForce.cpp; path = ../VertElectricForce.cpp; sourceTree = "<group>"; };
+		A7BB667820536289004C6174 /* ElectricForce.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ElectricForce.cpp; path = ../ElectricForce.cpp; sourceTree = "<group>"; };
 		D2AAC046055464E500DB518D /* libSimulation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSimulation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E16C487E12A587AE004F3B02 /* LICENSE.TXT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.TXT; path = ../LICENSE.TXT; sourceTree = SOURCE_ROOT; };
 		E16C488412A58E39004F3B02 /* README.TXT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.TXT; path = ../README.TXT; sourceTree = "<group>"; };
@@ -247,6 +259,12 @@
 		E1FD9466129999C200EBC94D /* Forces */ = {
 			isa = PBXGroup;
 			children = (
+				A7BB667820536289004C6174 /* ElectricForce.cpp */,
+				A7BB667320536289004C6174 /* ElectricForce.h */,
+				A7BB667620536289004C6174 /* GravitationalForce.cpp */,
+				A7BB667420536289004C6174 /* GravitationalForce.h */,
+				A7BB667720536289004C6174 /* VertElectricForce.cpp */,
+				A7BB667520536289004C6174 /* VertElectricForce.h */,
 				E1AE30D81299F19000775EDE /* ConfinementForces */,
 				E1AE30D71299F17700775EDE /* Drag Forces */,
 				E1FD94461299996F00EBC94D /* RotationalForce.h */,
@@ -273,8 +291,10 @@
 				E1FD94381299994F00EBC94D /* ConfinementForce.h in Headers */,
 				E1FD943A1299994F00EBC94D /* DragForce.h in Headers */,
 				E1FD943F1299996300EBC94D /* DrivingForce.h in Headers */,
+				A7BB667B20536289004C6174 /* VertElectricForce.h in Headers */,
 				E1FD94401299996300EBC94D /* Force.h in Headers */,
 				E1FD94561299996F00EBC94D /* RectConfinementForce.h in Headers */,
+				A7BB667A20536289004C6174 /* GravitationalForce.h in Headers */,
 				E1FD94581299996F00EBC94D /* RotationalForce.h in Headers */,
 				E1FD945A1299996F00EBC94D /* Runge_Kutta4.h in Headers */,
 				E1FD945C1299996F00EBC94D /* ShieldedCoulombForce.h in Headers */,
@@ -282,6 +302,7 @@
 				E1FD94601299996F00EBC94D /* ThermalForceLocalized.h in Headers */,
 				E1FD94621299996F00EBC94D /* TimeVaryingDragForce.h in Headers */,
 				E1FD94641299996F00EBC94D /* TimeVaryingThermalForce.h in Headers */,
+				A7BB667920536289004C6174 /* ElectricForce.h in Headers */,
 				E1B3A959129D710500599DFF /* VectorCompatibility.h in Headers */,
 				4DDDB4F912BA7E62003AC69F /* Operator.h in Headers */,
 				4D3A684913AF3EBD00A74926 /* CacheOperator.h in Headers */,
@@ -338,7 +359,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 0440;
+				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = "Plasma Sciences Laboratory";
 			};
 			buildConfigurationList = 1DEB91EF08733DB70010E9CD /* Build configuration list for PBXProject "Simulation" */;
@@ -371,6 +392,9 @@
 				E1FD94391299994F00EBC94D /* DragForce.cpp in Sources */,
 				E1FD943E1299996300EBC94D /* DrivingForce.cpp in Sources */,
 				E1FD94551299996F00EBC94D /* RectConfinementForce.cpp in Sources */,
+				A7BB667D20536289004C6174 /* VertElectricForce.cpp in Sources */,
+				A7BB667C20536289004C6174 /* GravitationalForce.cpp in Sources */,
+				A7BB667F20536295004C6174 /* driver.cpp in Sources */,
 				E1FD94571299996F00EBC94D /* RotationalForce.cpp in Sources */,
 				E1FD94591299996F00EBC94D /* Runge_Kutta4.cpp in Sources */,
 				E1FD945B1299996F00EBC94D /* ShieldedCoulombForce.cpp in Sources */,
@@ -382,6 +406,7 @@
 				4D51B13713E8A60A00F37502 /* ConfinementForceVoid.cpp in Sources */,
 				4D51B13A13E8A68600F37502 /* MagneticForce.cpp in Sources */,
 				4DDA63D21459F63A00E795F8 /* Integrator.cpp in Sources */,
+				A7BB667E20536289004C6174 /* ElectricForce.cpp in Sources */,
 				4DDA63DB145A012E00E795F8 /* Runge_Kutta2.cpp in Sources */,
 				4DB92EE4145F086600EB946D /* RandomNumbers.cpp in Sources */,
 			);
@@ -391,7 +416,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E1FD947912999A8900EBC94D /* driver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -414,11 +438,11 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				HEADER_SEARCH_PATHS = "$(inherited)";
+				HEADER_SEARCH_PATHS = "/Users/loriscott/Documents/Demon-xcode/builds/cfitsio";
 				INSTALL_PATH = /usr/local/lib;
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = "/Users/loriscott/Documents/Demon-xcode/builds/cfitsio";
 				LLVM_LTO = YES;
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "-lcfitsio";
 				PRODUCT_NAME = Simulation;
 			};
 			name = Debug;
@@ -429,11 +453,11 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				HEADER_SEARCH_PATHS = "$(inherited)";
+				HEADER_SEARCH_PATHS = "/Users/loriscott/Documents/Demon-xcode/builds/cfitsio";
 				INSTALL_PATH = /usr/local/lib;
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = "/Users/loriscott/Documents/Demon-xcode/builds/cfitsio";
 				LLVM_LTO = YES;
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "-lcfitsio";
 				PRODUCT_NAME = Simulation;
 			};
 			name = Release;
@@ -441,23 +465,34 @@
 		1DEB91F008733DB70010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_OBJCPP_ARC_ABI = YES;
 				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
 				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
 				CLANG_WARN_OBJC_RECEIVER_WEAK = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CLANG_X86_VECTOR_INSTRUCTIONS = sse4.2;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
@@ -484,14 +519,8 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					/Users/mark/Programs/cfitsio,
-					/Users/mark/cfitsio,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					/Users/mark/Programs/cfitsio,
-					/Users/mark/cfitsio,
-				);
+				HEADER_SEARCH_PATHS = "/Users/loriscott/Documents/Demon-xcode/builds/cfitsio";
+				LIBRARY_SEARCH_PATHS = "/Users/loriscott/Documents/Demon-xcode/builds/cfitsio";
 				LLVM_LTO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-lcfitsio";
@@ -504,26 +533,36 @@
 		1DEB91F108733DB70010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_OBJCPP_ARC_ABI = YES;
 				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
 				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
 				CLANG_WARN_OBJC_RECEIVER_WEAK = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CLANG_X86_VECTOR_INSTRUCTIONS = sse4.2;
 				DEAD_CODE_STRIPPING = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_DYNAMIC_NO_PIC = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_STRICT_ALIASING = YES;
@@ -555,14 +594,8 @@
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					/Users/mark/Programs/cfitsio,
-					/Users/mark/cfitsio,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					/Users/mark/Programs/cfitsio,
-					/Users/mark/cfitsio,
-				);
+				HEADER_SEARCH_PATHS = "/Users/loriscott/Documents/Demon-xcode/builds/cfitsio";
+				LIBRARY_SEARCH_PATHS = "/Users/loriscott/Documents/Demon-xcode/builds/cfitsio";
 				LLVM_LTO = NO;
 				OTHER_LDFLAGS = "-lcfitsio";
 				RUN_CLANG_STATIC_ANALYZER = YES;
@@ -580,9 +613,9 @@
 				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				HEADER_SEARCH_PATHS = "$(inherited)";
+				HEADER_SEARCH_PATHS = "/Users/loriscott/Documents/Demon-xcode/builds/cfitsio";
 				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = "/Users/loriscott/Documents/Demon-xcode/builds/cfitsio";
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = DEMON;
 			};
@@ -597,9 +630,9 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
-				HEADER_SEARCH_PATHS = "$(inherited)";
+				HEADER_SEARCH_PATHS = "/Users/loriscott/Documents/Demon-xcode/builds/cfitsio";
 				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = "/Users/loriscott/Documents/Demon-xcode/builds/cfitsio";
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = DEMON;
 			};
